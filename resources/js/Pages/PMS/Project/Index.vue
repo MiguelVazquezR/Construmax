@@ -5,14 +5,14 @@
       </div>
   
       <div class="flex justify-between mt-5 mx-1 lg:mx-14">
-        <div class="flex items-center space-x-2 w-1/3">
+        <div class="w-1/3">
           <input @keyup.enter="handleSearch" v-model="inputSearch" type="search" class="input" placeholder="Buscar proyecto" />
-          <SecondaryButton @click="handleSearch" type="submit" class="rounded-lg">
+          <!-- <SecondaryButton @click="handleSearch" type="submit" class="rounded-lg">
             <i class="fa-solid fa-magnifying-glass"></i>
-          </SecondaryButton>
+          </SecondaryButton> -->
         </div>
         <div>
-          <PrimaryButton @click="$inertia.get(route('projects.create'))">Nuevo proyecto</PrimaryButton>
+          <PrimaryButton @click="$inertia.get(route('pms.projects.create'))" class="rounded-full">Nuevo proyecto</PrimaryButton>
         </div>
       </div>
   
@@ -20,8 +20,9 @@
         <table class="lg:w-[80%] w-full mx-auto">
           <thead>
             <tr class="text-left">
+              <th class="font-bold pb-5">Folio <i class="fa-solid fa-arrow-down-long ml-3"></i></th>
               <th class="font-bold pb-5">Nombre del proyecto <i class="fa-solid fa-arrow-down-long ml-3"></i></th>
-              <th class="font-bold pb-5">Estatus <i class="fa-solid fa-arrow-down-long ml-3"></i></th>
+              <th class="font-bold pb-5">Estado <i class="fa-solid fa-arrow-down-long ml-3"></i></th>
               <th class="font-bold pb-5">Tareas <i class="fa-solid fa-arrow-down-long ml-3"></i></th>
               <th class="font-bold pb-5">Fecha de inicio <i class="fa-solid fa-arrow-down-long ml-3"></i></th>
               <th class="font-bold pb-5">Fecha final <i class="fa-solid fa-arrow-down-long ml-3"></i></th>
@@ -30,8 +31,8 @@
             </tr>
           </thead>
           <tbody>
-            <tr v-for="(project, index) in filteredTableData" :key="project.id"
-              class="mb-4 cursor-pointer hover:bg-[#dfdbdba8]" @click="$inertia.get(route('projects.show', project.id))">
+            <tr v-for="project in filteredTableData" :key="project.id"
+              class="mb-4 cursor-pointer hover:bg-[#dfdbdba8]" @click="$inertia.get(route('pms.projects.show', project.id))">
               <td class="text-left py-2 px-2 rounded-l-full">
                 {{ project.project_name }}
               </td>
@@ -68,7 +69,7 @@
         </table>
         <!-- --- pagination --- -->
         <div class="mt-4">
-          <Pagination :pagination="projects" />
+          <!-- <Pagination :pagination="projects" /> -->
         </div>
       </div>
   
@@ -102,7 +103,7 @@
         this.search = this.inputSearch;
       },
       handlePageChange(newPage) {
-        this.$inertia.get(route('projects.index', { page: newPage }));
+        this.$inertia.get(route('pms.projects.index', { page: newPage }));
       },
       calculateProjectStatus(tasks) {
         const totalTasks = tasks.length;

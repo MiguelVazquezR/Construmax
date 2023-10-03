@@ -9,6 +9,7 @@ import { ZiggyVue } from '../../vendor/tightenco/ziggy/dist/vue.m';
 
 import ElementPlus from 'element-plus';
 import 'element-plus/dist/index.css';
+import VueApexCharts from "vue3-apexcharts";
 
 const appName = import.meta.env.VITE_APP_NAME || 'Construmax';
 
@@ -20,6 +21,7 @@ createInertiaApp({
             .use(plugin)
             .use(ZiggyVue)
             .use(ElementPlus)
+            .use(VueApexCharts)
             .mount(el);
     },
     progress: {

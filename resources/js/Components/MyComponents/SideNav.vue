@@ -4,18 +4,20 @@
         <div class="bg-[#313131] h-full overflow-auto">
             <nav class="px-2 pt-32 text-white">
                 <template v-for="(menu, index) in menus" :key="index">
-                    <Accordion v-if="menu.options.length" :icon="menu.icon" :active="menu.active" :title="menu.label" :id="index">
+                    <Accordion v-if="menu.options.length" :icon="menu.icon" :active="menu.active" :title="menu.label"
+                        :id="index">
                         <div v-for="(option, index2) in menu.options" :key="index2">
                             <button @click="goToRoute(option.route)" v-if="option.show" :active="option.active"
+                                :title="option.label"
                                 class="w-full text-start pl-6 pr-2 mb-1 flex justify-between text-xs rounded-md py-1"
                                 :class="option.active ? 'bg-[#FD8827] text-white' : 'hover:text-[#FD8827]'">
                                 <p class="w-full truncate"> {{ option.label }}</p>
                             </button>
                         </div>
                     </Accordion>
-                    <button v-else @click="goToRoute(menu.route)" v-if="menu.show" :active="menu.active"
-                        class="w-full text-start px-2 mb-1 flex justify-between text-xs rounded-md py-1 hover:text-[#FD8827]"
-                        :class="menu.active ? 'bg-[#FD8827] text-white' : ''">
+                    <button v-else @click="goToRoute(menu.route)" v-if="menu.show" :active="menu.active"  :title="menu.label"
+                        class="w-full text-start px-2 mb-1 flex justify-between text-xs rounded-md py-1"
+                        :class="menu.active ? 'bg-[#FD8827] text-white' : 'hover:text-[#FD8827]'">
                         <p class="w-full truncate"><span v-html="menu.icon"></span> {{ menu.label }}</p>
                     </button>
                 </template>

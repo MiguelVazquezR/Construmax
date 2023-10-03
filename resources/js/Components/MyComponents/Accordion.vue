@@ -1,7 +1,7 @@
 <template>
     <button :id="`accordion-title-${id}`" class="w-full text-start px-2 mb-1 flex justify-between text-xs rounded-md py-1"
         :class="active ? 'font-bold text-[#FD8827]' : ''" @click.prevent="accordionOpen = !accordionOpen"
-        :aria-expanded="accordionOpen" :aria-controls="`accordion-text-${id}`">
+        :aria-expanded="accordionOpen" :aria-controls="`accordion-text-${id}`" :title="title">
         <p><span v-html="icon"></span> {{ title }}</p>
         <i class="fa-solid fa-angle-down transform origin-center transition duration-200 ease-out"
             :class="{ '!rotate-180': accordionOpen }"></i>
@@ -20,7 +20,7 @@
 export default {
     data() {
         return {
-            accordionOpen: false,
+            accordionOpen: this.active,
         }
     },
     props: {

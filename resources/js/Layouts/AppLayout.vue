@@ -202,7 +202,7 @@ const logout = () => {
                     </div>
                 </header>
 
-                <div class="overflow-y-auto h-[calc(100vh-8rem)] bg-white">
+                <div class="overflow-y-auto h-[calc(100vh-4.1rem)] bg-white">
                     <slot />
                 </div>
             </main>

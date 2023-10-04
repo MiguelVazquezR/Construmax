@@ -23,9 +23,11 @@ return new class extends Migration
             $table->date('start_date');
             $table->date('limit_date');
             $table->timestamp('finished_at')->nullable();
-            $table->foreignId('project_group_id')->constrained()->nullOnDelete();
             $table->foreignId('user_id')->constrained();
-            $table->foreignId('opportunity_id')->constrained()->nullOnDelete();
+            $table->unsignedBigInteger('opportunity_id');
+            $table->foreign('opportunity_id')->references('id')->on('opportunities');
+            $table->unsignedBigInteger('project_group_id');
+            $table->foreign('project_group_id')->references('id')->on('project_groups');
             $table->timestamps();
         });
     }

@@ -1,14 +1,14 @@
 <template>
     <AppLayout title="Proyectos">
-      <div class="flex justify-between text-lg mx-14 mt-11">
+      <div class="flex justify-between text-lg mx-16 mt-11">
         <span>Proyectos</span>
       </div>
   
-      <div class="flex justify-between mt-5 mx-1 lg:mx-14">
-        <div class="w-1/3">
-          <input @keyup.enter="handleSearch" v-model="inputSearch" type="search" class="input" placeholder="Buscar proyecto" />
+      <div class="flex justify-between mt-5 mx-1 lg:mx-16">
+        <div class="w-1/3 relative">
+          <input @keyup.enter="handleSearch" v-model="inputSearch" class="input pr-8" placeholder="Buscar proyecto" />
+          <i class="fa-solid fa-magnifying-glass absolute top-3 right-4 text-xs text-gray2"></i>
           <!-- <SecondaryButton @click="handleSearch" type="submit" class="rounded-lg">
-            <i class="fa-solid fa-magnifying-glass"></i>
           </SecondaryButton> -->
         </div>
         <div>
@@ -16,8 +16,8 @@
         </div>
       </div>
   
-      <div class="lg:px-16 px-4 py-7 text-sm overflow-x-scroll">
-        <table class="lg:w-[80%] w-full mx-auto">
+      <div class="lg:px-16 px-4 py-7 text-sm overflow-x-auto">
+        <table class="w-full mx-auto">
           <thead>
             <tr class="text-left">
               <th class="font-bold pb-5">Folio <i class="fa-solid fa-arrow-down-long ml-3"></i></th>

@@ -17,7 +17,7 @@ class ProjectController extends Controller
 
     public function create()
     {
-        //
+        return inertia('PMS/Project/Create');
     }
 
     public function store(Request $request)

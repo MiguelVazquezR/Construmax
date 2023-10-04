@@ -20,7 +20,8 @@ return new class extends Migration
             $table->date('close_date');
             $table->foreignId('contact_id')->constrained();
             $table->foreignId('user_id')->constrained();
-            $table->foreignId('seller_id')->constrained();
+            $table->unsignedBigInteger('seller_id');
+            $table->foreign('seller_id')->references('id')->on('users');
             $table->timestamps();
         });
     }

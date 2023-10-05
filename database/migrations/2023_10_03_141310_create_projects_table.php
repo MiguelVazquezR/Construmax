@@ -28,6 +28,8 @@ return new class extends Migration
             $table->foreign('opportunity_id')->references('id')->on('opportunities');
             $table->unsignedBigInteger('project_group_id');
             $table->foreign('project_group_id')->references('id')->on('project_groups');
+            $table->unsignedBigInteger('owner_id');
+            $table->foreign('owner_id')->references('id')->on('users');
             $table->timestamps();
         });
     }

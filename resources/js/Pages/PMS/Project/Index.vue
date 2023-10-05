@@ -22,8 +22,10 @@
             <tr class="text-left">
               <th class="font-bold pb-5">Folio <i class="fa-solid fa-arrow-down-long ml-3"></i></th>
               <th class="font-bold pb-5">Nombre del proyecto <i class="fa-solid fa-arrow-down-long ml-3"></i></th>
+              <th class="font-bold pb-5">Tipo de servicio <i class="fa-solid fa-arrow-down-long ml-3"></i></th>
               <th class="font-bold pb-5">Estado <i class="fa-solid fa-arrow-down-long ml-3"></i></th>
               <th class="font-bold pb-5">Tareas <i class="fa-solid fa-arrow-down-long ml-3"></i></th>
+              <th class="font-bold pb-5">Responsable <i class="fa-solid fa-arrow-down-long ml-3"></i></th>
               <th class="font-bold pb-5">Fecha de inicio <i class="fa-solid fa-arrow-down-long ml-3"></i></th>
               <th class="font-bold pb-5">Fecha final <i class="fa-solid fa-arrow-down-long ml-3"></i></th>
               <th class="font-bold pb-5">Completa <i class="fa-solid fa-arrow-down-long ml-3"></i></th>

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\ProjectGroupResource;
 use App\Http\Resources\ProjectResource;
 use App\Models\Customer;
 use App\Models\Project;
@@ -22,7 +23,7 @@ class ProjectController extends Controller
     public function create()
     {
         $customers = Customer::all();
-        $project_groups = ProjectGroup::all();
+        $project_groups = ProjectGroupResource::collection(ProjectGroup::all());
         $tags = Tag::where('type', 'projects')->get();
         $users = User::where('is_active', true)->get();
 

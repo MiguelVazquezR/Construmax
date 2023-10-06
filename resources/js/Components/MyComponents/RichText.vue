@@ -1,15 +1,15 @@
 <template>
     <div>
         <header class="border border-b-0 border-gray3 rounded-tl-[3px] rounded-tr-[3px] h-7 flex items-center">
-            <button @click="toggleStyle('bold')" :class="{ 'text-primary': styles.bold }"
+            <button @click="toggleStyle('bold')" :class="{ 'text-primary': styles.bold }" type="button"
                 class="border-r border-gray3 px-3 text-sm">
                 <i class="fa-solid fa-bold"></i>
             </button>
-            <button @click="toggleStyle('italic')" :class="{ 'text-primary': styles.italic }"
+            <button @click="toggleStyle('italic')" :class="{ 'text-primary': styles.italic }" type="button"
                 class="border-r border-gray3 px-3 text-sm">
                 <i class="fa-solid fa-italic"></i>
             </button>
-            <button @click="toggleStyle('underline')" :class="{ 'text-primary': styles.underline }"
+            <button @click="toggleStyle('underline')" :class="{ 'text-primary': styles.underline }" type="button"
                 class="border-r border-gray3 px-3 text-sm">
                 <i class="fa-solid fa-underline"></i>
             </button>

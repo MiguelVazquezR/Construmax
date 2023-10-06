@@ -12,11 +12,14 @@
     <form @submit.prevent="store" class="mx-8 mt-3 grid grid-cols-2 gap-x-4 gap-y-2">
       <div>
         <InputLabel value="Título del proyecto *" class="ml-2" />
-        <input v-model="form.name" type="text" class="input mt-1" placeholder="Asignar un nombre al proyecto">
+        <input v-model="form.name" type="text" class="input mt-1" placeholder="Asignar un nombre al proyecto" required>
       </div>
       <div>
         <InputLabel value="Responsable *" class="ml-2" />
-        <input v-model="form.owner_id" type="text" class="input mt-1" placeholder="Quien responde por el proyecto">
+        <el-select v-model="form.owner_id" clearable placeholder="Seleccione" class="w-full mt-1"
+          no-data-text="No hay opciones para mostrar" no-match-text="No se encontraron coincidencias">
+          <el-option v-for="(item, index) in users" :key="item.id" :label="item.name" :value="item.id" />
+        </el-select>
       </div>
       <div>
         <InputLabel value="Fecha de inicio *" class="ml-2" />
@@ -52,7 +55,7 @@
       <div class="mt-5 col-span-full w-[calc(50%-16px)]">
         <div class="flex justify-between items-center mx-2">
           <InputLabel value="Etiquetas" />
-          <button type="button" class="rounded-full border border-primary w-4 h-4 flex items-center justify-center">
+          <button @click="showTagFormModal = true" type="button" class="rounded-full border border-primary w-4 h-4 flex items-center justify-center">
             <i class="fa-solid fa-plus text-primary text-[9px]"></i>
           </button>
         </div>
@@ -87,13 +90,13 @@
               </div>
             </el-tooltip>
           </div>
-          <button type="button" class="text-primary text-xs">
+          <button @click="showGroupFormModal = true" type="button" class="text-primary text-xs">
             Agregar grupo nuevo
           </button>
         </div>
         <el-select v-model="form.project_group_id" clearable placeholder="Seleccione" class="w-full mt-1"
           no-data-text="No hay opciones para mostrar" no-match-text="No se encontraron coincidencias">
-          <el-option v-for="(item, index) in project_groups" :key="item.id" :label="item.name" :value="item.id" />
+          <el-option v-for="(item, index) in project_groups.data" :key="item.id" :label="item.name" :value="item.id" />
         </el-select>
       </div>
       <h2 class="font-bold text-sm my-2 col-span-full">Campos adicionales</h2>
@@ -178,7 +181,7 @@
               <h2 class="font-bold border-b border-gray3 w-1/3">Permisos</h2>
             </div>
             <div class="pl-3 overflow-y-auto min-h-[100px] max-h-[340px]">
-              <div class="flex mt-2 border-b border-gray3" v-for="user in selectedUsersToPermissions" :key="user.id">
+              <div class="flex mt-2 border-b border-gray3" v-for="user in form.selectedUsersToPermissions" :key="user.id">
                 <div class="w-2/3 flex space-x-2">
                   <div v-if="$page.props.jetstream.managesProfilePhotos" class="flex text-sm rounded-full w-12">
                     <img class="h-10 w-10 rounded-full object-cover" :src="user.profile_photo_url" :alt="user.name" />
@@ -193,34 +196,40 @@
                 <div class="w-1/3 flex items-center justify-between">
                   <div class="space-y-1 mb-2">
                     <label class="flex items-center">
-                      <Checkbox :disabled="!editAccesFlag" v-model="form.is_strict_proyect" value="1"
-                        :name="'p-' + user.id" />
-                      <span :class="!editAccesFlag ? 'text-gray-500/80 cursor-not-allowed' : ''" class="ml-2 text-xs">
+                      <Checkbox :disabled="!editAccesFlag || user.employee_properties === null"
+                        v-model="user.permissions[0]" :checked="user.permissions[0]" />
+                      <span
+                        :class="!editAccesFlag || user.employee_properties === null ? 'text-gray-500/80 cursor-not-allowed' : ''"
+                        class="ml-2 text-xs">
                         Crea tareas
                       </span>
                     </label>
                     <label class="flex items-center">
-                      <Checkbox :disabled="!editAccesFlag" v-model="form.is_strict_proyect" value="2"
-                        :name="'p-' + user.id" />
-                      <span :class="!editAccesFlag ? 'text-gray-500/80 cursor-not-allowed' : ''"
+                      <Checkbox :disabled="!editAccesFlag || user.employee_properties === null"
+                        v-model="user.permissions[1]" :checked="user.permissions[1]" />
+                      <span
+                        :class="!editAccesFlag || user.employee_properties === null ? 'text-gray-500/80 cursor-not-allowed' : ''"
                         class="ml-2 text-xs">Ver</span>
                     </label>
                     <label class="flex items-center">
-                      <Checkbox :disabled="!editAccesFlag" v-model="form.is_strict_proyect" value="3"
-                        :name="'p-' + user.id" />
-                      <span :class="!editAccesFlag ? 'text-gray-500/80 cursor-not-allowed' : ''"
+                      <Checkbox :disabled="!editAccesFlag || user.employee_properties === null"
+                        v-model="user.permissions[2]" :checked="user.permissions[2]" />
+                      <span
+                        :class="!editAccesFlag || user.employee_properties === null ? 'text-gray-500/80 cursor-not-allowed' : ''"
                         class="ml-2 text-xs">Editar</span>
                     </label>
                     <label class="flex items-center">
-                      <Checkbox :disabled="!editAccesFlag" v-model="form.is_strict_proyect" value="4"
-                        :name="'p-' + user.id" />
-                      <span :class="!editAccesFlag ? 'text-gray-500/80 cursor-not-allowed' : ''"
+                      <Checkbox :disabled="!editAccesFlag || user.employee_properties === null"
+                        v-model="user.permissions[3]" :checked="user.permissions[3]" />
+                      <span
+                        :class="!editAccesFlag || user.employee_properties === null ? 'text-gray-500/80 cursor-not-allowed' : ''"
                         class="ml-2 text-xs">Eliminar</span>
                     </label>
                     <label class="flex items-center">
-                      <Checkbox :disabled="!editAccesFlag" v-model="form.is_strict_proyect" value="5"
-                        :name="'p-' + user.id" />
-                      <span :class="!editAccesFlag ? 'text-gray-500/80 cursor-not-allowed' : ''"
+                      <Checkbox :disabled="!editAccesFlag || user.employee_properties === null"
+                        v-model="user.permissions[4]" :checked="user.permissions[4]" />
+                      <span
+                        :class="!editAccesFlag || user.employee_properties === null ? 'text-gray-500/80 cursor-not-allowed' : ''"
                         class="ml-2 text-xs">Comentar</span>
                     </label>
                   </div>
@@ -245,6 +254,51 @@
         <PrimaryButton>Agregar</PrimaryButton>
       </div>
     </form>
+
+    <!-- group form -->
+    <DialogModal :show="showGroupFormModal" @close="showGroupFormModal = false">
+      <template #title>
+        Agregar grupo
+      </template>
+      <template #content>
+        <form @submit.prevent="storeGroup" ref="groupForm">
+          <div>
+            <InputLabel value="Nombre del grupo *" class="ml-2" />
+            <input v-model="groupForm.name" type="text" class="input mt-1" placeholder="Escribe el nombre" required>
+            <InputError :message="groupForm.errors.name" />
+          </div>
+        </form>
+      </template>
+      <template #footer>
+        <CancelButton @click="showGroupFormModal = false" :disabled="groupForm.processing">Cancelar</CancelButton>
+        <PrimaryButton @click="submitGroupForm()" :disabled="groupForm.processing">Crear</PrimaryButton>
+      </template>
+    </DialogModal>
+
+    <!-- tag form -->
+    <DialogModal :show="showTagFormModal" @close="showTagFormModal = false">
+      <template #title>
+        Agregar etiqueta
+      </template>
+      <template #content>
+        <form @submit.prevent="storeTag" ref="tagForm">
+          <div>
+            <InputLabel value="Nombre de la etiqueta *" class="ml-2" />
+            <input v-model="tagForm.name" type="text" class="input mt-1" placeholder="Escribe el nombre" required>
+            <InputError :message="tagForm.errors.name" />
+          </div>
+          <div class="mt-3">
+            <InputLabel value="Seleccione el color *" class="ml-2" />
+            <el-color-picker v-model="tagForm.color" class="mt-1" />
+            <InputError :message="tagForm.errors.color" />
+          </div>
+        </form>
+      </template>
+      <template #footer>
+        <CancelButton @click="showTagFormModal = false" :disabled="tagForm.processing">Cancelar</CancelButton>
+        <PrimaryButton @click="submitTagForm()" :disabled="tagForm.processing">Crear</PrimaryButton>
+      </template>
+    </DialogModal>
   </AppLayout>
 </template>
   
@@ -252,18 +306,21 @@
 import AppLayout from "@/Layouts/AppLayout.vue";
 import PrimaryButton from "@/Components/PrimaryButton.vue";
 import InputLabel from "@/Components/InputLabel.vue";
+import InputError from "@/Components/InputError.vue";
 import CancelButton from "@/Components/CancelButton.vue";
 import Checkbox from "@/Components/Checkbox.vue";
 import RichText from "@/Components/MyComponents/RichText.vue";
 import ThirdButton from "@/Components/ThirdButton.vue";
+import DialogModal from "@/Components/DialogModal.vue";
 import { Link, useForm } from "@inertiajs/vue3";
+import axios from 'axios';
 //   import Pagination from "@/Components/MyComponents/Pagination.vue";
 
 export default {
   data() {
     const form = useForm({
       name: null,
-      owner_id: null,
+      owner_id: this.$page.props.auth.user.id,
       start_date: null,
       limit_date: null,
       is_strict: false,
@@ -274,10 +331,24 @@ export default {
       currency: '$MXN',
       amount: null,
       invoice_type: null,
+      selectedUsersToPermissions: [],
+    });
+
+    const groupForm = useForm({
+      name: null,
+    });
+
+    const tagForm = useForm({
+      name: null,
+      color: null,
     });
 
     return {
       form,
+      groupForm,
+      tagForm,
+      showGroupFormModal: false,
+      showTagFormModal: false,
       editAccesFlag: true,
       typeAccessProject: 'Private',
       search: '',
@@ -292,8 +363,6 @@ export default {
         { label: 'USD - Dolar ', value: '$USD' },
       ],
       opportunities: [],
-      selectedUsersToPermissions: [],
-
     }
   },
   components: {
@@ -305,11 +374,13 @@ export default {
     Checkbox,
     RichText,
     ThirdButton,
+    DialogModal,
+    InputError,
     //   Pagination
   },
   props: {
     customers: Array,
-    project_groups: Array,
+    project_groups: Object,
     tags: Array,
     users: Array,
   },
@@ -321,22 +392,46 @@ export default {
     },
   },
   methods: {
-    removeUserFromPermissions(userId) {
-      const index = this.selectedUsersToPermissions.findIndex(item => item.id === userId);
+    submitGroupForm() {
+      this.$refs.groupForm.dispatchEvent(new Event('submit', { cancelable: true }));
+    },
+    async storeGroup() {
+      try {
+        this.groupForm.processing = true;
+        const response = await axios.post(route('pms.project-groups.store'), { name: this.groupForm.name });
 
-      this.selectedUsersToPermissions.splice(index, 1);
+        if (response.status === 200) {
+          this.$notify({
+            title: 'Correcto',
+            message: response.data.message,
+            type: 'success'
+          });
+
+          this.showGroupFormModal = false;
+          this.project_groups.data.push({ name: this.groupForm.name, user_id: this.$page.props.auth.user.id });
+          this.groupForm.reset();
+          this.groupForm.errors = {};
+        }
+      } catch (error) {
+        if (error.response.status === 422) {
+          // guardando errores de validacion a formulario para mostrarlos
+          this.groupForm.errors.name = error.response.data.errors.name[0];
+        }
+        console.log(error)
+      } finally {
+        this.groupForm.processing = false;
+      }
+    },
+    removeUserFromPermissions(userId) {
+      const index = this.form.selectedUsersToPermissions.findIndex(item => item.id === userId);
+
+      this.form.selectedUsersToPermissions.splice(index, 1);
     },
     addToSelectedUsers(userId) {
       let user = this.users.find(item => item.id === userId);
-      const defaultPermissions = {
-        create: 0,
-        show: 1,
-        edit: 0,
-        delete: 0,
-        comment: 1,
-      };
+      const defaultPermissions = [false, true, false, false, true];
       user.permissions = defaultPermissions;
-      this.selectedUsersToPermissions.push(user);
+      this.form.selectedUsersToPermissions.push(user);
     },
     handleSearch() {
       this.search = this.inputSearch;
@@ -384,25 +479,19 @@ export default {
       // obtener los usuarios admin para que siempre aparezcan en los proyectos y dar todos los permisos
       let admins = this.users.filter(item => item.employee_properties == null);
       admins.forEach(admin => {
-        const defaultPermissions = {
-          create: 1,
-          show: 1,
-          edit: 1,
-          delete: 1,
-          comment: 1,
-        };
+        const defaultPermissions = [true, true, true, true, true];
         admin.permissions = defaultPermissions;
       });
-      this.selectedUsersToPermissions = admins;
+      this.form.selectedUsersToPermissions = admins;
     }
   },
   computed: {
     availableUsersToPermissions() {
-      if (this.selectedUsersToPermissions.length == 0) return this.users;
+      if (this.form.selectedUsersToPermissions.length == 0) return this.users;
 
       const availableUsers = this.users.filter((item) => {
         // Verifica si el item no se encuentra en item2
-        return !this.selectedUsersToPermissions.find((item2) => item.id === item2.id);
+        return !this.form.selectedUsersToPermissions.find((item2) => item.id === item2.id);
       });
 
       return availableUsers;
@@ -411,7 +500,15 @@ export default {
   watch: {
     typeAccessProject(newVal) {
       if (newVal === 'Public') {
-        this.selectedUsersToPermissions = this.users;
+        this.form.selectedUsersToPermissions = this.users;
+        this.form.selectedUsersToPermissions.forEach(user => {
+          let defaultPermissions = [true, true, true, true, true];
+          if (user.employee_properties) {
+            defaultPermissions = [false, true, false, false, true];
+          }
+
+          user.permissions = defaultPermissions;
+        });
         this.editAccesFlag = false;
       } else {
         this.selectAdmins();

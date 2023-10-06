@@ -56,7 +56,10 @@
             <i class="fa-solid fa-plus text-primary text-[9px]"></i>
           </button>
         </div>
-        <input v-model="form.tags" type="text" class="input mt-1" placeholder="Escriba un nombre de etiqueta">
+        <el-select v-model="form.tags" clearable placeholder="Seleccione" multiple class="w-full mt-1"
+          no-data-text="No hay opciones para mostrar" no-match-text="No se encontraron coincidencias">
+          <el-option v-for="(item, index) in tags" :key="item.id" :label="item.name" :value="item.id" />
+        </el-select>
       </div>
       <div class="col-span-full ml-2 text-sm mt-3 flex">
         <label class="flex items-center cursor-pointer flex-shrink-0 flex-grow-0">
@@ -76,8 +79,7 @@
         <div class="flex justify-between items-center mx-2">
           <div class="flex items-center space-x-2">
             <InputLabel value="Grupo" />
-            <el-tooltip
-              content="Organice su proyecto en grupos. Seleccione o cree un grupo para asociar este proyecto"
+            <el-tooltip content="Organice su proyecto en grupos. Seleccione o cree un grupo para asociar este proyecto"
               placement="right">
               <!-- <i class="fa-solid fa-circle-info text-primary text-xs ml-2"></i> -->
               <div class="rounded-full border border-primary w-3 h-3 flex items-center justify-center">
@@ -89,23 +91,160 @@
             Agregar grupo nuevo
           </button>
         </div>
-        <input v-model="form.tags" type="text" class="input mt-1" placeholder="Escriba un nombre de etiqueta">
+        <el-select v-model="form.project_group_id" clearable placeholder="Seleccione" class="w-full mt-1"
+          no-data-text="No hay opciones para mostrar" no-match-text="No se encontraron coincidencias">
+          <el-option v-for="(item, index) in project_groups" :key="item.id" :label="item.name" :value="item.id" />
+        </el-select>
       </div>
       <h2 class="font-bold text-sm my-2 col-span-full">Campos adicionales</h2>
       <div>
         <InputLabel value="Cliente *" class="ml-2" />
-        <input v-model="form.name" type="text" class="input mt-1" placeholder="Seleccione">
+        <el-select v-model="form.customer_id" clearable placeholder="Seleccione" class="w-full mt-1"
+          no-data-text="No hay opciones para mostrar" no-match-text="No se encontraron coincidencias">
+          <el-option v-for="(item, index) in customers" :key="item.id" :label="item.name" :value="item.id" />
+        </el-select>
       </div>
       <div>
         <InputLabel value="Sucursal *" class="ml-2" />
-        <input v-model="form.name" type="text" class="input mt-1" placeholder="Seleccione">
+        <el-select v-model="form.branch" clearable placeholder="Seleccione" class="w-full mt-1"
+          no-data-text="No hay opciones para mostrar" no-match-text="No se encontraron coincidencias">
+          <el-option v-for="(item, index) in branches" :key="index" :label="item" :value="item" />
+        </el-select>
       </div>
       <div>
         <InputLabel value="OP *" class="ml-2" />
-        <input v-model="form.name" type="text" class="input mt-1" placeholder="Seleccione">
+        <el-select v-model="form.opportunity_id" clearable placeholder="Seleccione" class="w-full mt-1"
+          no-data-text="No hay opciones para mostrar" no-match-text="No se encontraron coincidencias">
+          <el-option v-for="(item, index) in opportunities" :key="item.id" :label="item.name" :value="item.id" />
+        </el-select>
+      </div>
+      <h2 class="font-bold text-sm my-2 col-span-full">Presupuesto</h2>
+      <div>
+        <InputLabel value="Moneda" class="ml-2" />
+        <el-select v-model="form.currency" clearable placeholder="Seleccione" class="w-full mt-1"
+          no-data-text="No hay opciones para mostrar" no-match-text="No se encontraron coincidencias">
+          <el-option v-for="(item, index) in currencies" :key="index" :label="item.label" :value="item.value" />
+        </el-select>
+      </div>
+      <div>
+        <InputLabel value="Monto" class="ml-2" />
+        <input v-model="form.amount" type="number" class="input mt-1">
+      </div>
+      <div>
+        <InputLabel value="Método de facturación" class="ml-2 mt-1" />
+        <el-select v-model="form.invoice_type" clearable placeholder="Seleccione" class="w-full"
+          no-data-text="No hay opciones para mostrar" no-match-text="No se encontraron coincidencias">
+          <el-option v-for="(item, index) in invoiceTypes" :key="index" :label="item" :value="item" />
+        </el-select>
+      </div>
+      <h2 class="font-bold text-sm my-2 col-span-full">Acceso al proyecto</h2>
+      <div class="col-span-full text-sm">
+        <div class="my-1">
+          <input v-model="typeAccessProject" value="Public"
+            class="checked:bg-primary focus:text-primary focus:ring-primary border-black mr-3" type="radio"
+            name="typeAccessProject">
+          <b>Público</b>
+          <p class="text-[#9A9A9A] ml-7 text-xs">Los usuarios del portal solo pueden ver, seguir y comentar, mientras que
+            los
+            usuarios del proyecto tendrán acceso directo.</p>
+        </div>
+        <div class="my-1">
+          <input v-model="typeAccessProject" value="Private"
+            class="checked:bg-primary focus:text-primary focus:ring-primary border-black mr-3" type="radio"
+            name="typeAccessProject">
+          <b>Privado</b>
+          <p class="text-[#9A9A9A] ml-7 text-xs">Solo los usuarios de proyecto pueden ver y acceder a este proyecto</p>
+        </div>
+      </div>
+      <section class="rounded-[10px] py-12 mx-7 mt-5 max-h-[540px] col-span-full border border-gray3">
+        <div class="flex px-16 mb-8">
+          <div v-if="typeAccessProject === 'Private'" class="w-full">
+            <h2 class="font-bold text-sm my-2 ml-2 col-span-full">Asignar participantes </h2>
+            <el-select @change="addToSelectedUsers" filterable clearable placeholder="Seleccionar usuario" class="w-1/2"
+              no-data-text="No hay más usuarios para añadir" no-match-text="No se encontraron coincidencias">
+              <el-option v-for="(item, index) in availableUsersToPermissions" :key="item.id" :label="item.name"
+                :value="item.id" />
+            </el-select>
+          </div>
+          <ThirdButton v-if="typeAccessProject === 'Public'" type="button" class="ml-auto self-start"
+            @click.stop="editAccesFlag = !editAccesFlag">
+            {{ editAccesFlag ? 'Actualizar' : 'Editar' }}
+          </ThirdButton>
+        </div>
+        <div class="flex justify-between px-16 mt-4">
+          <div class="w-full">
+            <div class="flex">
+              <h2 class="font-bold border-b border-gray3 w-2/3 pl-3">Usuarios</h2>
+              <h2 class="font-bold border-b border-gray3 w-1/3">Permisos</h2>
+            </div>
+            <div class="pl-3 overflow-y-auto min-h-[100px] max-h-[340px]">
+              <div class="flex mt-2 border-b border-gray3" v-for="user in selectedUsersToPermissions" :key="user.id">
+                <div class="w-2/3 flex space-x-2">
+                  <div v-if="$page.props.jetstream.managesProfilePhotos" class="flex text-sm rounded-full w-12">
+                    <img class="h-10 w-10 rounded-full object-cover" :src="user.profile_photo_url" :alt="user.name" />
+                  </div>
+                  <div class="text-sm w-full">
+                    <p>{{ user.name }}</p>
+                    <p v-if="user.employee_properties">{{ 'Depto. ' + user.employee_properties?.department }}</p>
+                    <p v-else>Super admin</p>
+                  </div>
+                </div>
+
+                <div class="w-1/3 flex items-center justify-between">
+                  <div class="space-y-1 mb-2">
+                    <label class="flex items-center">
+                      <Checkbox :disabled="!editAccesFlag" v-model="form.is_strict_proyect" value="1"
+                        :name="'p-' + user.id" />
+                      <span :class="!editAccesFlag ? 'text-gray-500/80 cursor-not-allowed' : ''" class="ml-2 text-xs">
+                        Crea tareas
+                      </span>
+                    </label>
+                    <label class="flex items-center">
+                      <Checkbox :disabled="!editAccesFlag" v-model="form.is_strict_proyect" value="2"
+                        :name="'p-' + user.id" />
+                      <span :class="!editAccesFlag ? 'text-gray-500/80 cursor-not-allowed' : ''"
+                        class="ml-2 text-xs">Ver</span>
+                    </label>
+                    <label class="flex items-center">
+                      <Checkbox :disabled="!editAccesFlag" v-model="form.is_strict_proyect" value="3"
+                        :name="'p-' + user.id" />
+                      <span :class="!editAccesFlag ? 'text-gray-500/80 cursor-not-allowed' : ''"
+                        class="ml-2 text-xs">Editar</span>
+                    </label>
+                    <label class="flex items-center">
+                      <Checkbox :disabled="!editAccesFlag" v-model="form.is_strict_proyect" value="4"
+                        :name="'p-' + user.id" />
+                      <span :class="!editAccesFlag ? 'text-gray-500/80 cursor-not-allowed' : ''"
+                        class="ml-2 text-xs">Eliminar</span>
+                    </label>
+                    <label class="flex items-center">
+                      <Checkbox :disabled="!editAccesFlag" v-model="form.is_strict_proyect" value="5"
+                        :name="'p-' + user.id" />
+                      <span :class="!editAccesFlag ? 'text-gray-500/80 cursor-not-allowed' : ''"
+                        class="ml-2 text-xs">Comentar</span>
+                    </label>
+                  </div>
+                  <el-popconfirm v-if="typeAccessProject === 'Private'" confirm-button-text="Si" cancel-button-text="No"
+                    icon-color="#FD8827" title="Remover?" @confirm="removeUserFromPermissions(user.id)">
+                    <template #reference>
+                      <button :disabled="user.employee_properties == null"
+                        class="text-primary mr-10 disabled:cursor-not-allowed disabled:opacity-50">
+                        <i class="fa-regular fa-circle-xmark"></i>
+                      </button>
+                    </template>
+                  </el-popconfirm>
+                </div>
+
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+      <div class="col-span-full flex mt-8 mb-5 justify-end space-x-2">
+        <CancelButton>Cancelar</CancelButton>
+        <PrimaryButton>Agregar</PrimaryButton>
       </div>
     </form>
-
   </AppLayout>
 </template>
   
@@ -113,9 +252,10 @@
 import AppLayout from "@/Layouts/AppLayout.vue";
 import PrimaryButton from "@/Components/PrimaryButton.vue";
 import InputLabel from "@/Components/InputLabel.vue";
-import SecondaryButton from "@/Components/SecondaryButton.vue";
+import CancelButton from "@/Components/CancelButton.vue";
 import Checkbox from "@/Components/Checkbox.vue";
 import RichText from "@/Components/MyComponents/RichText.vue";
+import ThirdButton from "@/Components/ThirdButton.vue";
 import { Link, useForm } from "@inertiajs/vue3";
 //   import Pagination from "@/Components/MyComponents/Pagination.vue";
 
@@ -129,28 +269,75 @@ export default {
       is_strict: false,
       description: null,
       tags: null,
+      project_group_id: null,
+      opportunity_id: null,
+      currency: '$MXN',
+      amount: null,
+      invoice_type: null,
     });
 
     return {
       form,
+      editAccesFlag: true,
+      typeAccessProject: 'Private',
       search: '',
       inputSearch: '',
+      invoiceTypes: [
+        'Facturación al contado',
+        'Facturación a crédito',
+        'Facturación por adelantado',
+      ],
+      currencies: [
+        { label: 'MXN - Peso Mexicano', value: '$MXN' },
+        { label: 'USD - Dolar ', value: '$USD' },
+      ],
+      opportunities: [],
+      selectedUsersToPermissions: [],
+
     }
   },
   components: {
     AppLayout,
     PrimaryButton,
-    SecondaryButton,
+    CancelButton,
     Link,
     InputLabel,
     Checkbox,
     RichText,
+    ThirdButton,
     //   Pagination
   },
   props: {
-    //   projects: Object
+    customers: Array,
+    project_groups: Array,
+    tags: Array,
+    users: Array,
+  },
+  computed: {
+    branches() {
+      const selectedCustomer = this.customers.find(item => item.id === this.form.customer_id);
+
+      return selectedCustomer ? selectedCustomer.branches : [];
+    },
   },
   methods: {
+    removeUserFromPermissions(userId) {
+      const index = this.selectedUsersToPermissions.findIndex(item => item.id === userId);
+
+      this.selectedUsersToPermissions.splice(index, 1);
+    },
+    addToSelectedUsers(userId) {
+      let user = this.users.find(item => item.id === userId);
+      const defaultPermissions = {
+        create: 0,
+        show: 1,
+        edit: 0,
+        delete: 0,
+        comment: 1,
+      };
+      user.permissions = defaultPermissions;
+      this.selectedUsersToPermissions.push(user);
+    },
     handleSearch() {
       this.search = this.inputSearch;
     },
@@ -192,20 +379,49 @@ export default {
     },
     updateDescription(content) {
       this.form.description = content;
+    },
+    selectAdmins() {
+      // obtener los usuarios admin para que siempre aparezcan en los proyectos y dar todos los permisos
+      let admins = this.users.filter(item => item.employee_properties == null);
+      admins.forEach(admin => {
+        const defaultPermissions = {
+          create: 1,
+          show: 1,
+          edit: 1,
+          delete: 1,
+          comment: 1,
+        };
+        admin.permissions = defaultPermissions;
+      });
+      this.selectedUsersToPermissions = admins;
     }
   },
   computed: {
-    filteredTableData() {
-      if (!this.search) {
-        return this.projects.data;
+    availableUsersToPermissions() {
+      if (this.selectedUsersToPermissions.length == 0) return this.users;
+
+      const availableUsers = this.users.filter((item) => {
+        // Verifica si el item no se encuentra en item2
+        return !this.selectedUsersToPermissions.find((item2) => item.id === item2.id);
+      });
+
+      return availableUsers;
+    }
+  },
+  watch: {
+    typeAccessProject(newVal) {
+      if (newVal === 'Public') {
+        this.selectedUsersToPermissions = this.users;
+        this.editAccesFlag = false;
       } else {
-        return this.projects.data.filter(
-          (project) =>
-            project.project_name.toLowerCase().includes(this.search.toLowerCase())
-        )
+        this.selectAdmins();
+        this.editAccesFlag = true;
       }
     }
   },
+  mounted() {
+    this.selectAdmins();
+  }
 }
 </script>
   

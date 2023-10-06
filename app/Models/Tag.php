@@ -13,6 +13,7 @@ class Tag extends Model
         'name',
         'color',
         'user_id',
+        'type',
     ];
 
     // relationships

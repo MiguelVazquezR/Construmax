@@ -13,6 +13,7 @@ class Project extends Model
         'name',
         'description',
         'currency',
+        'address',
         'invoice_type',
         'is_strict',
         'is_internal',
@@ -23,6 +24,7 @@ class Project extends Model
         'project_group_id',
         'user_id',
         'opportunity_id',
+        'owner_id',
     ];
 
     protected $casts = [

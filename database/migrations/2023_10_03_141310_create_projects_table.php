@@ -16,6 +16,7 @@ return new class extends Migration
             $table->string('name');
             $table->text('description');
             $table->string('currency');
+            $table->string('address');
             $table->unsignedTinyInteger('invoice_type');
             $table->boolean('is_strict')->default(0);
             $table->boolean('is_internal')->default(0);

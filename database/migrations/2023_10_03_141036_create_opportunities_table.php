@@ -13,6 +13,15 @@ return new class extends Migration
     {
         Schema::create('opportunities', function (Blueprint $table) {
             $table->id();
+            $table->string('name');
+            $table->string('priority');
+            $table->string('status');
+            $table->unsignedFloat('amount');
+            $table->date('close_date');
+            $table->foreignId('contact_id')->constrained();
+            $table->foreignId('user_id')->constrained();
+            $table->unsignedBigInteger('seller_id');
+            $table->foreign('seller_id')->references('id')->on('users');
             $table->timestamps();
         });
     }

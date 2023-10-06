@@ -27,6 +27,8 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'is_active',
+        'employee_properties',
     ];
 
     /**
@@ -48,6 +50,7 @@ class User extends Authenticatable
      */
     protected $casts = [
         'email_verified_at' => 'datetime',
+        'employee_properties' => 'array',
     ];
 
     /**
@@ -58,4 +61,24 @@ class User extends Authenticatable
     protected $appends = [
         'profile_photo_url',
     ];
+
+    // relationships
+    public function contacts()
+    {
+        return $this->hasMany(Contact::class);
+    }
+
+    public function comments()
+    {
+        return $this->morphMany(Comment::class, 'commentable');
+    }
+
+    public function project()
+    {
+        return $this->belongsToMany(Project::class)
+        ->withPivot([
+            'id',
+            'permissions',
+        ])->withTimestamps();
+    }
 }

@@ -9,3 +9,24 @@
 body {
     font-family: 'Maitree', sans-serif;
 }
+
+@layer components {
+    .input {
+        @apply bg-transparent h-8 text-xs border placeholder:text-gray2 border-gray3 rounded-[3px] focus:ring-0 focus:border-primary block w-full;
+    }
+}
+
+*::-webkit-scrollbar {
+	width: 3px;
+	background: transparent;
+}
+
+*::-webkit-scrollbar-thumb {
+	background: #9a9a9a;
+	border-radius: 2px;
+}
+
+*::-webkit-scrollbar-thumb:horizontal {
+	background: #9a9a9a;
+	border-radius: 2px;
+}

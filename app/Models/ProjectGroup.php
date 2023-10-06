@@ -5,15 +5,18 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Setting extends Model
+class ProjectGroup extends Model
 {
     use HasFactory;
 
     protected $fillable = [
-        'label',
-        'key',
-        'value',
-        'options',
+        'name',
+        'user_id',
     ];
 
+    // relationships
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 }

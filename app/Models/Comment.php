@@ -5,15 +5,17 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Setting extends Model
+class Comment extends Model
 {
     use HasFactory;
 
     protected $fillable = [
-        'label',
-        'key',
-        'value',
-        'options',
+
     ];
 
+    // relationships
+    public function commentable()
+    {
+        return $this->morphTo();
+    }
 }

@@ -16,7 +16,7 @@ class ProjectController extends Controller
 {
     public function index()
     {
-        $projects = ProjectResource::collection(Project::with('tasks')->latest()->paginate(30));
+        $projects = ProjectResource::collection(Project::with(['tasks', 'owner'])->latest()->paginate(30));
 
         return inertia('PMS/Project/Index', compact('projects'));
     }
@@ -68,7 +68,11 @@ class ProjectController extends Controller
 
     public function show(Project $project)
     {
-        //
+        $project = ProjectResource::make(Project::with(['tasks' => ['participants', 'project', 'user'], 'projectGroup', 'opportunity.customer'])->find($project->id));
+        $projects = ProjectResource::collection(Project::with(['tasks' => ['participants', 'project', 'user', 'comments.user', 'media'], 'user', 'opportunity.customer', 'projectGroup'])->latest()->get());
+        $users = User::all();
+
+        return inertia('PMS/Project/Show', compact(['project', 'projects', 'users']));
     }
 
     public function edit(Project $project)

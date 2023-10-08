@@ -19,6 +19,7 @@ return new class extends Migration
             $table->unsignedFloat('amount');
             $table->date('close_date');
             $table->foreignId('contact_id')->constrained();
+            $table->foreignId('customerS_id')->constrained();
             $table->foreignId('user_id')->constrained();
             $table->unsignedBigInteger('seller_id');
             $table->foreign('seller_id')->references('id')->on('users');

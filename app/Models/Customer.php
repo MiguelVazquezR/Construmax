@@ -18,6 +18,10 @@ class Customer extends Model
         'user_id',
     ];
 
+    protected $casts = [
+        'branches' => 'array',
+    ];
+
     // relationships
     public function contacts()
     {

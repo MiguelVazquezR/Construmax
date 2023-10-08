@@ -13,6 +13,7 @@
       <div>
         <InputLabel value="Título del proyecto *" class="ml-2" />
         <input v-model="form.name" type="text" class="input mt-1" placeholder="Asignar un nombre al proyecto" required>
+        <InputError :message="form.errors.name" />
       </div>
       <div>
         <InputLabel value="Responsable *" class="ml-2" />
@@ -20,16 +21,19 @@
           no-data-text="No hay opciones para mostrar" no-match-text="No se encontraron coincidencias">
           <el-option v-for="(item, index) in users" :key="item.id" :label="item.name" :value="item.id" />
         </el-select>
+        <InputError :message="form.errors.owner_id" />
       </div>
       <div>
         <InputLabel value="Fecha de inicio *" class="ml-2" />
         <el-date-picker v-model="form.start_date" type="date" placeholder="Inicio *" format="YYYY/MM/DD"
           value-format="YYYY-MM-DD" />
+        <InputError :message="form.errors.start_date" />
       </div>
       <div>
         <InputLabel value="Fecha de límite *" class="ml-2" />
         <el-date-picker v-model="form.limit_date" type="date" placeholder="Límite *" format="YYYY/MM/DD"
           value-format="YYYY-MM-DD" />
+        <InputError :message="form.errors.limit_date" />
       </div>
       <div class="col-span-full ml-2 text-sm mt-3 flex">
         <label class="flex items-center cursor-pointer flex-shrink-0 flex-grow-0">
@@ -49,24 +53,26 @@
         <RichText @content="updateDescription($event)" />
       </div>
       <div class="ml-2 mt-2 col-span-full flex">
-        <p class="flex items-center space-x-2 text-sm text-primary cursor-pointer flex-shrink-0 flex-grow-0"><i
-            class="fa-solid fa-paperclip"></i> <span>Adjuntar archivos</span></p>
+        <FileUploader @files-selected="this.form.media = $event" />
       </div>
       <div class="mt-5 col-span-full w-[calc(50%-16px)]">
         <div class="flex justify-between items-center mx-2">
           <InputLabel value="Etiquetas" />
-          <button @click="showTagFormModal = true" type="button" class="rounded-full border border-primary w-4 h-4 flex items-center justify-center">
+          <button @click="showTagFormModal = true" type="button"
+            class="rounded-full border border-primary w-4 h-4 flex items-center justify-center">
             <i class="fa-solid fa-plus text-primary text-[9px]"></i>
           </button>
         </div>
         <el-select v-model="form.tags" clearable placeholder="Seleccione" multiple class="w-full mt-1"
           no-data-text="No hay opciones para mostrar" no-match-text="No se encontraron coincidencias">
-          <el-option v-for="(item, index) in tags" :key="item.id" :label="item.name" :value="item.id" />
+          <el-option v-for="(item, index) in tags.data" :key="item.id" :label="item.name" :value="item.id">
+            <Tag :name="item.name" :color="item.color" />
+          </el-option>
         </el-select>
       </div>
       <div class="col-span-full ml-2 text-sm mt-3 flex">
         <label class="flex items-center cursor-pointer flex-shrink-0 flex-grow-0">
-          <Checkbox v-model:checked="form.is_strict" name="strict" class="bg-transparent" />
+          <Checkbox v-model:checked="form.is_internal" name="strict" class="bg-transparent" />
           <span class="mx-2">Proyecto interno</span>
           <el-tooltip
             content="Seleccione esta opción si el proyecto es una iniciativa de la empresa y no esta relacionado con un cliente en específico"
@@ -98,21 +104,24 @@
           no-data-text="No hay opciones para mostrar" no-match-text="No se encontraron coincidencias">
           <el-option v-for="(item, index) in project_groups.data" :key="item.id" :label="item.name" :value="item.id" />
         </el-select>
+        <InputError :message="form.errors.project_group_id" />
       </div>
       <h2 class="font-bold text-sm my-2 col-span-full">Campos adicionales</h2>
       <div>
         <InputLabel value="Cliente *" class="ml-2" />
-        <el-select v-model="form.customer_id" clearable placeholder="Seleccione" class="w-full mt-1"
+        <el-select v-model="form.customer_id" @change="updateBranches()" clearable placeholder="Seleccione" class="w-full mt-1"
           no-data-text="No hay opciones para mostrar" no-match-text="No se encontraron coincidencias">
           <el-option v-for="(item, index) in customers" :key="item.id" :label="item.name" :value="item.id" />
         </el-select>
+        <InputError :message="form.errors.customer_id" />
       </div>
       <div>
         <InputLabel value="Sucursal *" class="ml-2" />
-        <el-select v-model="form.branch" clearable placeholder="Seleccione" class="w-full mt-1"
+        <el-select v-model="form.address" clearable placeholder="Seleccione" class="w-full mt-1"
           no-data-text="No hay opciones para mostrar" no-match-text="No se encontraron coincidencias">
           <el-option v-for="(item, index) in branches" :key="index" :label="item" :value="item" />
         </el-select>
+        <InputError :message="form.errors.address" />
       </div>
       <div>
         <InputLabel value="OP *" class="ml-2" />
@@ -120,6 +129,7 @@
           no-data-text="No hay opciones para mostrar" no-match-text="No se encontraron coincidencias">
           <el-option v-for="(item, index) in opportunities" :key="item.id" :label="item.name" :value="item.id" />
         </el-select>
+        <InputError :message="form.errors.opportunity_id" />
       </div>
       <h2 class="font-bold text-sm my-2 col-span-full">Presupuesto</h2>
       <div>
@@ -128,17 +138,20 @@
           no-data-text="No hay opciones para mostrar" no-match-text="No se encontraron coincidencias">
           <el-option v-for="(item, index) in currencies" :key="index" :label="item.label" :value="item.value" />
         </el-select>
+        <InputError :message="form.errors.currency" />
       </div>
       <div>
         <InputLabel value="Monto" class="ml-2" />
-        <input v-model="form.amount" type="number" class="input mt-1">
+        <input v-model="form.budget" type="number" step="0.01" class="input mt-1">
+        <InputError :message="form.errors.budget" />
       </div>
       <div>
-        <InputLabel value="Método de facturación" class="ml-2 mt-1" />
+        <InputLabel value="Método de facturación *" class="ml-2 mt-1" />
         <el-select v-model="form.invoice_type" clearable placeholder="Seleccione" class="w-full"
           no-data-text="No hay opciones para mostrar" no-match-text="No se encontraron coincidencias">
           <el-option v-for="(item, index) in invoiceTypes" :key="index" :label="item" :value="item" />
         </el-select>
+        <InputError :message="form.errors.invoice_type" />
       </div>
       <h2 class="font-bold text-sm my-2 col-span-full">Acceso al proyecto</h2>
       <div class="col-span-full text-sm">
@@ -236,7 +249,7 @@
                   <el-popconfirm v-if="typeAccessProject === 'Private'" confirm-button-text="Si" cancel-button-text="No"
                     icon-color="#FD8827" title="Remover?" @confirm="removeUserFromPermissions(user.id)">
                     <template #reference>
-                      <button :disabled="user.employee_properties == null"
+                      <button :disabled="user.employee_properties == null" type="button"
                         class="text-primary mr-10 disabled:cursor-not-allowed disabled:opacity-50">
                         <i class="fa-regular fa-circle-xmark"></i>
                       </button>
@@ -250,7 +263,9 @@
         </div>
       </section>
       <div class="col-span-full flex mt-8 mb-5 justify-end space-x-2">
-        <CancelButton>Cancelar</CancelButton>
+        <Link :href="route('pms.projects.index')">
+        <CancelButton type="button">Cancelar</CancelButton>
+        </Link>
         <PrimaryButton>Agregar</PrimaryButton>
       </div>
     </form>
@@ -312,6 +327,8 @@ import Checkbox from "@/Components/Checkbox.vue";
 import RichText from "@/Components/MyComponents/RichText.vue";
 import ThirdButton from "@/Components/ThirdButton.vue";
 import DialogModal from "@/Components/DialogModal.vue";
+import Tag from "@/Components/MyComponents/Tag.vue";
+import FileUploader from "@/Components/MyComponents/FileUploader.vue";
 import { Link, useForm } from "@inertiajs/vue3";
 import axios from 'axios';
 //   import Pagination from "@/Components/MyComponents/Pagination.vue";
@@ -324,14 +341,18 @@ export default {
       start_date: null,
       limit_date: null,
       is_strict: false,
+      is_internal: false,
       description: null,
       tags: null,
       project_group_id: null,
+      address: null,
       opportunity_id: null,
       currency: '$MXN',
-      amount: null,
+      budget: null,
       invoice_type: null,
       selectedUsersToPermissions: [],
+      media: [],
+      user_id: this.$page.props.auth.user.id,
     });
 
     const groupForm = useForm({
@@ -363,6 +384,7 @@ export default {
         { label: 'USD - Dolar ', value: '$USD' },
       ],
       opportunities: [],
+      branches: [],
     }
   },
   components: {
@@ -376,29 +398,44 @@ export default {
     ThirdButton,
     DialogModal,
     InputError,
+    Tag,
+    FileUploader,
     //   Pagination
   },
   props: {
     customers: Array,
     project_groups: Object,
-    tags: Array,
+    tags: Object,
     users: Array,
   },
   computed: {
-    branches() {
-      const selectedCustomer = this.customers.find(item => item.id === this.form.customer_id);
-
-      return selectedCustomer ? selectedCustomer.branches : [];
-    },
+    
   },
   methods: {
+    updateBranches() {
+      const selectedCustomer = this.customers.find(item => item.id === this.form.customer_id);
+
+      this.branches = selectedCustomer ? selectedCustomer.branches : [];
+      this.opportunities = selectedCustomer ? selectedCustomer.opportunities : [];
+    },
+    store() {
+      this.form.post(route('pms.projects.store'), {
+        onSuccess: () => {
+          this.$notify({
+            title: 'Correcto',
+            message: 'Proyecto creado',
+            type: 'success'
+          });
+        }
+      })
+    },
     submitGroupForm() {
       this.$refs.groupForm.dispatchEvent(new Event('submit', { cancelable: true }));
     },
     async storeGroup() {
       try {
         this.groupForm.processing = true;
-        const response = await axios.post(route('pms.project-groups.store'), { name: this.groupForm.name });
+        const response = await axios.post(route('pms.project-groups.store'), { name: this.groupForm.name, user_id: this.$page.props.auth.user.id });
 
         if (response.status === 200) {
           this.$notify({
@@ -408,9 +445,10 @@ export default {
           });
 
           this.showGroupFormModal = false;
-          this.project_groups.data.push({ name: this.groupForm.name, user_id: this.$page.props.auth.user.id });
+          this.project_groups.data.push(response.data.item);
           this.groupForm.reset();
           this.groupForm.errors = {};
+          this.form.project_group_id = response.data.item.id;
         }
       } catch (error) {
         if (error.response.status === 422) {
@@ -420,6 +458,38 @@ export default {
         console.log(error)
       } finally {
         this.groupForm.processing = false;
+      }
+    },
+    submitTagForm() {
+      this.$refs.tagForm.dispatchEvent(new Event('submit', { cancelable: true }));
+    },
+    async storeTag() {
+      try {
+        this.tagForm.processing = true;
+        const response = await axios.post(route('pms.tags.store'), { name: this.tagForm.name, color: this.tagForm.color, type: 'projects', user_id: this.$page.props.auth.user.id });
+
+        if (response.status === 200) {
+          this.$notify({
+            title: 'Correcto',
+            message: response.data.message,
+            type: 'success'
+          });
+
+          this.showTagFormModal = false;
+          this.tags.data.push(response.data.item);
+          this.tagForm.reset();
+          this.tagForm.errors = {};
+          this.form.tags.push(response.data.item);
+        }
+      } catch (error) {
+        if (error.response.status === 422) {
+          // guardando errores de validacion a formulario para mostrarlos
+          this.tagForm.errors.name = error.response.data.errors.name[0];
+          this.tagForm.errors.color = error.response.data.errors.color[0];
+        }
+        console.log(error)
+      } finally {
+        this.tagForm.processing = false;
       }
     },
     removeUserFromPermissions(userId) {

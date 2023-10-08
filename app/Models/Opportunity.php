@@ -16,6 +16,7 @@ class Opportunity extends Model
         'amount',
         'close_date',
         'contact_id',
+        'customer_id',
         'user_id',
         'seller_id',
     ];
@@ -28,6 +29,11 @@ class Opportunity extends Model
     public function contact()
     {
         return $this->belongsTo(Contact::class);
+    }
+
+    public function customer()
+    {
+        return $this->belongsTo(Customer::class);
     }
 
     public function user()

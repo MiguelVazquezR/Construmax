@@ -16,12 +16,12 @@
         <InputError :message="form.errors.name" />
       </div>
       <div>
-        <InputLabel value="Responsable *" class="ml-2" />
-        <el-select v-model="form.owner_id" clearable placeholder="Seleccione" class="w-full mt-1"
+        <InputLabel value="Tipo de servicio *" class="ml-2" />
+        <el-select v-model="form.service_type" clearable placeholder="Seleccione" class="w-full mt-1"
           no-data-text="No hay opciones para mostrar" no-match-text="No se encontraron coincidencias">
-          <el-option v-for="(item, index) in users" :key="item.id" :label="item.name" :value="item.id" />
+          <el-option v-for="(item, index) in serviceTypes" :key="item.id" :label="item" :value="item" />
         </el-select>
-        <InputError :message="form.errors.owner_id" />
+        <InputError :message="form.errors.service_type" />
       </div>
       <div>
         <InputLabel value="Fecha de inicio *" class="ml-2" />
@@ -34,6 +34,20 @@
         <el-date-picker v-model="form.limit_date" type="date" placeholder="Límite *" format="YYYY/MM/DD"
           value-format="YYYY-MM-DD" />
         <InputError :message="form.errors.limit_date" />
+      </div>
+      <div>
+        <InputLabel value="Responsable *" class="ml-2" />
+        <el-select v-model="form.owner_id" clearable placeholder="Seleccione" class="w-full mt-1"
+          no-data-text="No hay opciones para mostrar" no-match-text="No se encontraron coincidencias">
+          <el-option v-for="(item, index) in users" :key="item.id" :label="item.name" :value="item.id">
+            <div v-if="$page.props.jetstream.managesProfilePhotos"
+              class="flex text-sm rounded-full items-center mt-[3px]">
+              <img class="h-7 w-7 rounded-full object-cover mr-4" :src="item.profile_photo_url" :alt="item.name" />
+              <p>{{ item.name }}</p>
+            </div>
+          </el-option>
+        </el-select>
+        <InputError :message="form.errors.owner_id" />
       </div>
       <div class="col-span-full ml-2 text-sm mt-3 flex">
         <label class="flex items-center cursor-pointer flex-shrink-0 flex-grow-0">
@@ -106,16 +120,16 @@
         </el-select>
         <InputError :message="form.errors.project_group_id" />
       </div>
-      <h2 class="font-bold text-sm my-2 col-span-full">Campos adicionales</h2>
-      <div>
+      <h2 v-if="!form.is_internal" class="font-bold text-sm my-2 col-span-full">Campos adicionales</h2>
+      <div v-if="!form.is_internal">
         <InputLabel value="Cliente *" class="ml-2" />
-        <el-select v-model="form.customer_id" @change="updateBranches()" clearable placeholder="Seleccione" class="w-full mt-1"
-          no-data-text="No hay opciones para mostrar" no-match-text="No se encontraron coincidencias">
+        <el-select v-model="form.customer_id" @change="updateBranches()" clearable placeholder="Seleccione"
+          class="w-full mt-1" no-data-text="No hay opciones para mostrar" no-match-text="No se encontraron coincidencias">
           <el-option v-for="(item, index) in customers" :key="item.id" :label="item.name" :value="item.id" />
         </el-select>
         <InputError :message="form.errors.customer_id" />
       </div>
-      <div>
+      <div v-if="!form.is_internal">
         <InputLabel value="Sucursal *" class="ml-2" />
         <el-select v-model="form.address" clearable placeholder="Seleccione" class="w-full mt-1"
           no-data-text="No hay opciones para mostrar" no-match-text="No se encontraron coincidencias">
@@ -123,7 +137,7 @@
         </el-select>
         <InputError :message="form.errors.address" />
       </div>
-      <div>
+      <div v-if="!form.is_internal">
         <InputLabel value="OP *" class="ml-2" />
         <el-select v-model="form.opportunity_id" clearable placeholder="Seleccione" class="w-full mt-1"
           no-data-text="No hay opciones para mostrar" no-match-text="No se encontraron coincidencias">
@@ -345,6 +359,7 @@ export default {
       description: null,
       tags: null,
       project_group_id: null,
+      service_type: null,
       address: null,
       opportunity_id: null,
       currency: '$MXN',
@@ -379,6 +394,24 @@ export default {
         'Facturación a crédito',
         'Facturación por adelantado',
       ],
+      serviceTypes: [
+        'Iluminacón',
+        'Herrería',
+        'Acabados',
+        'Eléctrico',
+        'A. acondicionado',
+        'Sanitario',
+        'Anuncios',
+        'Pintura',
+        'Carpintería',
+        'Vidrio',
+        'Aluminio',
+        'Protección civil STPS',
+        'Monta cargas',
+        'Control de plagas',
+        'Impermeabilización',
+        'Servicios varios',
+      ],
       currencies: [
         { label: 'MXN - Peso Mexicano', value: '$MXN' },
         { label: 'USD - Dolar ', value: '$USD' },
@@ -409,7 +442,7 @@ export default {
     users: Array,
   },
   computed: {
-    
+
   },
   methods: {
     updateBranches() {

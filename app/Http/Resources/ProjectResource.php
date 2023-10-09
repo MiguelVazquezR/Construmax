@@ -33,6 +33,8 @@ class ProjectResource extends JsonResource
             'user' => $this->whenLoaded('user'),
             'owner' => $this->whenLoaded('owner'),
             'tasks' => TaskResource::collection($this->whenLoaded('tasks')),
+            'tags' => TaskResource::collection($this->whenLoaded('tags')),
+            'media' => $this->getMedia()->all(),
             'start_date' => $this->start_date?->isoFormat('DD MMM YYYY'),
             'limit_date' => $this->limit_date?->isoFormat('DD MMM YYYY'),
             'finished_at' => $this->finished_at?->isoFormat('DD MMM, YYYY h:mm A'),

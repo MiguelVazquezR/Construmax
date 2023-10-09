@@ -38,6 +38,7 @@ class ProjectController extends Controller
             'description' => 'nullable|string|max:255',
             'currency' => 'required|string|max:255',
             'address' => 'required|string',
+            'service_type' => 'required|string',
             'invoice_type' => 'required|string|max:255',
             'is_strict' => 'boolean',
             'is_internal' => 'boolean',
@@ -60,6 +61,12 @@ class ProjectController extends Controller
             $project->users()->attach($user['id'], $allowedUser);
         }
 
+        // etiquetas
+        // Obtiene los IDs de las etiquetas seleccionadas desde el formulario
+        $tagIds = $request->input('tags', []);
+        // Adjunta las etiquetas al proyecto utilizando la relación polimórfica
+        $project->tags()->attach($tagIds);
+
         // archivos adjuntos
         $project->addAllMediaFromRequest()->each(fn ($file) => $file->toMediaCollection());
 
@@ -68,8 +75,8 @@ class ProjectController extends Controller
 
     public function show(Project $project)
     {
-        $project = ProjectResource::make(Project::with(['tasks' => ['participants', 'project', 'user'], 'projectGroup', 'opportunity.customer'])->find($project->id));
-        $projects = ProjectResource::collection(Project::with(['tasks' => ['participants', 'project', 'user', 'comments.user', 'media'], 'user', 'opportunity.customer', 'projectGroup'])->latest()->get());
+        $project = ProjectResource::make(Project::with(['tasks' => ['participants', 'project', 'user'], 'projectGroup', 'opportunity.customer', 'tags'])->find($project->id));
+        $projects = ProjectResource::collection(Project::with(['tasks' => ['participants', 'project', 'user', 'comments.user', 'media'], 'user', 'opportunity.customer', 'projectGroup', 'tags'])->latest()->get());
         $users = User::all();
 
         return inertia('PMS/Project/Show', compact(['project', 'projects', 'users']));

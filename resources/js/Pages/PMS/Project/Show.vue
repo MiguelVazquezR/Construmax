@@ -110,42 +110,30 @@
             </div>
 
             <div class="grid grid-cols-2 text-left p-4 md:ml-10 border-r-2 border-gray-[#cccccc] items-center">
-                <p class="text-secondary col-span-2 mb-2 font-bold">Presupuestos</p>
+                <p class="text-secondary col-span-full mb-2 font-bold">Presupuestos</p>
 
-                <span class="text-gray-500 mb-6">Moneda</span>
-                <span class="mb-6">{{ currentProject?.currency }}</span>
+                <span class="text-gray-500">Moneda</span>
+                <span>{{ currentProject?.currency }}</span>
                 <span class="text-gray-500">Monto</span>
                 <span>${{ currentProject?.budget?.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",") }}</span>
                 <span class="text-gray-500 my-2">Método de facturación</span>
                 <span>{{ currentProject?.invoice_type }}</span>
 
-                <p class="text-secondary col-span-2 mt-7 font-bold">Acceso al proyecto</p>
+                <p class="text-secondary col-span-full mt-7 font-bold">Etiquetas</p>
+                
 
-                <span class="text-gray-500 my-2">Acceso</span>
-                <div class="flex items-start my-2">
-                    <span>{{ currentProject?.type_access_project }}</span>
-                    <el-tooltip
-                        content="Los usuarios del portal pueden  ver el contenido y hacer comentarios, mientras que los usuarios del proyecto tendrán acceso directo."
-                        placement="top">
-                        <i class="fa-regular fa-circle-question text-primary text-[10px] ml-1"></i>
-                    </el-tooltip>
-                </div>
 
-                <p class="text-secondary col-span-2 mb-2 font-bold">Usuarios</p>
-
-                <ul>
-                    <li v-for="user in uniqueUsers" :key="user.id" class="mt-1">{{ user.name }}</li>
-                </ul>
-                <ul>
-                    <li v-for="user in uniqueUsers" :key="user.id" class="mt-1">
-                        Depto. {{ user.employee_properties?.department ?? "Super admin" }}
-                    </li>
-                </ul>
-
-                <p class="text-secondary col-span-2 mb-2 font-bold">Documentos adjuntos</p>
-                <ul>
+                <p class="text-secondary col-span-full font-bold">Documentos adjuntos</p>
+                <li v-for="file in currentProject?.media" :key="file" class="flex items-center justify-between col-span-full">
+                    <a :href="file.original_url" target="_blank" class="flex items-center">
+                        <i :class="getFileTypeIcon(file.file_name)"></i>
+                        <span class="ml-2">{{ file.file_name }}</span>
+                    </a>
+                </li>
+                <!-- <ul>
+                    
                     <li v-for="file in currentProject?.media" :key="file" class="mt-1">{{ file.file_name }}</li>
-                </ul>
+                </ul> -->
             </div>
         </div>
         <!-- ------------- info project ends 1 ------------- -->
@@ -298,6 +286,21 @@ export default {
         users: Array,
     },
     methods: {
+        getFileTypeIcon(fileName) {
+            // Asocia extensiones de archivo a iconos
+            const fileExtension = fileName.split('.').pop().toLowerCase();
+            switch (fileExtension) {
+                case 'pdf':
+                    return 'fa-regular fa-file-pdf text-red-700';
+                case 'jpg':
+                case 'jpeg':
+                case 'png':
+                case 'gif':
+                    return 'fa-regular fa-image text-blue-300';
+                default:
+                    return 'fa-regular fa-file-lines';
+            }
+        },
         handleStartDrag(evt) {
             this.draggingTaskId = evt.item.__draggable_context.element.id;
             this.drag = true;

@@ -10,6 +10,7 @@ use App\Models\Project;
 use App\Models\ProjectGroup;
 use App\Models\Tag;
 use App\Models\User;
+use Illuminate\Validation\Rule;
 use Illuminate\Http\Request;
 
 class ProjectController extends Controller
@@ -37,7 +38,9 @@ class ProjectController extends Controller
             'name' => 'required|string|max:255',
             'description' => 'nullable|string|max:255',
             'currency' => 'required|string|max:255',
-            'address' => 'required|string',
+            'address' => [Rule::requiredIf(function () use ($request) {
+                return !$request->input('is_internal');
+            })],
             'service_type' => 'required|string',
             'invoice_type' => 'required|string|max:255',
             'is_strict' => 'boolean',
@@ -47,7 +50,9 @@ class ProjectController extends Controller
             'limit_date' => 'required|date',
             'project_group_id' => 'required|numeric|min:1',
             'user_id' => 'required|numeric|min:1',
-            'opportunity_id' => 'required|numeric|min:1',
+            'opportunity_id' => [Rule::requiredIf(function () use ($request) {
+                return !$request->input('is_internal');
+            })],
             'owner_id' => 'required|numeric|min:1',
         ]);
 
@@ -75,8 +80,8 @@ class ProjectController extends Controller
 
     public function show(Project $project)
     {
-        $project = ProjectResource::make(Project::with(['tasks' => ['participants', 'project', 'user'], 'projectGroup', 'opportunity.customer', 'tags'])->find($project->id));
-        $projects = ProjectResource::collection(Project::with(['tasks' => ['participants', 'project', 'user', 'comments.user', 'media'], 'user', 'opportunity.customer', 'projectGroup', 'tags'])->latest()->get());
+        $project = ProjectResource::make(Project::with(['tasks' => ['participants', 'project', 'user'], 'projectGroup', 'opportunity.customer', 'tags', 'users'])->find($project->id));
+        $projects = ProjectResource::collection(Project::with(['tasks' => ['participants', 'project', 'user', 'comments.user', 'media'], 'user', 'users', 'opportunity.customer', 'projectGroup', 'tags'])->latest()->get());
         $users = User::all();
 
         return inertia('PMS/Project/Show', compact(['project', 'projects', 'users']));

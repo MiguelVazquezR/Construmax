@@ -9,6 +9,8 @@ class TaskResource extends JsonResource
 {
     public function toArray(Request $request): array
     {
+        $priority = '';
+
         if ($this->priority == 'Baja') {
             $priority = [
                 'label' => 'Baja',
@@ -39,7 +41,7 @@ class TaskResource extends JsonResource
             'participants' => $this->whenLoaded('participants'),
             'user' => $this->whenLoaded('user'),
             'comments' => $this->whenLoaded('comments'),
-            'media' => $this->getMedia('files')->all(),
+            'media' => $this->getMedia()->all(),
             'start_date' => $this->start_date?->isoFormat('DD MMM YYYY'),
             'end_date' => $this->end_date?->isoFormat('DD MMM YYYY'),
             'created_at' => $this->created_at?->isoFormat('DD MMM YYYY'),

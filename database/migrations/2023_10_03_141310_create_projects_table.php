@@ -17,7 +17,7 @@ return new class extends Migration
             $table->string('service_type');
             $table->text('description');
             $table->string('currency');
-            $table->string('address');
+            $table->text('address')->nullable();
             $table->string('invoice_type');
             $table->boolean('is_strict')->default(0);
             $table->boolean('is_internal')->default(0);
@@ -26,7 +26,7 @@ return new class extends Migration
             $table->date('limit_date');
             $table->timestamp('finished_at')->nullable();
             $table->foreignId('user_id')->constrained();
-            $table->unsignedBigInteger('opportunity_id');
+            $table->unsignedBigInteger('opportunity_id')->nullable();
             $table->foreign('opportunity_id')->references('id')->on('opportunities');
             $table->unsignedBigInteger('project_group_id');
             $table->foreign('project_group_id')->references('id')->on('project_groups');

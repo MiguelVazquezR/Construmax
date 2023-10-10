@@ -11,40 +11,45 @@
         </div>
 
         <div class="flex justify-between mt-5 mx-2 lg:mx-14">
-            <div class="md:w-1/3 mr-2">
-                <el-select v-model="selectedProject" clearable filterable placeholder="Buscar proyecto" class="w-full"
+            <div class="md:w-full mr-2 flex items-center">
+                <el-select v-model="selectedProject" clearable filterable placeholder="Buscar proyecto" class="w-1/2 mr-4"
                     no-data-text="No hay proyectos registrados" no-match-text="No se encontraron coincidencias">
                     <el-option v-for="item in projects.data" :key="item.id" :label="item.name" :value="item.id" />
                 </el-select>
+                <div class="flex items-center">
+                    <div v-for="(user, index) in currentProject?.users" :key="index">
+                        <el-tooltip :content="user.name" placement="top">
+                            <div v-if="index < 3" class="flex text-sm rounded-full w-8">
+                                <img class="h-7 w-7 rounded-full object-cover" :src="user.profile_photo_url"
+                                    :alt="user.name" />
+                            </div>
+                        </el-tooltip>
+                    </div>
+                    <el-tooltip placement="top">
+                        <template #content>
+                            <li v-for="(user, index) in currentProject?.users.filter((item, index) => index >= 3)"
+                                :key="index" class="ml-2 text-xs">
+                                {{ user.name }}
+                            </li>
+                        </template>
+                        <span v-if="currentProject?.users.length > 3" class="ml-1 text-primary text-sm">
+                            +{{ (currentProject?.users.length - 3) }}
+                        </span>
+                    </el-tooltip>
+                </div>
             </div>
-            <div class="flex space-x-2">
+            <div v-if="currentTab == 1" class="flex space-x-2 w-full justify-end">
                 <PrimaryButton @click="$inertia.get(route('pms.projects.create'))">Nuevo proyecto</PrimaryButton>
+                <SecondaryButton @click="$inertia.put(route('pms.projects.edit', currentProject?.id ?? 1))"><i class="fa-solid fa-pen"></i></SecondaryButton>
+            </div>
+            <div v-if="currentTab == 2 || currentTab == 3" class="flex space-x-2 w-full justify-end">
+                <PrimaryButton @click="$inertia.get(route('pms.tasks.create', {projectId: currentProject?.id ?? 1}))">Nueva tarea</PrimaryButton>
             </div>
         </div>
 
         <!-- --------------project title--------------------------- -->
         <div class="text-center font-bold lg:text-lg mb-4 flex justify-center items-center mt-5 mx-2">
             <p>{{ currentProject?.name }}</p>
-            <div class="flex items-center ml-5 lg:ml-24">
-                <figure v-for="user in uniqueUsers.slice(0, maxUsersToShow)" :key="user.id">
-                    <el-tooltip :content="user.name" placement="top">
-                        <div v-if="$page.props.jetstream.managesProfilePhotos"
-                            class="flex text-sm items-center rounded-full">
-                            <img class="lg:h-12 h-10 w-10 lg:w-12 rounded-full object-cover" :src="user.profile_photo_url"
-                                :alt="user.name" />
-                        </div>
-                    </el-tooltip>
-                </figure>
-                <el-tooltip v-if="remainingUsersCount > 0" placement="top">
-                    <div
-                        class="rounded-full lg:w-10 lg:h-10 w-8 h-8 bg-[#D9D9D9] flex items-center justify-center text-primary text-sm cursor-default">
-                        +{{ remainingUsersCount }}
-                    </div>
-                    <template #content>
-                        <div style="white-space: pre-line">{{ userNames.join("\n") }}</div>
-                    </template>
-                </el-tooltip>
-            </div>
         </div>
 
         <!-- ------------- tabs section starts ------------- -->
@@ -104,9 +109,10 @@
                     currentProject?.address
                 }}</span>
                 <span v-if="!currentProject?.is_internal" class="text-gray-500 my-2">OP</span>
-                <span v-if="!currentProject?.is_internal">{{
-                    'OP-' + currentProject?.opportunity_id
-                }}</span>
+                <Link :href="route('crm.opportunities.show', currentProject?.opportunity.id ?? 1)"
+                    v-if="!currentProject?.is_internal" class="text-primary underline">
+                <span>{{ 'OP-' + currentProject?.opportunity.id }}</span>
+                </Link>
             </div>
 
             <div class="grid grid-cols-2 text-left p-4 md:ml-10 border-r-2 border-gray-[#cccccc] items-center">
@@ -120,11 +126,14 @@
                 <span>{{ currentProject?.invoice_type }}</span>
 
                 <p class="text-secondary col-span-full mt-7 font-bold">Etiquetas</p>
-                
+                <div class="col-span-full flex space-x-3">
+                    <Tag v-for="(item, index) in currentProject?.tags" :key="index" :name="item.name" :color="item.color" />
+                </div>
 
 
                 <p class="text-secondary col-span-full font-bold">Documentos adjuntos</p>
-                <li v-for="file in currentProject?.media" :key="file" class="flex items-center justify-between col-span-full">
+                <li v-for="file in currentProject?.media" :key="file"
+                    class="flex items-center justify-between col-span-full">
                     <a :href="file.original_url" target="_blank" class="flex items-center">
                         <i :class="getFileTypeIcon(file.file_name)"></i>
                         <span class="ml-2">{{ file.file_name }}</span>
@@ -233,10 +242,12 @@
 <script>
 import AppLayout from "@/Layouts/AppLayout.vue";
 import PrimaryButton from "@/Components/PrimaryButton.vue";
+import SecondaryButton from "@/Components/SecondaryButton.vue";
 import ProjectTaskCard from "@/Components/MyComponents/ProjectTaskCard.vue";
 import GanttDiagramMonth from "@/Components/MyComponents/GanttDiagramMonth.vue";
 import GanttDiagramBimester from "@/Components/MyComponents/GanttDiagramBimester.vue";
 import Tab from "@/Components/MyComponents/Tab.vue";
+import Tag from "@/Components/MyComponents/Tag.vue";
 import Dropdown from "@/Components/Dropdown.vue";
 import DropdownLink from "@/Components/DropdownLink.vue";
 import Modal from "@/Components/Modal.vue";
@@ -269,6 +280,7 @@ export default {
     components: {
         AppLayout,
         PrimaryButton,
+        SecondaryButton,
         ProjectTaskCard,
         Link,
         Dropdown,
@@ -279,6 +291,7 @@ export default {
         GanttDiagramMonth,
         GanttDiagramBimester,
         Tab,
+        Tag,
     },
     props: {
         projects: Object,

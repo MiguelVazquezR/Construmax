@@ -11,10 +11,11 @@
         </div>
         <!-- Form -->
         <form @submit.prevent="store">
-            <div class="mx-8 mt-3 grid grid-cols-2 gap-x-4 gap-y-2">
+            <div class="mx-8 mt-3 grid grid-cols-2 gap-x-4 gap-y-2 mb-6">
                 <div>
                     <InputLabel value="Nombre de la tarea *" class="ml-2" />
-                    <input v-model="form.title" class="input mt-1" type="text" placeholder="Escriba un nombre para la tarea">
+                    <input v-model="form.title" class="input mt-1" type="text"
+                        placeholder="Escriba un nombre para la tarea">
                     <InputError :message="form.errors.title" />
                 </div>
                 <div>
@@ -72,19 +73,46 @@
                     <InputError :message="form.errors.priority" />
                 </div>
                 <div>
+                    <InputLabel value="Duración *" class="ml-2" />
+                    <el-date-picker @change="handleDateRange" v-model="range" type="daterange" range-separator="A" start-placeholder="Fecha de inicio"
+                        end-placeholder="Fecha límite" value-format="YYYY-MM-DD" :disabled-date="disabledStartOrLimitDate" />
+                    <InputError :message="form.errors.start_date" />
+                </div>
+                <!-- <div>
                     <InputLabel value="Fecha de inicio *" class="ml-2" />
                     <el-date-picker v-model="form.start_date" type="date" placeholder="Inicio *" format="YYYY/MM/DD"
                         value-format="YYYY-MM-DD" :disabled-date="disabledStartOrLimitDate" />
                     <InputError :message="form.errors.start_date" />
                 </div>
                 <div>
-                    <InputLabel value="Fecha de límite *" class="ml-2" />
+                    <InputLabel value="Fecha límite *" class="ml-2" />
                     <el-date-picker v-model="form.limit_date" type="date" placeholder="Límite *" format="YYYY/MM/DD"
                         value-format="YYYY-MM-DD" :disabled-date="disabledStartOrLimitDate" />
                     <InputError :message="form.errors.limit_date" />
+                </div> -->
+                <div class="col-span-full ml-2 text-sm mt-3 flex">
+                    <label class="flex items-center cursor-pointer flex-shrink-0 flex-grow-0">
+                        <Checkbox v-model:checked="enabledTime" name="time" class="bg-transparent" />
+                        <span class="mx-2">Horario específico</span>
+                        <el-tooltip content="Puedes agregar un horario específico para la tarea, si es necesario."
+                            placement="right">
+                            <!-- <i class="fa-solid fa-circle-info text-primary text-xs ml-2"></i> -->
+                            <div class="rounded-full border border-primary w-3 h-3 flex items-center justify-center">
+                                <i class="fa-solid fa-info text-primary text-[7px]"></i>
+                            </div>
+                        </el-tooltip>
+                    </label>
+                </div>
+                <div v-if="enabledTime" class="flex space-x-3 items-center">
+                    <span>De</span>
+                    <el-time-select v-model="form.start_time" :max-time="form.limit_time" placeholder="Hora de inicio"
+                        start="08:00" step="00:15" end="18:00" format="hh:mm A" />
+                    <span>a</span>
+                    <el-time-select v-model="form.limit_time" :min-time="form.start_time" placeholder="Hora límite"
+                        start="08:00" step="00:15" end="18:00" format="hh:mm A" />
                 </div>
                 <div class="flex items-center justify-end mt-5 col-span-full space-x-2">
-                    <CancelButton :disabled="form.processing">Cancelar</CancelButton>
+                    <CancelButton @click="$inertia.get(route('pms.projects.show', parent_id))" type="button" :disabled="form.processing">Cancelar</CancelButton>
                     <PrimaryButton :disabled="form.processing">Agregar</PrimaryButton>
                 </div>
             </div>
@@ -106,7 +134,7 @@
                     <el-date-picker v-model="form.reminder" type="datetime" placeholder="Selecciona la fecha y hora" />
                 </div>
 
-                <div class="flex justify-end space-x-3 pt-5 pb-1">
+                <div class="flex justify-end space-x-3 pt-5">
                     <PrimaryButton>Agregar</PrimaryButton>
                     <CancelButton @close="remainderModal = false">Cancelar</CancelButton>
                 </div>
@@ -123,6 +151,7 @@ import { Link, useForm } from "@inertiajs/vue3";
 import InputError from "@/Components/InputError.vue";
 import Modal from "@/Components/Modal.vue";
 import CancelButton from "@/Components/CancelButton.vue";
+import Checkbox from "@/Components/Checkbox.vue";
 import RichText from "@/Components/MyComponents/RichText.vue";
 import FileUploader from "@/Components/MyComponents/FileUploader.vue";
 
@@ -138,13 +167,17 @@ export default {
             reminder: null,
             start_date: '',
             limit_date: '',
+            start_time: '',
+            limit_time: '',
             media: [],
         });
 
         return {
             form,
+            range: null,
             remainderModal: false,
             selectedProject: null,
+            enabledTime: false,
             mediaNames: [], // Agrega esta propiedad para almacenar los nombres de los archivos
             priorities: [
                 'Baja',
@@ -170,6 +203,7 @@ export default {
         InputLabel,
         Modal,
         CancelButton,
+        Checkbox,
         RichText,
         FileUploader,
     },
@@ -179,6 +213,10 @@ export default {
         users: Array,
     },
     methods: {
+        handleDateRange(range) {
+            this.form.start_date = range[0];
+            this.form.limit_date = range[1];
+        },
         updateDescription(content) {
             this.form.description = content;
         },

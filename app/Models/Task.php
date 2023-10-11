@@ -12,7 +12,6 @@ class Task extends Model implements HasMedia
     use HasFactory, InteractsWithMedia;
 
     protected $fillable = [
-        'taskable',
         'name',
         'description',
         'department',
@@ -63,7 +62,6 @@ class Task extends Model implements HasMedia
         return $this->belongsToMany(User::class)
             ->withPivot([
                 'id',
-                'permissions',
             ])->withTimestamps();
     }
 }

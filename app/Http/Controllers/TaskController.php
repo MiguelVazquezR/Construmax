@@ -7,6 +7,7 @@ use App\Models\Comment;
 use App\Models\Project;
 use App\Models\Task;
 use App\Models\User;
+use Illuminate\Validation\Rule;
 use Illuminate\Http\Request;
 
 class TaskController extends Controller
@@ -25,22 +26,24 @@ class TaskController extends Controller
     {
         $request->validate([
             'project_id' => 'required',
-            'title' => 'required|string',
+            'name' => 'required|string',
             'description' => 'required',
             'department' => 'required|string',
             'participants' => 'required|array|min:1',
             'priority' => 'required|string',
-            // 'reminder' => 'required',
             'start_date' => 'required|date',
-            'end_date' => 'required|date',
+            'limit_date' => 'required|date',
+            'start_time' => 'nullable',
+            'limit_time' => 'nullable',
             'media' => 'nullable',
+            // 'reminder' => 'required',
         ]);
 
         $task = Task::create($request->except('participants') + ['user_id' => auth()->id()]);
 
         foreach ($request->participants as $user_id) {
             // Adjuntar el usuario a la tarea
-            $task->participants()->attach($user_id);
+            $task->users()->attach($user_id);
         }
 
         // event(new RecordCreated($task));

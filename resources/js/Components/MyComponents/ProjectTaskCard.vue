@@ -2,7 +2,7 @@
   <div @click="
     taskInformationModal = true;
   titemToShow = taskComponentLocal;
-  " :class="taskComponentLocal?.priority.color_border"
+  " :class="priorities.find(item => item.label == taskComponentLocal?.priority.label)?.borderColor"
     class="shadow-md shadow-gray-400/100 border border-t-[#d9d9d9] border-r-[#d9d9d9] border-b-[#d9d9d9] h-36 rounded-r-md border-l-4 py-2 px-3 cursor-pointer my-3">
     <!-- ------------ top ------------------ -->
     <!-- <el-tooltip :content="'Prioridad: ' + taskComponentLocal?.priority.label" placement="top"> -->
@@ -12,7 +12,7 @@
         <i class="fa-solid fa-ellipsis-vertical text-lg"></i>
       </div>
       <div @click.stop="" class="flex cursor-default">
-        <p v-if="taskComponentLocal?.is_paused" class="mr-4 rounded-full text-orange-500 bg-orange-200 px-2">
+        <p v-if="taskComponentLocal?.is_paused" class="mr-4 rounded-full text-primary bg-[#EDEDED] px-2">
           {{ "Pausado" }}
         </p>
         <p class="mr-5">{{ taskComponentLocal?.created_at }}</p>
@@ -21,13 +21,10 @@
     <!-- </el-tooltip> -->
     <!-- ------------ body -------------------------- -->
     <div class="flex items-center justify-between p-3">
-      <p class="text-sm">{{ taskComponentLocal?.title }}</p>
+      <p class="text-sm">{{ taskComponentLocal?.name }}</p>
       <div>
-        <!-- <el-tooltip content="Tienes una tarea por cumplir antes de poder comenzar" placement="top">
-                            <i @click.stop="" class="fa-solid fa-hourglass cursor-default mr-3"></i>
-                        </el-tooltip> -->
         <el-tooltip v-if="taskComponentLocal?.media.length" content="Archivo adjunto" placement="top">
-          <i @click.stop="" class="fa-solid fa-paperclip rounded-full p-2"></i>
+          <i @click.stop="" class="fa-solid fa-paperclip rounded-full p-2 text-primary"></i>
         </el-tooltip>
       </div>
     </div>
@@ -36,23 +33,24 @@
     <footer class="p-3 border-t border-[#9A9A9A] relative">
       <div class="flex justify-between items-center px-3">
         <div class="flex items-center text-[#9A9A9A]">
-          <i class="fa-regular fa-comments text-lg rounded-full py-1 px-2"></i>
+          <i class="fa-regular fa-comments text-sm rounded-full py-1 px-2"></i>
           <p class="text-xs">{{ taskComponentLocal?.comments?.length }}</p>
-          <p class="text-sm ml-1">| {{ "Dpto. " + taskComponentLocal?.department }}</p>
+          <p class="text-xs ml-1">| {{ "Dpto. " + taskComponentLocal?.department }}</p>
         </div>
         <div class="flex items-center absolute bottom-3 right-0 cursor-default">
           <el-tooltip v-if="taskComponentLocal?.status == 'Terminada'" content="Tarea terminada" placement="bottom">
             <i @click.stop="" class="fa-solid fa-check text-green-500 text-xl cursor-default mr-2"></i>
           </el-tooltip>
-          <el-tooltip v-if="taskComponentLocal?.participants?.length > 2" placement="top">
-          <p class="text-primary mr-1"> + {{ taskComponentLocal?.participants.length - 2 }}</p>
+          <el-tooltip v-if="taskComponentLocal?.users?.length > 2" placement="top">
+            <p class="text-primary mr-1"> + {{ taskComponentLocal?.users.length - 2 }}</p>
             <template #content>
-            <div>
-             <p v-for="user in taskComponentLocal?.participants.slice(1, taskComponentLocal?.participants.length)" :key="user">{{ user.name }}</p>
-            </div>
-          </template>
+              <div>
+                <p v-for="user in taskComponentLocal?.users.slice(1, taskComponentLocal?.users.length)" :key="user">{{
+                  user.name }}</p>
+              </div>
+            </template>
           </el-tooltip>
-          <el-tooltip v-for="user in taskComponentLocal?.participants.slice(0, 2)" :key="user" :content="user.name"
+          <el-tooltip v-for="user in taskComponentLocal?.users.slice(0, 2)" :key="user" :content="user.name"
             placement="bottom">
             <figure @click.stop="">
               <div v-if="$page.props.jetstream.managesProfilePhotos" class="flex text-sm rounded-full">
@@ -72,11 +70,10 @@
         class="cursor-pointer w-5 h-5 rounded-full flex items-center justify-center absolute top-0 right-0">
         <i class="fa-solid fa-xmark"></i>
       </div>
-      <h1 class="font-bold">{{ taskComponentLocal?.title }}</h1>
+      <h1 class="font-bold">{{ taskComponentLocal?.name }}</h1>
 
       <div class="relative">
-        <i :class="getColorStatus(form.status)"
-          class="fa-solid fa-circle text-xs top-10 -left-4 absolute z-30"></i>
+        <i :class="getColorStatus(form.status)" class="fa-solid fa-circle text-xs top-10 -left-4 absolute z-30"></i>
         <label>Estado actual</label> <br />
         <div class="flex items-center space-x-4">
           <el-select :disabled="taskComponentLocal?.is_paused" class="lg:w-1/2 mt-2" v-model="form.status" clearable
@@ -122,12 +119,12 @@
         </div>
         <div class="flex space-x-2 justify-end items-center mt-3">
           <label>Más participantes</label> <br>
-          <el-select class="w-full mt-2" v-model="form.participants" clearable filterable multiple
+          <el-select class="w-full mt-2" v-model="form.users" clearable filterable multiple
             placeholder="Seleccionar participantes" no-data-text="No hay usuarios registrados"
             no-match-text="No se encontraron coincidencias">
             <el-option v-for="user in users" :key="user.id" :label="user.name" :value="user.id" />
           </el-select>
-          <InputError :message="form.errors.participants" />
+          <InputError :message="form.errors.users" />
         </div>
         <div class="mt-3">
           <label>Descripción</label>
@@ -135,8 +132,7 @@
           <InputError :message="form.errors.description" />
         </div>
         <div class="mt-3 relative">
-          <i :class="getColorPriority(form.priority)"
-            class="fa-solid fa-circle text-xs top-10 -left-4 absolute z-30"></i>
+          <i :class="getColorPriority(form.priority)" class="fa-solid fa-circle text-xs top-10 -left-4 absolute z-30"></i>
           <label>Prioridad</label>
           <el-select class="w-full mt-2" v-model="form.priority" clearable filterable placeholder="Seleccionar prioridad"
             no-data-text="No hay registros" no-match-text="No se encontraron coincidencias">
@@ -252,16 +248,18 @@ export default {
   data() {
     const form = useForm({
       status: this.taskComponent.status,
-      title: null,
-      project_name: this.taskComponent.project.project_name,
+      name: null,
+      project_name: this.taskComponent.project.name,
       user: this.taskComponent.user.name,
       department: this.taskComponent.department,
-      participants: null,
+      users: null,
       description: this.taskComponent.description,
       priority: this.taskComponent.priority.label,
       start_date: this.taskComponent.start_date,
-      limit_date: this.taskComponent.end_date,
-      reminder: this.taskComponent.reminder,
+      limit_date: this.taskComponent.limit_date,
+      start_time: this.taskComponent.start_time,
+      limit_time: this.taskComponent.limit_time,
+      // reminder: this.taskComponent.reminder,
       comment: null,
     });
 
@@ -292,17 +290,20 @@ export default {
         {
           label: "Baja",
           color: "text-[#87CEEB]",
+          borderColor: "border-l-[#87CEEB]",
         },
         {
           label: "Media",
-          color: "text-orange-500",
+          color: "text-[#F2C940]",
+          borderColor: "border-l-[#F2C940]",
         },
         {
           label: "Alta",
-          color: "text-red-600",
+          color: "text-[#FB2A2A]",
+          borderColor: "border-l-[#FB2A2A]",
         },
       ],
-      departments: ["Marketing", "Ventas", "Produccion", "Diseño"],
+      departments: ["Construcción", "Mantenimiento"],
     };
   },
   components: {
@@ -320,7 +321,7 @@ export default {
     'updated-status'
   ],
   methods: {
-    async playPauseTask(task){
+    async playPauseTask(task) {
       try {
         const response = await axios.put(route('tasks.pause-play', task));
 
@@ -330,16 +331,16 @@ export default {
           if (this.taskComponentLocal.is_paused) {
             this.$notify({
               title: "Éxito",
-            message: "Se ha pausado la tarea",
-            type: "success",
-          });
-            } else {
-              this.$notify({
+              message: "Se ha pausado la tarea",
+              type: "success",
+            });
+          } else {
+            this.$notify({
               title: "Éxito",
-            message: "Se ha reanudado la tarea",
-            type: "success",
-          });
-            }
+              message: "Se ha reanudado la tarea",
+              type: "success",
+            });
+          }
         }
       } catch (error) {
         console.log(error);
@@ -352,12 +353,14 @@ export default {
         const response = await axios.put(route("tasks.update", this.taskComponentLocal), {
           status: this.form.status,
           department: this.form.department,
-          participants: this.form.participants,
+          users: this.form.users,
           description: this.form.description,
           priority: this.form.priority,
           start_date: this.form.start_date,
-          limit_date: this.form.end_date,
-          reminder: this.form.reminder,
+          limit_date: this.form.limit_date,
+          start_time: this.form.start_time,
+          limit_time: this.form.limit_time,
+          // reminder: this.form.reminder,
           comment: this.form.comment,
         });
         if (response.status === 200) {

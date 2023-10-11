@@ -73,12 +73,20 @@ class User extends Authenticatable
         return $this->morphMany(Comment::class, 'commentable');
     }
 
-    public function project()
+    public function projects()
     {
         return $this->belongsToMany(Project::class)
         ->withPivot([
             'id',
             'permissions',
+        ])->withTimestamps();
+    }
+
+    public function tasks()
+    {
+        return $this->belongsToMany(User::class)
+        ->withPivot([
+            'id',
         ])->withTimestamps();
     }
 }

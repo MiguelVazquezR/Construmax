@@ -14,9 +14,9 @@
             <div class="mx-8 mt-3 grid grid-cols-2 gap-x-4 gap-y-2 mb-6">
                 <div>
                     <InputLabel value="Nombre de la tarea *" class="ml-2" />
-                    <input v-model="form.title" class="input mt-1" type="text"
+                    <input v-model="form.name" class="input mt-1" type="text"
                         placeholder="Escriba un nombre para la tarea">
-                    <InputError :message="form.errors.title" />
+                    <InputError :message="form.errors.name" />
                 </div>
                 <div>
                     <InputLabel value="Proyecto *" class="ml-2" />
@@ -74,23 +74,12 @@
                 </div>
                 <div>
                     <InputLabel value="Duración *" class="ml-2" />
-                    <el-date-picker @change="handleDateRange" v-model="range" type="daterange" range-separator="A" start-placeholder="Fecha de inicio"
-                        end-placeholder="Fecha límite" value-format="YYYY-MM-DD" :disabled-date="disabledStartOrLimitDate" />
+                    <el-date-picker @change="handleDateRange" v-model="range" type="daterange" range-separator="A"
+                        start-placeholder="Fecha de inicio" end-placeholder="Fecha límite" value-format="YYYY-MM-DD"
+                        :disabled-date="disabledStartOrLimitDate" />
                     <InputError :message="form.errors.start_date" />
                 </div>
-                <!-- <div>
-                    <InputLabel value="Fecha de inicio *" class="ml-2" />
-                    <el-date-picker v-model="form.start_date" type="date" placeholder="Inicio *" format="YYYY/MM/DD"
-                        value-format="YYYY-MM-DD" :disabled-date="disabledStartOrLimitDate" />
-                    <InputError :message="form.errors.start_date" />
-                </div>
-                <div>
-                    <InputLabel value="Fecha límite *" class="ml-2" />
-                    <el-date-picker v-model="form.limit_date" type="date" placeholder="Límite *" format="YYYY/MM/DD"
-                        value-format="YYYY-MM-DD" :disabled-date="disabledStartOrLimitDate" />
-                    <InputError :message="form.errors.limit_date" />
-                </div> -->
-                <div class="col-span-full ml-2 text-sm mt-3 flex">
+                <div v-if="canSelectTime" class="col-span-full ml-2 text-sm mt-3 flex">
                     <label class="flex items-center cursor-pointer flex-shrink-0 flex-grow-0">
                         <Checkbox v-model:checked="enabledTime" name="time" class="bg-transparent" />
                         <span class="mx-2">Horario específico</span>
@@ -112,7 +101,8 @@
                         start="08:00" step="00:15" end="18:00" format="hh:mm A" />
                 </div>
                 <div class="flex items-center justify-end mt-5 col-span-full space-x-2">
-                    <CancelButton @click="$inertia.get(route('pms.projects.show', parent_id))" type="button" :disabled="form.processing">Cancelar</CancelButton>
+                    <CancelButton @click="$inertia.get(route('pms.projects.show', parent_id))" type="button"
+                        :disabled="form.processing">Cancelar</CancelButton>
                     <PrimaryButton :disabled="form.processing">Agregar</PrimaryButton>
                 </div>
             </div>
@@ -154,12 +144,13 @@ import CancelButton from "@/Components/CancelButton.vue";
 import Checkbox from "@/Components/Checkbox.vue";
 import RichText from "@/Components/MyComponents/RichText.vue";
 import FileUploader from "@/Components/MyComponents/FileUploader.vue";
+import { isSameDay, parseISO } from "date-fns";
 
 export default {
     data() {
         const form = useForm({
             project_id: parseInt(this.parent_id),
-            title: null,
+            name: null,
             description: null,
             department: null,
             participants: null,
@@ -175,6 +166,7 @@ export default {
         return {
             form,
             range: null,
+            canSelectTime: false,
             remainderModal: false,
             selectedProject: null,
             enabledTime: false,
@@ -216,6 +208,18 @@ export default {
         handleDateRange(range) {
             this.form.start_date = range[0];
             this.form.limit_date = range[1];
+
+            const date1 = parseISO(range[0]);
+            const date2 = parseISO(range[1]);
+
+            // Compara si son del mismo día
+            if (isSameDay(date1, date2)) {
+                this.canSelectTime = true;
+            } else {
+                this.canSelectTime = false;
+                this.enabledTime = false;
+            }
+
         },
         updateDescription(content) {
             this.form.description = content;

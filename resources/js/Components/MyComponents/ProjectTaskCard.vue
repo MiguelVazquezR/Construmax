@@ -64,180 +64,181 @@
   </div>
 
   <!-- -------------- task information Modal -------------- -->
-  <Modal :show="taskInformationModal" @close="taskInformationModal = false">
-    <form @submit.prevent="update" class="mx-7 my-4 space-y-4 relative">
-      <div @click="taskInformationModal = false"
-        class="cursor-pointer w-5 h-5 rounded-full flex items-center justify-center absolute top-0 right-0">
-        <i class="fa-solid fa-xmark"></i>
-      </div>
-      <h1 class="font-bold">{{ taskComponentLocal?.name }}</h1>
-
-      <div class="relative">
-        <i :class="getColorStatus(form.status)" class="fa-solid fa-circle text-xs top-10 -left-4 absolute z-30"></i>
-        <label>Estado actual</label> <br />
-        <div class="flex items-center space-x-4">
-          <el-select :disabled="taskComponentLocal?.is_paused" class="lg:w-1/2 mt-2" v-model="form.status" clearable
-            filterable placeholder="Seleccionar estatus" no-data-text="No hay estatus registrados"
-            no-match-text="No se encontraron coincidencias">
-            <el-option v-for="item in statuses" :key="item" :label="item.label" :value="item.label">
-              <span style="float: left"><i :class="item.color" class="fa-solid fa-circle"></i></span>
-              <span style="float: center; margin-left: 5px; font-size: 13px">{{
-                item.label
-              }}</span>
-            </el-option>
-          </el-select>
-          <el-tooltip v-if="taskComponentLocal?.status == 'En curso'"
-            :content="taskComponentLocal?.is_paused ? 'Reanudar tarea' : 'Pausar tarea'" placement="top">
-            <button type="button">
-              <i @click.stop="playPauseTask(taskComponentLocal)" :class="taskComponentLocal?.is_paused ? 'fa-circle-play' : 'fa-circle-pause'
-                " class="fa-regular text-secondary text-xl cursor-pointer"></i>
-            </button>
-          </el-tooltip>
-        </div>
-        <InputError :message="form.errors.status" />
-      </div>
-      <h2 class="font-bold">Información de la tarea</h2>
-      <div>
-        <div class="flex space-x-2 justify-end items-center">
-          <label>Proyecto</label>
-          <input v-model="form.project_name" disabled class="input w-[80%]" type="text" />
-          <InputError :message="form.errors.project_name" />
-        </div>
-        <div class="flex space-x-2 justify-end items-center mt-3">
-          <label>Creado por</label>
-          <input v-model="form.user" disabled class="input w-[80%]" type="text" />
-          <InputError :message="form.errors.user" />
-        </div>
-        <div class="flex space-x-2 justify-end items-center mt-3">
-          <label>Departamento</label>
-          <el-select class="w-full mt-2" v-model="form.department" clearable filterable
-            placeholder="Seleccionar departamento" no-data-text="No hay departamentos registrados"
-            no-match-text="No se encontraron coincidencias">
-            <el-option v-for="item in departments" :key="item" :label="item" :value="item" />
-          </el-select>
-          <InputError :message="form.errors.department" />
-        </div>
-        <div class="flex space-x-2 justify-end items-center mt-3">
-          <label>Más participantes</label> <br>
-          <el-select class="w-full mt-2" v-model="form.users" clearable filterable multiple
-            placeholder="Seleccionar participantes" no-data-text="No hay usuarios registrados"
-            no-match-text="No se encontraron coincidencias">
-            <el-option v-for="user in users" :key="user.id" :label="user.name" :value="user.id" />
-          </el-select>
-          <InputError :message="form.errors.users" />
-        </div>
-        <div class="mt-3">
-          <label>Descripción</label>
-          <textarea v-model="form.description" class="textarea w-full"> </textarea>
-          <InputError :message="form.errors.description" />
-        </div>
-        <div class="mt-3 relative">
-          <i :class="getColorPriority(form.priority)" class="fa-solid fa-circle text-xs top-10 -left-4 absolute z-30"></i>
-          <label>Prioridad</label>
-          <el-select class="w-full mt-2" v-model="form.priority" clearable filterable placeholder="Seleccionar prioridad"
-            no-data-text="No hay registros" no-match-text="No se encontraron coincidencias">
-            <el-option v-for="item in priorities" :key="item" :label="item.label" :value="item.label">
-              <span style="float: left"><i :class="item.color" class="fa-solid fa-circle"></i></span>
-              <span style="float: center; margin-left: 5px; font-size: 13px">{{
-                item.label
-              }}</span>
-            </el-option>
-          </el-select>
-          <InputError :message="form.errors.priority" />
-        </div>
-        <div class="flex space-x-5 justify-between mt-3">
-          <div class="w-1/2">
-            <label>fecha de inicio</label>
-            <input v-model="form.start_date" disabled class="input" type="text" />
-            <InputError :message="form.errors.start_date" />
+  <DialogModal :show="taskInformationModal" @close="taskInformationModal = false">
+    <template #title>
+      {{ taskComponent.name }}
+    </template>
+    <template #content>
+      <form @submit.prevent="update" class="mx-7 my-4 space-y-4 relative">
+        <div class="relative">
+          <i :class="getColorStatus(form.status)" class="fa-solid fa-circle text-xs top-10 -left-4 absolute z-30"></i>
+          <label>Estado actual</label> <br />
+          <div class="flex items-center space-x-4">
+            <el-select :disabled="taskComponentLocal?.is_paused" class="lg:w-1/2 mt-2" v-model="form.status" clearable
+              filterable placeholder="Seleccionar estatus" no-data-text="No hay estatus registrados"
+              no-match-text="No se encontraron coincidencias">
+              <el-option v-for="item in statuses" :key="item" :label="item.label" :value="item.label">
+                <span style="float: left"><i :class="item.color" class="fa-solid fa-circle"></i></span>
+                <span style="float: center; margin-left: 5px; font-size: 13px">{{
+                  item.label
+                }}</span>
+              </el-option>
+            </el-select>
+            <el-tooltip v-if="taskComponentLocal?.status == 'En curso'"
+              :content="taskComponentLocal?.is_paused ? 'Reanudar tarea' : 'Pausar tarea'" placement="top">
+              <button type="button">
+                <i @click.stop="playPauseTask(taskComponentLocal)" :class="taskComponentLocal?.is_paused ? 'fa-circle-play' : 'fa-circle-pause'
+                  " class="fa-regular text-secondary text-xl cursor-pointer"></i>
+              </button>
+            </el-tooltip>
           </div>
-          <div class="w-1/2">
-            <label>fecha final</label>
-            <input v-model="form.limit_date" disabled class="input" type="text" />
-            <InputError :message="form.errors.limit_date" />
-          </div>
+          <InputError :message="form.errors.status" />
         </div>
-
-        <div class="w-1/2 mt-3">
-          <label>Recordatorio</label>
-          <textarea v-model="form.reminder" disabled class="textarea w-full"> </textarea>
-          <InputError :message="form.errors.reminder" />
-        </div>
-        <!-- --------------------- TABS -------------------- -->
-        <section class="mt-9">
-          <div class="flex items-center justify-center">
-            <p @click="tabs = 1" :class="tabs == 1 ? 'border-b-2 border-[#D90537] text-primary' : ''"
-              class="h-8 p-1 cursor-pointer ml-5 transition duration-300 ease-in-out text-xs md:text-base">
-              Comentarios ({{ taskComponentLocal?.comments?.length }})
-            </p>
-            <div class="border-r-2 border-[#cccccc] h-7 ml-3"></div>
-            <p @click="tabs = 2" :class="tabs == 2 ? 'border-b-2 border-[#D90537] text-primary' : ''"
-              class="ml-3 h-8 p-1 cursor-pointer transition duration-300 ease-in-out text-xs md:text-base">
-              Documentos
-            </p>
-            <div class="border-r-2 border-[#cccccc] h-7 ml-3"></div>
-            <p @click="tabs = 3" :class="tabs == 3 ? 'border-b-2 border-[#D90537] text-primary' : ''"
-              class="ml-3 h-8 p-1 cursor-pointer transition duration-300 ease-in-out text-xs md:text-base">
-              Historial
-            </p>
+        <h2 class="font-bold">Información de la tarea</h2>
+        <div>
+          <div class="flex space-x-2 justify-end items-center">
+            <label>Proyecto</label>
+            <input v-model="form.project_name" disabled class="input w-[80%]" type="text" />
+            <InputError :message="form.errors.project_name" />
           </div>
-          <!-- -------------- Tab 1 comentarios starts ----------------->
-          <div v-if="tabs == 1" class="mt-7">
-            <div>
-              <figure class="flex space-x-2 mt-4" v-for="comment in taskComponentLocal?.comments" :key="comment">
-                <div v-if="$page.props.jetstream.managesProfilePhotos" class="flex text-sm rounded-full w-12">
-                  <img class="h-10 w-10 rounded-full object-cover" :src="comment.user?.profile_photo_url"
-                    :alt="comment.user?.name" />
-                </div>
-                <div class="text-sm w-full">
-                  <p class="font-bold">{{ comment.user?.name }}</p>
-                  <p>{{ comment.body }}</p>
-                </div>
-              </figure>
-              <div class="flex space-x-2 mt-5 items-center">
-                <div v-if="$page.props.jetstream.managesProfilePhotos" class="flex text-sm rounded-full w-12">
-                  <img class="h-10 w-10 rounded-full object-cover" :src="$page.props.auth.user.profile_photo_url"
-                    :alt="$page.props.auth.user.name" />
-                </div>
-                <textarea v-model="form.comment" class="textarea w-full"> </textarea>
-                <PrimaryButton type="button" @click.stop="comment(taskComponentLocal)" class="h-9"><i
-                    class="fa-regular fa-paper-plane"></i></PrimaryButton>
-              </div>
+          <div class="flex space-x-2 justify-end items-center mt-3">
+            <label>Creado por</label>
+            <input v-model="form.user" disabled class="input w-[80%]" type="text" />
+            <InputError :message="form.errors.user" />
+          </div>
+          <div class="flex space-x-2 justify-end items-center mt-3">
+            <label>Departamento</label>
+            <el-select class="w-full mt-2" v-model="form.department" clearable filterable
+              placeholder="Seleccionar departamento" no-data-text="No hay departamentos registrados"
+              no-match-text="No se encontraron coincidencias">
+              <el-option v-for="item in departments" :key="item" :label="item" :value="item" />
+            </el-select>
+            <InputError :message="form.errors.department" />
+          </div>
+          <div class="flex space-x-2 justify-end items-center mt-3">
+            <label>Más participantes</label> <br>
+            <el-select class="w-full mt-2" v-model="form.users" clearable filterable multiple
+              placeholder="Seleccionar participantes" no-data-text="No hay usuarios registrados"
+              no-match-text="No se encontraron coincidencias">
+              <el-option v-for="user in users" :key="user.id" :label="user.name" :value="user.id" />
+            </el-select>
+            <InputError :message="form.errors.users" />
+          </div>
+          <div class="mt-3">
+            <label>Descripción</label>
+            <textarea v-model="form.description" class="textarea w-full"> </textarea>
+            <InputError :message="form.errors.description" />
+          </div>
+          <div class="mt-3 relative">
+            <i :class="getColorPriority(form.priority)"
+              class="fa-solid fa-circle text-xs top-10 -left-4 absolute z-30"></i>
+            <label>Prioridad</label>
+            <el-select class="w-full mt-2" v-model="form.priority" clearable filterable
+              placeholder="Seleccionar prioridad" no-data-text="No hay registros"
+              no-match-text="No se encontraron coincidencias">
+              <el-option v-for="item in priorities" :key="item" :label="item.label" :value="item.label">
+                <span style="float: left"><i :class="item.color" class="fa-solid fa-circle"></i></span>
+                <span style="float: center; margin-left: 5px; font-size: 13px">{{
+                  item.label
+                }}</span>
+              </el-option>
+            </el-select>
+            <InputError :message="form.errors.priority" />
+          </div>
+          <div class="flex space-x-5 justify-between mt-3">
+            <div class="w-1/2">
+              <label>fecha de inicio</label>
+              <input v-model="form.start_date" disabled class="input" type="text" />
+              <InputError :message="form.errors.start_date" />
+            </div>
+            <div class="w-1/2">
+              <label>fecha final</label>
+              <input v-model="form.limit_date" disabled class="input" type="text" />
+              <InputError :message="form.errors.limit_date" />
             </div>
           </div>
-          <!-- ---------------- tab 1 comentarios ends  -------------->
 
-          <!-- -------------- Tab 2 documentos starts ----------------->
-          <div v-if="tabs == 2" class="mt-7">
-            <a :href="file?.original_url" target="_blank" v-for="file in taskComponentLocal?.media" :key="file"
-              class="flex justify-between items-center cursor-pointer">
-              <div class="flex space-x-7 items-center">
-                <img src="@/../../public/images/adobepdf.png" :alt="file?.file_name" />
-                <p>{{ file?.file_name }}sss</p>
-              </div>
-              <i class="fa-solid fa-download text-right text-sm text-[#9a9a9a]"></i>
-            </a>
+          <div class="w-1/2 mt-3">
+            <label>Recordatorio</label>
+            <textarea v-model="form.reminder" disabled class="textarea w-full"> </textarea>
+            <InputError :message="form.errors.reminder" />
           </div>
-          <!-- ---------------- tab 2 documentos ends  -------------->
+          <!-- --------------------- TABS -------------------- -->
+          <section class="mt-9">
+            <div class="flex items-center justify-center">
+              <p @click="tabs = 1" :class="tabs == 1 ? 'border-b-2 border-[#D90537] text-primary' : ''"
+                class="h-8 p-1 cursor-pointer ml-5 transition duration-300 ease-in-out text-xs md:text-base">
+                Comentarios ({{ taskComponentLocal?.comments?.length }})
+              </p>
+              <div class="border-r-2 border-[#cccccc] h-7 ml-3"></div>
+              <p @click="tabs = 2" :class="tabs == 2 ? 'border-b-2 border-[#D90537] text-primary' : ''"
+                class="ml-3 h-8 p-1 cursor-pointer transition duration-300 ease-in-out text-xs md:text-base">
+                Documentos
+              </p>
+              <div class="border-r-2 border-[#cccccc] h-7 ml-3"></div>
+              <p @click="tabs = 3" :class="tabs == 3 ? 'border-b-2 border-[#D90537] text-primary' : ''"
+                class="ml-3 h-8 p-1 cursor-pointer transition duration-300 ease-in-out text-xs md:text-base">
+                Historial
+              </p>
+            </div>
+            <!-- -------------- Tab 1 comentarios starts ----------------->
+            <div v-if="tabs == 1" class="mt-7">
+              <div>
+                <figure class="flex space-x-2 mt-4" v-for="comment in taskComponentLocal?.comments" :key="comment">
+                  <div v-if="$page.props.jetstream.managesProfilePhotos" class="flex text-sm rounded-full w-12">
+                    <img class="h-10 w-10 rounded-full object-cover" :src="comment.user?.profile_photo_url"
+                      :alt="comment.user?.name" />
+                  </div>
+                  <div class="text-sm w-full">
+                    <p class="font-bold">{{ comment.user?.name }}</p>
+                    <p>{{ comment.body }}</p>
+                  </div>
+                </figure>
+                <div class="flex space-x-2 mt-5 items-center">
+                  <div v-if="$page.props.jetstream.managesProfilePhotos" class="flex text-sm rounded-full w-12">
+                    <img class="h-10 w-10 rounded-full object-cover" :src="$page.props.auth.user.profile_photo_url"
+                      :alt="$page.props.auth.user.name" />
+                  </div>
+                  <textarea v-model="form.comment" class="textarea w-full"> </textarea>
+                  <PrimaryButton type="button" @click.stop="comment(taskComponentLocal)" class="h-9"><i
+                      class="fa-regular fa-paper-plane"></i></PrimaryButton>
+                </div>
+              </div>
+            </div>
+            <!-- ---------------- tab 1 comentarios ends  -------------->
 
-          <!-- -------------- Tab 3 historial starts ----------------->
-          <div v-if="tabs == 3" class="mt-7"></div>
-          <!-- ---------------- tab 3 historial ends  -------------->
+            <!-- -------------- Tab 2 documentos starts ----------------->
+            <div v-if="tabs == 2" class="mt-7">
+              <a :href="file?.original_url" target="_blank" v-for="file in taskComponentLocal?.media" :key="file"
+                class="flex justify-between items-center cursor-pointer">
+                <div class="flex space-x-7 items-center">
+                  <img src="@/../../public/images/adobepdf.png" :alt="file?.file_name" />
+                  <p>{{ file?.file_name }}sss</p>
+                </div>
+                <i class="fa-solid fa-download text-right text-sm text-[#9a9a9a]"></i>
+              </a>
+            </div>
+            <!-- ---------------- tab 2 documentos ends  -------------->
+
+            <!-- -------------- Tab 3 historial starts ----------------->
+            <div v-if="tabs == 3" class="mt-7"></div>
+            <!-- ---------------- tab 3 historial ends  -------------->
 
 
-        </section>
-      </div>
-      <!-- {{ form }} -->
-      <div class="flex justify-end space-x-3 pt-5 pb-1">
-        <CancelButton @click="taskInformationModal = false">Cancelar</CancelButton>
-        <PrimaryButton>Guardar</PrimaryButton>
-      </div>
-    </form>
-  </Modal>
+          </section>
+        </div>
+        <!-- {{ form }} -->
+      </form>
+    </template>
+    <template #footer>
+      <CancelButton @click="taskInformationModal = false">Cancelar</CancelButton>
+      <PrimaryButton>Guardar</PrimaryButton>
+    </template>
+  </DialogModal>
 </template>
 
 <script>
-import Modal from "@/Components/Modal.vue";
+import DialogModal from "@/Components/DialogModal.vue";
 import PrimaryButton from "@/Components/PrimaryButton.vue";
 import CancelButton from "@/Components/CancelButton.vue";
 import { Link, useForm } from "@inertiajs/vue3";
@@ -307,7 +308,7 @@ export default {
     };
   },
   components: {
-    Modal,
+    DialogModal,
     PrimaryButton,
     CancelButton,
     Link,

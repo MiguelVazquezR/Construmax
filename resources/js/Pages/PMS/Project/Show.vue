@@ -40,7 +40,7 @@
             </div>
             <div v-if="currentTab == 1" class="flex space-x-2 w-full justify-end">
                 <PrimaryButton @click="$inertia.get(route('pms.projects.create'))">Nuevo proyecto</PrimaryButton>
-                <SecondaryButton @click="$inertia.put(route('pms.projects.edit', currentProject?.id ?? 1))"><i class="fa-solid fa-pen"></i></SecondaryButton>
+                <SecondaryButton @click="$inertia.get(route('pms.projects.edit', currentProject?.id ?? 1))"><i class="fa-solid fa-pen"></i></SecondaryButton>
             </div>
             <div v-if="currentTab == 2 || currentTab == 3" class="flex space-x-2 w-full justify-end">
                 <PrimaryButton @click="$inertia.get(route('pms.tasks.create', {projectId: currentProject?.id ?? 1}))">Nueva tarea</PrimaryButton>
@@ -115,7 +115,7 @@
                 </Link>
             </div>
 
-            <div class="grid grid-cols-2 text-left p-4 md:ml-10 border-r-2 border-gray-[#cccccc] items-center">
+            <div class="grid grid-cols-2 text-left p-4 md:ml-10 border-r-2 border-gray-[#cccccc] items-center self-start">
                 <p class="text-secondary col-span-full mb-2 font-bold">Presupuestos</p>
 
                 <span class="text-gray-500">Moneda</span>
@@ -131,7 +131,7 @@
                 </div>
 
 
-                <p class="text-secondary col-span-full font-bold">Documentos adjuntos</p>
+                <p class="text-secondary col-span-full font-bold mt-7">Documentos adjuntos</p>
                 <li v-for="file in currentProject?.media" :key="file"
                     class="flex items-center justify-between col-span-full">
                     <a :href="file.original_url" target="_blank" class="flex items-center">

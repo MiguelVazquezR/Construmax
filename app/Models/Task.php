@@ -4,13 +4,14 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
 
-class Task extends Model
+class Task extends Model implements HasMedia
 {
-    use HasFactory;
+    use HasFactory, InteractsWithMedia;
 
     protected $fillable = [
-        'taskable',
         'name',
         'description',
         'department',
@@ -61,7 +62,6 @@ class Task extends Model
         return $this->belongsToMany(User::class)
             ->withPivot([
                 'id',
-                'permissions',
             ])->withTimestamps();
     }
 }

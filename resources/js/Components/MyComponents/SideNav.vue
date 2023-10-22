@@ -82,7 +82,7 @@ export default {
                             label: 'Proyectos',
                             route: route('pms.projects.index'),
                             // show: this.$page.props.auth.user.permissions.includes('Ver proyectos'),
-                            active: route().current('pms.projects.*'),
+                            active: route().current('pms.projects.*') || route().current('pms.tasks.*'),
                             show: true,
                         },
                     ],

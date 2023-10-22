@@ -195,5 +195,7 @@ return [
         'date' => 'fecha',
         'time' => 'hora',
         'type' => ' ',
+        'participants' => 'participantes',
+        'start_date' => 'fecha de inicio',
     ],
 ];

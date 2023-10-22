@@ -10,7 +10,10 @@ class Comment extends Model
     use HasFactory;
 
     protected $fillable = [
-
+        'commentable_type',
+        'commentable_id',
+        'content',
+        'user_id',
     ];
 
     // relationships

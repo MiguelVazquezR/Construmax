@@ -19,11 +19,11 @@
       <table class="w-full mx-auto">
         <thead>
           <tr class="text-left">
-            <th class="font-bold pb-5">Folio <i class="fa-solid fa-arrow-down-long ml-3"></i></th>
+            <th class="font-bold pb-5 pl-4">Folio <i class="fa-solid fa-arrow-down-long ml-3"></i></th>
             <th class="font-bold pb-5">Nombre del proyecto <i class="fa-solid fa-arrow-down-long ml-3"></i></th>
             <th class="font-bold pb-5">Tipo de servicio <i class="fa-solid fa-arrow-down-long ml-3"></i></th>
             <th class="font-bold pb-5">Estado <i class="fa-solid fa-arrow-down-long ml-3"></i></th>
-            <th class="font-bold pb-5">Tareas <i class="fa-solid fa-arrow-down-long ml-3"></i></th>
+            <th class="font-bold pb-5 text-center">Tareas <i class="fa-solid fa-arrow-down-long ml-3"></i></th>
             <th class="font-bold pb-5">Responsable <i class="fa-solid fa-arrow-down-long ml-3"></i></th>
             <th class="font-bold pb-5">Fecha de inicio <i class="fa-solid fa-arrow-down-long ml-3"></i></th>
             <th class="font-bold pb-5">Fecha final <i class="fa-solid fa-arrow-down-long ml-3"></i></th>
@@ -34,15 +34,21 @@
         <tbody>
           <tr v-for="project in filteredTableData" :key="project.id" class="mb-4 cursor-pointer hover:bg-[#dfdbdba8]"
             @click="$inertia.get(route('pms.projects.show', project.id))">
-            <td class="text-left py-2 px-2 rounded-l-full">
-              {{ project.project_name }}
+            <td class="text-left py-2 pr-2 pl-4 rounded-l-full">
+              {{ project.folio }}
             </td>
-            <td class="text-left py-2 px-2">
+            <td class="text-left py-2">
+              {{ project.name }}
+            </td>
+            <td class="text-left py-2">
+              {{ project.service_type }}
+            </td>
+            <td class="text-left py-2">
               <span
                 :class="calculateProjectStatus(project.tasks)?.text_color + ' ' + calculateProjectStatus(project.tasks)?.bg"
                 class="py-1 px-2 rounded-full">{{ calculateProjectStatus(project.tasks)?.label }}</span>
             </td>
-            <td class="text-left py-2 flex space-x-1 items-center px-2">
+            <td class="text-left py-2 flex space-x-1 items-center">
               <p class="text-xs">{{ project.tasks.filter(task => task.status === 'Terminada').length }}</p>
               <div class="relative bg-[#D9D9D9] rounded-full h-5 w-24">
                 <div
@@ -55,6 +61,9 @@
                     100) : '0' }}%</p>
               </div>
               <p class="text-xs">{{ project.tasks.length }}</p>
+            </td>
+            <td class="text-left py-2 px-2">
+              {{ project.owner.name }}
             </td>
             <td class="text-left py-2 px-2">
               {{ project.start_date }}
@@ -147,7 +156,12 @@ export default {
       } else {
         return this.projects.data.filter(
           (project) =>
-            project.project_name.toLowerCase().includes(this.search.toLowerCase())
+            project.folio.toLowerCase().includes(this.search.toLowerCase()) ||
+            project.name.toLowerCase().includes(this.search.toLowerCase()) ||
+            project.service_type.toLowerCase().includes(this.search.toLowerCase()) ||
+            project.owner.name.toLowerCase().includes(this.search.toLowerCase()) ||
+            project.start_date.toLowerCase().includes(this.search.toLowerCase()) ||
+            project.limit_date.toLowerCase().includes(this.search.toLowerCase())
         )
       }
     }

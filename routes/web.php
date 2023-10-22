@@ -8,6 +8,7 @@ use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\ProjectGroupController;
 use App\Http\Controllers\SettingController;
 use App\Http\Controllers\TagController;
+use App\Http\Controllers\TaskController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -16,6 +17,7 @@ use Inertia\Inertia;
 // projects routes
 Route::get('pms/dashboard', [PMSController::class, 'dashboard'])->middleware('auth')->name('pms.dashboard');
 Route::resource('projects', ProjectController::class)->middleware('auth')->names('pms.projects');
+Route::resource('tasks', TaskController::class)->middleware('auth')->names('pms.tasks');
 Route::resource('project-groups', ProjectGroupController::class)->middleware('auth')->names('pms.project-groups');
 Route::resource('tags', TagController::class)->middleware('auth')->names('pms.tags');
 

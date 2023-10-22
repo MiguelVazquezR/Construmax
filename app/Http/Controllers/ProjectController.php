@@ -10,13 +10,14 @@ use App\Models\Project;
 use App\Models\ProjectGroup;
 use App\Models\Tag;
 use App\Models\User;
+use Illuminate\Validation\Rule;
 use Illuminate\Http\Request;
 
 class ProjectController extends Controller
 {
     public function index()
     {
-        $projects = ProjectResource::collection(Project::with('tasks')->latest()->paginate(30));
+        $projects = ProjectResource::collection(Project::with(['tasks', 'owner'])->latest()->paginate(30));
 
         return inertia('PMS/Project/Index', compact('projects'));
     }
@@ -37,7 +38,10 @@ class ProjectController extends Controller
             'name' => 'required|string|max:255',
             'description' => 'nullable|string|max:255',
             'currency' => 'required|string|max:255',
-            'address' => 'required|string',
+            'address' => [Rule::requiredIf(function () use ($request) {
+                return !$request->input('is_internal');
+            })],
+            'service_type' => 'required|string',
             'invoice_type' => 'required|string|max:255',
             'is_strict' => 'boolean',
             'is_internal' => 'boolean',
@@ -46,7 +50,9 @@ class ProjectController extends Controller
             'limit_date' => 'required|date',
             'project_group_id' => 'required|numeric|min:1',
             'user_id' => 'required|numeric|min:1',
-            'opportunity_id' => 'required|numeric|min:1',
+            'opportunity_id' => [Rule::requiredIf(function () use ($request) {
+                return !$request->input('is_internal');
+            })],
             'owner_id' => 'required|numeric|min:1',
         ]);
 
@@ -60,6 +66,12 @@ class ProjectController extends Controller
             $project->users()->attach($user['id'], $allowedUser);
         }
 
+        // etiquetas
+        // Obtiene los IDs de las etiquetas seleccionadas desde el formulario
+        $tagIds = $request->input('tags', []);
+        // Adjunta las etiquetas al proyecto utilizando la relación polimórfica
+        $project->tags()->attach($tagIds);
+
         // archivos adjuntos
         $project->addAllMediaFromRequest()->each(fn ($file) => $file->toMediaCollection());
 
@@ -68,12 +80,21 @@ class ProjectController extends Controller
 
     public function show(Project $project)
     {
-        //
+        $project = ProjectResource::make(Project::with(['tasks' => ['users', 'project', 'user'], 'projectGroup', 'opportunity.customer', 'tags', 'users'])->find($project->id));
+        $projects = ProjectResource::collection(Project::with(['tasks' => ['users', 'project', 'user', 'comments.user', 'media'], 'user', 'users', 'opportunity.customer', 'projectGroup', 'tags'])->latest()->get());
+        $users = User::all();
+
+        return inertia('PMS/Project/Show', compact(['project', 'projects', 'users']));
     }
 
     public function edit(Project $project)
     {
-        //
+        $customers = Customer::with(['opportunities'])->get();
+        $project_groups = ProjectGroupResource::collection(ProjectGroup::all());
+        $tags = TagResource::collection(Tag::where('type', 'projects')->get());
+        $users = User::where('is_active', true)->get();
+
+        return inertia('PMS/Project/Edit', compact('customers', 'project_groups', 'tags', 'users', 'project'));
     }
 
     public function update(Request $request, Project $project)

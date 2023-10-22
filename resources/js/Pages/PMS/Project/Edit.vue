@@ -64,8 +64,7 @@
       </div>
       <div class="mt-5 col-span-full">
         <InputLabel value="Descripción" class="ml-2" />
-        <RichText @content="updateDescription($event)" :defaultValue="form.description"/>
-        {{ form.description }}
+        <RichText @content="updateDescription($event)" />
       </div>
       <div class="ml-2 mt-2 col-span-full flex">
         <FileUploader @files-selected="this.form.media = $event" />
@@ -350,24 +349,24 @@ import axios from 'axios';
 export default {
   data() {
     const form = useForm({
-      name: null,
-      owner_id: this.$page.props.auth.user.id,
-      start_date: null,
-      limit_date: null,
-      is_strict: false,
-      is_internal: false,
-      description: '<div><b>jeu</b></div>',
-      tags: null,
-      project_group_id: null,
-      service_type: null,
-      address: null,
-      opportunity_id: null,
-      currency: '$MXN',
-      budget: null,
-      invoice_type: null,
+      name: this.project.name,
+      owner_id: this.project.owner_id,
+      start_date: this.project.start_date,
+      limit_date: this.project.limit_date,
+      is_strict: Boolean(this.project.is_strict),
+      is_internal: Boolean(this.project.is_internal),
+      description: this.project.description,
+      tags: [],
+      project_group_id: this.project.project_group_id,
+      service_type: this.project.service_type,
+      address: this.project.address,
+      opportunity_id: this.project.opportunity_id,
+      currency: this.project.currency,
+      budget: this.project.budget,
+      invoice_type: this.project.invoice_type,
       selectedUsersToPermissions: [],
       media: [],
-      user_id: this.$page.props.auth.user.id,
+      user_id: this.project.user_id,
     });
 
     const groupForm = useForm({
@@ -438,6 +437,7 @@ export default {
   props: {
     customers: Array,
     project_groups: Object,
+    project: Array,
     tags: Object,
     users: Array,
   },

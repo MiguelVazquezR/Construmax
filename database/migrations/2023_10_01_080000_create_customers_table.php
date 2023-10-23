@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string('rfc');
             $table->string('zipcode', 5);
             $table->foreignId('user_id')->constrained();
+            $table->foreignId('contact_id')->constrained();
             $table->timestamps();
         });
     }

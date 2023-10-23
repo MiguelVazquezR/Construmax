@@ -15,19 +15,19 @@
       </div>
     </div>
 
-    <div class="lg:px-16 px-4 py-7 text-sm overflow-x-auto">
+    <div v-if="projects.data.length" class="lg:px-16 px-4 py-7 text-sm overflow-x-auto">
       <table class="w-full mx-auto">
         <thead>
           <tr class="text-left">
-            <th class="font-bold pb-5 pl-4">Folio <i class="fa-solid fa-arrow-down-long ml-3"></i></th>
-            <th class="font-bold pb-5">Nombre del proyecto <i class="fa-solid fa-arrow-down-long ml-3"></i></th>
-            <th class="font-bold pb-5">Tipo de servicio <i class="fa-solid fa-arrow-down-long ml-3"></i></th>
-            <th class="font-bold pb-5">Estado <i class="fa-solid fa-arrow-down-long ml-3"></i></th>
-            <th class="font-bold pb-5 text-center">Tareas <i class="fa-solid fa-arrow-down-long ml-3"></i></th>
-            <th class="font-bold pb-5">Responsable <i class="fa-solid fa-arrow-down-long ml-3"></i></th>
-            <th class="font-bold pb-5">Fecha de inicio <i class="fa-solid fa-arrow-down-long ml-3"></i></th>
-            <th class="font-bold pb-5">Fecha final <i class="fa-solid fa-arrow-down-long ml-3"></i></th>
-            <th class="font-bold pb-5">Completa <i class="fa-solid fa-arrow-down-long ml-3"></i></th>
+            <th class="font-bold pb-5 pl-4">Folio <i class="fa-solid fa-arrow-down-long ml-3 px-14 md:px-2"></i></th>
+            <th class="font-bold pb-5">Nombre del proyecto <i class="fa-solid fa-arrow-down-long ml-3 px-14 md:px-2"></i></th>
+            <th class="font-bold pb-5">Tipo de servicio <i class="fa-solid fa-arrow-down-long ml-3 px-14 md:px-2"></i></th>
+            <th class="font-bold pb-5">Estado <i class="fa-solid fa-arrow-down-long ml-3 px-14 md:px-2"></i></th>
+            <th class="font-bold pb-5 text-center">Tareas <i class="fa-solid fa-arrow-down-long ml-3 px-14 md:px-2"></i></th>
+            <th class="font-bold pb-5">Responsable <i class="fa-solid fa-arrow-down-long ml-3 px-14 md:px-2"></i></th>
+            <th class="font-bold pb-5">Fecha de inicio <i class="fa-solid fa-arrow-down-long ml-3 px-14 md:px-2"></i></th>
+            <th class="font-bold pb-5">Fecha final <i class="fa-solid fa-arrow-down-long ml-3 px-14 md:px-2"></i></th>
+            <th class="font-bold pb-5">Completa <i class="fa-solid fa-arrow-down-long ml-3 px-14 md:px-2"></i></th>
             <th></th>
           </tr>
         </thead>
@@ -81,6 +81,10 @@
       <div class="mt-4">
         <!-- <Pagination :pagination="projects" /> -->
       </div>
+    </div>
+    <div class="text-center mt-12" v-else>
+      <p class="text-sm text-gray-400">No hay proyectos para mostrar</p>
+      <i class="fa-regular fa-folder-open mt-32 text-gray-400/20 text-[200px]"></i>
     </div>
 
   </AppLayout>

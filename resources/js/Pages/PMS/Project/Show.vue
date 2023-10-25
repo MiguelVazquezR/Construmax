@@ -182,7 +182,9 @@
                     :class="(drag && !inProgressTasksList?.length) ? 'h-40' : ''">
                     <template #item="{ element: task }">
                         <li>
-                            <ProjectTaskCard @updated-status="updateTask($event)" :taskComponent="task" :users="users" />
+                            <Link :href="route('pms.tasks.show', task.id)">
+                                <ProjectTaskCard @updated-status="updateTask($event)" :taskComponent="task" :users="users" />
+                            </Link>
                         </li>
                     </template>
                 </draggable>
@@ -202,7 +204,9 @@
                     :class="(drag && !finishedTasksList?.length) ? 'h-40' : ''">
                     <template #item="{ element: task }">
                         <li>
-                            <ProjectTaskCard @updated-status="updateTask($event)" :taskComponent="task" :users="users" />
+                            <Link :href="route('pms.tasks.show', task.id)">
+                                <ProjectTaskCard @updated-status="updateTask($event)" :taskComponent="task" :users="users" />
+                            </Link>
                         </li>
                     </template>
                 </draggable>
@@ -224,7 +228,7 @@
             <div class="text-right mr-9">
                 <div class="border border-[#9A9A9A] rounded-md inline-flex justify-end mt-4">
                     <p :class="period == 'Mes' ? 'bg-primary text-white rounded-sm' : 'border-[#9A9A9A]'
-                        " @click="period = 'Mes'" class="px-4 py-2 text-[#9A9A9A] cursor-pointer border-x">
+                        " @click="period = 'Mes'" class="px-4 py-2 text-[#9A9A9A] cursor-pointer">
                         Mes
                     </p>
                     <p :class="period == 'Bimestre'
@@ -246,8 +250,8 @@ import AppLayout from "@/Layouts/AppLayout.vue";
 import PrimaryButton from "@/Components/PrimaryButton.vue";
 import SecondaryButton from "@/Components/SecondaryButton.vue";
 import ProjectTaskCard from "@/Components/MyComponents/ProjectTaskCard.vue";
-import GanttDiagramMonth from "@/Components/MyComponents/GanttDiagramMonth.vue";
-import GanttDiagramBimester from "@/Components/MyComponents/GanttDiagramBimester.vue";
+import GanttDiagramMonth from "@/Components/MyComponents/PMS/GanttDiagramMonth.vue";
+import GanttDiagramBimester from "@/Components/MyComponents/PMS/GanttDiagramBimester.vue";
 import Tab from "@/Components/MyComponents/Tab.vue";
 import Tag from "@/Components/MyComponents/Tag.vue";
 import Dropdown from "@/Components/Dropdown.vue";

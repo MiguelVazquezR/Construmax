@@ -56,7 +56,7 @@
             </el-option>
           </el-select>
           <el-tooltip
-            v-if="task.data.status == 'En curso'"
+            v-if="task.data.status == 'En curso' && (authUserIsParticipant || toBool(authUserPermissions[2]))"
             :content="task.data.is_paused ? 'Reanudar tarea' : 'Pausar tarea'"
             placement="top"
           >
@@ -64,7 +64,7 @@
               <i
                 @click.stop="playPauseTask(task)"
                 :class="task.data.is_paused ? 'fa-circle-play' : 'fa-circle-pause'"
-                class="fa-regular text-secondary text-xl cursor-pointer"
+                class="fa-regular text-primary text-xl cursor-pointer"
               ></i>
             </button>
           </el-tooltip>
@@ -495,6 +495,11 @@ export default {
 
         if (response.status === 200) {
           this.task.data.status = this.form.status;
+          this.$notify({
+            title: "Éxito",
+            message: "Se ha cambiado el status",
+            type: "success",
+          });
         }
       } catch (error) {
         console.log(error);
@@ -510,12 +515,12 @@ export default {
     updateComment(content) {
       this.form.comment = content;
     },
-    async playPauseTask(task) {
+    async playPauseTask() {
       try {
-        const response = await axios.put(route("pms.tasks.pause-play", task));
+        const response = await axios.put(route("pms.tasks.pause-play", this.task.data.id));
 
         if (response.status === 200) {
-          this.task = response.data.item;
+          this.task.data = response.data.item;
 
           if (this.task.data.is_paused) {
             this.$notify({

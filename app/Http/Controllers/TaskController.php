@@ -56,7 +56,7 @@ class TaskController extends Controller
 
     public function show(Task $task)
     {
-        $task = TaskResource::make(Task::with(['project.users', 'user', 'users', 'comments.user'])->find($task->id));
+        $task = TaskResource::make(Task::with(['project.users', 'user', 'users', 'comments.user', 'media'])->find($task->id));
 
         return inertia('PMS/Task/Show', compact('task'));
     }
@@ -130,7 +130,7 @@ class TaskController extends Controller
         }
         $task->save();
 
-        return response()->json(['item' => TaskResource::make($task->fresh(['users', 'project', 'user', 'comments.user', 'media']))]);
+        return response()->json(['item' => TaskResource::make($task->fresh(['project.users', 'user', 'users', 'comments.user', 'media']))]);
     }
 
     public function updateStatus(Task $task, Request $request)

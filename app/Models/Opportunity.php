@@ -4,17 +4,25 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
 
-class Opportunity extends Model
+class Opportunity extends Model implements HasMedia
 {
-    use HasFactory;
+    use HasFactory, InteractsWithMedia;
 
     protected $fillable = [
         'name',
         'priority',
+        'probability',
+        'service_type',
         'status',
+        'description',
+        'lost_oportunity_razon',
         'amount',
+        'start_date',
         'close_date',
+        'finished_at',
         'contact_id',
         'customer_id',
         'user_id',
@@ -22,7 +30,9 @@ class Opportunity extends Model
     ];
 
     protected $casts = [
+        'start_date' => 'date',
         'close_date' => 'date',
+        'finished_at' => 'datetime',
     ];
 
     // relationships

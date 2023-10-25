@@ -33,7 +33,7 @@ class Customer extends Model
     // relationships
     public function contacts()
     {
-        return $this->hasMany(Contact::class);
+        return $this->morphMany(Contact::class, 'contactable');
     }
 
     public function tags()

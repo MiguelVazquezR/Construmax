@@ -17,7 +17,7 @@ return new class extends Migration
             $table->json('branches')->nullable();
             $table->string('currency');
             $table->string('rfc');
-            $table->string('zipcode', 5);
+            // $table->string('zipcode', 5);
             $table->string('contact_name');
             $table->string('contact_phone');
             $table->string('contact_email')->nullable();

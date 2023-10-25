@@ -83,8 +83,9 @@ class ProjectController extends Controller
         $project = ProjectResource::make(Project::with(['tasks' => ['users', 'project', 'user'], 'projectGroup', 'opportunity.customer', 'tags', 'users'])->find($project->id));
         $projects = ProjectResource::collection(Project::with(['tasks' => ['users', 'project', 'user', 'comments.user', 'media'], 'user', 'users', 'opportunity.customer', 'projectGroup', 'tags'])->latest()->get());
         $users = User::all();
+        $defaultTab = request('defaultTab');
 
-        return inertia('PMS/Project/Show', compact(['project', 'projects', 'users']));
+        return inertia('PMS/Project/Show', compact(['project', 'projects', 'users', 'defaultTab']));
     }
 
     public function edit(Project $project)

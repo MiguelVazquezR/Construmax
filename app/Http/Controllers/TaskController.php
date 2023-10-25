@@ -50,13 +50,19 @@ class TaskController extends Controller
 
         $task->addAllMediaFromRequest('media')->each(fn ($file) => $file->toMediaCollection());
 
-        return to_route('pms.projects.show', ['project' => $request->project_id]);
+        return to_route('pms.projects.show', ['project' => $request->project_id, 'defaultTab' => 2]);
     }
 
 
     public function show(Task $task)
     {
-        //
+        $task = TaskResource::make(Task::with(['project.users', 'user', 'users', 'comments'])->find($task->id));
+        // $users = User::where('is_active', true)->get();
+        // $projects = Project::with(['users'])->latest()->get();
+        // $users = User::where('is_active', true)->get();
+        // $parent_id = $request->input('projectId') ?? 1;
+
+        return inertia('PMS/Task/Show', compact('task'));
     }
 
 
@@ -147,7 +153,7 @@ class TaskController extends Controller
     public function getLateTasks()
     {
         $late_tasks = Task::with(['participants', 'project'])->where('status', '!=', 'Terminada')->whereDate('end_date', '<', today())->get();
-        
+
         $currentDate = today();
 
         $late_tasks = $late_tasks->map(function ($task) use ($currentDate) {
@@ -159,17 +165,18 @@ class TaskController extends Controller
         return response()->json(['items' => $late_tasks]);
     }
 
-    private function handleUpdatedTaskStatus($project_id) {
-         // Obtén el proyecto al que pertenece la tarea
-         $project = Project::with('tasks')->find($project_id);
- 
-         // Verifica si todas las tareas del proyecto están terminadas y actualiza propiedad finished_at
-          if ($project->tasks->where('status', 'Terminada')->count() === $project->tasks->count()) {
+    private function handleUpdatedTaskStatus($project_id)
+    {
+        // Obtén el proyecto al que pertenece la tarea
+        $project = Project::with('tasks')->find($project_id);
+
+        // Verifica si todas las tareas del proyecto están terminadas y actualiza propiedad finished_at
+        if ($project->tasks->where('status', 'Terminada')->count() === $project->tasks->count()) {
             $project->finished_at = now();
             $project->save();
-          } else if ($project->finished_at !== null) {
+        } else if ($project->finished_at !== null) {
             $project->finished_at = null;
             $project->save();
-          }
+        }
     }
 }

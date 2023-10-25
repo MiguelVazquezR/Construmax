@@ -16,7 +16,7 @@
     </div>
 
     <div class="lg:px-16 px-4 py-7 text-sm overflow-x-auto">
-      <table class="w-full mx-auto">
+      <table v-if="filteredTableData.length" class="w-full mx-auto">
         <thead>
           <tr class="text-left">
             <th class="font-bold pb-5 pl-4">Folio <i class="fa-solid fa-arrow-down-long ml-3"></i></th>
@@ -77,6 +77,7 @@
           </tr>
         </tbody>
       </table>
+      <p v-else class="text-center text-gray2 mt-12">No hay proyectos registrados</p>
       <!-- --- pagination --- -->
       <div class="mt-4">
         <!-- <Pagination :pagination="projects" /> -->

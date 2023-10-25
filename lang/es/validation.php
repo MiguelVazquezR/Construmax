@@ -197,5 +197,10 @@ return [
         'type' => ' ',
         'participants' => 'participantes',
         'start_date' => 'fecha de inicio',
+        'address' => 'dirección',
+        'project_group' => 'grupo',
+        'opportunity_id' => 'oportunidad',
+        'invoice_type' => 'condiciones de pago',
+        'budget' => 'monto',
     ],
 ];

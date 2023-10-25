@@ -159,8 +159,10 @@
                     :class="(drag && !pendingTasksList?.length) ? 'h-40' : ''">
                     <template #item="{ element: task }">
                         <li>
-                            <ProjectTaskCard @updated-status="updateTask($event)" :taskComponent="task" :users="users"
-                                :id="task.id" />
+                            <Link :href="route('pms.tasks.show', task.id)">
+                                <ProjectTaskCard @updated-status="updateTask($event)" :taskComponent="task" :users="users"
+                                    :id="task.id" />
+                            </Link>
                         </li>
                     </template>
                 </draggable>
@@ -297,6 +299,7 @@ export default {
         projects: Object,
         project: Object,
         users: Array,
+        defaultTab: Number,
     },
     methods: {
         getFileTypeIcon(fileName) {
@@ -420,6 +423,9 @@ export default {
     mounted() {
         this.selectedProject = this.project.data.id;
         this.currentProject = this.projects.data.find((item) => item.id == this.selectedProject);
+        if (this.defaultTab !== null ) {
+            this.currentTab = this.defaultTab;
+        }
     },
 };
 </script>

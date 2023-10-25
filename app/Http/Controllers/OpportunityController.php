@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\OpportunityResource;
 use App\Models\Opportunity;
 use Illuminate\Http\Request;
 
@@ -9,7 +10,9 @@ class OpportunityController extends Controller
 {
     public function index()
     {
-        return inertia('CRM/Opportunity/Index');
+        $opportunities = OpportunityResource::collection(Opportunity::latest()->get());
+
+        return inertia('CRM/Opportunity/Index', compact('opportunities'));
     }
 
     public function create()

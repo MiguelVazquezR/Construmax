@@ -20,8 +20,7 @@
         </p>
       </Link>
     </div>
-    <!-- Form -->
-    <form @submit.prevent="update" class="mx-8 mt-3 grid grid-cols-2 gap-x-4 gap-y-2">
+    <div class="mx-8 mt-3 grid grid-cols-2 gap-x-4 gap-y-2">
       <div class="relative">
         <InputLabel class="ml-2">
           Estado actual
@@ -33,7 +32,7 @@
         <div class="flex items-center space-x-4">
           <el-select
             :disabled="task.data.is_paused || !authUserIsParticipant"
-            class="lg:w-1/2"
+            class="lg:w-full"
             v-model="form.status"
             @change="updateStatus()"
             clearable
@@ -72,6 +71,50 @@
         </div>
         <InputError :message="form.errors.status" />
       </div>
+      <el-dropdown
+        v-if="toBool(authUserPermissions[2]) && !canEdit"
+        split-button
+        type="primary"
+        @click="canEdit = true"
+        class="custom-dropdown mt-5 ml-auto"
+      >
+        <span>Editar</span>
+        <template #dropdown>
+          <el-dropdown-menu>
+            <el-dropdown-item @click="copyToClipboard">Copiar link</el-dropdown-item>
+          </el-dropdown-menu>
+          <el-dropdown-menu v-if="toBool(authUserPermissions[3])">
+            <el-dropdown-item @click="showConfirmModal = true"
+              >Eliminar tarea</el-dropdown-item
+            >
+          </el-dropdown-menu>
+        </template>
+      </el-dropdown>
+      <el-dropdown
+        v-if="toBool(authUserPermissions[2]) && canEdit"
+        split-button
+        type="primary"
+        @click="updateTask"
+        class="custom-dropdown mt-5 ml-auto"
+      >
+        <span>Guardar cambios</span>
+        <template #dropdown>
+          <el-dropdown-menu>
+            <el-dropdown-item @click="canEdit = false">Cancelar edición</el-dropdown-item>
+          </el-dropdown-menu>
+          <el-dropdown-menu>
+            <el-dropdown-item @click="copyToClipboard">Copiar link</el-dropdown-item>
+          </el-dropdown-menu>
+          <el-dropdown-menu v-if="toBool(authUserPermissions[3])">
+            <el-dropdown-item @click="showConfirmModal = true"
+              >Eliminar tarea</el-dropdown-item
+            >
+          </el-dropdown-menu>
+        </template>
+      </el-dropdown>
+    </div>
+    <!-- Form -->
+    <div class="mx-8 mt-3 grid grid-cols-2 gap-x-4 gap-y-2">
       <h2 class="font-bold col-span-full mt-10">Información de la tarea</h2>
       <div>
         <InputLabel value="Proyecto" class="ml-2" />
@@ -128,8 +171,16 @@
       </div>
       <div class="col-span-full">
         <InputLabel value="Descripción" class="ml-2" />
-        <RichText v-if="canEdit" @content="updateDescription($event)" />
-        <div v-else v-html="form.description" class="input cursor-not-allowed min-h-[70px] px-3 py-2"></div>
+        <RichText
+          v-if="canEdit"
+          @content="updateDescription($event)"
+          :defaultValue="form.description"
+        />
+        <div
+          v-else
+          v-html="form.description"
+          class="input cursor-not-allowed min-h-[70px] px-3 py-2"
+        ></div>
         <InputError :message="form.errors.description" />
       </div>
       <div class="col-span-full">
@@ -214,17 +265,14 @@
           </p>
         </div>
         <!-- -------------- Tab 1 comentarios starts ----------------->
-        <div v-if="currentTab == 1" class="mt-7 min-h-[170px]">
+        <div v-if="currentTab == 1" class="my-7 min-h-[170px]">
           <div>
             <figure
               class="flex space-x-2 mt-4"
               v-for="comment in task.data.comments"
               :key="comment"
             >
-              <div
-                v-if="$page.props.jetstream.managesProfilePhotos"
-                class="flex text-sm rounded-full w-10"
-              >
+              <div class="flex text-sm rounded-full w-10">
                 <img
                   class="h-8 w-8 rounded-full object-cover"
                   :src="comment.user?.profile_photo_url"
@@ -233,7 +281,7 @@
               </div>
               <div class="text-sm w-full">
                 <p class="font-bold">{{ comment.user?.name }}</p>
-                <p v-html="comment.body"></p>
+                <p v-html="comment.content"></p>
               </div>
             </figure>
             <div v-if="toBool(authUserPermissions[4])" class="flex space-x-1 mt-5">
@@ -262,7 +310,7 @@
         <!-- ---------------- tab 1 comentarios ends  -------------->
 
         <!-- -------------- Tab 2 documentos starts ----------------->
-        <div v-if="currentTab == 2" class="mt-7 min-h-[170px]">
+        <div v-if="currentTab == 2" class="my-7 min-h-[170px]">
           <a
             :href="file?.original_url"
             target="_blank"
@@ -284,31 +332,20 @@
         <!-- ---------------- tab 3 historial ends  -------------->
       </section>
       <!-- {{ form }} -->
-      <div class="flex justify-end space-x-3 pt-5 pb-1">
-        <CancelButton
-          @click="!canEdit ? (taskInformationModal = false) : (canEdit = false)"
-        >
-          {{ !canEdit ? "Cancelar" : "Cancelar edición" }}
-        </CancelButton>
-        <el-dropdown
-          v-if="toBool(authUserPermissions[2])"
-          split-button
-          type="primary"
-          @click="candEdit ? update : (canEdit = true)"
-          class="custom-dropdown rounded-lg"
-        >
-          <span v-if="canEdit">Guardar cambios</span>
-          <span v-else>Editar</span>
-          <template #dropdown>
-            <el-dropdown-menu v-if="toBool(authUserPermissions[3])">
-              <el-dropdown-item @click="showConfirmModal = true"
-                >Eliminar</el-dropdown-item
-              >
-            </el-dropdown-menu>
-          </template>
-        </el-dropdown>
-      </div>
-    </form>
+    </div>
+
+    <ConfirmationModal :show="showConfirmModal" @close="showConfirmModal = false">
+      <template #title> Eliminar tarea </template>
+      <template #content> ¿Continuar con la eliminación? </template>
+      <template #footer>
+        <div class="flex space-x-1">
+          <CancelButton @click="showConfirmModal = false" class="mr-2"
+            >Cancelar</CancelButton
+          >
+          <PrimaryButton @click="deleteProjectTask">Eliminar</PrimaryButton>
+        </div>
+      </template>
+    </ConfirmationModal>
   </AppLayout>
 </template>
 
@@ -320,6 +357,7 @@ import InputLabel from "@/Components/InputLabel.vue";
 import { Link, useForm } from "@inertiajs/vue3";
 import InputError from "@/Components/InputError.vue";
 import CancelButton from "@/Components/CancelButton.vue";
+import ConfirmationModal from "@/Components/ConfirmationModal.vue";
 import RichText from "@/Components/MyComponents/RichText.vue";
 
 export default {
@@ -389,6 +427,7 @@ export default {
     InputError,
     RichText,
     InputLabel,
+    ConfirmationModal,
   },
   props: {
     task: Object,
@@ -413,6 +452,29 @@ export default {
     },
   },
   methods: {
+    copyToClipboard() {
+      const textToCopy = "Predefined text you want to copy to the clipboard";
+
+      // Create a temporary input element
+      const input = document.createElement("input");
+      input.value = textToCopy;
+      document.body.appendChild(input);
+
+      // Select the content of the input element
+      input.select();
+
+      // Try to copy the text to the clipboard
+      document.execCommand("copy");
+
+      // Remove the temporary input element
+      document.body.removeChild(input);
+
+      this.$notify({
+        title: "Éxito",
+        message: "Se ha copiado el link en el portapapeles",
+        type: "success",
+      });
+    },
     getColorStatus(taskStatus) {
       if (taskStatus === "Por hacer") {
         return "text-gray3";
@@ -450,7 +512,7 @@ export default {
     },
     async playPauseTask(task) {
       try {
-        const response = await axios.put(route("tasks.pause-play", task));
+        const response = await axios.put(route("pms.tasks.pause-play", task));
 
         if (response.status === 200) {
           this.task = response.data.item;
@@ -475,43 +537,29 @@ export default {
         this.taskInformationModal = false;
       }
     },
-    async update() {
-      try {
-        const response = await axios.put(route("tasks.update", this.task), {
-          status: this.form.status,
-          department: this.form.department,
-          participants: this.form.participants,
-          description: this.form.description,
-          priority: this.form.priority,
-          start_date: this.form.start_date,
-          limit_date: this.form.end_date,
-          reminder: this.form.reminder,
-          comment: this.form.comment,
-        });
-        if (response.status === 200) {
-          this.task = response.data.item;
+    updateTask() {
+      this.form.put(route("pms.tasks.update", this.task.data), {
+        onSuccess: () => {
           this.$notify({
             title: "Éxito",
             message: "Se ha actualizado la tarea",
             type: "success",
           });
-          this.task = response.data.item;
-          this.taskInformationModal = false;
-          this.$emit("updated-status", this.task);
-        }
-      } catch (error) {
-        console.log(error);
-      }
+        },
+      });
     },
     async storeComment() {
       const editor = this.$refs.commentEditor;
       if (this.form.comment) {
         this.sendingComments = true;
         try {
-          const response = await axios.post(route("tasks.comment", this.task.data.id), {
-            comment: this.form.comment,
-            mentions: editor.mentions,
-          });
+          const response = await axios.post(
+            route("pms.tasks.comment", this.task.data.id),
+            {
+              comment: this.form.comment,
+              mentions: editor.mentions,
+            }
+          );
           if (response.status === 200) {
             this.task.data.comments.push(response.data.item);
             this.form.comment = null;
@@ -549,9 +597,15 @@ export default {
       }
     },
     deleteProjectTask() {
-      this.$emit("delete-task", this.task.data.id);
-      this.taskInformationModal = false;
-      this.showConfirmModal = false;
+      this.form.delete(route("pms.tasks.destroy", this.task.data), {
+        onSuccess: () => {
+          this.$notify({
+            title: "Éxito",
+            message: "Se ha eliminado la tarea",
+            type: "success",
+          });
+        },
+      });
     },
   },
 

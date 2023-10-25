@@ -42,7 +42,7 @@
             <p class="text-primary mr-1"> + {{ taskComponentLocal?.users.length - 2 }}</p>
             <template #content>
               <div>
-                <p v-for="user in taskComponentLocal?.users.slice(1, taskComponentLocal?.users.length)" :key="user">{{
+                <p v-for="user in taskComponentLocal?.users.slice(2, taskComponentLocal?.users.length)" :key="user">{{
                   user.name }}</p>
               </div>
             </template>

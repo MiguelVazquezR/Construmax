@@ -268,7 +268,6 @@ export default {
             currentTab: 1,
             uniqueUsers: [],
             maxUsersToShow: 3,
-            selectedProject: "",
             currentProject: null,
             period: "Mes", //period of time in cronograma table tab 3
             pendingTasksList: [],

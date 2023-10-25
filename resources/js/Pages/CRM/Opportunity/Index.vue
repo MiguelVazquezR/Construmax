@@ -1,14 +1,355 @@
 <template>
     <AppLayout title="Oportunidades">
-        
+    <div @click="show_type_view = false" class="flex flex-col md:mx-9 md:my-7 space-y-3 m-1">
+      <div class="flex justify-between">
+        <label class="text-lg">Oportunidades</label>
+      </div>
+      <div class="flex justify-between">
+        <div v-if="type_view == 'Lista'" class="w-1/3 relative ">
+          <input @keyup.enter="handleSearch" v-model="inputSearch" class="input outline-none pr-8"
+            placeholder="Buscar proyecto" />
+          <i class="fa-solid fa-magnifying-glass absolute top-2 right-4 text-xs text-[#9A9A9A]"></i>
+        </div>
+        <span v-if="type_view == 'Kanban'"></span>
+        <div class="flex items-center space-x-2">
+          <div @click.stop="show_type_view = !show_type_view"
+            class="flex items-center text-primary mr-7 cursor-pointer relative">
+            <p class="text-sm">{{ type_view }}</p>
+            <i class="fa-solid fa-angle-down text-sm ml-2"></i>
+            <div v-if="show_type_view" class="text-sm absolute -bottom-10 -left-4 border rounded-md py-1 px-1">
+              <p v-if="type_view == 'Lista'" @click="type_view = 'Kanban'"
+                class="cursor-pointer hover:bg-orange-100 rounded-full py-1 px-3">
+                Kanban
+              </p>
+              <p v-if="type_view == 'Kanban'" @click="type_view = 'Lista'"
+                class="cursor-pointer hover:bg-orange-100 rounded-full py-1 px-3">
+                Lista
+              </p>
+            </div>
+          </div>
+          <Link v-if="$page.props.auth.user.permissions?.includes('Crear oportunidades') || true"
+            :href="route('crm.opportunities.create')">
+          <PrimaryButton class="rounded-lg">Nueva oportunidad</PrimaryButton>
+          </Link>
+          <!-- <Dropdown
+            align="right"
+            width="48"
+            v-if="$page.props.auth.user.permissions.includes('Eliminar oportunidades')"
+          >
+            <template #trigger>
+              <button class="h-9 px-3 rounded-lg bg-[#D9D9D9] flex items-center text-sm">
+                Más <i class="fa-solid fa-chevron-down text-[11px] ml-2"></i>
+              </button>
+            </template>
+            <template #content>
+              <DropdownLink
+                @click="showConfirmModal = true"
+                as="button"
+                v-if="
+                  $page.props.auth.user.permissions.includes('Eliminar oportunidades')
+                "
+              >
+                Eliminar
+              </DropdownLink>
+            </template>
+          </Dropdown> -->
+        </div>
+      </div>
+    </div>
+
+    <!-- ------------ Kanban view starts ----------------- -->
+    <div v-if="type_view === 'Kanban'" class="mx-4 contenedor text-center text-sm my-16 pb-9">
+      <!-- ---- Nueva --- -->
+      <section class="seccion">
+        <h2 class="text-[#9A9A9A] bg-[#D9D9D9] border border-[#9A9A9A] py-1">Nueva</h2>
+        <div class="border border-[#9A9A9A] p-2 min-h-full">
+          <!-- <p class="text-[#9A9A9A] cursor-pointer mt-1">+ Agregar</p> -->
+          <p class="text-primary text-xl my-2">
+            ${{ newTotal?.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",") ?? "0.00" }}
+          </p>
+          <draggable @start="handleStartDrag" @add="handleAddDrag" @end="drag = false" v-model="newOportunitiesLocal"
+            :animation="300" item-key="id" tag="ul" group="oportunities" id="new"
+            :class="(drag && !newOportunitiesLocal?.length) ? 'h-40' : ''">
+            <template #item="{ element: oportunity }">
+              <li>
+                <OportunityCard class="my-3" :oportunity="oportunity" />
+              </li>
+            </template>
+          </draggable>
+          <div class="text-center" v-if="!newOportunitiesLocal?.length">
+            <p class="text-xs text-gray-500 mt-6">No hay oportunidades en este estatus</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ---- Pendiente de aprobación --- -->
+      <section class="seccion">
+        <h2 class="text-[#C88C3C] bg-[#F3FD85] border border-[#9A9A9A] py-1">
+          Pendiente de aprobación
+        </h2>
+        <div class="border border-[#9A9A9A] p-2 min-h-full">
+          <!-- <p class="text-[#9A9A9A] cursor-pointer mt-1">+ Agregar</p> -->
+          <p class="text-primary text-xl my-2">
+            ${{
+              pendingTotal?.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",") ?? "0.00"
+            }}
+          </p>
+          <draggable @start="handleStartDrag" @add="handleAddDrag" @end="drag = false" v-model="pendingOportunitiesLocal"
+            :animation="300" item-key="id" tag="ul" group="oportunities" id="pending"
+            :class="(drag && !pendingOportunitiesLocal?.length) ? 'h-40' : ''">
+            <template #item="{ element: oportunity }">
+              <li>
+                <OportunityCard class="my-3" :oportunity="oportunity" />
+              </li>
+            </template>
+          </draggable>
+          <div class="text-center" v-if="!pendingOportunitiesLocal?.length">
+            <p class="text-xs text-gray-500 mt-6">No hay oportunidades en este estatus</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ---- En progreso --- -->
+      <section class="seccion">
+        <h2 class="text-[#FD8827] bg-[#FEDBBD] border border-[#9A9A9A] py-1">
+          En progreso
+        </h2>
+        <div class="border border-[#9A9A9A] p-2 min-h-full">
+          <!-- <p class="text-[#9A9A9A] cursor-pointer mt-1">+ Agregar</p> -->
+          <p class="text-primary text-xl my-2">
+            ${{
+              inProgressTotal?.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",") ?? "0.00"
+            }}
+          </p>
+          <draggable @start="handleStartDrag" @add="handleAddDrag" @end="drag = false" v-model="progressOportunitiesLocal"
+            :animation="300" item-key="id" tag="ul" group="oportunities" id="progress"
+            :class="(drag && !progressOportunitiesLocal?.length) ? 'h-40' : ''">
+            <template #item="{ element: oportunity }">
+              <li>
+                <OportunityCard class="my-3" :oportunity="oportunity" />
+              </li>
+            </template>
+          </draggable>
+          <div class="text-center" v-if="!progressOportunitiesLocal?.length">
+            <p class="text-xs text-gray-500 mt-6">No hay oportunidades en este estatus</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ---- Pagado --- -->
+      <section class="seccion">
+        <h2 class="text-[#37951F] bg-[#AFFDB2] border border-[#9A9A9A] py-1">Pagado</h2>
+        <div class="border border-[#9A9A9A] p-2 min-h-full">
+          <!-- <p class="text-[#9A9A9A] cursor-pointer mt-1">+ Agregar</p> -->
+          <p class="text-primary text-xl my-2">
+            ${{ paidTotal?.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",") ?? "0.00" }}
+          </p>
+          <draggable @start="handleStartDrag" @add="handleAddDrag" @end="drag = false" v-model="paidOportunitiesLocal"
+            :animation="300" item-key="id" tag="ul" group="oportunities" id="paid"
+            :class="(drag && !paidOportunitiesLocal?.length) ? 'h-40' : ''">
+            <template #item="{ element: oportunity }">
+              <li>
+                <OportunityCard class="my-3" :oportunity="oportunity" />
+              </li>
+            </template>
+          </draggable>
+          <div class="text-center" v-if="!paidOportunitiesLocal?.length">
+            <p class="text-xs text-gray-500 mt-6">No hay oportunidades en este estatus</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ---- Perdidas --- -->
+      <section class="seccion">
+        <h2 class="text-[#9E0FA9] bg-[#F7B7FC] border border-[#9A9A9A] py-1">Perdidas</h2>
+        <div class="border border-[#9A9A9A] p-2 min-h-full">
+          <!-- <p class="text-[#9A9A9A] cursor-pointer mt-1">+ Agregar</p> -->
+          <p class="text-primary text-xl my-2">
+            ${{ lostTotal?.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",") ?? "0.00" }}
+          </p>
+          <draggable @start="handleStartDrag" @add="handleAddDrag" @end="drag = false" v-model="lostOportunitiesLocal"
+            :animation="300" item-key="id" tag="ul" group="oportunities" id="lost"
+            :class="(drag && !lostOportunitiesLocal?.length) ? 'h-40' : ''">
+            <template #item="{ element: oportunity }">
+              <li>
+                <OportunityCard class="my-3" :oportunity="oportunity" />
+              </li>
+            </template>
+          </draggable>
+          <div class="text-center" v-if="!lostOportunitiesLocal?.length">
+            <p class="text-xs text-gray-500 mt-6">No hay oportunidades en este estatus</p>
+          </div>
+        </div>
+      </section>
+    </div>
+    <!-- ------------ Kanban view ends ----------------- -->
+
+    <!-- ------------ Lista view starts ----------------- -->
+    <div v-if="type_view === 'Lista'" class="w-11/12 mx-auto my-16">
+    <div v-if="opportunities?.length">
+      <table class="lg:w-[90%] w-full mx-auto">
+        <thead>
+          <tr class="text-left">
+            <th class="font-bold pb-5">
+              Nombre <i class="fa-solid fa-arrow-down-long ml-3"></i>
+            </th>
+            <th class="font-bold pb-5">
+              Estatus <i class="fa-solid fa-arrow-down-long ml-3"></i>
+            </th>
+            <th class="font-bold pb-5">
+              Fecha inicio <i class="fa-solid fa-arrow-down-long ml-3"></i>
+            </th>
+            <th class="font-bold pb-5">
+              Estimación de cierre <i class="fa-solid fa-arrow-down-long ml-3"></i>
+            </th>
+            <th class="font-bold pb-5">
+              Cerrada el <i class="fa-solid fa-arrow-down-long ml-3"></i>
+            </th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="oportunity in filteredTableData" :key="oportunity.id"
+            class="mb-4 cursor-pointer hover:bg-[#dfdbdba8]"
+            @click="$inertia.get(route('oportunities.show', oportunity.id))">
+            <td class="text-left py-2 px-2 rounded-l-full">
+              {{ oportunity.name }}
+            </td>
+            <td class="text-left py-2 px-2">
+              <span class="py-1 px-4 rounded-full" :class="getStatusStyles(oportunity)">{{ oportunity.status }}</span>
+            </td>
+            <td class="text-left py-2 px-2">
+              <span class="py-1 px-2 rounded-full">{{ oportunity.created_at.isoFormat }}</span>
+            </td>
+            <td class="text-left py-2 px-2">
+              {{ oportunity.estimated_finish_date }}
+            </td>
+            <td class="text-left py-2 px-2">
+              {{ oportunity.finished_at ?? "--" }}
+            </td>
+            <td v-if="$page.props.auth.user.permissions.includes('Eliminar oportunidades')"
+              class="text-left py-2 px-2 rounded-r-full">
+              <el-popconfirm confirm-button-text="Si" cancel-button-text="No" icon-color="#D90537" title="¿Eliminar?"
+                @confirm="deleteOportunity(oportunity)">
+                <template #reference>
+                  <i @click.stop="" class="fa-regular fa-trash-can text-primary cursor-pointer p-2"></i>
+                </template>
+              </el-popconfirm>
+            </td>
+          </tr>
+        </tbody>
+      </table>           
+    </div>
+    <div v-else>
+        <p class="text-sm text-center">No hay oportunidades para mostrar</p>
+    </div>
+</div>
+    <!-- ------------ Lista view ends ----------------- -->
      </AppLayout>
  </template>
  <script>
- import AppLayout from '@/Layouts/AppLayout.vue';
+import AppLayout from '@/Layouts/AppLayout.vue';
+import Dropdown from "@/Components/Dropdown.vue";
+import DropdownLink from "@/Components/DropdownLink.vue";
+import PrimaryButton from "@/Components/PrimaryButton.vue";
+import OportunityCard from "@/Components/MyComponents/CRM/OportunityCard.vue";
+import SecondaryButton from "@/Components/SecondaryButton.vue";
+import draggable from 'vuedraggable';
+import { Link } from "@inertiajs/vue3";
  
  export default {
+    data(){
+        return{
+            search: "",
+            inputSearch: "",
+            show_type_view: false,
+            type_view: "Kanban",
+            newTotal: null,
+            pendingTotal: null,
+            inProgressTotal: null,
+            paidTotal: null,
+            lostTotal: null,
+            newOportunitiesLocal: [],
+            pendingOportunitiesLocal: [],
+            progressOportunitiesLocal: [],
+            paidOportunitiesLocal: [],
+            lostOportunitiesLocal: [],
+            drag: false,
+            draggingOpportunityId: null,
+            oportunitiesLocal: null,
+        }
+    },
      components: {
-         AppLayout,
-     }
+        AppLayout,
+        Dropdown,
+        DropdownLink,
+        PrimaryButton,
+        SecondaryButton,
+        OportunityCard,
+        draggable,
+        Link,
+     },
+     props:{
+        opportunities: Object,
+     },
+     methods:{
+        handleSearch() {
+      this.search = this.inputSearch;
+        },
+        handleStartDrag(evt) {
+      this.draggingOpportunityId = evt.item.__draggable_context.element.id;
+      this.drag = true;
+    },
+    handleAddDrag(evt) {
+      let status = 'Perdida';
+      if (evt.to.id === 'new') {
+        status = 'Nueva';
+      } else if (evt.to.id === 'pending') {
+        status = 'Pendiente';
+      } else if (evt.to.id === 'progress') {
+        status = 'En proceso';
+      } else if (evt.to.id === 'paid') {
+        status = 'Pagado';
+      } else if (evt.to.id === 'lost') {
+        status = 'Perdida';
+      }
+
+      this.updateOpportunityStatus(status);
+      this.drag = false;
+    },      
+     },
+     computed: {
+    filteredTableData() {
+      if (!this.search) {
+        return this.oportunities.data;
+      } else {
+        return this.oportunities.data.filter((oportunity) =>
+          oportunity.name.toLowerCase().includes(this.search.toLowerCase()) ||
+          oportunity.status.toLowerCase().includes(this.search.toLowerCase())
+        );
+      }
+    },
+  },
+  mounted() {
+    this.oportunitiesLocal = this.oportunities.data;
+    this.updateLists();
+    // Calcula el dinero total de cada sección
+    this.calculateTotals();
+  },
  }
  </script>
+
+<style>
+.contenedor {
+  display: flex;
+  overflow-x: scroll;
+  /* Permite el desplazamiento horizontal */
+  white-space: nowrap;
+  /* Evita el salto de línea de las secciones */
+}
+
+.seccion {
+  flex: 0 0 25%;
+  /* Establece el ancho de cada sección al 25% */
+}
+</style>

@@ -20,6 +20,10 @@ Route::resource('projects', ProjectController::class)->middleware('auth')->names
 Route::resource('tasks', TaskController::class)->middleware('auth')->names('pms.tasks');
 Route::resource('project-groups', ProjectGroupController::class)->middleware('auth')->names('pms.project-groups');
 Route::resource('tags', TagController::class)->middleware('auth')->names('pms.tags');
+Route::post('tasks-{task}-comment', [TaskController::class, 'comment'])->name('pms.tasks.comment')->middleware('auth');
+Route::put('tasks-{task}-pause-play', [TaskController::class, 'pausePlayTask'])->name('pms.tasks.pause-play')->middleware('auth');
+Route::put('tasks-{task}-update-status', [TaskController::class, 'updateStatus'])->name('pms.tasks.update-status')->middleware('auth');
+Route::get('tasks-late-tasks', [TaskController::class, 'getLateTasks'])->middleware('auth')->name('pms.tasks.get-late-tasks');
 
 // crm routes
 Route::get('crm/dashboard', [CRMController::class, 'dashboard'])->middleware('auth')->name('crm.dashboard');

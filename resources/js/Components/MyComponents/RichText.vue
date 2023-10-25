@@ -51,6 +51,7 @@
         >
           <template v-for="item in userList" :key="item.id">
             <li
+              v-if="item.id !== $page.props.auth.user.id"
               type="button"
               @click="mentionUser(item)"
               class="flex items-center px-2 py-1 space-x-2 text-xs mb-1 hover:bg-primarylight cursor-pointer"

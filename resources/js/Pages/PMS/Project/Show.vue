@@ -122,7 +122,7 @@
                 <span>{{ currentProject?.currency }}</span>
                 <span class="text-gray-500">Monto</span>
                 <span>${{ currentProject?.budget?.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",") }}</span>
-                <span class="text-gray-500 my-2">Método de facturación</span>
+                <span class="text-gray-500 my-2">Condiciones de pago</span>
                 <span>{{ currentProject?.invoice_type }}</span>
 
                 <p class="text-secondary col-span-full mt-7 font-bold">Etiquetas</p>

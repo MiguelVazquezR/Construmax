@@ -56,11 +56,7 @@ class TaskController extends Controller
 
     public function show(Task $task)
     {
-        $task = TaskResource::make(Task::with(['project.users', 'user', 'users', 'comments'])->find($task->id));
-        // $users = User::where('is_active', true)->get();
-        // $projects = Project::with(['users'])->latest()->get();
-        // $users = User::where('is_active', true)->get();
-        // $parent_id = $request->input('projectId') ?? 1;
+        $task = TaskResource::make(Task::with(['project.users', 'user', 'users', 'comments.user'])->find($task->id));
 
         return inertia('PMS/Task/Show', compact('task'));
     }
@@ -85,11 +81,7 @@ class TaskController extends Controller
 
         $task->update($validated);
 
-        //agregar nuevos participantes
-        foreach ($request->participants as $user_id) {
-            // Adjuntar el usuario a la tarea
-            $task->participants()->attach($user_id);
-        }
+        $task->users()->sync($request->participants);
 
         if ($request->comment) {
             $comment = new Comment([
@@ -101,15 +93,15 @@ class TaskController extends Controller
 
         $this->handleUpdatedTaskStatus($task->project_id);
 
-        // event(new RecordEdited($task));
-
-        return response()->json(['item' => TaskResource::make($task->fresh(['participants', 'project', 'user', 'comments.user', 'media']))]);
+        return to_route('pms.projects.show', ['project' => $task->project_id, 'defaultTab' => 2]);
     }
 
 
     public function destroy(Task $task)
     {
-        //
+        $task->delete();
+
+        return to_route('pms.projects.show', ['project' => $task->project_id, 'defaultTab' => 2]);
     }
 
 
@@ -121,8 +113,7 @@ class TaskController extends Controller
             'user_id' => auth()->id(),
         ]);
         $task->comments()->save($comment);
-        // event(new RecordCreated($comment)); me dice que el id del usuario no tiene un valor por default.
-        // return to_route('projects.show', ['project' => $request->project_id]);
+
         return response()->json(['item' => $comment->fresh('user')]);
     }
 
@@ -139,7 +130,7 @@ class TaskController extends Controller
         }
         $task->save();
 
-        return response()->json(['item' => TaskResource::make($task->fresh(['participants', 'project', 'user', 'comments.user', 'media']))]);
+        return response()->json(['item' => TaskResource::make($task->fresh(['users', 'project', 'user', 'comments.user', 'media']))]);
     }
 
     public function updateStatus(Task $task, Request $request)
@@ -152,7 +143,7 @@ class TaskController extends Controller
 
     public function getLateTasks()
     {
-        $late_tasks = Task::with(['participants', 'project'])->where('status', '!=', 'Terminada')->whereDate('end_date', '<', today())->get();
+        $late_tasks = Task::with(['users', 'project'])->where('status', '!=', 'Terminada')->whereDate('end_date', '<', today())->get();
 
         $currentDate = today();
 

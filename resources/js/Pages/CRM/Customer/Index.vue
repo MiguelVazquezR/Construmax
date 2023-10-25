@@ -5,23 +5,22 @@
         </div>
 
         <div class="flex justify-between mt-5 mx-1 lg:mx-16">
-        <div class="w-1/3 relative">
-            <input @keyup.enter="handleSearch" v-model="inputSearch" class="input pr-8" placeholder="Buscar cliente" />
-            <i class="fa-solid fa-magnifying-glass absolute top-2 right-4 text-xs text-gray2"></i>
-        </div>
-        <div class="flex items-center">
-            <el-dropdown split-button type="primary" @click="$inertia.get(route('crm.customers.create'))">
-                Nuevo cliente
-                <template #dropdown>
-                <el-dropdown-menu>
-                    <el-dropdown-item @click="update">Enviar correo</el-dropdown-item>
-                    <el-dropdown-item @click="showConfirmModal= true">Registar pago</el-dropdown-item>
-                    <el-dropdown-item @click="showConfirmModal= true">Agendar cita</el-dropdown-item>
-                </el-dropdown-menu>
-                </template>
-            </el-dropdown>
-            <i class="fa-solid fa-pencil ml-3 text-primary rounded-full p-2 bg-[#FEDBBD] cursor-pointer"></i>
-        </div>
+          <div class="w-1/3 relative">
+              <input @keyup.enter="handleSearch" v-model="inputSearch" class="input pr-8" placeholder="Buscar cliente" />
+              <i class="fa-solid fa-magnifying-glass absolute top-2 right-4 text-xs text-gray2"></i>
+          </div>
+          <div class="flex items-center">
+              <el-dropdown split-button type="primary" @click="$inertia.get(route('crm.customers.create'))">
+                  Nuevo cliente
+                  <template #dropdown>
+                  <el-dropdown-menu>
+                      <el-dropdown-item @click="update">Enviar correo</el-dropdown-item>
+                      <el-dropdown-item @click="showConfirmModal= true">Registar pago</el-dropdown-item>
+                      <el-dropdown-item @click="showConfirmModal= true">Agendar cita</el-dropdown-item>
+                  </el-dropdown-menu>
+                  </template>
+              </el-dropdown>
+          </div>
     </div>
 
 <!-- Customer table ----------------------------------------------------------------------------------------------------->
@@ -43,25 +42,25 @@
           <tr v-for="customer in filteredTableData" :key="customer.id" class="mb-4 cursor-pointer hover:bg-[#dfdbdba8]"
             @click="$inertia.get(route('crm.customers.show', customer.id))">
             <td class="text-left py-2 pr-2 pl-4 rounded-l-full">
-              {{ customer.folio }}
+              {{ customer.id }}
             </td>
             <td class="text-left py-2">
               {{ customer.name }}
             </td>
             <td class="text-left py-2">
-              {{ customer.service_type }}
+              {{ customer.rfc }}
             </td>
             <td class="text-left py-2 px-2">
-              {{ customer.owner.name }}
+              {{ customer.created_at }}
             </td>
             <td class="text-left py-2 px-2">
-              {{ customer.start_date }}
+              {{ customer.contact_name }}
             </td>
             <td class="text-left py-2 px-2">
-              {{ customer.limit_date }}
+              {{ customer.contact_phone }}
             </td>
             <td class="text-left py-2 px-2 rounded-r-full">
-              {{ customer.finished_at ?? '--' }}
+              {{ customer.contact_email ?? '--' }}
             </td>
           </tr>
         </tbody>
@@ -110,12 +109,12 @@ computed: {
       } else {
         return this.customers.data.filter(
           (customer) =>
-            customer.id.toString().includes(this.search.toString()) ||
+            customer.id.toString().toLowerCase().includes(this.search.toLowerCase()) ||
             customer.name.toLowerCase().includes(this.search.toLowerCase()) ||
             customer.rfc.toLowerCase().includes(this.search.toLowerCase()) ||
-            customer.contact.toLowerCase().includes(this.search.toLowerCase()) ||
-            customer.phone.toLowerCase().includes(this.search.toLowerCase()) ||
-            customer.email.toLowerCase().includes(this.search.toLowerCase())
+            customer.contact_name.toLowerCase().includes(this.search.toLowerCase()) ||
+            customer.contact_phone.toLowerCase().includes(this.search.toLowerCase()) ||
+            customer.contact_email.toLowerCase().includes(this.search.toLowerCase())
         )
       }
     }

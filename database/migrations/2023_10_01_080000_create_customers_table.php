@@ -18,8 +18,14 @@ return new class extends Migration
             $table->string('currency');
             $table->string('rfc');
             $table->string('zipcode', 5);
+            $table->string('contact_name');
+            $table->string('contact_phone');
+            $table->string('contact_email')->nullable();
+            $table->string('invoicing_method');
+            $table->string('payment_method');
+            $table->string('invoice_use');
             $table->foreignId('user_id')->constrained();
-            $table->foreignId('contact_id')->constrained();
+            //$table->foreignId('contact_id')->constrained();
             $table->timestamps();
         });
     }

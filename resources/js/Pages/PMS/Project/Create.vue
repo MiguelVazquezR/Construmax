@@ -356,7 +356,7 @@ export default {
       limit_date: null,
       is_strict: false,
       is_internal: false,
-      description: '<div><b>jeu</b></div>',
+      description: null,
       tags: null,
       project_group_id: null,
       service_type: null,

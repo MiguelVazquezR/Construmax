@@ -369,6 +369,7 @@ export default {
       service_type: this.project.service_type,
       address: this.project.address,
       opportunity_id: this.project.opportunity_id,
+      customer_id: parseInt(this.project.opportunity?.customer_id),
       currency: this.project.currency,
       budget: this.project.budget,
       invoice_type: this.project.invoice_type,
@@ -477,7 +478,7 @@ export default {
     },
     update() {
       if (this.form.media.length) {
-        this.form.post(route("pms.projects.update-with-media", this.project.data.id), {
+        this.form.post(route("pms.projects.update-with-media", this.project.id), {
           method: '_put',
           onSuccess: () => {
             this.$notify({
@@ -489,7 +490,7 @@ export default {
           },
         });
       } else {
-        this.form.put(route("pms.projects.update", this.project.data.id), {
+        this.form.put(route("pms.projects.update", this.project.id), {
           onSuccess: () => {
             this.$notify({
               title: "Correcto",
@@ -661,6 +662,7 @@ export default {
   mounted() {
     // this.selectAdmins();
     this.form.tags = this.project.tags.map(tag => tag.id);
+    this.updateBranches()
   }
 }
 </script>

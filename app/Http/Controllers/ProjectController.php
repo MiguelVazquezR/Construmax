@@ -141,7 +141,7 @@ class ProjectController extends Controller
         // Adjunta las etiquetas al proyecto utilizando la relación polimórfica
         $project->tags()->sync($tagIds);
 
-        return to_route('projects.show', $project);
+        return to_route('pms.projects.show', $project);
         //event(new RecordEdited($project));
     }
 
@@ -189,7 +189,7 @@ class ProjectController extends Controller
         // archivos adjuntos
         $project->addAllMediaFromRequest()->each(fn ($file) => $file->toMediaCollection());
 
-        return to_route('projects.show', $project);
+        return to_route('pms.projects.show', $project);
         //event(new RecordEdited($project));
     }
 

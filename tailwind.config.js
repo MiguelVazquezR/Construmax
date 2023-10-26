@@ -23,6 +23,7 @@ export default {
                 gray1: '#313131',
                 gray2: '#97989A',
                 gray3: '#BEBFC1',
+                gray4: '#D9D9D9',
             },
         },
     },

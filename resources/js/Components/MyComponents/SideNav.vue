@@ -15,7 +15,7 @@
                             </button>
                         </div>
                     </Accordion>
-                    <button v-else @click="goToRoute(menu.route)" v-if="menu.show" :active="menu.active"  :title="menu.label"
+                    <button v-else @click="goToRoute(menu.route)" v-if="menu.show" :active="menu.active" :title="menu.label"
                         class="w-full text-start px-2 mb-1 flex justify-between text-xs rounded-md py-1"
                         :class="menu.active ? 'bg-[#FD8827] text-white' : 'hover:text-[#FD8827]'">
                         <p class="w-full truncate"><span v-html="menu.icon"></span> {{ menu.label }}</p>
@@ -103,7 +103,15 @@ export default {
                     icon: '<i class="fa-solid fa-gear mr-1"></i>',
                     route: route('settings.index'),
                     active: route().current('settings.*'),
-                    options: [],
+                    options: [
+                        {
+                            label: 'Roles y permisos',
+                            route: route('settings.role-permission.index'),
+                            // show: this.$page.props.auth.user.permissions.includes('Inicio settings'),
+                            active: route().current('settings.role-permission.index'),
+                            show: true,
+                        },
+                    ],
                     // show: this.$page.props.auth.user.permissions.includes('Ver configuraciones')
                     show: true,
                 },

@@ -31,7 +31,6 @@ return new class extends Migration
             $table->foreignId('contact_id')->constrained();
             $table->foreignId('customer_id')->nullable()->constrained();
             $table->foreignId('user_id')->constrained();
-            $table->string('contact_id')->nullable();
             $table->unsignedBigInteger('seller_id');
             $table->foreign('seller_id')->references('id')->on('users');
             $table->timestamps();

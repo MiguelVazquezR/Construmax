@@ -9,6 +9,7 @@ use App\Http\Controllers\ProjectGroupController;
 use App\Http\Controllers\SettingController;
 use App\Http\Controllers\TagController;
 use App\Http\Controllers\TaskController;
+use App\Http\Controllers\UserController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -34,7 +35,11 @@ Route::resource('opportunities', OpportunityController::class)->middleware('auth
 Route::resource('settings', SettingController::class)->middleware('auth');
 
 // users routes
-Route::resource('users', SettingController::class)->middleware('auth');
+Route::resource('users', UserController::class)->middleware('auth');
+Route::get('users-get-notifications', [UserController::class, 'getNotifications'])->name('users.get-user-notifications')->middleware('auth');
+Route::delete('users-delete-notifications', [UserController::class, 'deleteNotifications'])->name('users.delete-user-notifications')->middleware('auth');
+Route::post('users-read-notifications', [UserController::class, 'readNotifications'])->name('users.read-user-notifications')->middleware('auth');
+Route::put('users-{user}-toggle-status', [UserController::class, 'toggleStatus'])->name('users.toggle-status')->middleware('auth');
 
 
 // default routes

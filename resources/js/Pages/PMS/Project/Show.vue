@@ -423,7 +423,6 @@ export default {
             }
         },
     },
-
     mounted() {
         this.selectedProject = this.project.data.id;
         this.currentProject = this.projects.data.find((item) => item.id == this.selectedProject);

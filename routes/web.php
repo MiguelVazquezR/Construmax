@@ -27,11 +27,13 @@ Route::post('tasks-{task}-comment', [TaskController::class, 'comment'])->name('p
 Route::put('tasks-{task}-pause-play', [TaskController::class, 'pausePlayTask'])->name('pms.tasks.pause-play')->middleware('auth');
 Route::put('tasks-{task}-update-status', [TaskController::class, 'updateStatus'])->name('pms.tasks.update-status')->middleware('auth');
 Route::get('tasks-late-tasks', [TaskController::class, 'getLateTasks'])->middleware('auth')->name('pms.tasks.get-late-tasks');
+Route::get('/tasks-format/{task_id}', [TaskController::class, 'taskFormat'])->middleware('auth')->name('pms.tasks-format');
 
 // crm routes
 Route::get('crm/dashboard', [CRMController::class, 'dashboard'])->middleware('auth')->name('crm.dashboard');
 Route::resource('customers', CustomerController::class)->middleware('auth')->names('crm.customers');
 Route::resource('opportunities', OpportunityController::class)->middleware('auth')->names('crm.opportunities');
+Route::put('/opportunities/update-status/{opportunity_id}', [OpportunityController::class, 'updateStatus'])->name('crm.opportunities.update-status')->middleware('auth');
 
 // settings routes
 Route::resource('settings', SettingController::class)->middleware('auth');

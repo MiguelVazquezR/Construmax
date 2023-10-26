@@ -28,6 +28,7 @@ class CustomerResource extends JsonResource
             'payment_method' => $this->payment_method,
             'invoice_use' => $this->invoice_use,
             'user' => $this->whenLoaded('user'),
+            'contacts' => $this->whenLoaded('contacts'),
             'tags' => TagResource::collection($this->whenLoaded('tags')),
             'created_at' => $this->created_at?->isoFormat('DD MMMM YYYY'),
             'updated_at' => $this->updated_at?->isoFormat('DD MMMM YYYY'),

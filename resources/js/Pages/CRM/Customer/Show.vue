@@ -129,7 +129,7 @@ data() {
             'Oportunidades',
             'Seguimiento integral',
             'Historial',
-            ]
+            ],
     }
 },
 components: {

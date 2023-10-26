@@ -453,7 +453,7 @@ export default {
   },
   methods: {
     copyToClipboard() {
-      const textToCopy = "Predefined text you want to copy to the clipboard";
+      const textToCopy = "http://localhost:8000/tasks-format/"+this.task.data.id;
 
       // Create a temporary input element
       const input = document.createElement("input");

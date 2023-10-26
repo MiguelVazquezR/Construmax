@@ -6,6 +6,7 @@ use App\Http\Controllers\OpportunityController;
 use App\Http\Controllers\PMSController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\ProjectGroupController;
+use App\Http\Controllers\RolePermissionController;
 use App\Http\Controllers\SettingController;
 use App\Http\Controllers\TagController;
 use App\Http\Controllers\TaskController;
@@ -20,6 +21,7 @@ Route::get('pms/dashboard', [PMSController::class, 'dashboard'])->middleware('au
 Route::resource('projects', ProjectController::class)->middleware('auth')->names('pms.projects');
 Route::resource('tasks', TaskController::class)->middleware('auth')->names('pms.tasks');
 Route::resource('project-groups', ProjectGroupController::class)->middleware('auth')->names('pms.project-groups');
+Route::post('projects/update-with-media/{project}', [ProjectController::class, 'updateWithMedia'])->name('pms.projects.update-with-media')->middleware('auth');
 Route::resource('tags', TagController::class)->middleware('auth')->names('pms.tags');
 Route::post('tasks-{task}-comment', [TaskController::class, 'comment'])->name('pms.tasks.comment')->middleware('auth');
 Route::put('tasks-{task}-pause-play', [TaskController::class, 'pausePlayTask'])->name('pms.tasks.pause-play')->middleware('auth');
@@ -41,6 +43,14 @@ Route::delete('users-delete-notifications', [UserController::class, 'deleteNotif
 Route::post('users-read-notifications', [UserController::class, 'readNotifications'])->name('users.read-user-notifications')->middleware('auth');
 Route::put('users-{user}-toggle-status', [UserController::class, 'toggleStatus'])->name('users.toggle-status')->middleware('auth');
 
+// ------- Roles and permissions Routes ---------
+Route::get('role-permission', [RolePermissionController::class, 'index'])->middleware('auth')->name('settings.role-permission.index');
+Route::put('role-permission/{role}/edit-role', [RolePermissionController::class, 'updateRole'])->middleware('auth')->name('settings.role-permission.update-role');
+Route::post('role-permission/store-role', [RolePermissionController::class, 'storeRole'])->middleware('auth')->name('settings.role-permission.store-role');
+Route::delete('role-permission/{role}/destroy-role', [RolePermissionController::class, 'deleteRole'])->middleware('auth')->name('settings.role-permission.delete-role');
+Route::put('role-permission/{permission}/edit-permission', [RolePermissionController::class, 'updatePermission'])->middleware('auth')->name('settings.role-permission.update-permission');
+Route::post('role-permission/store-permission', [RolePermissionController::class, 'storePermission'])->middleware('auth')->name('settings.role-permission.store-permission');
+Route::delete('role-permission/{permission}/destroy-permission', [RolePermissionController::class, 'deletePermission'])->middleware('auth')->name('settings.role-permission.delete-permission');
 
 // default routes
 Route::get('/', function () {

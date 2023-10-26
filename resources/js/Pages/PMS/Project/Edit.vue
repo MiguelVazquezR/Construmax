@@ -9,7 +9,7 @@
       </p>
       </Link>
     </div>
-    <form @submit.prevent="store" class="mx-8 mt-3 grid grid-cols-2 gap-x-4 gap-y-2">
+    <form @submit.prevent="update" class="mx-8 mt-3 grid grid-cols-2 gap-x-4 gap-y-2">
       <div>
         <InputLabel value="Título del proyecto *" class="ml-2" />
         <input v-model="form.name" type="text" class="input mt-1" placeholder="Asignar un nombre al proyecto" required>
@@ -64,10 +64,18 @@
       </div>
       <div class="mt-5 col-span-full">
         <InputLabel value="Descripción" class="ml-2" />
-        <RichText @content="updateDescription($event)" />
+        <RichText @content="updateDescription($event)" :defaultValue="form.description" />
       </div>
       <div class="ml-2 mt-2 col-span-full flex">
         <FileUploader @files-selected="this.form.media = $event" />
+      </div>
+      <div class="col-span-full">
+        <li v-for="file in media" :key="file" class="flex items-center justify-between">
+          <a :href="file.original_url" target="_blank" class="flex items-center">
+            <i :class="getFileTypeIcon(file.file_name)"></i>
+            <span class="ml-2">{{ file.file_name }}</span>
+          </a>
+        </li>
       </div>
       <div class="mt-5 col-span-full w-[calc(50%-16px)]">
         <div class="flex justify-between items-center mx-2">
@@ -167,7 +175,7 @@
         </el-select>
         <InputError :message="form.errors.invoice_type" />
       </div>
-      <h2 class="font-bold text-sm my-2 col-span-full">Acceso al proyecto</h2>
+      <!-- <h2 class="font-bold text-sm my-2 col-span-full">Acceso al proyecto</h2>
       <div class="col-span-full text-sm">
         <div class="my-1">
           <input v-model="typeAccessProject" value="Public"
@@ -274,7 +282,7 @@
             </div>
           </div>
         </div>
-      </section>
+      </section> -->
       <div class="col-span-full flex mt-8 mb-5 justify-end space-x-2">
         <Link :href="route('pms.projects.index')">
         <CancelButton type="button">Cancelar</CancelButton>
@@ -440,27 +448,58 @@ export default {
     project: Array,
     tags: Object,
     users: Array,
+    media: Array,
   },
   computed: {
 
   },
   methods: {
+    getFileTypeIcon(fileName) {
+      // Asocia extensiones de archivo a iconos
+      const fileExtension = fileName.split('.').pop().toLowerCase();
+      switch (fileExtension) {
+        case 'pdf':
+          return 'fa-regular fa-file-pdf text-red-700';
+        case 'jpg':
+        case 'jpeg':
+        case 'png':
+        case 'gif':
+          return 'fa-regular fa-image text-blue-300';
+        default:
+          return 'fa-regular fa-file-lines';
+      }
+    },
     updateBranches() {
       const selectedCustomer = this.customers.find(item => item.id === this.form.customer_id);
 
       this.branches = selectedCustomer ? selectedCustomer.branches : [];
       this.opportunities = selectedCustomer ? selectedCustomer.opportunities : [];
     },
-    store() {
-      this.form.post(route('pms.projects.store'), {
-        onSuccess: () => {
-          this.$notify({
-            title: 'Correcto',
-            message: 'Proyecto creado',
-            type: 'success'
-          });
-        }
-      })
+    update() {
+      if (this.form.media.length) {
+        this.form.post(route("pms.projects.update-with-media", this.project.data.id), {
+          method: '_put',
+          onSuccess: () => {
+            this.$notify({
+              title: "Correcto",
+              message: "Se ha actualizado el proyecto",
+              type: "success",
+            });
+
+          },
+        });
+      } else {
+        this.form.put(route("pms.projects.update", this.project.data.id), {
+          onSuccess: () => {
+            this.$notify({
+              title: "Correcto",
+              message: "Se ha actualizado el proyecto",
+              type: "success",
+            });
+
+          },
+        });
+      }
     },
     submitGroupForm() {
       this.$refs.groupForm.dispatchEvent(new Event('submit', { cancelable: true }));
@@ -620,7 +659,8 @@ export default {
     }
   },
   mounted() {
-    this.selectAdmins();
+    // this.selectAdmins();
+    this.form.tags = this.project.tags.map(tag => tag.id);
   }
 }
 </script>

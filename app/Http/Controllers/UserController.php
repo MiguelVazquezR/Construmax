@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Resources\UserResource;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Spatie\Permission\Models\Role;
 
 class UserController extends Controller
 {
@@ -16,7 +17,9 @@ class UserController extends Controller
 
     public function create()
     {
-        return inertia('User/Create');
+        $roles = Role::all();
+
+        return inertia('User/Create', compact('roles'));
     }
 
     public function store(Request $request)
@@ -30,6 +33,7 @@ class UserController extends Controller
         ]);
 
         $user = User::create($request->all() + ['password' => bcrypt('Construmax123')]);
+        $user->syncRoles($request->roles);
 
         return to_route('users.show', $user->id);
     }
@@ -43,7 +47,10 @@ class UserController extends Controller
 
     public function edit(User $user)
     {
-        return inertia('User/Edit', compact('user'));
+        $roles = Role::all();
+        $user_roles = $user->roles->pluck('id');
+
+        return inertia('User/Edit', compact('user', 'roles', 'user_roles'));
     }
 
     public function update(Request $request, User $user)
@@ -57,6 +64,7 @@ class UserController extends Controller
         ]);
 
         $user->update($request->all());
+        $user->syncRoles($request->roles);
 
         return to_route('users.show', $user->id);
     }

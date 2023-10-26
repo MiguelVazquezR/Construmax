@@ -156,6 +156,15 @@ class TaskController extends Controller
         return response()->json(['items' => $late_tasks]);
     }
 
+    public function taskFormat($task_id)
+    {
+        $task = TaskResource::make(Task::with('project.users', 'user')->find($task_id));
+
+        // return $task;
+
+        return inertia('PMS/Project/TaskFormat', compact('task'));
+    }
+
     private function handleUpdatedTaskStatus($project_id)
     {
         // Obtén el proyecto al que pertenece la tarea

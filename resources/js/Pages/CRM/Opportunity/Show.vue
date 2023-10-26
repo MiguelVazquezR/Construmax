@@ -99,7 +99,7 @@
         <span class="text-gray-500 my-2">Fecha estimada de cierre</span>
         <span>{{ currentOpportunity?.close_date }}</span>
         <span class="text-gray-500 my-2">Monto estimado</span>
-        <span>{{ currentOpportunity?.amount }}</span>
+        <span>${{ currentOpportunity?.amount?.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",") }}</span>
         <span class="text-gray-500 my-2">Prioridad</span>
         <div class="relative">
             <span>{{ currentOpportunity?.priority.label }}</span>

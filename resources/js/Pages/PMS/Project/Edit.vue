@@ -168,7 +168,7 @@
         <InputError :message="form.errors.budget" />
       </div>
       <div>
-        <InputLabel value="Método de facturación *" class="ml-2 mt-1" />
+        <InputLabel value="Condiciones de pago *" class="ml-2 mt-1" />
         <el-select v-model="form.invoice_type" clearable placeholder="Seleccione" class="w-full"
           no-data-text="No hay opciones para mostrar" no-match-text="No se encontraron coincidencias">
           <el-option v-for="(item, index) in invoiceTypes" :key="index" :label="item" :value="item" />
@@ -287,7 +287,7 @@
         <Link :href="route('pms.projects.index')">
         <CancelButton type="button">Cancelar</CancelButton>
         </Link>
-        <PrimaryButton>Agregar</PrimaryButton>
+        <PrimaryButton>Actualizar</PrimaryButton>
       </div>
     </form>
 

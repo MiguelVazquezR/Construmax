@@ -30,7 +30,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr v-for="user in filteredTableData" :key="user.id" class="mb-4 cursor-pointer hover:bg-[#dfdbdba8]"
+                    <tr v-for="user in filteredTableData" :key="user.id" class="mb-4 cursor-pointer hover:bg-primarylight"
                         @click="$inertia.get(route('users.show', user.id))">
                         <td class="text-left py-2 pr-2 pl-4 rounded-l-full">
                             {{ user.id }}

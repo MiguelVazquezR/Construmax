@@ -23,7 +23,7 @@
     <div class="mx-8 mt-10 grid grid-cols-4 gap-x-4 gap-y-2">
       <div>
         <figure class="rounded-full w-52 h-52 mx-auto">
-          <img :src="user.profile_photo_url" class="rounded-full w-52 h-52">
+          <img :src="currentUser?.profile_photo_url" class="rounded-full w-52 h-52">
         </figure>
       </div>
       <div class="col-span-3 grid grid-cols-2 gap-x-4 gap-y-2">

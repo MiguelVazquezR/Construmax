@@ -72,10 +72,22 @@
               class="bg-transparent disabled:border-gray-400" />
             <span class="ml-2 text-xs">Nuevo cliente</span>
           </label>
-          <div v-if="form.is_new_company" class="col-span-2 w-1/2">
-            <InputLabel value="Contacto *" class="ml-2" />
-            <input v-model="form.contact" class="input" type="text" />
-            <InputError :message="form.errors.contact" />
+          <div class="flex justify-between space-x-3 col-span-2" v-if="form.is_new_company">
+            <div class="w-full">
+                <InputLabel value="Cliente *" class="ml-2" />
+                <input v-model="form.customer_name" class="input" type="text" required />
+                <InputError :message="form.errors.contact_name" />
+            </div>
+            <div class="w-full">
+                <InputLabel value="Contacto *" class="ml-2" />
+                <input v-model="form.contact_name" class="input" type="text" required />
+                <InputError :message="form.errors.contact_name" />
+            </div>
+            <div class="w-full">
+                <InputLabel value="Teléfono *" class="ml-2" />
+                <input v-model="form.contact_phone" class="input" type="text" required />
+                <InputError :message="form.errors.contact_phone" />
+            </div>
           </div>
           <div v-if="!form.is_new_company" class="flex justify-between space-x-3 col-span-2">
             <div class="w-full">
@@ -99,12 +111,12 @@
             </div>
             <div class="w-full">
               <InputLabel value="Contacto *" class="ml-2" />
-              <el-select class="w-full" v-model="form.contact" clearable filterable placeholder="Seleccione"
+              <el-select class="w-full" v-model="form.contact_id" clearable filterable placeholder="Seleccione"
                 no-data-text="No hay contactos registrados" no-match-text="No se encontraron coincidencias">
                 <el-option v-for="contact in customers.data.find(
                   (item) => item.id == form.customer_id
                 )?.contacts" :key="contact" :label="contact.name"
-                  :value="contact.name" />
+                  :value="contact.id" />
               </el-select>
             </div>
           </div>
@@ -199,13 +211,22 @@
             </div>
         </div>
         <div v-if="form.status == 'Perdida'" class="w-full">
-            <label>Causa oportunidad perdida
+            <label class="text-sm">Causa oportunidad perdida
             <el-tooltip content="Escribe la causa por la cual se PERDIÓ esta oportunidad" placement="right">
                 <i class="fa-regular fa-circle-question ml-2 text-primary text-xs"></i>
             </el-tooltip>
             </label>
             <input v-model="form.lost_oportunity_razon" class="input" type="text" />
             <InputError :message="form.errors.lost_oportunity_razon" />
+        </div>
+        <div class="w-full">
+            <label class="text-sm">Valor de oportunidad
+            <el-tooltip content="Monto esperado si se cierra la venta" placement="right">
+                <i class="fa-regular fa-circle-question ml-2 text-primary text-xs"></i>
+            </el-tooltip>
+            </label>
+            <input v-model="form.amount" class="input" type="number" min="0" />
+            <InputError :message="form.errors.amount" />
         </div>
         <h2 class="font-bold text-sm my-2 col-span-full">Acceso al proyecto</h2>
         <div class="col-span-full text-sm">
@@ -472,13 +493,18 @@ export default {
             description: null,
             tags: null,
             probability: null,
+            lost_oportunity_razon: null,
             priority: null,
+            amount: null,
             selectedUsersToPermissions: [],
             media: [],
             is_new_company: false,
-            contact: null,
+            contact_id: null,
             customer_id: null,
+            customer_name: null,
             branch: null,
+            contact_name: null,
+            contact_phone: null,
            
             });
 
@@ -652,7 +678,7 @@ export default {
       //resetea la busqueda de contacto en formulario
       this.form.customer_id = null;
       this.form.branch = null;
-      this.form.contact = null;
+      this.form.contact_id = null;
     },
     addToSelectedUsers(userId) {
       const user = this.users.find(item => item.id === userId);

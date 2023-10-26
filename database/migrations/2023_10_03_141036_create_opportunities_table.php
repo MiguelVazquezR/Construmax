@@ -20,15 +20,16 @@ return new class extends Migration
             $table->string('service_type');
             $table->string('contact_name')->nullable();
             $table->string('contact_phone')->nullable();
+            $table->string('customer_name')->nullable();
             $table->string('branch')->nullable();
             $table->string('status');
-            $table->text('description');
+            $table->text('description')->nullable();
             $table->unsignedFloat('amount');
             $table->date('start_date');
             $table->date('close_date');
             $table->timestamp('finished_at')->nullable();
             $table->foreignId('contact_id')->constrained();
-            $table->foreignId('customer_id')->constrained();
+            $table->foreignId('customer_id')->nullable()->constrained();
             $table->foreignId('user_id')->constrained();
             $table->string('contact_id')->nullable();
             $table->unsignedBigInteger('seller_id');

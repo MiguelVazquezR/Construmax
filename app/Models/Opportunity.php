@@ -25,6 +25,10 @@ class Opportunity extends Model implements HasMedia
         'finished_at',
         'contact_id',
         'customer_id',
+        'customer_name',
+        'contact_name',
+        'contact_phone',
+        'branch',
         'user_id',
         'seller_id',
     ];
@@ -53,6 +57,20 @@ class Opportunity extends Model implements HasMedia
 
     public function seller()
     {
-        return $this->belongsTo(User::class, 'id', 'seller_id');
+        return $this->belongsTo(User::class);
+    }
+
+    public function tags()
+    {
+        return $this->morphToMany(Tag::class, 'taggable');
+    }
+
+    public function users()
+    {
+        return $this->belongsToMany(User::class)
+        ->withPivot([
+            'id',
+            'permissions',
+        ])->withTimestamps();
     }
 }

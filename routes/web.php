@@ -29,6 +29,7 @@ Route::get('tasks-late-tasks', [TaskController::class, 'getLateTasks'])->middlew
 Route::get('crm/dashboard', [CRMController::class, 'dashboard'])->middleware('auth')->name('crm.dashboard');
 Route::resource('customers', CustomerController::class)->middleware('auth')->names('crm.customers');
 Route::resource('opportunities', OpportunityController::class)->middleware('auth')->names('crm.opportunities');
+Route::put('/opportunities/update-status/{opportunity_id}', [OpportunityController::class, 'updateStatus'])->name('crm.opportunities.update-status')->middleware('auth');
 
 // settings routes
 Route::resource('settings', SettingController::class)->middleware('auth');

@@ -202,5 +202,9 @@ return [
         'opportunity_id' => 'oportunidad',
         'invoice_type' => 'condiciones de pago',
         'budget' => 'monto',
+        'close_date' => 'fecha de cierre',
+        'service_type' => 'tipo de servicio',
+        'status' => 'Estatus',
+        'amount' => ' ',
     ],
 ];

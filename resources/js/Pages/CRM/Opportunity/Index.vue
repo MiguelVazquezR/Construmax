@@ -181,7 +181,7 @@
             <template #item="{ element: opportunity }">
               <li>
                 <OpportunityCard class="my-3" :opportunity="opportunity" />
-              </li>p
+              </li>
             </template>
           </draggable>
           <div class="text-center" v-if="!progressOpportunitiesLocal?.length">
@@ -284,7 +284,7 @@
             <tr
               v-for="opportunity in filteredTableData"
               :key="opportunity.id"
-              class="mb-4 cursor-pointer hover:bg-[#dfdbdba8]"
+              class="mb-4 cursor-pointer hover:bg-primarylight"
               @click="$inertia.get(route('oportunities.show', opportunity.id))"
             >
               <td class="text-left py-2 px-2 rounded-l-full">
@@ -303,7 +303,7 @@
                 }}</span>
               </td>
               <td class="text-left py-2 px-2">
-                {{ opportunity.estimated_finish_date }}
+                {{ opportunity.close_date }}
               </td>
               <td class="text-left py-2 px-2">
                 {{ opportunity.finished_at ?? "--" }}

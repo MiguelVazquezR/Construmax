@@ -34,6 +34,11 @@ class Tag extends Model
         return $this->morphedByMany(Customer::class, 'taggable');
     }
 
+    public function opportunities()
+    {
+        return $this->morphedByMany(Opportunity::class, 'taggable');
+    }
+
     public function taggable()
     {
         return $this->morphTo();

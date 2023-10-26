@@ -58,7 +58,7 @@ class OpportunityResource extends JsonResource
             'users' => $this->whenLoaded('users'),
             'seller' => $this->whenLoaded('seller'),
             // 'clientMonitores' => ClientMonitorResource::collection($this->whenLoaded('clientMonitores')),
-            // 'oportunityTasks' => OportunityTaskResource::collection($this->whenLoaded('oportunityTasks')),
+            'opportunityTasks' => OpportunityTaskResource::collection($this->whenLoaded('opportunityTasks')),
             // 'survey' => $this->whenLoaded('survey'),
             'created_at' => [
                 'diffForHumans' => $this->created_at?->diffForHumans(),

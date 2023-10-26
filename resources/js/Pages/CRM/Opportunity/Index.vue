@@ -285,7 +285,7 @@
               v-for="opportunity in filteredTableData"
               :key="opportunity.id"
               class="mb-4 cursor-pointer hover:bg-primarylight"
-              @click="$inertia.get(route('oportunities.show', opportunity.id))"
+              @click="$inertia.get(route('crm.opportunities.show', opportunity.id))"
             >
               <td class="text-left py-2 px-2 rounded-l-full">
                 {{ opportunity.name }}

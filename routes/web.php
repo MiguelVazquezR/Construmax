@@ -3,6 +3,7 @@
 use App\Http\Controllers\CRMController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\OpportunityController;
+use App\Http\Controllers\OpportunityTaskController;
 use App\Http\Controllers\PMSController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\ProjectGroupController;
@@ -34,6 +35,13 @@ Route::get('crm/dashboard', [CRMController::class, 'dashboard'])->middleware('au
 Route::resource('customers', CustomerController::class)->middleware('auth')->names('crm.customers');
 Route::resource('opportunities', OpportunityController::class)->middleware('auth')->names('crm.opportunities');
 Route::put('/opportunities/update-status/{opportunity_id}', [OpportunityController::class, 'updateStatus'])->name('crm.opportunities.update-status')->middleware('auth');
+
+// ------- CRM (opportunityTasks Routes)  ---------
+Route::resource('opportunity-tasks', OpportunityTaskController::class)->except(['store', 'create'])->middleware('auth');
+Route::get('opportunity-tasks/create/{opportunity_id}', [OpportunityTaskController::class, 'create'])->name('crm.opportunity-tasks.create')->middleware('auth');
+Route::post('opportunity-tasks/store/{opportunity_id}', [OpportunityTaskController::class, 'store'])->name('crm.opportunity-tasks.store')->middleware('auth');
+Route::post('opportunity-tasks/{opportunity_task}/comment', [OpportunityTaskController::class, 'comment'])->name('crm.opportunity-tasks.comment')->middleware('auth');
+Route::put('opportunity-tasks/mark-as-done/{opportunityTask}', [OpportunityTaskController::class, 'markAsDone'])->name('crm.opportunity-tasks.mark-as-done')->middleware('auth');
 
 // settings routes
 Route::resource('settings', SettingController::class)->middleware('auth');

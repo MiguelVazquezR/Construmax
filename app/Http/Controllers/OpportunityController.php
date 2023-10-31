@@ -117,21 +117,32 @@ class OpportunityController extends Controller
             $opportunity->update([
                 'status' => $request->status,
                 'finished_at' => now(),
+                'paid_at' => null,
+                'lost_oportunity_razon' => null,
+            ]);
+        } elseif ($request->status == 'Pagado') {
+            $opportunity->update([
+                'status' => $request->status,
+                'paid_at' => now(),
                 'lost_oportunity_razon' => null,
             ]);
         } elseif ($request->status == 'Perdida') {
             $opportunity->update([
                 'status' => $request->status,
                 'finished_at' => null,
+                'paid_at' => null,
                 'lost_oportunity_razon' => $request->lost_oportunity_razon,
             ]);
-        } else {
-
+        }
+        else {
             $opportunity->update([
                 'status' => $request->status,
                 'finished_at' => null,
+                'paid_at' => null,
                 'lost_oportunity_razon' => null,
             ]);
         }
+
+        return response()->json(['item' => OpportunityResource::make($opportunity)]);
     }
 }

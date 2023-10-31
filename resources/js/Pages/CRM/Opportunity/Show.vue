@@ -1,5 +1,4 @@
 <template>
-<<<<<<< HEAD
   <AppLayout title="Oportunidades">
     <div class="flex flex-col md:mx-9 md:my-7 space-y-3 m-1">
       <div class="flex justify-between text-lg mx-2 lg:mx-14 mt-11">
@@ -29,56 +28,6 @@
               :value="item.id"
             />
           </el-select>
-=======
-    <AppLayout title="Oportunidades">
-        <div class="flex flex-col md:mx-9 md:my-7 space-y-3 m-1">
-            <div class="flex justify-between text-lg mx-2 lg:mx-14 mt-11">
-                <span>Oportunidades</span>
-                <Link :href="route('crm.opportunities.index')">
-                <p class="flex items-center text-sm text-primary">
-                    <i class="fa-solid fa-arrow-left-long mr-2"></i>
-                    <span>Regresar</span>
-                </p>
-                </Link>
-            </div>
-            <div class="flex justify-between mt-5 mx-2 lg:mx-14">
-                <div class="md:w-full mr-2 flex items-center">
-                    <el-select v-model="selectedOpportunity" clearable filterable placeholder="Buscar proyecto" class="w-1/2 mr-4"
-                        no-data-text="No hay clientes registrados" no-match-text="No se encontraron coincidencias">
-                        <el-option v-for="item in opportunities.data" :key="item.id" :label="item.name" :value="item.id" />
-                    </el-select>
-                </div>
-                <div class="flex justify-end mr-3 w-1/2">
-                    <!-- <el-dropdown split-button type="primary" @click="$inertia.get(route('crm.opportunities.create'))">
-                        Nuevo cliente
-                        <template #dropdown>
-                        <el-dropdown-menu>
-                            <el-dropdown-item @click="update">Enviar correo</el-dropdown-item>
-                            <el-dropdown-item @click="showConfirmModal= true">Registar pago</el-dropdown-item>
-                            <el-dropdown-item @click="showConfirmModal= true">Agendar cita</el-dropdown-item>
-                        </el-dropdown-menu>
-                        </template>
-                    </el-dropdown> -->
-                    <Link
-                        v-if="
-                        $page.props.auth.user.permissions?.includes('Crear oportunidades') || true
-                        "
-                        :href="route('crm.opportunities.create')"
-                    >
-                        <PrimaryButton class="rounded-full">Nueva oportunidad</PrimaryButton>
-                    </Link>
-                    <Link v-if="this.$page.props.auth.user.permissions.includes('Editar oportunidades')" :href="route('crm.opportunities.edit', selectedOpportunity)">
-                        <i class="fa-solid fa-pencil ml-3 text-primary rounded-full p-2 bg-[#FEDBBD] cursor-pointer"></i>
-                    </Link>
-                </div>
-            </div>
-        </div>
-        <div class="flex items-center justify-center space-x-5 mb-4">
-            <p class="font-bold text-lg">
-            {{ currentOpportunity?.folio }} - {{ currentOpportunity?.name }}
-            </p>
-            <p :class="getColorStatus()" class="px-2 py-1 font-bold rounded-sm">{{ currentOpportunity?.status }}</p>
->>>>>>> 62f9b97406fe61641a38739794069afd806ccd71
         </div>
         <div class="flex items-center space-x-2">
           <!-- <el-tooltip v-if="$page.props.auth.user.permissions.includes('Editar oportunidades') && tabs == 1"
@@ -89,8 +38,38 @@
             </button>
             </Link>
           </el-tooltip> -->
+          <Dropdown align="right" width="48" v-if="$page.props.auth.user.permissions?.includes(
+            'Eliminar oportunidades'
+          ) || $page.props.auth.user.permissions?.includes('Registrar pagos en seguimiento integral') 
+          || $page.props.auth.user.permissions?.includes('Agendar citas en seguimiento integral') 
+          || $page.props.auth.user.permissions?.includes('Agendar citas en seguimiento integral') 
+            ">
+            <template #trigger>
+              <button v-if="currentTab == 1 || currentTab == 3" class="h-9 px-3 rounded-lg bg-[#D9D9D9] flex items-center text-sm">
+                Más <i class="fa-solid fa-chevron-down text-[11px] ml-2"></i>
+              </button>
+            </template>
+            <template #content>
+              <DropdownLink :href="route('payment-monitors.create')"
+                v-if="currentTab == 3 && $page.props.auth.user.permissions?.includes('Registrar pagos en seguimiento integral')">
+                Registrar Pago
+              </DropdownLink>
+              <DropdownLink :href="route('meeting-monitors.create')"
+                v-if="currentTab == 3 && $page.props.auth.user.permissions?.includes('Agendar citas en seguimiento integral')">
+                Agendar Cita
+              </DropdownLink>
+              <DropdownLink :href="route('meeting-monitors.create')"
+                v-if="currentTab == 3 && $page.props.auth.user.permissions?.includes('Agendar citas en seguimiento integral')">
+                Enviar correo
+              </DropdownLink>
+              <DropdownLink v-if="$page.props.auth.user.permissions?.includes('Eliminar oportunidades') && currentTab == 1
+                " @click="showConfirmModal = true" as="button">
+                Eliminar
+              </DropdownLink>
+            </template>
+          </Dropdown>
           <div class="flex items-center">
-            <el-tooltip v-if="$page.props.auth.user.permissions?.includes('Crear oportunidades') || currentTab == 1 "
+            <el-tooltip v-if="$page.props.auth.user.permissions?.includes('Crear oportunidades') && currentTab == 1 "
               content="Crear oportunidad" placement="top">
               <Link :href="route('crm.opportunities.create')">
               <PrimaryButton class="rounded-md w-[166px]">Nueva oportunidad</PrimaryButton>
@@ -117,34 +96,6 @@
             content="Genera la url para la encuesta de satisfacción" placement="top">
             <PrimaryButton @click="generateSurveyUrl" class="rounded-md">Generar url</PrimaryButton>
           </el-tooltip>
-
-          <Dropdown align="right" width="48" v-if="$page.props.auth.user.permissions?.includes(
-            'Crear ordenes de venta'
-          ) &&
-            $page.props.auth.user.permissions?.includes(
-              'Eliminar ordenes de venta'
-            )
-            ">
-            <template #trigger>
-              <button v-if="currentTab == 1 || currentTab == 3" class="h-9 px-3 rounded-lg bg-[#D9D9D9] flex items-center text-sm">
-                Más <i class="fa-solid fa-chevron-down text-[11px] ml-2"></i>
-              </button>
-            </template>
-            <template #content>
-              <DropdownLink :href="route('payment-monitors.create')"
-                v-if="currentTab == 3 && $page.props.auth.user.permissions?.includes('Registrar pagos en seguimiento integral')">
-                Registrar Pago
-              </DropdownLink>
-              <DropdownLink :href="route('meeting-monitors.create')"
-                v-if="currentTab == 3 && $page.props.auth.user.permissions?.includes('Agendar citas en seguimiento integral')">
-                Agendar Cita
-              </DropdownLink>
-              <DropdownLink v-if="$page.props.auth.user.permissions?.includes('Eliminar oportunidades') && currentTab == 1
-                " @click="showConfirmModal = true" as="button">
-                Eliminar
-              </DropdownLink>
-            </template>
-          </Dropdown>
         </div>
       </div>
     </div>
@@ -240,8 +191,12 @@
         <span class="text-gray-500 my-2">Prioridad</span>
         <div class="relative">
           <span>{{ currentOpportunity?.priority.label }}</span>
-          <i class="fa-solid fa-circle text-xs absolute -left-12 top-[2px]"></i>
+          <i :class="getColorPriority(currentOpportunity?.priority)" class="fa-solid fa-circle text-xs absolute -left-12 top-[2px]"></i>
         </div>
+        <span v-if="currentOpportunity?.finished_at" class="text-gray-500 my-2">Cerrada el</span>
+        <span v-if="currentOpportunity?.finished_at" class="bg-green-300 py-1 px-2 rounded-full">{{ currentOpportunity?.finished_at }}</span>
+        <span v-if="currentOpportunity?.paid_at" class="text-gray-500 my-2">Pagado el</span>
+        <span v-if="currentOpportunity?.paid_at" class="bg-green-300 py-1 px-2 rounded-full">{{ currentOpportunity?.paid_at }}</span>
         <span v-if="currentOpportunity?.lost_oportunity_razon" class="text-gray-500 my-2"
           >Causa de pérdida</span
         >
@@ -516,11 +471,11 @@ export default {
           color: "text-[#F3FD85]",
         },
         {
-          label: "En proceso",
+          label: "Cerrada",
           color: "text-[#FEDBBD]",
         },
         {
-          label: "Cerrada",
+          label: "Pagado",
           color: "text-[#AFFDB2]",
         },
         {
@@ -618,14 +573,25 @@ export default {
         return "bg-[#F2F2F2] text-[#97989A]";
       } else if (this.currentOpportunity?.status == "Pendiente") {
         return "bg-[#F3FD85] text-[#C88C3C]";
-      } else if (this.currentOpportunity?.status == "En proceso") {
-        return "bg-[#FEDBBD] text-[#FD8827]";
       } else if (this.currentOpportunity?.status == "Cerrada") {
+        return "bg-[#FEDBBD] text-[#FD8827]";
+      } else if (this.currentOpportunity?.status == "Pagado") {
         return "bg-[#AFFDB2] text-[#37951F]";
       } else if (this.currentOpportunity?.status == "Perdida") {
         return "bg-[#F7B7FC] text-[#9E0FA9]";
       } else {
         return "bg-transparent";
+      }
+    },
+    getColorPriority(priority) {
+      if (priority === "Baja") {
+        return "text-[#87CEEB]";
+      } else if (priority === "Media") {
+        return "text-[#D97705]";
+      } else if (priority === "Alta") {
+        return "text-[#D90537]";
+      } else {
+        return "text-transparent";
       }
     },
     getFileTypeIcon(fileName) {
@@ -658,14 +624,13 @@ export default {
             message: "Se ha actulizado el estatus de la oportunidad",
             type: "success",
           });
+          //Cambia dinamicamente las propiedades de la oportunidad al cmbair el estatus
           this.showLostOpportunityModal = false;
-          this.currenOpportunity.status = this.status;
-          if (this.lost_oportunity_razon) {
-            this.currentOpportunity.lost_oportunity_razon = this.lost_oportunity_razon;
-            this.lost_oportunity_razon = null;
-          } else {
-            this.currentOpportunity.lost_oportunity_razon = null;
-          }
+          this.currentOpportunity.status = this.status;
+          this.currentOpportunity.finished_at = response.data.item.finished_at;
+          this.currentOpportunity.paid_at = response.data.item.paid_at;
+          this.currentOpportunity.lost_oportunity_razon = response.data.item.lost_oportunity_razon;
+
         }
       } catch (error) {
         console.log(error);

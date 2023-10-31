@@ -24,6 +24,7 @@ class Opportunity extends Model implements HasMedia
         'start_date',
         'close_date',
         'finished_at',
+        'paid_at',
         'contact_id',
         'customer_id',
         'customer_name',
@@ -38,6 +39,7 @@ class Opportunity extends Model implements HasMedia
         'start_date' => 'date',
         'close_date' => 'date',
         'finished_at' => 'datetime',
+        'paid_at' => 'datetime',
     ];
 
     // relationships

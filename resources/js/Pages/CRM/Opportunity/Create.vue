@@ -42,7 +42,7 @@
             <InputError :message="form.errors.service_type" />
         </div>
         <div class="relative">
-            <i :class="getColorStatus(form.status)" class="fa-solid fa-circle text-xs top-1 left-16 absolute z-30"></i>
+            <i :class="getColorStatus(form.status)" class="fa-solid fa-circle text-xs top-[2px] left-16 absolute z-30"></i>
              <InputLabel value="Estatus" class="ml-2" />
             <div class="flex items-center space-x-4">
                 <el-select class="w-full" v-model="form.status" clearable filterable
@@ -533,11 +533,11 @@ export default {
                 color: "text-[#F3FD85]",
                 },
                 {
-                label: "En proceso",
+                label: "Cerrada",
                 color: "text-[#FEDBBD]",
                 },
                 {
-                label: "Cerrada",
+                label: "Pagado",
                 color: "text-[#AFFDB2]",
                 },
                 {
@@ -616,9 +616,9 @@ export default {
         return "text-[#9A9A9A]";
       } else if (oportunityStatus === "Pendiente") {
         return "text-[#F3FD85]";
-      } else if (oportunityStatus === "En proceso") {
-        return "text-[#FEDBBD]";
       } else if (oportunityStatus === "Cerrada") {
+        return "text-[#FEDBBD]";
+      } else if (oportunityStatus === "Pagado") {
         return "text-[#AFFDB2]";
       } else if (oportunityStatus === "Perdida") {
         return "text-[#F7B7FC]";

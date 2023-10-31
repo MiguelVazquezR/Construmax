@@ -50,6 +50,7 @@ class OpportunityResource extends JsonResource
             'type_access_project' => $this->type_access_project,
             'priority' => $priority,
             'finished_at' => $this->finished_at?->isoFormat('DD MMMM YYYY'),
+            'paid_at' => $this->paid_at?->isoFormat('DD MMMM YYYY'),
             'start_date' => $this->start_date?->isoFormat('DD MMMM YYYY'),
             'media' => $this->getMedia()->all(),
             'close_date' => $this->close_date?->isoFormat('DD MMMM YYYY'),

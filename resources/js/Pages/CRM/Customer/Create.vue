@@ -211,6 +211,7 @@ export default {
       name: null,
       rfc: null,
       contacts: [],
+      tags: [],
       invoicing_method: null,
       payment_method: null,
       invoice_use: null,

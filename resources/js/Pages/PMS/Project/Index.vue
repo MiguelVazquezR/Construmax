@@ -10,7 +10,7 @@
         <i class="fa-solid fa-magnifying-glass absolute top-2 right-4 text-xs text-gray2"></i>
       </div>
       <div>
-        <PrimaryButton @click="$inertia.get(route('pms.projects.create'))" class="rounded-full">Nuevo proyecto
+        <PrimaryButton v-if="this.$page.props.auth.user.permissions.includes('Crear proyectos')" @click="$inertia.get(route('pms.projects.create'))" class="rounded-full">Nuevo proyecto
         </PrimaryButton>
       </div>
     </div>

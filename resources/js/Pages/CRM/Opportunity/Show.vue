@@ -1,4 +1,5 @@
 <template>
+<<<<<<< HEAD
   <AppLayout title="Oportunidades">
     <div class="flex flex-col md:mx-9 md:my-7 space-y-3 m-1">
       <div class="flex justify-between text-lg mx-2 lg:mx-14 mt-11">
@@ -28,6 +29,56 @@
               :value="item.id"
             />
           </el-select>
+=======
+    <AppLayout title="Oportunidades">
+        <div class="flex flex-col md:mx-9 md:my-7 space-y-3 m-1">
+            <div class="flex justify-between text-lg mx-2 lg:mx-14 mt-11">
+                <span>Oportunidades</span>
+                <Link :href="route('crm.opportunities.index')">
+                <p class="flex items-center text-sm text-primary">
+                    <i class="fa-solid fa-arrow-left-long mr-2"></i>
+                    <span>Regresar</span>
+                </p>
+                </Link>
+            </div>
+            <div class="flex justify-between mt-5 mx-2 lg:mx-14">
+                <div class="md:w-full mr-2 flex items-center">
+                    <el-select v-model="selectedOpportunity" clearable filterable placeholder="Buscar proyecto" class="w-1/2 mr-4"
+                        no-data-text="No hay clientes registrados" no-match-text="No se encontraron coincidencias">
+                        <el-option v-for="item in opportunities.data" :key="item.id" :label="item.name" :value="item.id" />
+                    </el-select>
+                </div>
+                <div class="flex justify-end mr-3 w-1/2">
+                    <!-- <el-dropdown split-button type="primary" @click="$inertia.get(route('crm.opportunities.create'))">
+                        Nuevo cliente
+                        <template #dropdown>
+                        <el-dropdown-menu>
+                            <el-dropdown-item @click="update">Enviar correo</el-dropdown-item>
+                            <el-dropdown-item @click="showConfirmModal= true">Registar pago</el-dropdown-item>
+                            <el-dropdown-item @click="showConfirmModal= true">Agendar cita</el-dropdown-item>
+                        </el-dropdown-menu>
+                        </template>
+                    </el-dropdown> -->
+                    <Link
+                        v-if="
+                        $page.props.auth.user.permissions?.includes('Crear oportunidades') || true
+                        "
+                        :href="route('crm.opportunities.create')"
+                    >
+                        <PrimaryButton class="rounded-full">Nueva oportunidad</PrimaryButton>
+                    </Link>
+                    <Link v-if="this.$page.props.auth.user.permissions.includes('Editar oportunidades')" :href="route('crm.opportunities.edit', selectedOpportunity)">
+                        <i class="fa-solid fa-pencil ml-3 text-primary rounded-full p-2 bg-[#FEDBBD] cursor-pointer"></i>
+                    </Link>
+                </div>
+            </div>
+        </div>
+        <div class="flex items-center justify-center space-x-5 mb-4">
+            <p class="font-bold text-lg">
+            {{ currentOpportunity?.folio }} - {{ currentOpportunity?.name }}
+            </p>
+            <p :class="getColorStatus()" class="px-2 py-1 font-bold rounded-sm">{{ currentOpportunity?.status }}</p>
+>>>>>>> 62f9b97406fe61641a38739794069afd806ccd71
         </div>
         <div class="flex items-center space-x-2">
           <!-- <el-tooltip v-if="$page.props.auth.user.permissions.includes('Editar oportunidades') && tabs == 1"

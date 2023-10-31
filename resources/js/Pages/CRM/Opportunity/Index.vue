@@ -1,59 +1,35 @@
 <template>
   <AppLayout title="Oportunidades">
-    <div
-      @click="show_type_view = false"
-      class="flex flex-col md:mx-9 md:my-7 space-y-3 m-1"
-    >
+    <div @click="show_type_view = false" class="flex flex-col md:mx-9 md:my-7 space-y-3 m-1">
       <div class="flex justify-between">
         <label class="text-lg">Oportunidades</label>
       </div>
       <div class="flex justify-between">
         <div v-if="type_view == 'Lista'" class="w-1/3 relative">
-          <input
-            @keyup.enter="handleSearch"
-            v-model="inputSearch"
-            class="input outline-none pr-8"
-            placeholder="Buscar proyecto"
-          />
-          <i
-            class="fa-solid fa-magnifying-glass absolute top-2 right-4 text-xs text-[#9A9A9A]"
-          ></i>
+          <input @keyup.enter="handleSearch" v-model="inputSearch" class="input outline-none pr-8"
+            placeholder="Buscar proyecto" />
+          <i class="fa-solid fa-magnifying-glass absolute top-2 right-4 text-xs text-[#9A9A9A]"></i>
         </div>
         <span v-if="type_view == 'Kanban'"></span>
         <div class="flex items-center space-x-2">
-          <div
-            @click.stop="show_type_view = !show_type_view"
-            class="flex items-center text-primary mr-7 cursor-pointer relative"
-          >
+          <div @click.stop="show_type_view = !show_type_view"
+            class="flex items-center text-primary mr-7 cursor-pointer relative">
             <p class="text-sm">{{ type_view }}</p>
             <i class="fa-solid fa-angle-down text-sm ml-2"></i>
-            <div
-              v-if="show_type_view"
-              class="text-sm absolute -bottom-10 -left-4 border rounded-md py-1 px-1"
-            >
-              <p
-                v-if="type_view == 'Lista'"
-                @click="type_view = 'Kanban'"
-                class="cursor-pointer hover:bg-orange-100 rounded-full py-1 px-3"
-              >
+            <div v-if="show_type_view" class="text-sm absolute -bottom-10 -left-4 border rounded-md py-1 px-1">
+              <p v-if="type_view == 'Lista'" @click="type_view = 'Kanban'"
+                class="cursor-pointer hover:bg-orange-100 rounded-full py-1 px-3">
                 Kanban
               </p>
-              <p
-                v-if="type_view == 'Kanban'"
-                @click="type_view = 'Lista'"
-                class="cursor-pointer hover:bg-orange-100 rounded-full py-1 px-3"
-              >
+              <p v-if="type_view == 'Kanban'" @click="type_view = 'Lista'"
+                class="cursor-pointer hover:bg-orange-100 rounded-full py-1 px-3">
                 Lista
               </p>
             </div>
           </div>
-          <Link
-            v-if="
-              $page.props.auth.user.permissions?.includes('Crear oportunidades') || true
-            "
-            :href="route('crm.opportunities.create')"
-          >
-            <PrimaryButton class="rounded-lg">Nueva oportunidad</PrimaryButton>
+          <Link v-if="$page.props.auth.user.permissions?.includes('Crear oportunidades') || true
+            " :href="route('crm.opportunities.create')">
+          <PrimaryButton class="rounded-lg">Nueva oportunidad</PrimaryButton>
           </Link>
           <!-- <Dropdown
             align="right"
@@ -82,10 +58,7 @@
     </div>
 
     <!-- ------------ Kanban view starts ----------------- -->
-    <div
-      v-if="type_view === 'Kanban'"
-      class="mx-4 contenedor text-center text-sm my-16 pb-9"
-    >
+    <div v-if="type_view === 'Kanban'" class="mx-4 contenedor text-center text-sm my-16 pb-9">
       <!-- ---- Nueva --- -->
       <section class="seccion">
         <h2 class="text-[#9A9A9A] bg-[#D9D9D9] border border-[#9A9A9A] py-1">Nueva</h2>
@@ -94,18 +67,9 @@
           <p class="text-primary text-xl my-2">
             ${{ newTotal?.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",") ?? "0.00" }}
           </p>
-          <draggable
-            @start="handleStartDrag"
-            @add="handleAddDrag"
-            @end="drag = false"
-            v-model="newOpportunitiesLocal"
-            :animation="300"
-            item-key="id"
-            tag="ul"
-            group="oportunities"
-            id="new"
-            :class="drag && !newOpportunitiesLocal?.length ? 'h-40' : ''"
-          >
+          <draggable @start="handleStartDrag" @add="handleAddDrag" @end="drag = false" v-model="newOpportunitiesLocal"
+            :animation="300" item-key="id" tag="ul" group="oportunities" id="new"
+            :class="drag && !newOpportunitiesLocal?.length ? 'h-40' : ''">
             <template #item="{ element: opportunity }">
               <li>
                 <OpportunityCard class="my-3" :opportunity="opportunity" />
@@ -130,18 +94,9 @@
               pendingTotal?.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",") ?? "0.00"
             }}
           </p>
-          <draggable
-            @start="handleStartDrag"
-            @add="handleAddDrag"
-            @end="drag = false"
-            v-model="pendingOpportunitiesLocal"
-            :animation="300"
-            item-key="id"
-            tag="ul"
-            group="oportunities"
-            id="pending"
-            :class="drag && !pendingOpportunitiesLocal?.length ? 'h-40' : ''"
-          >
+          <draggable @start="handleStartDrag" @add="handleAddDrag" @end="drag = false" v-model="pendingOpportunitiesLocal"
+            :animation="300" item-key="id" tag="ul" group="oportunities" id="pending"
+            :class="drag && !pendingOpportunitiesLocal?.length ? 'h-40' : ''">
             <template #item="{ element: opportunity }">
               <li>
                 <OpportunityCard class="my-3" :opportunity="opportunity" />
@@ -166,18 +121,9 @@
               inProgressTotal?.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",") ?? "0.00"
             }}
           </p>
-          <draggable
-            @start="handleStartDrag"
-            @add="handleAddDrag"
-            @end="drag = false"
-            v-model="progressOpportunitiesLocal"
-            :animation="300"
-            item-key="id"
-            tag="ul"
-            group="oportunities"
-            id="progress"
-            :class="drag && !progressOpportunitiesLocal?.length ? 'h-40' : ''"
-          >
+          <draggable @start="handleStartDrag" @add="handleAddDrag" @end="drag = false"
+            v-model="progressOpportunitiesLocal" :animation="300" item-key="id" tag="ul" group="oportunities"
+            id="progress" :class="drag && !progressOpportunitiesLocal?.length ? 'h-40' : ''">
             <template #item="{ element: opportunity }">
               <li>
                 <OpportunityCard class="my-3" :opportunity="opportunity" />
@@ -198,18 +144,9 @@
           <p class="text-primary text-xl my-2">
             ${{ closedTotal?.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",") ?? "0.00" }}
           </p>
-          <draggable
-            @start="handleStartDrag"
-            @add="handleAddDrag"
-            @end="drag = false"
-            v-model="closedOpportunitiesLocal"
-            :animation="300"
-            item-key="id"
-            tag="ul"
-            group="oportunities"
-            id="closed"
-            :class="drag && !closedOpportunitiesLocal?.length ? 'h-40' : ''"
-          >
+          <draggable @start="handleStartDrag" @add="handleAddDrag" @end="drag = false" v-model="closedOpportunitiesLocal"
+            :animation="300" item-key="id" tag="ul" group="oportunities" id="closed"
+            :class="drag && !closedOpportunitiesLocal?.length ? 'h-40' : ''">
             <template #item="{ element: opportunity }">
               <li>
                 <OpportunityCard class="my-3" :opportunity="opportunity" />
@@ -230,18 +167,9 @@
           <p class="text-primary text-xl my-2">
             ${{ lostTotal?.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",") ?? "0.00" }}
           </p>
-          <draggable
-            @start="handleStartDrag"
-            @add="handleAddDrag"
-            @end="drag = false"
-            v-model="lostOpportunitiesLocal"
-            :animation="300"
-            item-key="id"
-            tag="ul"
-            group="oportunities"
-            id="lost"
-            :class="drag && !lostOpportunitiesLocal?.length ? 'h-40' : ''"
-          >
+          <draggable @start="handleStartDrag" @add="handleAddDrag" @end="drag = false" v-model="lostOpportunitiesLocal"
+            :animation="300" item-key="id" tag="ul" group="oportunities" id="lost"
+            :class="drag && !lostOpportunitiesLocal?.length ? 'h-40' : ''">
             <template #item="{ element: opportunity }">
               <li>
                 <OpportunityCard class="my-3" :opportunity="opportunity" />
@@ -281,21 +209,23 @@
             </tr>
           </thead>
           <tbody>
+<<<<<<< HEAD
             <tr
               v-for="opportunity in filteredTableData"
               :key="opportunity.id"
               class="mb-4 cursor-pointer hover:bg-primarylight"
               @click="$inertia.get(route('crm.opportunities.show', opportunity.id))"
             >
+=======
+            <tr v-for="opportunity in filteredTableData" :key="opportunity.id"
+              class="mb-4 cursor-pointer `hover:`bg-primarylight"
+              @click="$inertia.get(route('oportunities.show', opportunity.id))">
+>>>>>>> 62f9b97406fe61641a38739794069afd806ccd71
               <td class="text-left py-2 px-2 rounded-l-full">
                 {{ opportunity.name }}
               </td>
               <td class="text-left py-2 px-2">
-                <span
-                  class="py-1 px-4 rounded-full"
-                  :class="getStatusStyles(opportunity)"
-                  >{{ opportunity.status }}</span
-                >
+                <span class="py-1 px-4 rounded-full" :class="getStatusStyles(opportunity)">{{ opportunity.status }}</span>
               </td>
               <td class="text-left py-2 px-2">
                 <span class="py-1 px-2 rounded-full">{{
@@ -308,24 +238,12 @@
               <td class="text-left py-2 px-2">
                 {{ opportunity.finished_at ?? "--" }}
               </td>
-              <td
-                v-if="
-                  $page.props.auth.user.permissions?.includes('Eliminar oportunidades') || true
-                "
-                class="text-left py-2 px-2 rounded-r-full"
-              >
-                <el-popconfirm
-                  confirm-button-text="Si"
-                  cancel-button-text="No"
-                  icon-color="#D90537"
-                  title="¿Eliminar?"
-                  @confirm="deleteOpportunity(opportunity)"
-                >
+              <td v-if="$page.props.auth.user.permissions?.includes('Eliminar oportunidades') || true
+                " class="text-left py-2 px-2 rounded-r-full">
+                <el-popconfirm confirm-button-text="Si" cancel-button-text="No" icon-color="#D90537" title="¿Eliminar?"
+                  @confirm="deleteOpportunity(opportunity)">
                   <template #reference>
-                    <i
-                      @click.stop=""
-                      class="fa-regular fa-trash-can text-primary cursor-pointer p-2"
-                    ></i>
+                    <i @click.stop="" class="fa-regular fa-trash-can text-primary cursor-pointer p-2"></i>
                   </template>
                 </el-popconfirm>
               </td>

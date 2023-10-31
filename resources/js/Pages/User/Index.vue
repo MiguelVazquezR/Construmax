@@ -10,7 +10,7 @@
                 <i class="fa-solid fa-magnifying-glass absolute top-2 right-4 text-xs text-gray2"></i>
             </div>
             <div>
-                <PrimaryButton @click="$inertia.get(route('users.create'))" class="rounded-full">Agregar usuario
+                <PrimaryButton v-if="this.$page.props.auth.user.permissions.includes('Crear usuarios')" @click="$inertia.get(route('users.create'))" class="rounded-full">Agregar usuario
                 </PrimaryButton>
             </div>
         </div>

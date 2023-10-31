@@ -228,7 +228,7 @@
             <input v-model="form.amount" class="input" type="number" min="0" />
             <InputError :message="form.errors.amount" />
         </div>
-        <h2 class="font-bold text-sm my-2 col-span-full">Acceso al proyecto</h2>
+        <!-- <h2 class="font-bold text-sm my-2 col-span-full">Acceso al proyecto</h2>
         <div class="col-span-full text-sm">
             <div class="my-1">
                 <input v-model="typeAccessProject" value="Public"
@@ -421,7 +421,7 @@
             </div>
           </div>
         </div>
-      </section>
+      </section> -->
 
           <div class="col-span-full flex mt-8 mb-5 justify-end space-x-2">
             <Link :href="route('crm.opportunities.index')">

@@ -209,7 +209,7 @@
               <a :href="file?.original_url" target="_blank" v-for="file in taskComponentLocal?.media" :key="file"
                 class="flex justify-between items-center cursor-pointer">
                 <div class="flex space-x-7 items-center">
-                  <img src="@/../../public/images/adobepdf.png" :alt="file?.file_name" />
+                  <!-- <img src="@/../../public/images/adobepdf.png" :alt="file?.file_name" /> -->
                   <p>{{ file?.file_name }}sss</p>
                 </div>
                 <i class="fa-solid fa-download text-right text-sm text-[#9a9a9a]"></i>

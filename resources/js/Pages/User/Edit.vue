@@ -11,9 +11,9 @@
     </div>
     <div class="flex justify-end items-center mx-8 mt-8">
       <div class="flex items-center space-x-2">
-        <ThirdButton @click="toggleUserStatus()" class="!rounded-full">{{ user.is_active ? 'Marcar como inactivo' :
+        <ThirdButton v-if="this.$page.props.auth.user.permissions.includes('Editar usuarios')" @click="toggleUserStatus()" class="!rounded-full">{{ user.is_active ? 'Marcar como inactivo' :
           'Marcar como activo' }}</ThirdButton>
-        <el-popconfirm confirm-button-text="Si" cancel-button-text="No" icon-color="#FD8827" title="¿Continuar?"
+        <el-popconfirm v-if="this.$page.props.auth.user.permissions.includes('Eliminar usuarios')" confirm-button-text="Si" cancel-button-text="No" icon-color="#FD8827" title="¿Continuar?"
           @confirm="deleteUser()">
           <template #reference>
             <SecondaryButton class="!text-lg">
@@ -61,6 +61,17 @@
           <InputError :message="form.errors.employee_properties?.phone" />
         </div>
       </div>
+      <!-- roles -->
+      <br><el-divider content-position="left" class="col-span-full">Roles</el-divider>
+      <br>
+      <div class="col-span-full grid grid-cols-3 gap-2">
+        <InputLabel v-for="role in roles" :key="role.id" class="flex items-center">
+          <input type="checkbox" v-model="form.roles" :value="role.id"
+            class="rounded text-primary shadow-sm focus:ring-primary bg-transparent" />
+          <span class="ml-2 text-sm">{{ role.name }}</span>
+        </InputLabel>
+      </div>
+      <InputError :message="form.errors.roles" />
       <div class="col-span-full flex mt-8 mb-5 justify-end space-x-2">
         <PrimaryButton :disabled="form.processing">Actualizar usuario</PrimaryButton>
       </div>
@@ -89,6 +100,7 @@ export default {
         phone: this.user.employee_properties.phone,
       },
       email: this.user.email,
+      roles: this.user_roles
     });
 
     return {
@@ -115,6 +127,8 @@ export default {
   },
   props: {
     user: Array,
+    roles: Array,
+    user_roles: Array,
   },
   methods: {
     update() {

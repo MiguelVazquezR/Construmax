@@ -39,8 +39,8 @@
                 </div>
             </div>
             <div v-if="currentTab == 1" class="flex space-x-2 w-full justify-end">
-                <PrimaryButton @click="$inertia.get(route('pms.projects.create'))">Nuevo proyecto</PrimaryButton>
-                <SecondaryButton @click="$inertia.get(route('pms.projects.edit', currentProject?.id ?? 1))"><i
+                <PrimaryButton v-if="this.$page.props.auth.user.permissions.includes('Crear proyectos')" @click="$inertia.get(route('pms.projects.create'))">Nuevo proyecto</PrimaryButton>
+                <SecondaryButton v-if="this.$page.props.auth.user.permissions.includes('Editar proyectos')" @click="$inertia.get(route('pms.projects.edit', currentProject?.id ?? 1))"><i
                         class="fa-solid fa-pen"></i></SecondaryButton>
             </div>
             <div v-if="currentTab == 2 || currentTab == 3" class="flex space-x-2 w-full justify-end">

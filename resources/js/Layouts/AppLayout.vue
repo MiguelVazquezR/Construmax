@@ -50,7 +50,7 @@ const logout = () => {
                             <div class="hidden sm:flex sm:items-center sm:ml-6 items-center">
 
                                 <!-- calendar -->
-                                <button class="text-[#97989A]">
+                                <!-- <button class="text-[#97989A]">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" fill="currentColor"
                                         class="bi bi-calendar4-event" viewBox="0 0 16 16">
                                         <path
@@ -58,7 +58,7 @@ const logout = () => {
                                         <path
                                             d="M11 7.5a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1z" />
                                     </svg>
-                                </button>
+                                </button> -->
 
                                 <!-- notifications -->
                                 <NotificationsCenter />

@@ -10,7 +10,7 @@
               <i class="fa-solid fa-magnifying-glass absolute top-2 right-4 text-xs text-gray2"></i>
           </div>
           <div class="flex items-center">
-              <el-dropdown split-button type="primary" @click="$inertia.get(route('crm.customers.create'))">
+              <el-dropdown v-if="this.$page.props.auth.user.permissions.includes('Crear clientes')" split-button type="primary" @click="$inertia.get(route('crm.customers.create'))">
                   Nuevo cliente
                   <template #dropdown>
                   <el-dropdown-menu>
@@ -39,7 +39,7 @@
           </tr>
         </thead>
         <tbody>
-          <tr v-for="customer in filteredTableData" :key="customer.id" class="mb-4 cursor-pointer hover:bg-[#dfdbdba8]"
+          <tr v-for="customer in filteredTableData" :key="customer.id" class="mb-4 cursor-pointer hover:bg-primarylight"
             @click="$inertia.get(route('crm.customers.show', customer.id))">
             <td class="text-left py-2 pr-2 pl-4 rounded-l-full">
               {{ customer.id }}

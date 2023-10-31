@@ -18,7 +18,7 @@
                 </el-select>
             </div>
             <div class="flex justify-end mr-3 w-1/2">
-                <el-dropdown split-button type="primary" @click="$inertia.get(route('crm.customers.create'))">
+                <el-dropdown v-if="this.$page.props.auth.user.permissions.includes('Crear clientes')" split-button type="primary" @click="$inertia.get(route('crm.customers.create'))">
                     Nuevo cliente
                     <template #dropdown>
                     <el-dropdown-menu>
@@ -28,7 +28,7 @@
                     </el-dropdown-menu>
                     </template>
                  </el-dropdown>
-                <Link :href="route('crm.customers.edit', selectedCustomer)">
+                <Link v-if="this.$page.props.auth.user.permissions.includes('Editar clientes')" :href="route('crm.customers.edit', selectedCustomer)">
                     <i class="fa-solid fa-pencil ml-3 text-primary rounded-full p-2 bg-[#FEDBBD] cursor-pointer"></i>
                 </Link>
             </div>

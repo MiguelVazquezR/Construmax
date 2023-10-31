@@ -36,7 +36,7 @@
                     >
                         <PrimaryButton class="rounded-full">Nueva oportunidad</PrimaryButton>
                     </Link>
-                    <Link :href="route('crm.opportunities.edit', selectedOpportunity)">
+                    <Link v-if="this.$page.props.auth.user.permissions.includes('Editar oportunidades')" :href="route('crm.opportunities.edit', selectedOpportunity)">
                         <i class="fa-solid fa-pencil ml-3 text-primary rounded-full p-2 bg-[#FEDBBD] cursor-pointer"></i>
                     </Link>
                 </div>

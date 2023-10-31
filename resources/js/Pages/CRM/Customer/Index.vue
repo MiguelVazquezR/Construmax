@@ -10,7 +10,7 @@
               <i class="fa-solid fa-magnifying-glass absolute top-2 right-4 text-xs text-gray2"></i>
           </div>
           <div class="flex items-center">
-              <el-dropdown split-button type="primary" @click="$inertia.get(route('crm.customers.create'))">
+              <el-dropdown v-if="this.$page.props.auth.user.permissions.includes('Crear clientes')" split-button type="primary" @click="$inertia.get(route('crm.customers.create'))">
                   Nuevo cliente
                   <template #dropdown>
                   <el-dropdown-menu>

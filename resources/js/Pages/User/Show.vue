@@ -15,8 +15,8 @@
         <el-option v-for="item in users" :key="item.id" :label="item.name" :value="item.id" />
       </el-select>
       <div class="flex items-center space-x-2">
-        <PrimaryButton @click="$inertia.get(route('users.create'))">Agregar usuario</PrimaryButton>
-        <SecondaryButton @click="$inertia.get(route('users.edit', this.currentUser))" class="!text-lg"><i
+        <PrimaryButton v-if="this.$page.props.auth.user.permissions.includes('Crear usuarios')" @click="$inertia.get(route('users.create'))">Agregar usuario</PrimaryButton>
+        <SecondaryButton v-if="this.$page.props.auth.user.permissions.includes('Editar usuarios')" @click="$inertia.get(route('users.edit', this.currentUser))" class="!text-lg"><i
             class="fa-solid fa-pen"></i></SecondaryButton>
       </div>
     </div>

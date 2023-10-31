@@ -11,9 +11,9 @@
     </div>
     <div class="flex justify-end items-center mx-8 mt-8">
       <div class="flex items-center space-x-2">
-        <ThirdButton @click="toggleUserStatus()" class="!rounded-full">{{ user.is_active ? 'Marcar como inactivo' :
+        <ThirdButton v-if="this.$page.props.auth.user.permissions.includes('Editar usuarios')" @click="toggleUserStatus()" class="!rounded-full">{{ user.is_active ? 'Marcar como inactivo' :
           'Marcar como activo' }}</ThirdButton>
-        <el-popconfirm confirm-button-text="Si" cancel-button-text="No" icon-color="#FD8827" title="¿Continuar?"
+        <el-popconfirm v-if="this.$page.props.auth.user.permissions.includes('Eliminar usuarios')" confirm-button-text="Si" cancel-button-text="No" icon-color="#FD8827" title="¿Continuar?"
           @confirm="deleteUser()">
           <template #reference>
             <SecondaryButton class="!text-lg">

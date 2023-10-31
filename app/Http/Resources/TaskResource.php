@@ -36,6 +36,7 @@ class TaskResource extends JsonResource
             'priority' => $priority,
             'status' => $this->status,
             'is_paused' => $this->is_paused,
+            'pausa_reazon' => $this->pausa_reazon,
             'reminder' => $this->reminder,
             'project' => ProjectResource::make($this->whenLoaded('project')),
             'user' => $this->whenLoaded('user'),

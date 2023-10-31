@@ -167,14 +167,6 @@
         <input v-model="form.budget" type="number" step="0.01" class="input mt-1">
         <InputError :message="form.errors.budget" />
       </div>
-      <div>
-        <InputLabel value="Condiciones de pago *" class="ml-2 mt-1" />
-        <el-select v-model="form.invoice_type" clearable placeholder="Seleccione" class="w-full"
-          no-data-text="No hay opciones para mostrar" no-match-text="No se encontraron coincidencias">
-          <el-option v-for="(item, index) in invoiceTypes" :key="index" :label="item" :value="item" />
-        </el-select>
-        <InputError :message="form.errors.invoice_type" />
-      </div>
       <!-- <h2 class="font-bold text-sm my-2 col-span-full">Acceso al proyecto</h2>
       <div class="col-span-full text-sm">
         <div class="my-1">
@@ -372,7 +364,6 @@ export default {
       customer_id: parseInt(this.project.opportunity?.customer_id),
       currency: this.project.currency,
       budget: this.project.budget,
-      invoice_type: this.project.invoice_type,
       selectedUsersToPermissions: [],
       media: [],
       user_id: this.project.user_id,
@@ -397,11 +388,6 @@ export default {
       typeAccessProject: 'Private',
       search: '',
       inputSearch: '',
-      invoiceTypes: [
-        'Facturación al contado',
-        'Facturación a crédito',
-        'Facturación por adelantado',
-      ],
       serviceTypes: [
         'Iluminacón',
         'Herrería',

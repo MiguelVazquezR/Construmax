@@ -27,7 +27,7 @@ class TaskController extends Controller
         $request->validate([
             'project_id' => 'required',
             'name' => 'required|string',
-            'description' => 'required',
+            'description' => 'nullable',
             'department' => 'required|string',
             'participants' => 'required|array|min:1',
             'priority' => 'required|string',
@@ -117,15 +117,17 @@ class TaskController extends Controller
         return response()->json(['item' => $comment->fresh('user')]);
     }
 
-    public function pausePlayTask(Task $task)
+    public function pausePlayTask(Task $task, Request $request)
     {
         if ($task->is_paused) {
             $task->update([
-                'is_paused' => false
+                'is_paused' => false,
+                'pausa_reazon' => null
             ]);
         } else {
             $task->update([
-                'is_paused' => true
+                'is_paused' => true,
+                'pausa_reazon' => $request->reazon
             ]);
         }
         $task->save();

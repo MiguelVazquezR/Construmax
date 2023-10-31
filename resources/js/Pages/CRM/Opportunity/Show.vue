@@ -32,20 +32,20 @@
         <div class="flex items-center space-x-2">
           <!-- <el-tooltip v-if="$page.props.auth.user.permissions.includes('Editar oportunidades') && tabs == 1"
             content="Editar oportunidad" placement="top">
-            <Link :href="route('oportunities.edit', oportunitySelected)">
+            <Link :href="route('crm.opportunities.edit', selectedOpportunity)">
             <button class="w-9 h-9 rounded-lg bg-[#D9D9D9]">
               <i class="fa-solid fa-pen text-sm"></i>
             </button>
             </Link>
           </el-tooltip> -->
           <div class="flex items-center">
-            <el-tooltip v-if="$page.props.auth.user.permissions?.includes('Crear oportunidades') && currentTab == 1"
+            <el-tooltip v-if="$page.props.auth.user.permissions?.includes('Crear oportunidades') || currentTab == 1 "
               content="Crear oportunidad" placement="top">
               <Link :href="route('crm.opportunities.create')">
-              <PrimaryButton class="rounded-md">Nueva oportunidad</PrimaryButton>
+              <PrimaryButton class="rounded-md w-[166px]">Nueva oportunidad</PrimaryButton>
               </Link>
             </el-tooltip>
-              <Link :href="route('crm.opportunities.edit', selectedOpportunity)">
+              <Link v-if="currentTab == 1" :href="route('crm.opportunities.edit', selectedOpportunity)">
               <i
                 class="fa-solid fa-pencil ml-3 text-primary rounded-full p-2 bg-[#FEDBBD] cursor-pointer"
               ></i>
@@ -58,8 +58,8 @@
             </Link>
           </el-tooltip>
           <el-tooltip v-if="currentTab == 3" content="Enviar un correo a prospecto" placement="top">
-            <!-- <Link :href="route('oportunity-tasks.create', selectedOpportunity)"> -->
-            <PrimaryButton class="rounded-md">Enviar correo</PrimaryButton>
+            <!-- <Link :href="route('crm.opportunity-tasks.create', selectedOpportunity)"> -->
+            <PrimaryButton class="rounded-md w-[132px]">Enviar correo</PrimaryButton>
             <!-- </Link> -->
           </el-tooltip>
           <el-tooltip v-if="currentTab == 5 && currentOpportunity?.finished_at"
@@ -149,7 +149,7 @@
           <!-- <i :class="getColorStatus()" class="fa-solid fa-circle absolute -left-3 top-4"></i> -->
           <el-select
             @change="
-              status == 'Perdida' ? (showLostOportunityModal = true) : updateStatus()
+              status == 'Perdida' ? (showLostOpportunityModal = true) : updateStatus()
             "
             class="lg:w-1/2 mt-2"
             v-model="status"
@@ -393,7 +393,7 @@
       </template>
     </ConfirmationModal>
 
-    <Modal :show="showLostOportunityModal" @close="showLostOportunityModal = false">
+    <Modal :show="showLostOpportunityModal" @close="showLostOpportunityModal = false">
       <div class="mx-7 my-4 space-y-4 relative">
         <div>
           <label
@@ -428,6 +428,8 @@ import Tag from "@/Components/MyComponents/Tag.vue";
 import ConfirmationModal from "@/Components/ConfirmationModal.vue";
 import OpportunityTaskCard from "@/Components/MyComponents/CRM/OpportunityTaskCard.vue";
 import Modal from "@/Components/Modal.vue";
+import Dropdown from "@/Components/Dropdown.vue";
+import DropdownLink from "@/Components/DropdownLink.vue";
 import { Link } from "@inertiajs/vue3";
 import axios from "axios";
 
@@ -438,7 +440,7 @@ export default {
       currentTab: 1,
       currenOpportunity: null,
       showConfirmModal: false,
-      showLostOportunityModal: false,
+      showLostOpportunityModal: false,
       status: null,
       lost_oportunity_razon: null,
       todayTasksList: [],
@@ -484,6 +486,8 @@ export default {
     ConfirmationModal,
     OpportunityTaskCard,
     Modal,
+    Dropdown,
+    DropdownLink,
     Tab,
     Tag,
     Link,
@@ -493,9 +497,13 @@ export default {
     opportunities: Object,
   },
   methods: {
+    toBool(value) {
+      if (value == 1 || value == true) return true;
+      return false;
+    },
     generateSurveyUrl() {
       alert('http://127.0.0.1:8000/surveys/create/' + this.currentOpportunity.id);
-      // console.log('http://127.0.0.1:8000/surveys/create/' + this.currentOportunity.id);
+
     },
     deleteItem() {
       this.$inertia.delete(route("crm.opportunities.destroy", this.selectedOpportunity));
@@ -503,7 +511,7 @@ export default {
     },
     async deleteTask(data) {
       try {
-        const response = await axios.delete(route("oportunity-tasks.destroy", data));
+        const response = await axios.delete(route("crm.opportunity-tasks.destroy", data));
 
         if (response.status === 200) {
           this.$notify({
@@ -512,12 +520,12 @@ export default {
             type: "success",
           });
 
-          const index = this.currentOportunity.oportunityTasks.findIndex(
+          const index = this.currentOpportunity.opportunityTasks.findIndex(
             (item) => item.id === data
           );
 
           if (index !== -1) {
-            this.currentOportunity.oportunityTasks.splice(index, 1);
+            this.currentOpportunity.opportunityTasks.splice(index, 1);
           }
         }
       } catch (error) {
@@ -599,13 +607,13 @@ export default {
             message: "Se ha actulizado el estatus de la oportunidad",
             type: "success",
           });
-          this.showLostOportunityModal = false;
+          this.showLostOpportunityModal = false;
           this.currenOpportunity.status = this.status;
           if (this.lost_oportunity_razon) {
-            this.currentOportunity.lost_oportunity_razon = this.lost_oportunity_razon;
+            this.currentOpportunity.lost_oportunity_razon = this.lost_oportunity_razon;
             this.lost_oportunity_razon = null;
           } else {
-            this.currentOportunity.lost_oportunity_razon = null;
+            this.currentOpportunity.lost_oportunity_razon = null;
           }
         }
       } catch (error) {
@@ -624,7 +632,7 @@ export default {
     this.currentOpportunity = this.opportunities.data.find(
       (item) => item.id == this.selectedOpportunity
     );
-    this.status = this.currentOportunity?.status;
+    this.status = this.currentOpportunity?.status;
     if (this.defaultTab != null) {
       this.tabs = parseInt(this.defaultTab);
     }
@@ -645,7 +653,7 @@ export default {
 
       if (this.currentOpportunity?.opportunityTasks.length) {
         // Recorremos las tareas y agregamos los nombres de los asignados al conjunto.
-        this.currentOpportunity?.oportunityTasks?.forEach((task) => {
+        this.currentOpportunity?.opportunityTasks?.forEach((task) => {
           asignedNamesSet.add(task.asigned.name);
         });
 
@@ -654,30 +662,30 @@ export default {
       }
     },
     todayTasksList() {
-      return (this.todayTasksList = this.currentOpportunity.opportunityTasks.filter(
+      return (this.todayTasksList = this.currentOpportunity.opportunityTasks?.filter(
         (opportunity) =>
           opportunity.deadline_status === "Terminar hoy" && !opportunity.finished_at
       ));
     },
     thisWeekTasksList() {
-      return (this.thisWeekTasksList = this.currentOpportunity.opportunityTasks.filter(
+      return (this.thisWeekTasksList = this.currentOpportunity.opportunityTasks?.filter(
         (opportunity) =>
           opportunity.deadline_status === "Esta semana" && !opportunity.finished_at
       ));
     },
     nextTasksList() {
-      return (this.nextTasksList = this.currentOpportunity.opportunityTasks.filter(
+      return (this.nextTasksList = this.currentOpportunity.opportunityTasks?.filter(
         (opportunity) =>
           opportunity.deadline_status === "Proximas" && !opportunity.finished_at
       ));
     },
     finishedTasksList() {
-      return (this.finishedTasksList = this.currentOpportunity.opportunityTasks.filter(
+      return (this.finishedTasksList = this.currentOpportunity.opportunityTasks?.filter(
         (opportunity) => opportunity.finished_at
       ));
     },
     lateTasksList() {
-      return (this.lateTasksList = this.currentOpportunity.opportunityTasks.filter(
+      return (this.lateTasksList = this.currentOpportunity.opportunityTasks?.filter(
         (opportunity) =>
           opportunity.deadline_status === "Atrasadas" && !opportunity.finished_at
       ));

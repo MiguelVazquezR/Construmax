@@ -24,7 +24,7 @@ class ProjectController extends Controller
 
     public function create()
     {
-        $customers = Customer::with(['opportunities'])->get();
+        $customers = Customer::with(['opportunities', 'contacts'])->get();
         $project_groups = ProjectGroupResource::collection(ProjectGroup::all());
         $tags = TagResource::collection(Tag::where('type', 'projects')->get());
         $users = User::where('is_active', true)->get();

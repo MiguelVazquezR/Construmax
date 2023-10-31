@@ -124,11 +124,19 @@
       </h2>
       <div v-if="!form.is_internal">
         <InputLabel value="Cliente *" class="ml-2" />
-        <el-select v-model="form.customer_id" @change="updateBranches()" clearable placeholder="Seleccione"
+        <el-select v-model="form.customer_id" @change="updateContacts()" clearable placeholder="Seleccione"
           class="w-full mt-1" no-data-text="No hay opciones para mostrar" no-match-text="No se encontraron coincidencias">
           <el-option v-for="(item, index) in customers" :key="item.id" :label="item.name" :value="item.id" />
         </el-select>
         <InputError :message="form.errors.customer_id" />
+      </div>
+      <div v-if="!form.is_internal">
+        <InputLabel value="Contacto *" class="ml-2" />
+        <el-select v-model="form.contact_id" @change="updateBranches()" clearable placeholder="Seleccione" class="w-full mt-1"
+          no-data-text="No hay opciones para mostrar" no-match-text="No se encontraron coincidencias">
+          <el-option v-for="(item, index) in contacts" :key="index" :label="item" :value="item" />
+        </el-select>
+        <InputError :message="form.errors.contact_id" />
       </div>
       <div v-if="!form.is_internal">
         <InputLabel value="Sucursal *" class="ml-2" />
@@ -361,6 +369,8 @@ export default {
       project_group_id: null,
       service_type: null,
       address: null,
+      customer_id: null,
+      contact_id: null,
       opportunity_id: null,
       currency: "$MXN",
       budget: null,
@@ -411,6 +421,7 @@ export default {
         { label: "USD - Dolar ", value: "$USD" },
       ],
       opportunities: [],
+      contacts: [],
       branches: [],
     };
   },
@@ -437,13 +448,20 @@ export default {
   },
   computed: {},
   methods: {
-    updateBranches() {
+    updateContacts() {
       const selectedCustomer = this.customers.find(
         (item) => item.id === this.form.customer_id
       );
 
-      this.branches = selectedCustomer ? selectedCustomer.branches : [];
+      this.contacts = selectedCustomer ? selectedCustomer.contacts : [];
       this.opportunities = selectedCustomer ? selectedCustomer.opportunities : [];
+    },
+    updateBranches() {
+      const selectedContact = this.customers.find(
+        (item) => item.id === this.form.contact_id
+      );
+
+      this.branches = selectedContact ? selectedContact.additional.branches : [];
     },
     store() {
       this.form.post(route("pms.projects.store"), {

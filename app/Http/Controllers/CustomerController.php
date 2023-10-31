@@ -32,10 +32,6 @@ class CustomerController extends Controller
         $request->validate([
             'name' => 'required|string',
             'rfc' => 'required|string',
-            'branches' => 'required|array|min:1',
-            'contact_name' => 'required|string',
-            'contact_email' => 'nullable|email',
-            'contact_phone' => 'required|string',
             'invoicing_method' => 'required',
             'payment_method' => 'required',
             'invoice_use' => 'required',
@@ -43,15 +39,17 @@ class CustomerController extends Controller
 
        $customer = Customer::create($request->all() + ['user_id' => auth()->id()]);
 
-       //crea el contacto en su tabla polimorfica
-        $contact = new Contact();
-        $contact->name = $request->input('contact_name');
-        $contact->email = $request->input('contact_email');
-        $contact->phone = $request->input('contact_phone');
-        $contact->user_id = auth()->id();
-        $contact->contactable_type = Customer::class;
-        $contact->contactable_id = $customer->id;
-        $contact->save();
+       foreach ($$request->input('contacts') as $contact) {
+           //relacionar contacto con cliente
+           $contact = new Contact([
+               'name' => $contact['name'],
+               'email' => $contact['email'],
+               'phone' => $contact['phone'],
+               'position' => $contact['position'],
+               'additional' => ['branches' => $contact['branches']],
+           ]);
+           $customer->contacts()->save($contact);
+       }
        
         return to_route('crm.customers.index');
     }

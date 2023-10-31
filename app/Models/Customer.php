@@ -13,21 +13,12 @@ class Customer extends Model
 
     protected $fillable = [
         'name',
-        'branches',
         'currency',
         'rfc',
-        'zipcode',
         'user_id',
-        'contact_name',
-        'contact_phone',
-        'contact_email',
         'invoicing_method',
         'payment_method',
         'invoice_use',
-    ];
-
-    protected $casts = [
-        'branches' => 'array',
     ];
 
     // relationships

@@ -15,7 +15,7 @@ class OpportunityController extends Controller
 {
     public function index()
     {
-        $opportunities = OpportunityResource::collection(Opportunity::with('contact')->latest()->get());
+        $opportunities = OpportunityResource::collection(Opportunity::with('contact', 'opportunityTasks')->latest()->get());
         
         // return $opportunities; 
 

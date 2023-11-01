@@ -12,12 +12,12 @@ defineProps({
 <template>
     <Head title="Welcome" />
 
-    <div class="relative sm:flex sm:justify-center sm:items-center min-h-screen bg-dots-darker bg-center bg-gray-100 darkk:bg-dots-lighter darkk:bg-gray-900 selection:bg-red-500 selection:text-white">
+    <div class="relative sm:flex sm:justify-center sm:items-center min-h-screen bg-dots-darker bg-center bg-gray-100 darkk:bg-dots-lighter darkk:bg-gray-900 selection:bg-orange-400 selection:text-white">
         <div v-if="canLogin" class="z-10 text-4xl">
-            <Link v-if="$page.props.auth.user" :href="route('pms.projects.index')" class="font-semibold text-gray-600 hover:text-gray-900 darkk:text-gray-400 darkk:hover:text-white focus:outline focus:outline-2 focus:rounded-sm focus:outline-red-500">Ir al panel de inicio</Link>
+            <Link v-if="$page.props.auth.user" :href="route('pms.projects.index')" class="font-semibold text-gray-600 hover:text-gray-900 darkk:text-gray-400 darkk:hover:text-white focus:outline focus:outline-2 focus:rounded-sm focus:outline-orange-400">Ir al panel de inicio</Link>
 
             <template v-else>
-                <Link :href="route('login')" class="font-semibold text-gray-600 hover:text-gray-900 darkk:text-gray-400 darkk:hover:text-white focus:outline focus:outline-2 focus:rounded-sm focus:outline-red-500">Iniciar sesion</Link>
+                <Link :href="route('login')" class="font-semibold text-gray-600 hover:text-gray-900 darkk:text-gray-400 darkk:hover:text-white focus:outline focus:outline-2 focus:rounded-sm focus:outline-orange-500">Iniciar sesion</Link>
             </template>
         </div>
     </div>

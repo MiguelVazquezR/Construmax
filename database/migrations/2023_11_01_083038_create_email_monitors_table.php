@@ -17,9 +17,11 @@ return new class extends Migration
             $table->text('content');
             $table->string('contact_name')->nullable();
             $table->string('contact_email')->nullable();
+            $table->string('branch')->nullable();
             $table->foreignId('seller_id')->constrained('users')->cascadeOnDelete(); //quien creó el correo
             $table->foreignId('opportunity_id')->constrained()->cascadeOnDelete();
             $table->foreignId('customer_id')->nullable()->constrained()->cascadeOnDelete();
+            $table->foreignId('contact_id')->nullable()->constrained()->cascadeOnDelete();
             $table->foreignId('client_monitor_id')->nullable()->constrained()->cascadeOnDelete();
             $table->timestamps();
         });

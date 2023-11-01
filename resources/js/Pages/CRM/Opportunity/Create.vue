@@ -100,16 +100,6 @@
               <InputError :message="form.errors.customer" />
             </div>
             <div class="w-full">
-              <InputLabel value="Sucursal *" class="ml-2" />
-              <el-select class="w-full" v-model="form.branch" clearable filterable
-                placeholder="Seleccione" no-data-text="No hay sucursales registradas"
-                no-match-text="No se encontraron coincidencias">
-                <el-option v-for="branch in customers.data.find(
-                  (item) => item.id == form.customer_id
-                )?.branches" :key="branch" :label="branch" :value="branch" />
-              </el-select>
-            </div>
-            <div class="w-full">
               <InputLabel value="Contacto *" class="ml-2" />
               <el-select class="w-full" v-model="form.contact_id" clearable filterable placeholder="Seleccione"
                 no-data-text="No hay contactos registrados" no-match-text="No se encontraron coincidencias">
@@ -117,6 +107,16 @@
                   (item) => item.id == form.customer_id
                 )?.contacts" :key="contact" :label="contact.name"
                   :value="contact.id" />
+              </el-select>
+            </div>
+            <div class="w-full">
+              <InputLabel value="Sucursal *" class="ml-2" />
+              <el-select class="w-full" v-model="form.branch" clearable filterable
+                placeholder="Seleccione" no-data-text="No hay sucursales registradas"
+                no-match-text="No se encontraron coincidencias">
+                <el-option v-for="branch in customers.data.find(
+                  (item) => item.id == form.customer_id
+                )?.contacts.find( (item) => item.id == form.contact_id).additional.branches" :key="branch" :label="branch" :value="branch" />
               </el-select>
             </div>
           </div>

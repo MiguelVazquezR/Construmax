@@ -54,11 +54,11 @@ class OpportunityResource extends JsonResource
             'start_date' => $this->start_date?->isoFormat('DD MMMM YYYY'),
             'media' => $this->getMedia()->all(),
             'close_date' => $this->close_date?->isoFormat('DD MMMM YYYY'),
-            'customer' => $this->whenLoaded('customer'),
+            'customer' => CustomerResource::make($this->whenLoaded('customer')),
             'user' => $this->whenLoaded('user'),
             'users' => $this->whenLoaded('users'),
             'seller' => $this->whenLoaded('seller'),
-            // 'clientMonitores' => ClientMonitorResource::collection($this->whenLoaded('clientMonitores')),
+            'clientMonitors' => ClientMonitorResource::collection($this->whenLoaded('clientMonitors')),
             'opportunityTasks' => OpportunityTaskResource::collection($this->whenLoaded('opportunityTasks')),
             // 'survey' => $this->whenLoaded('survey'),
             'created_at' => [

@@ -31,7 +31,7 @@
           "
           split-button
           type="primary"
-          @click="$inertia.get(route('crm.customers.create'))"
+          @click="$inertia.get(route('crm.email-monitors.create'))"
         >
           Enviar correo
           <template #dropdown>
@@ -89,10 +89,9 @@
         </thead>
         <tbody>
           <tr  v-for="monitor in filteredTableData" :key="monitor.id"
-          @click="showMonitorType(monitor)"
             class="mb-4"
           >
-            <td class="text-center py-2 px-2 rounded-l-full text-primary hover:underline cursor-pointer">
+            <td @click="showMonitorType(monitor)" class="text-center py-2 px-2 rounded-l-full text-primary hover:underline cursor-pointer">
               {{ monitor.folio}}
             </td>
             <td @click="$inertia.get(route('crm.customers.show', monitor.customer?.id))" class="text-center py-2 px-2 text-primary hover:underline cursor-pointer">

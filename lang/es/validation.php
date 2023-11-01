@@ -206,5 +206,8 @@ return [
         'service_type' => 'tipo de servicio',
         'status' => 'Estatus',
         'amount' => ' ',
+        'customer_id' => 'cliente',
+        'branch' => 'sucursal',
+        'contact_email' => 'correo electrónico',
     ],
 ];

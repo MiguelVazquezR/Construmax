@@ -1,7 +1,7 @@
 <template>
-  <AppLayout title="Correo electrónico">
+  <AppLayout title="Agendar cita">
     <div class="flex justify-between items-center text-lg mx-8 mt-8">
-      <b>Correo electrónico</b>
+      <b>Agendar cita</b>
       <Link :href="route('crm.client-monitors.index')">
       <p class="flex items-center text-sm text-primary">
         <i class="fa-solid fa-arrow-left-long mr-2"></i>
@@ -18,10 +18,10 @@
             </el-select>
             <InputError :message="form.errors.opportunity_id" />
         </div>
-        <h2 class="text-primary col-span-2 mt-2">Datos del cliente</h2>
+        <h2 class="text-primary col-span-2 my-3">Datos del cliente</h2>
         <div class="w-full">
             <InputLabel value="Cliente *" class="ml-2" />
-            <el-select disabled class="w-full" v-model="form.customer_id" clearable filterable
+            <el-select disabled @change="cleanCustomerInfo" class="w-full" v-model="form.customer_id" clearable filterable
                 placeholder="Seleccione" no-data-text="No hay clientes registrados"
                 no-match-text="No se encontraron coincidencias">
                 <el-option v-for="customer in customers.data" :key="customer" :label="customer.name" :value="customer.id" />
@@ -30,7 +30,7 @@
         </div>
         <div class="w-full">
             <InputLabel value="Contacto *" class="ml-2" />
-            <el-select @change="getContactEmail" class="w-full" v-model="form.contact_id" clearable filterable placeholder="Seleccione"
+            <el-select @change="getContactPhone" class="w-full" v-model="form.contact_id" clearable filterable placeholder="Seleccione"
             no-data-text="No hay contactos registrados" no-match-text="No se encontraron coincidencias">
             <el-option v-for="contact in customers.data.find(
                 (item) => item.id == form.customer_id
@@ -50,33 +50,53 @@
             </el-select>
             <InputError :message="form.errors.branch" />
         </div>
+        <h2 class="text-primary col-span-2 my-3">Detalles de la cita</h2>
         <div class="w-full">
-            <InputLabel value="Correo electrónico *" class="ml-2" />
-            <input v-model="form.contact_email" class="input" type="text">
-            <InputError :message="form.errors.contact_email" />
+            <InputLabel value="Fecha *" class="ml-2" />
+            <el-date-picker class="w-full" v-model="form.meeting_date" type="date" placeholder="Fecha*" format="YYYY/MM/DD"
+                value-format="YYYY-MM-DD" :disabled-date="disabledDate" />
+            <InputError :message="form.errors.meeting_date" />
         </div>
-        <div>
-            <InputLabel value="Asunto *" class="ml-2" />
-            <input v-model="form.subject" class="input" type="text" >
-            <InputError :message="form.errors.subject" />
+        <div class="w-full">
+            <InputLabel value="Hora *" class="ml-2" />
+            <el-time-select class="w-full" v-model="form.time" start="07:00" step="00:15" end="23:30"
+                placeholder="Seleccione una hora" />
+            <InputError :message="form.errors.time" />
+        </div>
+        <div class="w-full">
+            <InputLabel value="Vía de cita *" class="ml-2" />
+            <el-select class="w-full" v-model="form.meeting_via" clearable filterable placeholder="Seleccione"
+              no-data-text="No hay registros" no-match-text="No se encontraron coincidencias">
+              <el-option v-for="meeting_via in meetingVias" :key="meeting_via" :label="meeting_via"
+                :value="meeting_via" />
+            </el-select>
+            <InputError :message="form.errors.meeting_via" />
+        </div>
+        <div class="w-full">
+            <InputLabel value="Ubicación *" class="ml-2" />
+            <input v-model="form.location" class="input" type="text">
+            <InputError :message="form.errors.location" />
         </div>
         <div class="col-span-2">
-            <InputLabel value="Contenido *" class="ml-2" />
-            <textarea v-model="form.content" class="input h-24" rows="3">
-            </textarea>
-            <InputError :message="form.errors.content" />
+            <InputLabel value="Participante(s) *" class="ml-2" />
+            <el-select class="w-full mt-2" v-model="form.participants" clearable filterable multiple
+                placeholder="Seleccionar participantes" no-data-text="No hay usuarios registrados"
+                no-match-text="No se encontraron coincidencias">
+                <el-option v-for="user in users" :key="user.id" :label="user.name" :value="user.id" />
+            </el-select>
+            <InputError :message="form.errors.participants" />
         </div>
-    <!-- <div class="ml-2 mt-2 col-span-full flex">
-            <FileUploader @files-selected="this.form.media = $event" />
-        </div> -->
+        <div class="mt-5 col-span-full">
+          <InputLabel value="Descripción *" class="ml-2" />
+          <RichText @content="updateDescription($event)" />
+        </div>
         <div class="flex justify-end items-center col-span-2 mt-5">
-        <PrimaryButton :disabled="form.processing">
-            Enviar
-        </PrimaryButton>
-
+          <PrimaryButton :disabled="form.processing">
+            Agendar
+          </PrimaryButton>
         </div>
     </form>
-    </AppLayout>
+</AppLayout>
 </template>
 
 <script>
@@ -85,23 +105,35 @@ import PrimaryButton from "@/Components/PrimaryButton.vue";
 import InputLabel from "@/Components/InputLabel.vue";
 import InputError from "@/Components/InputError.vue";
 import CancelButton from "@/Components/CancelButton.vue";
+import RichText from "@/Components/MyComponents/RichText.vue";
 import { Link, useForm } from "@inertiajs/vue3";
 
 export default {
 data(){
     const form = useForm({
-    opportunity_id: null,
-    customer_id: null,
-    branch: null,
-    contact_id: null,
-    contact_name: null,
-    contact_email: null,
-    subject: null,
-    content: null,
-    // media: [],
-        });
+        opportunity_id: null,
+        time: null,
+        customer_id: null,
+        meeting_date: null,
+        branch: null,
+        contact_id: null,
+        contact_name: null,
+        contact_phone: null,
+        meeting_via: null,
+        location: null,
+        description: null,
+        participants: null,
+    });
     return {
         form,
+        // has_contact: false,
+        // company_branch_obj: null,
+        meetingVias: [
+            'Presencial',
+            'Videoconferencia',
+            'Llamada',
+            'Otro',
+        ],
     }
 },
 components:{
@@ -110,20 +142,21 @@ components:{
     InputLabel,
     InputError,
     CancelButton,
+    RichText,
     Link,
 },
 props:{
     opportunities: Object,
-    customers: Array,
+    customers: Object,
     users: Array,
 },
 methods:{
-    store(){
-      this.form.post(route('crm.email-monitors.store'), {
+    store() {
+      this.form.post(route("crm.meeting-monitors.store"), {
         onSuccess: () => {
           this.$notify({
-            title: "Éxito",
-            message: "Se registró interacción de correo electrónico",
+            title: "Correcto",
+            message: "Se ha agendado una nueva cita",
             type: "success",
           });
         },
@@ -131,21 +164,27 @@ methods:{
     },
     getCustomer() {
         const opportunity = this.opportunities.data.find(opportunity => opportunity.id === this.form.opportunity_id);
-        this.form.customer_id = null;
         this.form.branch = null;
         this.form.contact_id = null;
-        this.form.contact_email = null;
         this.form.customer_id = opportunity.customer.id;
       },
-    getContactEmail() {
+    cleanCustomerInfo() {
+        this.form.contact_id = null;
+        this.form.branch = null;
+      },
+      getContactPhone() {
         this.form.branch = null; 
         this.form.contact_name = this.customers.data.find((item) => item.id == this.form.customer_id)?.contacts?.find( (item) => item.id == this.form.contact_id).name; 
-        this.form.contact_email = this.customers.data.find((item) => item.id == this.form.customer_id)?.contacts?.find( (item) => item.id == this.form.contact_id).email;
+        this.form.contact_phone = this.customers.data.find((item) => item.id == this.form.customer_id)?.contacts?.find( (item) => item.id == this.form.contact_id).phone;
       },
-}
-}
+      disabledDate(time) {
+      const today = new Date();
+      today.setHours(0, 0, 0, 0); // Establece la hora a las 00:00:00.000
+      return time < today;
+    },
+    updateDescription(content) {
+      this.form.description = content;
+    },
+},
+};
 </script>
-
-<style>
-
-</style>

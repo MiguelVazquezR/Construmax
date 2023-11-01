@@ -37,12 +37,12 @@
           <template #dropdown>
             <el-dropdown-menu>
               <el-dropdown-item
+                @click="$inertia.get(route('crm.meeting-monitors.create'))"
                 v-if="
                   this.$page.props.auth.user.permissions.includes(
                     'Agendar citas en seguimiento integral'
                   )
                 "
-                @click="update"
                 >Agendar cita</el-dropdown-item
               >
               <el-dropdown-item
@@ -73,7 +73,7 @@
               Cliente <i class="fa-solid fa-arrow-down-long ml-3"></i>
             </th>
             <th class="font-bold pb-5 px-7">
-              Tipo que interaccion <i class="fa-solid fa-arrow-down-long ml-3"></i>
+              Tipo de interacción <i class="fa-solid fa-arrow-down-long ml-3"></i>
             </th>
             <th class="font-bold pb-5 px-10">
               Fecha <i class="fa-solid fa-arrow-down-long ml-3"></i>

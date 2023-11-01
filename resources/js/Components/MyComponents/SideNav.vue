@@ -63,7 +63,7 @@ export default {
                     show: ['Ver clientes', 'Ver oportunidades'].some(permission => this.$page.props.auth.user.permissions.includes(permission)),
                 },
                 {
-                    label: 'PMS',
+                    label: 'Proyectos',
                     icon: '<i class="fa-solid fa-check mr-1"></i>',
                     route: route('pms.projects.index'),
                     active: route().current('pms.*'),

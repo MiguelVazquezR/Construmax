@@ -15,7 +15,13 @@ class Contact extends Model
         'name',
         'email',
         'phone',
+        'position',
+        'additional',
         'user_id',
+    ];
+
+    protected $casts = [
+        'additional' => 'array',
     ];
 
     // relationships

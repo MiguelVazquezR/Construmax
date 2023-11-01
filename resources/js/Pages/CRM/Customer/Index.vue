@@ -32,9 +32,7 @@
             <th class="font-bold pb-5">Nombre <i class="fa-solid fa-arrow-down-long ml-3 px-14 md:px-2"></i></th>
             <th class="font-bold pb-5">RFC <i class="fa-solid fa-arrow-down-long ml-3 px-14 md:px-2"></i></th>
             <th class="font-bold pb-5">Fecha de registro <i class="fa-solid fa-arrow-down-long ml-3 px-14 md:px-2"></i></th>
-            <th class="font-bold pb-5 text-center">Contacto <i class="fa-solid fa-arrow-down-long ml-3 px-14 md:px-2"></i></th>
-            <th class="font-bold pb-5">Teléfono <i class="fa-solid fa-arrow-down-long ml-3 px-14 md:px-2"></i></th>
-            <th class="font-bold pb-5">Correo electrónico <i class="fa-solid fa-arrow-down-long ml-3 px-14 md:px-2"></i></th>
+            <th class="font-bold pb-5">Contactos <i class="fa-solid fa-arrow-down-long ml-3 px-14 md:px-2"></i></th>
             <th></th>
           </tr>
         </thead>
@@ -53,14 +51,8 @@
             <td class="text-left py-2 px-2">
               {{ customer.created_at }}
             </td>
-            <td class="text-left py-2 px-2">
-              {{ customer.contact_name }}
-            </td>
-            <td class="text-left py-2 px-2">
-              {{ customer.contact_phone }}
-            </td>
             <td class="text-left py-2 px-2 rounded-r-full">
-              {{ customer.contact_email ?? '--' }}
+              {{ customer.contacts.map(item => item.name).join(', ') }}
             </td>
           </tr>
         </tbody>
@@ -112,9 +104,7 @@ computed: {
             customer.id.toString().toLowerCase().includes(this.search.toLowerCase()) ||
             customer.name.toLowerCase().includes(this.search.toLowerCase()) ||
             customer.rfc.toLowerCase().includes(this.search.toLowerCase()) ||
-            customer.contact_name.toLowerCase().includes(this.search.toLowerCase()) ||
-            customer.contact_phone.toLowerCase().includes(this.search.toLowerCase()) ||
-            customer.contact_email.toLowerCase().includes(this.search.toLowerCase())
+            customer.contacts.map(item => item.name).join(', ').toLowerCase().includes(this.search.toLowerCase())
         )
       }
     }

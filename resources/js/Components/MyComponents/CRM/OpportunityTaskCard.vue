@@ -35,6 +35,8 @@
       Hecho
     </button>
   </div>
+
+<!-- ------------------- Modal al dar click a la tarjeta ------->
   <Modal :show="taskInformationModal" @close="taskInformationModal = false">
     <form @submit.prevent="update" class="mx-7 my-4 space-y-4 relative">
       <div @click="taskInformationModal = false"
@@ -43,45 +45,47 @@
       </div>
       <h1 class="font-bold">{{ opportunityTask?.name }}</h1>
 
-      <h2 class="font-bold">Información de la actividad</h2>
-
-      <div class="flex justify-between items-center space-x-3 text-sm">
-        <label>Oportunidad</label>
-        <input v-model="oportunity" disabled class="input w-3/4 cursor-not-allowed" type="text">
+      <div class="flex justify-between items-center">
+        <h2 class="font-bold">Información de la actividad</h2>
+        <ThirdButton type="button" v-if="toBool(authUserPermissions[2]) || true" @click="canEdit = true">Editar</ThirdButton>
       </div>
 
-      <div class="flex justify-between items-center space-x-3 text-sm">
-        <label>Creado por</label>
-        <input v-model="creator" disabled class="input w-3/4 cursor-not-allowed" type="text">
-        <InputError :message="form.errors.name" />
+    <div class="grid grid-cols-2 gap-x-4 gap-y-2">    
+      <div>
+        <InputLabel value="Oportunidad" class="ml-2" />
+        <input :value="opportunityTask.opportunity.name" disabled class="input mt-1 cursor-not-allowed" type="text">
       </div>
-
-      <div class="flex justify-between items-center space-x-3 text-sm">
-        <label class="lg:pr-20">Asignado a</label>
-        <el-select class="w-2/3" v-model="form.asigned_id" clearable filterable placeholder="Seleccionar usuario"
+      <div>
+        <InputLabel value="Tipo de servicio" class="ml-2" />
+        <input :value="opportunityTask.opportunity.service_type" disabled class="input mt-1 cursor-not-allowed" type="text">
+      </div>
+      <div>
+        <InputLabel value="Creado por" class="ml-2" />
+        <input :value="opportunityTask.user.name" disabled class="input mt-1 cursor-not-allowed" type="text">
+      </div>
+      <div class="mt-1">
+        <InputLabel value="Asignado a" class="ml-2" />
+        <el-select v-model="form.asigned_id" clearable filterable placeholder="Seleccionar usuario"
           :disabled="!canEdit" no-data-text="No hay usuarios registrados" no-match-text="No se encontraron coincidencias">
-          <el-option v-for="user in users" :key="user" :label="user?.name" :value="user.id" />
+          <el-option v-for="user in users" :key="user" :label="user.name" :value="user.id" />
         </el-select>
         <InputError :message="form.errors.asigned_id" />
       </div>
-
-      <div class="lg:flex items-center space-x-4">
-        <div class="flex items-center space-x-2">
-          <label class="lg:mr-16 text-sm">Fecha limite</label>
+        <div class="mt-1">
+          <InputLabel value="Fecha limite para completar tarea" class="ml-2" />
           <el-date-picker v-model="form.limit_date" type="date" placeholder="Fecha limite *" :disabled-date="disabledDate"
             :disabled="!canEdit" format="YYYY-MM-DD" />
           <InputError :message="form.errors.limit_date" />
         </div>
-        <div class="flex items-center space-x-2">
+        <div>
           <label class="text-sm">Hora</label>
           <input v-model="form.time" class="input" type="time" :disabled="!canEdit">
           <InputError :message="form.errors.time" />
         </div>
-      </div>
 
-      <div class="flex justify-between items-center space-x-3 text-sm relative">
-        <label class="lg:mr-20">Prioridad</label>
-        <el-select class="w-full mt-2" v-model="form.priority" clearable filterable placeholder="Seleccionar prioridad"
+      <div class=" relative">
+        <InputLabel value="Prioridad" class="ml-2" />
+        <el-select class="w-full" v-model="form.priority" clearable filterable placeholder="Seleccionar prioridad"
           :disabled="!canEdit" no-data-text="No hay registros" no-match-text="No se encontraron coincidencias">
           <el-option v-for="item in priorities" :key="item" :label="item.label" :value="item.label">
             <span style="float: left"><i :class="item.color" class="fa-solid fa-circle"></i></span>
@@ -91,18 +95,18 @@
           </el-option>
         </el-select>
         <i :class="getColorPriority(form.priority)"
-          class="fa-solid fa-circle text-xs top-3 left-12 lg:left-16 absolute z-30"></i>
+          class="fa-solid fa-circle text-[10px] top-1 left-16 lg:left-20 absolute z-30"></i>
         <InputError :message="form.errors.priority" />
       </div>
-      <!-- <div class="flex justify-between items-center space-x-2">
+      <!-- <div>
         <label class="text-sm">Recordatorio</label>
         <textarea v-model="form.reminder" disabled class="textarea w-3/4 cursor-not-allowed"> </textarea>
         <InputError :message="form.errors.reminder" />
       </div> -->
-      <div class="flex justify-between items-center space-x-2">
-        <label class="text-sm">Descripción</label>
-      <RichText v-if="canEdit" @content="updateDescription($event)" :defaultValue="form.description" />
-        <div v-else class="rounded-[10px] bg-[#cccccc] px-3 py-2 min-h-[100px] text-sm w-3/4">{{ form.description }}</div>
+      <div class="col-span-2">
+        <InputLabel value="Descrpción" class="ml-2" />
+        <RichText v-if="canEdit" @content="updateDescription($event)" :defaultValue="form.description" />
+        <div v-else class="rounded-[10px] bg-transparent border border-[#BEBFC1] px-3 py-2 min-h-[100px] text-sm w-full">{{ form.description }}</div>
         <InputError :message="form.errors.description" />
       </div>
 
@@ -119,10 +123,10 @@
       </div>
 
 
-      <h2 class="font-bold py-5">Comentarios</h2>
+      <h2 class="font-bold py-5 col-span-2">Comentarios</h2>
 
       <!-- ------- Comments ------- -->
-      <div class="mt-7">
+      <div class="mt-7 col-span-2">
         <figure class="flex space-x-2 mt-4" v-for="comment in opportunityTask?.comments" :key="comment">
           <div v-if="$page.props.jetstream.managesProfilePhotos" class="flex text-sm rounded-full w-10">
             <img class="h-8 w-8 rounded-full object-cover" :src="comment.user?.profile_photo_url"
@@ -130,13 +134,13 @@
           </div>
           <div class="text-sm w-full">
             <p class="font-bold">{{ comment.user?.name }}</p>
-            <p v-html="comment.body"></p>
+            <p v-html="comment.content"></p>
           </div>
         </figure>
         <div v-if="toBool(authUserPermissions[4])" class="flex space-x-1 mt-5">
           <div v-if="$page.props.jetstream.managesProfilePhotos" class="flex text-sm rounded-full w-10">
             <img class="h-8 w-8 rounded-full object-cover" :src="$page.props.auth.user.profile_photo_url"
-              :alt="$page.props.auth.user?.name" />
+              :alt="$page.props.auth.user.name" />
           </div>
           <RichText @submitComment="storeComment(taskComponentLocal)" @content="updateComment($event)" ref="commentEditor"
             class="flex-1" withFooter :userList="users" :disabled="sendingComments" />
@@ -156,7 +160,9 @@
         <CancelButton v-if="canEdit" @click="canEdit = false">
           Cancelar edición
         </CancelButton>
+        <PrimaryButton v-if="canEdit" type="button" @click="update()">Guardar cambios</PrimaryButton>
       </div>
+  </div>
     </form>
   </Modal>
 
@@ -175,8 +181,10 @@
 import Modal from "@/Components/Modal.vue";
 import PrimaryButton from "@/Components/PrimaryButton.vue";
 import CancelButton from "@/Components/CancelButton.vue";
-import { Link, useForm } from "@inertiajs/vue3";
+import ThirdButton from "@/Components/ThirdButton.vue";
 import InputError from "@/Components/InputError.vue";
+import InputLabel from "@/Components/InputLabel.vue";
+import { Link, useForm } from "@inertiajs/vue3";
 import ConfirmationModal from "@/Components/ConfirmationModal.vue";
 import RichText from "@/Components/MyComponents/RichText.vue";
 import axios from "axios";
@@ -196,7 +204,7 @@ export default {
     return {
       form,
       taskComponentLocal: null,
-      oportunity: this.opportunityTask.opportunity.name,
+      oportunity: this.opportunityTask.opportunity?.name,
       creator: this.opportunityTask.user?.name,
       taskInformationModal: false,
       showConfirmModal: false,
@@ -222,10 +230,12 @@ export default {
     Modal,
     PrimaryButton,
     CancelButton,
+    ThirdButton,
     InputError,
     ConfirmationModal,
     Link,
     RichText,
+    InputLabel,
   },
   props: {
     opportunityTask: Object,
@@ -260,6 +270,9 @@ export default {
       if (value == 1 || value == true) return true;
       return false;
     },
+    updateDescription(content) {
+      this.form.description = content;
+    },
     async update() {
       try {
         const response = await axios.put(route("crm.opportunity-tasks.update", this.opportunityTask), {
@@ -272,7 +285,7 @@ export default {
         });
         if (response.status === 200) {
           this.$notify({
-            title: "Éxito",
+            title: "Correcto",
             message: "Se ha actualizado la actividad",
             type: "success",
           });
@@ -348,13 +361,13 @@ export default {
   computed: {
     authUser() {
       console.log(this.users)
-      return this.users.find(item => item.id == this.$page.props.auth.user.id);
+      return this.users?.find(item => item.id == this.$page.props.auth.user.id);
     },
     authUserIsParticipant() {
-      return this.taskComponentLocal.asigned?.id === this.authUser.id;
+      return this.taskComponentLocal.asigned?.id === this.authUser?.id;
     },
     authUserPermissions() {
-      const permissions = this.authUser.pivot.permissions;
+      const permissions = this.authUser?.pivot?.permissions;
       if (permissions) {
         return JSON.parse(permissions);
       } else {

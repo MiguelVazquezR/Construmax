@@ -37,7 +37,7 @@ Route::resource('opportunities', OpportunityController::class)->middleware('auth
 Route::put('/opportunities/update-status/{opportunity_id}', [OpportunityController::class, 'updateStatus'])->name('crm.opportunities.update-status')->middleware('auth');
 
 // ------- CRM (opportunityTasks Routes)  ---------
-Route::resource('opportunity-tasks', OpportunityTaskController::class)->except(['store', 'create'])->middleware('auth');
+Route::resource('opportunity-tasks', OpportunityTaskController::class)->except(['store', 'create'])->names('crm.opportunity-tasks')->middleware('auth');
 Route::get('opportunity-tasks/create/{opportunity_id}', [OpportunityTaskController::class, 'create'])->name('crm.opportunity-tasks.create')->middleware('auth');
 Route::post('opportunity-tasks/store/{opportunity_id}', [OpportunityTaskController::class, 'store'])->name('crm.opportunity-tasks.store')->middleware('auth');
 Route::post('opportunity-tasks/{opportunity_task}/comment', [OpportunityTaskController::class, 'comment'])->name('crm.opportunity-tasks.comment')->middleware('auth');

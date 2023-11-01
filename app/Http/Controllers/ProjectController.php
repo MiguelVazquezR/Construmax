@@ -24,7 +24,7 @@ class ProjectController extends Controller
 
     public function create()
     {
-        $customers = Customer::with(['opportunities'])->get();
+        $customers = Customer::with(['opportunities', 'contacts'])->get();
         $project_groups = ProjectGroupResource::collection(ProjectGroup::all());
         $tags = TagResource::collection(Tag::where('type', 'projects')->get());
         $users = User::where('is_active', true)->get();
@@ -42,7 +42,6 @@ class ProjectController extends Controller
                 return !$request->input('is_internal');
             })],
             'service_type' => 'required|string',
-            'invoice_type' => 'required|string|max:255',
             'is_strict' => 'boolean',
             'is_internal' => 'boolean',
             'budget' => 'required|numeric|min:0',
@@ -80,8 +79,8 @@ class ProjectController extends Controller
 
     public function show(Project $project)
     {
-        $project = ProjectResource::make(Project::with(['tasks' => ['users', 'project', 'user'], 'projectGroup', 'opportunity.customer', 'tags', 'users'])->find($project->id));
-        $projects = ProjectResource::collection(Project::with(['tasks' => ['users', 'project', 'user', 'comments.user', 'media'], 'user', 'users', 'opportunity.customer', 'projectGroup', 'tags'])->latest()->get());
+        $project = ProjectResource::make(Project::with(['tasks' => ['users', 'project', 'user'], 'projectGroup', 'opportunity.customer', 'tags', 'users', 'owner'])->find($project->id));
+        $projects = ProjectResource::collection(Project::with(['tasks' => ['users', 'project', 'user', 'comments.user', 'media'], 'user', 'users', 'opportunity.customer', 'projectGroup', 'tags', 'owner'])->latest()->get());
         $users = User::all();
         $defaultTab = request('defaultTab');
 
@@ -110,7 +109,6 @@ class ProjectController extends Controller
                 return !$request->input('is_internal');
             })],
             'service_type' => 'required|string',
-            'invoice_type' => 'required|string|max:255',
             'is_strict' => 'boolean',
             'is_internal' => 'boolean',
             'budget' => 'required|numeric|min:0',
@@ -155,7 +153,6 @@ class ProjectController extends Controller
                 return !$request->input('is_internal');
             })],
             'service_type' => 'required|string',
-            'invoice_type' => 'required|string|max:255',
             'is_strict' => 'boolean',
             'is_internal' => 'boolean',
             'budget' => 'required|numeric|min:0',

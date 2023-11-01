@@ -9,9 +9,11 @@
         <i class="fa-solid fa-ellipsis-vertical text-lg"></i>
       </div>
       <div @click.stop="" class="flex cursor-default">
-        <p v-if="taskComponentLocal?.is_paused" class="mr-4 rounded-full text-primary bg-[#EDEDED] px-2">
-          {{ "Pausado" }}
-        </p>
+        <el-tooltip :content="taskComponentLocal?.pausa_reazon" placement="top">
+          <p v-if="taskComponentLocal?.is_paused" class="mr-4 rounded-full text-primary bg-[#EDEDED] px-2">
+            {{ "Pausado" }}
+          </p>
+        </el-tooltip>
         <p class="mr-5">{{ taskComponentLocal?.created_at }}</p>
       </div>
     </div>

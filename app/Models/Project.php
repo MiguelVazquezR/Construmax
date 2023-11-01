@@ -17,7 +17,7 @@ class Project extends Model implements HasMedia
         'description',
         'currency',
         'address',
-        'invoice_type',
+        // 'invoice_type',
         'is_strict',
         'is_internal',
         'budget',

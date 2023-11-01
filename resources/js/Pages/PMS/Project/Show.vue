@@ -75,6 +75,8 @@
                 <span>{{ currentProject?.user?.name }}</span>
                 <span class="text-gray-500 my-2">Creado el</span>
                 <span>{{ currentProject?.created_at }}</span>
+                <span class="text-gray-500 my-2">Responsable</span>
+                <span>{{ currentProject?.owner.name }}</span>
                 <span class="text-gray-500 my-2">Tipo de servicio</span>
                 <span>{{ currentProject?.service_type }}</span>
                 <span class="text-gray-500 my-2">Fecha de inicio</span>
@@ -129,8 +131,6 @@
                 <span>{{ currentProject?.currency }}</span>
                 <span class="text-gray-500">Monto</span>
                 <span>${{ currentProject?.budget?.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",") }}</span>
-                <span class="text-gray-500 my-2">Condiciones de pago</span>
-                <span>{{ currentProject?.invoice_type }}</span>
 
                 <p class="text-secondary col-span-full mt-7 font-bold">Etiquetas</p>
                 <div class="col-span-full flex space-x-3">

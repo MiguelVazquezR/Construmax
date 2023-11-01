@@ -74,13 +74,11 @@ class OpportunityTaskController extends Controller
 
         if ($request->comment) {
             $comment = new Comment([
-                'body' => $request->comment,
+                'content' => $request->comment,
                 'user_id' => auth()->id(),
             ]);
             $opportunity_task->comments()->save($comment);
         }
-
-        // event(new RecordEdited($task));
 
         return response()->json(['item' => OpportunityTaskResource::make($opportunity_task->fresh(['asigned','opportunity','user','comments.user']))]);
     }
@@ -104,13 +102,12 @@ class OpportunityTaskController extends Controller
     {
 
         $comment = new Comment([
-            'body' => $request->comment,
+            'content' => $request->comment,
             'user_id' => auth()->id(),
         ]);
 
         $opportunity_task->comments()->save($comment);
-        // event(new RecordCreated($comment)); me dice que el id del usuario no tiene un valor por default.
-        // return to_route('projects.show', ['project' => $request->project_id]);
+
         return response()->json(['item' => $comment->fresh('user')]);
     }
 }

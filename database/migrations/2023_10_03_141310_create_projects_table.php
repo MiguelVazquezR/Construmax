@@ -18,7 +18,7 @@ return new class extends Migration
             $table->text('description');
             $table->string('currency');
             $table->text('address')->nullable();
-            $table->string('invoice_type');
+            // $table->string('invoice_type');
             $table->boolean('is_strict')->default(0);
             $table->boolean('is_internal')->default(0);
             $table->unsignedFloat('budget');

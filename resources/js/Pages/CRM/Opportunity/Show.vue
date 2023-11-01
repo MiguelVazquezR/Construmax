@@ -30,14 +30,14 @@
           </el-select>
         </div>
         <div class="flex items-center space-x-2">
-          <!-- <el-tooltip v-if="$page.props.auth.user.permissions.includes('Editar oportunidades') && tabs == 1"
+          <el-tooltip v-if="$page.props.auth.user.permissions.includes('Editar oportunidades') && tabs == 1"
             content="Editar oportunidad" placement="top">
             <Link :href="route('crm.opportunities.edit', selectedOpportunity)">
             <button class="w-9 h-9 rounded-lg bg-[#D9D9D9]">
               <i class="fa-solid fa-pen text-sm"></i>
             </button>
             </Link>
-          </el-tooltip> -->
+          </el-tooltip>
           <Dropdown align="right" width="48" v-if="$page.props.auth.user.permissions?.includes(
             'Eliminar oportunidades'
           ) || $page.props.auth.user.permissions?.includes('Registrar pagos en seguimiento integral') 
@@ -81,10 +81,10 @@
               ></i>
             </Link>
           </div>
-          <el-tooltip v-if="currentTab == 2 && toBool(authUserPermissions[0])" content="Crear actividad en la oportunidad"
+          <el-tooltip v-if="currentTab == 2 || toBool(authUserPermissions[0])" content="Crear actividad en la oportunidad"
             placement="top">
             <Link :href="route('crm.opportunity-tasks.create', selectedOpportunity)">
-            <PrimaryButton class="rounded-md">Nueva actividad</PrimaryButton>
+            <PrimaryButton class="rounded-full w-40">Agregar actividad</PrimaryButton>
             </Link>
           </el-tooltip>
           <el-tooltip v-if="currentTab == 3" content="Enviar un correo a prospecto" placement="top">
@@ -182,12 +182,8 @@
         <span>{{ currentOpportunity?.start_date }}</span>
         <span class="text-gray-500 my-2">Fecha estimada de cierre</span>
         <span>{{ currentOpportunity?.close_date }}</span>
-        <span class="text-gray-500 my-2">Monto estimado</span>
-        <span
-          >${{
-            currentOpportunity?.amount?.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")
-          }}</span
-        >
+        <span class="text-gray-500 my-2">Monto</span>
+        <span>${{ currentOpportunity?.amount?.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",") }}</span>
         <span class="text-gray-500 my-2">Prioridad</span>
         <div class="relative">
           <span>{{ currentOpportunity?.priority.label }}</span>
@@ -280,7 +276,7 @@
       <!-- -- TERMINAR HOY -- -->
       <div class="lg:border-r lg:mb-0 mb-16 border-[#9A9A9A] h-auto lg:pr-7 seccion mx-2">
         <h2 class="font-bold mb-10">
-          TERMINAR HOY <span class="font-normal ml-7">{{ todayTasksList.length }}</span>
+          TERMINAR HOY <span class="font-normal ml-7">{{ todayTasksList?.length }}</span>
         </h2>
         <OpportunityTaskCard
           @updated-opportunityTask="updateOpportunityTask"
@@ -302,7 +298,7 @@
       <div class="lg:border-r lg:mb-0 mb-16 border-[#9A9A9A] h-auto lg:px-4 seccion mx-2">
         <h2 class="font-bold mb-10 first-letter ml-2">
           TERMINAR ESTA SEMANA
-          <span class="font-normal ml-7">{{ thisWeekTasksList.length }}</span>
+          <span class="font-normal ml-7">{{ thisWeekTasksList?.length }}</span>
         </h2>
         <OpportunityTaskCard
           @updated-opportunityTask="updateOpportunityTask"
@@ -324,7 +320,7 @@
       <div class="lg:border-r lg:mb-0 mb-16 border-[#9A9A9A] h-auto lg:px-4 seccion mx-2">
         <h2 class="font-bold mb-10 first-letter ml-2">
           ACTIVIDADES PROXIMAS
-          <span class="font-normal ml-7">{{ nextTasksList.length }}</span>
+          <span class="font-normal ml-7">{{ nextTasksList?.length }}</span>
         </h2>
         <OpportunityTaskCard
           @updated-opportunityTask="updateOpportunityTask"
@@ -336,7 +332,7 @@
           :opportunityTask="nextTask"
           :users="currentOpportunity?.users"
         />
-        <div class="text-center" v-if="!nextTasksList.length">
+        <div class="text-center" v-if="!nextTasksList?.length">
           <p class="text-xs text-gray-500">No hay tareas para mostrar</p>
           <i class="fa-regular fa-folder-open text-9xl text-gray-300/50 mt-16"></i>
         </div>
@@ -345,7 +341,7 @@
       <!-- -- TERMINADAS -- -->
       <div class="lg:border-r lg:mb-0 mb-16 border-[#9A9A9A] h-auto lg:px-4 seccion mx-2">
         <h2 class="font-bold mb-10 first-letter ml-2">
-          TERMINADAS <span class="font-normal ml-7">{{ finishedTasksList.length }}</span>
+          TERMINADAS <span class="font-normal ml-7">{{ finishedTasksList?.length }}</span>
         </h2>
         <OpportunityTaskCard
           @updated-opportunityTask="updateOpportunityTask"
@@ -384,6 +380,7 @@
         </div>
       </div>
     </div>
+    <!-- {{ nextTasksList}} -->
     <!-- ------------- tab 2 atividades ends ------------ -->
 
     <ConfirmationModal :show="showConfirmModal" @close="showConfirmModal = false">
@@ -642,6 +639,7 @@ export default {
       this.currentOpportunity = this.opportunities.data.find((item) => item.id == newVal);
       this.selectedOpportunity = this.currentOpportunity?.id;
     },
+
   },
   mounted() {
     this.selectedOpportunity = this.opportunity.id;
@@ -667,7 +665,7 @@ export default {
     uniqueAsignedNames() {
       const asignedNamesSet = new Set(); // Usamos un Set para nombres únicos.
 
-      if (this.currentOpportunity?.opportunityTasks.length) {
+      if (this.currentOpportunity?.opportunityTasks?.length) {
         // Recorremos las tareas y agregamos los nombres de los asignados al conjunto.
         this.currentOpportunity?.opportunityTasks?.forEach((task) => {
           asignedNamesSet.add(task.asigned.name);
@@ -678,7 +676,7 @@ export default {
       }
     },
     todayTasksList() {
-      return (this.todayTasksList = this.currentOpportunity.opportunityTasks?.filter(
+       return (this.todayTasksList = this.currentOpportunity.opportunityTasks?.filter(
         (opportunity) =>
           opportunity.deadline_status === "Terminar hoy" && !opportunity.finished_at
       ));

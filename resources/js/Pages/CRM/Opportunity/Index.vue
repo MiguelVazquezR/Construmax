@@ -379,6 +379,7 @@ export default {
         message: "Oportunidad eliminada",
         type: "success",
       });
+      window.location.reload();
     },
   },
   computed: {

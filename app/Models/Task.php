@@ -26,6 +26,7 @@ class Task extends Model implements HasMedia
         'user_id',
         'project_id',
         'opportunity_id',
+        'pausa_reazon',
     ];
 
     protected $casts = [

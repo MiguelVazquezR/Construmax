@@ -22,7 +22,7 @@ class EmailMonitorResource extends JsonResource
             'contact_email' => $this->contact_email,
             'branch' => $this->branch,
             'customer' => $this->whenLoaded('customer'),
-            'opportunity' => $this->whenLoaded('opportunity'),
+            'opportunity' => OpportunityResource::make($this->whenLoaded('opportunity')),
             'seller' => $this->whenLoaded('seller'),
             'contact' => $this->whenLoaded('contact'),
             'clientMonitor' => $this->whenLoaded('clientMonitor'),

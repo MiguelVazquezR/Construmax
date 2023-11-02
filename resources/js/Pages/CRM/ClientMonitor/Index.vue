@@ -46,12 +46,12 @@
                 >Agendar cita</el-dropdown-item
               >
               <el-dropdown-item
+              @click="$inertia.get(route('crm.payment-monitors.create'))"
                 v-if="
                   this.$page.props.auth.user.permissions.includes(
                     'Registrar pagos en seguimiento integral'
                   )
                 "
-                @click="showConfirmModal = true"
                 >Registar pago</el-dropdown-item
               >
             </el-dropdown-menu>

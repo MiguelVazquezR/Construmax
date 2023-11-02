@@ -18,8 +18,13 @@ class PaymentMonitor extends Model implements HasMedia
         'payment_method',
         'concept',
         'notes',
+        'branch',
+        'contact_name',
+        'contact_phone',
         'seller_id',
         'opportunity_id',
+        'contact_id',
+        'customer_id',
         'client_monitor_id',
     ];
 
@@ -33,6 +38,11 @@ class PaymentMonitor extends Model implements HasMedia
         return $this->belongsTo(Opportunity::class);
     }
 
+    public function customer() :BelongsTo
+    {
+        return $this->belongsTo(Customer::class);
+    }
+
     public function seller() :BelongsTo
     {
         return $this->belongsTo(User::class);
@@ -41,5 +51,10 @@ class PaymentMonitor extends Model implements HasMedia
     public function clientMonitor() :BelongsTo
     {
         return $this->belongsTo(ClientMonitor::class);
+    }
+
+    public function contact()
+    {
+        return $this->morphOne(Contact::class, 'contactable');
     }
 }

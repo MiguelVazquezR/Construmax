@@ -18,8 +18,13 @@ return new class extends Migration
             $table->string('payment_method');
             $table->string('concept');
             $table->text('notes')->nullable();
+            $table->string('branch')->nullable();
+            $table->string('contact_name')->nullable();
+            $table->string('contact_phone')->nullable();
             $table->foreignId('seller_id')->nullable()->constrained('users')->cascadeOnDelete();
             $table->foreignId('opportunity_id')->nullable()->constrained()->cascadeOnDelete();
+            $table->foreignId('contact_id')->nullable()->constrained()->cascadeOnDelete();
+            $table->foreignId('customer_id')->nullable()->constrained()->cascadeOnDelete();
             $table->foreignId('client_monitor_id')->nullable()->constrained()->cascadeOnDelete();
             $table->timestamps();
         });

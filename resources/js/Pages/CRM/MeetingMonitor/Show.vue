@@ -116,7 +116,3 @@ methods:{
 }
 }
 </script>
-
-<style>
-
-</style>

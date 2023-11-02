@@ -54,7 +54,7 @@ class MeetingMonitor extends Model
         return $this->belongsTo(ClientMonitor::class);
     }
 
-    public function contact() :MorphOne
+    public function contact()
     {
         return $this->morphOne(Contact::class, 'contactable');
     }

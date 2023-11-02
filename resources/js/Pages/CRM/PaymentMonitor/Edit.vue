@@ -1,15 +1,15 @@
 <template>
-  <AppLayout title="Agendar cita">
+<AppLayout title="Editar registro de pago">
     <div class="flex justify-between items-center text-lg mx-8 mt-8">
-      <b>Agendar cita</b>
-      <Link :href="route('crm.client-monitors.index')">
-      <p class="flex items-center text-sm text-primary">
+        <b>Editar pago o transacción</b>
+        <Link :href="route('crm.client-monitors.index')">
+        <p class="flex items-center text-sm text-primary">
         <i class="fa-solid fa-arrow-left-long mr-2"></i>
         <span>Regresar</span>
-      </p>
-      </Link>
+        </p>
+        </Link>
     </div>
-    <form @submit.prevent="store" class="mx-8 mt-3 grid grid-cols-2 gap-x-4 gap-y-2">
+    <form @submit.prevent="update" class="mx-8 mt-3 grid grid-cols-2 gap-x-4 gap-y-2">
         <div>
             <InputLabel value="Folio de oportunidad *" class="ml-2" />
             <el-select @change="getCustomer" class="w-full" v-model="form.opportunity_id" clearable filterable placeholder="Seleccione"
@@ -50,49 +50,43 @@
             </el-select>
             <InputError :message="form.errors.branch" />
         </div>
-        <h2 class="text-primary col-span-2 my-3">Detalles de la cita</h2>
+
+        <h2 class="text-primary col-span-2 my-3">Datos del pago</h2>
+
         <div class="w-full">
-            <InputLabel value="Fecha *" class="ml-2" />
-            <el-date-picker class="w-full" v-model="form.meeting_date" type="date" placeholder="Fecha*" format="YYYY/MM/DD"
-                value-format="YYYY-MM-DD" :disabled-date="disabledDate" />
-            <InputError :message="form.errors.meeting_date" />
+            <InputLabel value="Monto pagado *" class="ml-2" />
+            <input v-model="form.amount" class="input" type="number" min="0">
+            <InputError :message="form.errors.amount" />
         </div>
         <div class="w-full">
-            <InputLabel value="Hora *" class="ml-2" />
-            <el-time-select class="w-full" v-model="form.time" start="07:00" step="00:15" end="23:30"
-                placeholder="Seleccione una hora" />
-            <InputError :message="form.errors.time" />
-        </div>
-        <div class="w-full">
-            <InputLabel value="Vía de cita *" class="ml-2" />
-            <el-select class="w-full" v-model="form.meeting_via" clearable filterable placeholder="Seleccione"
-              no-data-text="No hay registros" no-match-text="No se encontraron coincidencias">
-              <el-option v-for="meeting_via in meetingVias" :key="meeting_via" :label="meeting_via"
-                :value="meeting_via" />
+            <InputLabel value="Método de pago *" class="ml-2" />
+            <el-select class="w-full" v-model="form.payment_method" clearable filterable placeholder="Seleccione"
+                no-data-text="No hay registros" no-match-text="No se encontraron coincidencias">
+                <el-option v-for="payment_method in payment_methods" :key="payment_method" :label="payment_method" :value="payment_method" />
             </el-select>
-            <InputError :message="form.errors.meeting_via" />
+            <InputError :message="form.errors.payment_method" />
         </div>
         <div class="w-full">
-            <InputLabel value="Ubicación *" class="ml-2" />
-            <input v-model="form.location" class="input" type="text">
-            <InputError :message="form.errors.location" />
+            <InputLabel value="Concepto *" class="ml-2" />
+            <input v-model="form.concept" class="input" type="text">
+            <InputError :message="form.errors.concept" />
         </div>
-        <div class="col-span-2">
-            <InputLabel value="Participante(s) *" class="ml-2" />
-            <el-select class="w-full mt-2" v-model="form.participants" clearable filterable multiple
-                placeholder="Seleccionar participantes" no-data-text="No hay usuarios registrados"
-                no-match-text="No se encontraron coincidencias">
-                <el-option v-for="user in users" :key="user.id" :label="user.name" :value="user.id" />
-            </el-select>
-            <InputError :message="form.errors.participants" />
+        <div class="w-full">
+            <InputLabel value="Fecha del pago *" class="ml-2" />
+            <el-date-picker class="w-full" v-model="form.paid_at" type="date" placeholder="Fecha*" format="YYYY/MM/DD"
+                 :disabled-date="disabledDate" />
+            <InputError :message="form.errors.paid_at" />
         </div>
         <div class="mt-5 col-span-full">
-          <InputLabel value="Descripción *" class="ml-2" />
-          <RichText @content="updateDescription($event)" />
+          <InputLabel value="Notas " class="ml-2" />
+          <textarea class="input h-24" v-model="form.notes" rows="3"></textarea>
+        </div>
+        <div class="ml-2 mt-2 col-span-full">
+              <FileUploader @files-selected="this.form.media = $event" />
         </div>
         <div class="flex justify-end items-center col-span-2 mt-5">
           <PrimaryButton :disabled="form.processing">
-            Agendar
+            Guardar cambios
           </PrimaryButton>
         </div>
     </form>
@@ -105,33 +99,33 @@ import PrimaryButton from "@/Components/PrimaryButton.vue";
 import InputLabel from "@/Components/InputLabel.vue";
 import InputError from "@/Components/InputError.vue";
 import CancelButton from "@/Components/CancelButton.vue";
-import RichText from "@/Components/MyComponents/RichText.vue";
+import FileUploader from "@/Components/MyComponents/FileUploader.vue";
 import { Link, useForm } from "@inertiajs/vue3";
 
 export default {
 data(){
     const form = useForm({
-        opportunity_id: null,
-        time: null,
-        customer_id: null,
-        meeting_date: null,
-        branch: null,
-        contact_id: null,
-        contact_name: null,
-        contact_phone: null,
-        meeting_via: null,
-        location: null,
-        description: null,
-        participants: null,
+        opportunity_id: this.payment_monitor.data.opportunity?.id,
+        customer_id: this.payment_monitor.data.customer?.id,
+        branch: this.payment_monitor.data.branch,
+        contact_id: this.payment_monitor.data.contact?.id,
+        contact_name: this.payment_monitor.data.contact_name,
+        contact_phone: this.payment_monitor.data.contact_phone,
+        paid_at: this.payment_monitor.data.paid_at_raw,
+        amount: this.payment_monitor.data.amount,
+        payment_method: this.payment_monitor.data.payment_method,
+        concept: this.payment_monitor.data.concept,
+        notes: this.payment_monitor.data.notes,
+        media: [],
     });
-    return {
+    return{
         form,
-        meetingVias: [
-            'Presencial',
-            'Videoconferencia',
-            'Llamada',
-            'Otro',
-        ],
+        payment_methods: [
+        'Transferencia electrónica',
+        'Depósito',
+        'Pago en efectivo',
+        'Otro',
+      ],
     }
 },
 components:{
@@ -140,25 +134,38 @@ components:{
     InputLabel,
     InputError,
     CancelButton,
-    RichText,
-    Link,
+    FileUploader,
+    Link
 },
 props:{
+    payment_monitor: Object,
     opportunities: Object,
     customers: Object,
-    users: Array,
 },
 methods:{
-    store() {
-      this.form.post(route("crm.meeting-monitors.store"), {
-        onSuccess: () => {
-          this.$notify({
-            title: "Correcto",
-            message: "Se ha agendado una nueva cita",
-            type: "success",
-          });
-        },
-      });
+    update() {
+      if (this.form.media.length > 0) {
+        this.form.post(route("crm.payment-monitors.update-with-media", this.payment_monitor.data.id), {
+          method: '_put',
+          onSuccess: () => {
+            this.$notify({
+              title: "Correcto",
+              message: "Registro de pago editado",
+              type: "success",
+            });
+          },
+        });
+      } else {
+        this.form.put(route("crm.payment-monitors.update", this.payment_monitor.data.id), {
+          onSuccess: () => {
+            this.$notify({
+              title: "Correcto",
+              message: "Registro de pago editado",
+              type: "success",
+            });
+          },
+        });
+      }
     },
     getCustomer() {
         const opportunity = this.opportunities.data.find(opportunity => opportunity.id === this.form.opportunity_id);
@@ -166,7 +173,7 @@ methods:{
         this.form.contact_id = null;
         this.form.customer_id = opportunity.customer.id;
       },
-    cleanCustomerInfo() {
+      cleanCustomerInfo() {
         this.form.contact_id = null;
         this.form.branch = null;
       },
@@ -175,14 +182,6 @@ methods:{
         this.form.contact_name = this.customers.data.find((item) => item.id == this.form.customer_id)?.contacts?.find( (item) => item.id == this.form.contact_id).name; 
         this.form.contact_phone = this.customers.data.find((item) => item.id == this.form.customer_id)?.contacts?.find( (item) => item.id == this.form.contact_id).phone;
       },
-      disabledDate(time) {
-      const today = new Date();
-      today.setHours(0, 0, 0, 0); // Establece la hora a las 00:00:00.000
-      return time < today;
-    },
-    updateDescription(content) {
-      this.form.description = content;
-    },
-},
-};
+}
+}
 </script>

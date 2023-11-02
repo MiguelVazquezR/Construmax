@@ -209,5 +209,8 @@ return [
         'customer_id' => 'cliente',
         'branch' => 'sucursal',
         'contact_email' => 'correo electrónico',
+        'payment_method' => 'método de pago',
+        'concept' => 'concepto',
+        'paid_at' => 'fecha de pago',
     ],
 ];

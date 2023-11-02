@@ -51,7 +51,7 @@ Route::put('opportunity-tasks/mark-as-done/{opportunityTask}', [OpportunityTaskC
 Route::resource('client-monitors', ClientMonitorController::class)->names('crm.client-monitors')->middleware('auth');
 
 // ------- CRM (Payment monior Routes)  ---------
-Route::resource('payment-monitors', PaymentMonitorController::class)->names('crm.payments-monitors')->middleware('auth');
+Route::resource('payment-monitors', PaymentMonitorController::class)->names('crm.payment-monitors')->middleware('auth');
 Route::post('payment-monitors/update-with-media/{payment_monitor}', [PaymentMonitorController::class, 'updateWithMedia'])->name('crm.payment-monitors.update-with-media')->middleware('auth');
 
 // ------- CRM (meeting monior Routes)  ---------

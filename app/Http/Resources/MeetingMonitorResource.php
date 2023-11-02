@@ -27,7 +27,7 @@ class MeetingMonitorResource extends JsonResource
             'description' => $this->description,
             'branch' => $this->branch,
             'customer' => $this->whenLoaded('customer'),
-            'opportunity' => $this->whenLoaded('opportunity'),
+            'opportunity' => OpportunityResource::make($this->whenLoaded('opportunity')),
             'seller' => $this->whenLoaded('seller'),
             'clientMonitor' => $this->whenLoaded('clientMonitor'),
             'contact' => $this->whenLoaded('contact'),

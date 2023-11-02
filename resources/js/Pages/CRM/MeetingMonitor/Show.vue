@@ -39,7 +39,14 @@
       <div v-if="tabs == 1" class="md:grid grid-cols-2 border-b-2 border-[#cccccc] text-sm">
         <div class="grid grid-cols-2 text-left p-4 md:ml-10 border-r-2 border-gray-[#cccccc] items-center">
 
-          <p class="font-bold col-span-2 mb-2">Información de la cita</p>
+          <p class="font-bold col-span-2 mb-2">Información de la oportunidad</p>
+
+          <span class="text-gray-500 my-2">Folio de oportunidad</span>
+          <a class="hover:underline text-primary" :href="route('crm.opportunities.show', meeting_monitor.data.opportunity?.id)"><span>{{ meeting_monitor.data.opportunity?.folio }}</span></a>
+          <span class="text-gray-500 my-2">Vendedor</span>
+          <span>{{ meeting_monitor.data.seller?.name }}</span>
+
+          <p class="font-bold col-span-2 my-2">Información de la cita</p>
           <span class="text-gray-500">Creado por</span>
           <span>{{ meeting_monitor.data.seller.name }}</span>
           <span class="text-gray-500 my-2">Fecha</span>

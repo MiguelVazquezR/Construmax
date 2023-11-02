@@ -10,7 +10,8 @@
         <i class="fa-solid fa-magnifying-glass absolute top-2 right-4 text-xs text-gray2"></i>
       </div>
       <div>
-        <PrimaryButton v-if="this.$page.props.auth.user.permissions.includes('Crear proyectos')" @click="$inertia.get(route('pms.projects.create'))" class="rounded-full">Nuevo proyecto
+        <PrimaryButton v-if="this.$page.props.auth.user.permissions.includes('Crear proyectos')"
+          @click="$inertia.get(route('pms.projects.create'))" class="rounded-full">Nuevo proyecto
         </PrimaryButton>
       </div>
     </div>
@@ -20,10 +21,13 @@
         <thead>
           <tr class="text-left">
             <th class="font-bold pb-5 pl-4">Folio <i class="fa-solid fa-arrow-down-long ml-3 px-14 md:px-2"></i></th>
-            <th class="font-bold pb-5">Nombre del proyecto <i class="fa-solid fa-arrow-down-long ml-3 px-14 md:px-2"></i></th>
-            <th class="font-bold pb-5">Tipo de servicio <i class="fa-solid fa-arrow-down-long ml-3 px-14 md:px-2"></i></th>
+            <th class="font-bold pb-5">Nombre del proyecto <i class="fa-solid fa-arrow-down-long ml-3 px-14 md:px-2"></i>
+            </th>
+            <th class="font-bold pb-5">Tipo de servicio <i class="fa-solid fa-arrow-down-long ml-3 px-14 md:px-2"></i>
+            </th>
             <th class="font-bold pb-5">Estado <i class="fa-solid fa-arrow-down-long ml-3 px-14 md:px-2"></i></th>
-            <th class="font-bold pb-5 text-center">Tareas <i class="fa-solid fa-arrow-down-long ml-3 px-14 md:px-2"></i></th>
+            <th class="font-bold pb-5 text-center">Tareas <i class="fa-solid fa-arrow-down-long ml-3 px-14 md:px-2"></i>
+            </th>
             <th class="font-bold pb-5">Responsable <i class="fa-solid fa-arrow-down-long ml-3 px-14 md:px-2"></i></th>
             <th class="font-bold pb-5">Fecha de inicio <i class="fa-solid fa-arrow-down-long ml-3 px-14 md:px-2"></i></th>
             <th class="font-bold pb-5">Fecha final <i class="fa-solid fa-arrow-down-long ml-3 px-14 md:px-2"></i></th>
@@ -46,7 +50,8 @@
             <td class="text-left py-2">
               <span
                 :class="calculateProjectStatus(project.tasks)?.text_color + ' ' + calculateProjectStatus(project.tasks)?.bg"
-                class="py-1 px-2 rounded-full border border-white">{{ calculateProjectStatus(project.tasks)?.label }}</span>
+                class="py-1 px-2 rounded-full border border-white">{{ calculateProjectStatus(project.tasks)?.label
+                }}</span>
             </td>
             <td class="text-left py-2 flex space-x-1 items-center">
               <p class="text-xs">{{ project.tasks.filter(task => task.status === 'Terminada').length }}</p>
@@ -68,8 +73,12 @@
             <td class="text-left py-2 px-2">
               {{ project.start_date }}
             </td>
-            <td class="text-left py-2 px-2">
+            <td class="text-left py-2 px-2" :class="getTextClass(project)">
               {{ project.limit_date }}
+              <el-tooltip v-if="project.finished_at === null && limitDateHasPassed(project)" content="La fecha limite ha pasado"
+                placement="top">
+                <i class="fa-solid fa-circle-exclamation"></i>
+              </el-tooltip>
             </td>
             <td class="text-left py-2 px-2 rounded-r-full">
               {{ project.finished_at ?? '--' }}
@@ -91,6 +100,7 @@
 import AppLayout from "@/Layouts/AppLayout.vue";
 import PrimaryButton from "@/Components/PrimaryButton.vue";
 import SecondaryButton from "@/Components/SecondaryButton.vue";
+import moment from 'moment';
 //   import Pagination from "@/Components/MyComponents/Pagination.vue";
 
 export default {
@@ -110,6 +120,33 @@ export default {
     projects: Object
   },
   methods: {
+    limitDateHasPassed(project) {
+      const today = moment();
+      const limitDate = moment(project.raw_limit_date);
+
+      if (limitDate.isBefore(today, 'day')) {
+        return true;
+      }
+
+      return false;
+    },
+    getTextClass(project) {
+      const today = moment();
+      const createdDate = moment(project.raw_created_at);
+      const limitDate = moment(project.raw_limit_date);
+
+      if (project.finished_at === null) {
+        if (createdDate.isSame(today, 'day')) {
+          return 'text-green-600';
+        } else if (createdDate.isBefore(today, 'day') && limitDate.isAfter(today, 'day')) {
+          return 'text-amber-600';
+        } else if (limitDate.isSame(today, 'day') || limitDate.isBefore(today, 'day')) {
+          return 'text-red-600';
+        } else {
+          return 'text-purple-500'; // Clase vacía si no se cumple ninguna condición
+        }
+      }
+    },
     handleSearch() {
       this.search = this.inputSearch;
     },

@@ -17,7 +17,6 @@ class Project extends Model implements HasMedia
         'description',
         'currency',
         'address',
-        // 'invoice_type',
         'is_strict',
         'is_internal',
         'budget',
@@ -26,6 +25,7 @@ class Project extends Model implements HasMedia
         'finished_at',
         'project_group_id',
         'user_id',
+        'contact_id',
         'opportunity_id',
         'owner_id',
     ];
@@ -74,5 +74,10 @@ class Project extends Model implements HasMedia
     public function tasks()
     {
         return $this->hasMany(Task::class);
+    }
+
+    public function contact()
+    {
+        return $this->belongsTo(Contact::class);
     }
 }

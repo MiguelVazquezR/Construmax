@@ -49,6 +49,7 @@ class ProjectController extends Controller
             'limit_date' => 'required|date',
             'project_group_id' => 'required|numeric|min:1',
             'user_id' => 'required|numeric|min:1',
+            'contact_id' => 'required|numeric|min:1',
             'opportunity_id' => [Rule::requiredIf(function () use ($request) {
                 return !$request->input('is_internal');
             })],
@@ -79,8 +80,8 @@ class ProjectController extends Controller
 
     public function show(Project $project)
     {
-        $project = ProjectResource::make(Project::with(['tasks' => ['users', 'project', 'user'], 'projectGroup', 'opportunity.customer', 'tags', 'users', 'owner'])->find($project->id));
-        $projects = ProjectResource::collection(Project::with(['tasks' => ['users', 'project', 'user', 'comments.user', 'media'], 'user', 'users', 'opportunity.customer', 'projectGroup', 'tags', 'owner'])->latest()->get());
+        $project = ProjectResource::make(Project::with(['tasks' => ['users', 'project', 'user'], 'projectGroup', 'opportunity.customer', 'tags', 'users', 'owner', 'contact'])->find($project->id));
+        $projects = ProjectResource::collection(Project::with(['tasks' => ['users', 'project', 'user', 'comments.user', 'media'], 'user', 'users', 'opportunity.customer', 'projectGroup', 'tags', 'owner', 'contact'])->latest()->get());
         $users = User::all();
         $defaultTab = request('defaultTab');
 
@@ -89,8 +90,8 @@ class ProjectController extends Controller
 
     public function edit(Project $project)
     {
-        $project = $project->fresh(['tags', 'opportunity.customer', 'owner']);
-        $customers = Customer::with(['opportunities'])->get();
+        $project = $project->fresh(['tags', 'opportunity.customer', 'owner', 'users']);
+        $customers = Customer::with(['opportunities', 'contacts'])->get();
         $project_groups = ProjectGroupResource::collection(ProjectGroup::all());
         $tags = TagResource::collection(Tag::where('type', 'projects')->get());
         $users = User::where('is_active', true)->get();
@@ -116,6 +117,7 @@ class ProjectController extends Controller
             'limit_date' => 'required|date',
             'project_group_id' => 'required|numeric|min:1',
             'user_id' => 'required|numeric|min:1',
+            'contact_id' => 'required|numeric|min:1',
             'opportunity_id' => [Rule::requiredIf(function () use ($request) {
                 return !$request->input('is_internal');
             })],
@@ -125,13 +127,15 @@ class ProjectController extends Controller
 
         $project->update($validated);
 
-        // // permisos
-        // foreach ($request->selectedUsersToPermissions as $user) {
-        //     $allowedUser = [
-        //         "permissions" => json_encode($user['permissions']), // Serializa los permisos en formato JSON
-        //     ];
-        //     $project->users()->attach($user['id'], $allowedUser);
-        // }
+        // permisos
+        // Eliminar todos los permisos actuales para el proyecto
+        $project->users()->detach();
+        foreach ($request->selectedUsersToPermissions as $user) {
+            $allowedUser = [
+                "permissions" => json_encode($user['permissions']), // Serializa los permisos en formato JSON
+            ];
+            $project->users()->attach($user['id'], $allowedUser);
+        }
 
         // etiquetas
         // Obtiene los IDs de las etiquetas seleccionadas desde el formulario
@@ -160,6 +164,7 @@ class ProjectController extends Controller
             'limit_date' => 'required|date',
             'project_group_id' => 'required|numeric|min:1',
             'user_id' => 'required|numeric|min:1',
+            'contact_id' => 'required|numeric|min:1',
             'opportunity_id' => [Rule::requiredIf(function () use ($request) {
                 return !$request->input('is_internal');
             })],
@@ -169,13 +174,15 @@ class ProjectController extends Controller
 
         $project->update($validated);
 
-        // // permisos
-        // foreach ($request->selectedUsersToPermissions as $user) {
-        //     $allowedUser = [
-        //         "permissions" => json_encode($user['permissions']), // Serializa los permisos en formato JSON
-        //     ];
-        //     $project->users()->attach($user['id'], $allowedUser);
-        // }
+        // permisos
+        // Eliminar todos los permisos actuales para el proyecto
+        $project->users()->detach();
+        foreach ($request->selectedUsersToPermissions as $user) {
+            $allowedUser = [
+                "permissions" => json_encode($user['permissions']), // Serializa los permisos en formato JSON
+            ];
+            $project->users()->attach($user['id'], $allowedUser);
+        }
 
         // etiquetas
         // Obtiene los IDs de las etiquetas seleccionadas desde el formulario

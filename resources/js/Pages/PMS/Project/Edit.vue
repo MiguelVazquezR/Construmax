@@ -99,7 +99,6 @@
           <el-tooltip
             content="Seleccione esta opción si el proyecto es una iniciativa de la empresa y no esta relacionado con un cliente en específico"
             placement="right">
-            <!-- <i class="fa-solid fa-circle-info text-primary text-xs ml-2"></i> -->
             <div class="rounded-full border border-primary w-3 h-3 flex items-center justify-center">
               <i class="fa-solid fa-info text-primary text-[7px]"></i>
             </div>
@@ -112,7 +111,6 @@
             <InputLabel value="Grupo" />
             <el-tooltip content="Organice su proyecto en grupos. Seleccione o cree un grupo para asociar este proyecto"
               placement="right">
-              <!-- <i class="fa-solid fa-circle-info text-primary text-xs ml-2"></i> -->
               <div class="rounded-full border border-primary w-3 h-3 flex items-center justify-center">
                 <i class="fa-solid fa-info text-primary text-[7px]"></i>
               </div>
@@ -131,11 +129,19 @@
       <h2 v-if="!form.is_internal" class="font-bold text-sm my-2 col-span-full">Campos adicionales</h2>
       <div v-if="!form.is_internal">
         <InputLabel value="Cliente *" class="ml-2" />
-        <el-select v-model="form.customer_id" @change="updateBranches()" clearable placeholder="Seleccione"
+        <el-select v-model="form.customer_id" @change="updateContacts()" clearable placeholder="Seleccione"
           class="w-full mt-1" no-data-text="No hay opciones para mostrar" no-match-text="No se encontraron coincidencias">
           <el-option v-for="(item, index) in customers" :key="item.id" :label="item.name" :value="item.id" />
         </el-select>
         <InputError :message="form.errors.customer_id" />
+      </div>
+      <div v-if="!form.is_internal">
+        <InputLabel value="Contacto *" class="ml-2" />
+        <el-select v-model="form.contact_id" @change="updateBranches()" clearable placeholder="Seleccione"
+          class="w-full mt-1" no-data-text="No hay opciones para mostrar" no-match-text="No se encontraron coincidencias">
+          <el-option v-for="(item, index) in contacts" :key="item.id" :label="item.name" :value="item.id" />
+        </el-select>
+        <InputError :message="form.errors.contact_id" />
       </div>
       <div v-if="!form.is_internal">
         <InputLabel value="Sucursal *" class="ml-2" />
@@ -167,7 +173,7 @@
         <input v-model="form.budget" type="number" step="0.01" class="input mt-1">
         <InputError :message="form.errors.budget" />
       </div>
-      <!-- <h2 class="font-bold text-sm my-2 col-span-full">Acceso al proyecto</h2>
+      <h2 class="font-bold text-sm my-2 col-span-full">Acceso al proyecto</h2>
       <div class="col-span-full text-sm">
         <div class="my-1">
           <input v-model="typeAccessProject" value="Public"
@@ -223,7 +229,7 @@
                   <div class="space-y-1 mb-2">
                     <label class="flex items-center">
                       <Checkbox :disabled="!editAccesFlag || user.employee_properties === null"
-                        v-model="user.permissions[0]" :checked="user.permissions[0]" />
+                        v-model:checked="user.permissions[0]" :checked="user.permissions[0]" />
                       <span
                         :class="!editAccesFlag || user.employee_properties === null ? 'text-gray-500/80 cursor-not-allowed' : ''"
                         class="ml-2 text-xs">
@@ -232,28 +238,28 @@
                     </label>
                     <label class="flex items-center">
                       <Checkbox :disabled="!editAccesFlag || user.employee_properties === null"
-                        v-model="user.permissions[1]" :checked="user.permissions[1]" />
+                        v-model:checked="user.permissions[1]" :checked="user.permissions[1]" />
                       <span
                         :class="!editAccesFlag || user.employee_properties === null ? 'text-gray-500/80 cursor-not-allowed' : ''"
                         class="ml-2 text-xs">Ver</span>
                     </label>
                     <label class="flex items-center">
                       <Checkbox :disabled="!editAccesFlag || user.employee_properties === null"
-                        v-model="user.permissions[2]" :checked="user.permissions[2]" />
+                        v-model:checked="user.permissions[2]" :checked="user.permissions[2]" />
                       <span
                         :class="!editAccesFlag || user.employee_properties === null ? 'text-gray-500/80 cursor-not-allowed' : ''"
                         class="ml-2 text-xs">Editar</span>
                     </label>
                     <label class="flex items-center">
                       <Checkbox :disabled="!editAccesFlag || user.employee_properties === null"
-                        v-model="user.permissions[3]" :checked="user.permissions[3]" />
+                        v-model:checked="user.permissions[3]" :checked="user.permissions[3]" />
                       <span
                         :class="!editAccesFlag || user.employee_properties === null ? 'text-gray-500/80 cursor-not-allowed' : ''"
                         class="ml-2 text-xs">Eliminar</span>
                     </label>
                     <label class="flex items-center">
                       <Checkbox :disabled="!editAccesFlag || user.employee_properties === null"
-                        v-model="user.permissions[4]" :checked="user.permissions[4]" />
+                        v-model:checked="user.permissions[4]" :checked="user.permissions[4]" />
                       <span
                         :class="!editAccesFlag || user.employee_properties === null ? 'text-gray-500/80 cursor-not-allowed' : ''"
                         class="ml-2 text-xs">Comentar</span>
@@ -274,7 +280,7 @@
             </div>
           </div>
         </div>
-      </section> -->
+      </section>
       <div class="col-span-full flex mt-8 mb-5 justify-end space-x-2">
         <Link :href="route('pms.projects.index')">
         <CancelButton type="button">Cancelar</CancelButton>
@@ -362,6 +368,7 @@ export default {
       address: this.project.address,
       opportunity_id: this.project.opportunity_id,
       customer_id: parseInt(this.project.opportunity?.customer_id),
+      contact_id: parseInt(this.project.contact_id),
       currency: this.project.currency,
       budget: this.project.budget,
       selectedUsersToPermissions: [],
@@ -411,6 +418,7 @@ export default {
         { label: 'USD - Dolar ', value: '$USD' },
       ],
       opportunities: [],
+      contacts: [],
       branches: [],
     }
   },
@@ -456,11 +464,20 @@ export default {
           return 'fa-regular fa-file-lines';
       }
     },
-    updateBranches() {
-      const selectedCustomer = this.customers.find(item => item.id === this.form.customer_id);
+    updateContacts() {
+      const selectedCustomer = this.customers.find(
+        (item) => item.id === this.form.customer_id
+      );
 
-      this.branches = selectedCustomer ? selectedCustomer.branches : [];
+      this.contacts = selectedCustomer ? selectedCustomer.contacts : [];
       this.opportunities = selectedCustomer ? selectedCustomer.opportunities : [];
+    },
+    updateBranches() {
+      const selectedContact = this.contacts.find(
+        (item) => item.id === this.form.contact_id
+      );
+
+      this.branches = selectedContact ? selectedContact?.additional.branches : [];
     },
     update() {
       if (this.form.media.length) {
@@ -648,7 +665,19 @@ export default {
   mounted() {
     // this.selectAdmins();
     this.form.tags = this.project.tags.map(tag => tag.id);
-    this.updateBranches()
+
+    // inicializar permisos
+    this.project.users.forEach(user => {
+      const participant = {
+        id: user.id,
+        name: user.name,
+        profile_photo_url: user.profile_photo_url,
+        permissions: JSON.parse(user.pivot.permissions),
+      };
+      this.form.selectedUsersToPermissions.push(participant);
+    });
+    this.updateContacts();
+    this.updateBranches();
   }
 }
 </script>

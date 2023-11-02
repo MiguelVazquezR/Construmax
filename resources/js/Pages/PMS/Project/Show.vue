@@ -113,6 +113,10 @@
                 <span v-if="!currentProject?.is_internal">{{
                     currentProject?.opportunity?.customer?.name
                 }}</span>
+                <span v-if="!currentProject?.is_internal" class="text-gray-500 my-2">Contacto</span>
+                <span v-if="!currentProject?.is_internal">{{
+                    currentProject?.contact?.name
+                }}</span>
                 <span v-if="!currentProject?.is_internal" class="text-gray-500 my-2">Sucursal</span>
                 <span v-if="!currentProject?.is_internal">{{
                     currentProject?.address

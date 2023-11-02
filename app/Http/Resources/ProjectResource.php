@@ -28,6 +28,7 @@ class ProjectResource extends JsonResource
             'budget' => $this->budget,
             'address' => $this->address,
             'user' => $this->whenLoaded('user'),
+            'contact' => $this->whenLoaded('contact'),
             'company' => $this->whenLoaded('company'),
             'opportunity' =>$this->whenLoaded('opportunity'),
             'user' => $this->whenLoaded('user'),
@@ -38,8 +39,10 @@ class ProjectResource extends JsonResource
             'media' => $this->getMedia()->all(),
             'start_date' => $this->start_date?->isoFormat('DD MMM YYYY'),
             'limit_date' => $this->limit_date?->isoFormat('DD MMM YYYY'),
+            'raw_limit_date' => $this->limit_date->toDateString(),
             'finished_at' => $this->finished_at?->isoFormat('DD MMM, YYYY h:mm A'),
             'created_at' => $this->created_at?->isoFormat('DD MMM, YYYY h:mm A'),
+            'raw_created_at' => $this->created_at?->toDateString(),
             'updated_at' => $this->updated_at?->isoFormat('DD MMM, YYYY h:mm A'),
         ];
     }

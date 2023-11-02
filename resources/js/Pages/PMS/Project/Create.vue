@@ -134,7 +134,7 @@
         <InputLabel value="Contacto *" class="ml-2" />
         <el-select v-model="form.contact_id" @change="updateBranches()" clearable placeholder="Seleccione" class="w-full mt-1"
           no-data-text="No hay opciones para mostrar" no-match-text="No se encontraron coincidencias">
-          <el-option v-for="(item, index) in contacts" :key="index" :label="item" :value="item" />
+          <el-option v-for="(item, index) in contacts" :key="item.id" :label="item.name" :value="item.id" />
         </el-select>
         <InputError :message="form.errors.contact_id" />
       </div>
@@ -457,11 +457,11 @@ export default {
       this.opportunities = selectedCustomer ? selectedCustomer.opportunities : [];
     },
     updateBranches() {
-      const selectedContact = this.customers.find(
+      const selectedContact = this.contacts.find(
         (item) => item.id === this.form.contact_id
       );
 
-      this.branches = selectedContact ? selectedContact.additional.branches : [];
+      this.branches = selectedContact ? selectedContact?.additional.branches : [];
     },
     store() {
       this.form.post(route("pms.projects.store"), {

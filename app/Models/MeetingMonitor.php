@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\MorphOne;
 
 class MeetingMonitor extends Model
 {
@@ -15,16 +16,16 @@ class MeetingMonitor extends Model
         'time',
         'meeting_via',
         'location',
-        'phone',
-        'description',
+        'contact_phone',
         'contact_name',
-        'company_id',
-        'company_branch',
+        'description',
+        'branch',
+        'participants',
+        'customer_id',
         'opportunity_id',
         'seller_id',
         'client_monitor_id',
         'contact_id',
-        'participants',
     ];
 
     protected $casts = [
@@ -33,9 +34,9 @@ class MeetingMonitor extends Model
     ];
 
     //relationships
-    public function company() :BelongsTo
+    public function customer() :BelongsTo
     {
-        return $this->belongsTo(Company::class);
+        return $this->belongsTo(Customer::class);
     }
 
     public function opportunity() :BelongsTo
@@ -53,8 +54,8 @@ class MeetingMonitor extends Model
         return $this->belongsTo(ClientMonitor::class);
     }
 
-    public function contact() :BelongsTo
+    public function contact() :MorphOne
     {
-        return $this->belongsTo(Contact::class);
+        return $this->morphOne(Contact::class, 'contactable');
     }
 }

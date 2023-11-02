@@ -76,7 +76,7 @@
               Tipo de interacción <i class="fa-solid fa-arrow-down-long ml-3"></i>
             </th>
             <th class="font-bold pb-5 px-10">
-              Fecha <i class="fa-solid fa-arrow-down-long ml-3"></i>
+              Fecha<i class="fa-solid fa-arrow-down-long ml-3"></i>
             </th>
             <th class="font-bold pb-5 px-7">
               Concepto <i class="fa-solid fa-arrow-down-long ml-3"></i>

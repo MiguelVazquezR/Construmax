@@ -17,12 +17,12 @@ return new class extends Migration
             $table->time('time');
             $table->string('meeting_via');
             $table->string('location')->nullable();
-            $table->string('phone')->nullable();
+            $table->string('contact_phone')->nullable();
             $table->text('description');
             $table->json('participants')->nullable();
             $table->string('contact_name')->nullable();
             $table->foreignId('customer_id')->nullable()->constrained()->cascadeOnDelete();
-            $table->foreignId('company_branch')->nullable();
+            $table->foreignId('branch')->nullable();
             $table->foreignId('opportunity_id')->nullable()->constrained()->cascadeOnDelete();
             $table->foreignId('seller_id')->constrained('users')->cascadeOnDelete();
             $table->foreignId('client_monitor_id')->nullable()->constrained()->cascadeOnDelete();

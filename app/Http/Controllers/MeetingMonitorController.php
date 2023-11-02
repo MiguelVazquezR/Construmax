@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Http\Resources\CustomerResource;
+use App\Http\Resources\MeetingMonitorResource;
 use App\Http\Resources\OpportunityResource;
+use App\Models\ClientMonitor;
 use App\Models\Customer;
 use App\Models\MeetingMonitor;
 use App\Models\Opportunity;
@@ -32,110 +34,101 @@ class MeetingMonitorController extends Controller
     
     public function store(Request $request)
     {
-    //     $request->validate([
-    //         'is_oportunity' => 'boolean',
-    //         'meeting_date' => 'required|date',
-    //         'time' => 'required',
-    //         'oportunity_id' => 'nullable',
-    //         'company_id' => 'nullable',
-    //         'company_branch_id' => 'nullable',
-    //         'contact_id' => 'nullable',
-    //         'contact_name' => 'nullable|string',
-    //         'phone' => 'nullable',
-    //         'meeting_via' => 'required',
-    //         'location' => 'nullable',
-    //         'description' => 'required',
-    //         'participants' => 'required|array|min:1',
-    //     ]);
+        $request->validate([
+            'opportunity_id' => 'required',
+            'time' => 'required',
+            'customer_id' => 'required',
+            'meeting_date' => 'required|date',
+            'branch' => 'required|string',
+            'contact_id' => 'required',
+            'contact_name' => 'required|string',
+            'contact_phone' => 'required|string',
+            'meeting_via' => 'required|string',
+            'location' => 'required|string',
+            'description' => 'required|string',
+            'participants' => 'required|array|min:1',
+        ]);
 
-    //     $meeting_monitor = MettingMonitor::create($request->all() + ['seller_id' => auth()->id()]);
+        $meeting_monitor = MeetingMonitor::create($request->all() + ['seller_id' => auth()->id()]);
         
-    //     event(new RecordCreated($meeting_monitor));
+       $client_monitor = ClientMonitor::create([
+            'type' => 'Reunión',
+            'date' => $request->meeting_date,
+            'concept' => $request->description,
+            'seller_id' => auth()->id(),
+            'opportunity_id' => $request->opportunity_id,
+            'customer_id' => $request->customer_id,
+        ]);
 
-    //    $client_monitor = ClientMonitor::create([
-    //         'type' => 'Reunión',
-    //         'date' => $request->meeting_date,
-    //         'concept' => $request->description,
-    //         'seller_id' => auth()->id(),
-    //         'oportunity_id' => $request->oportunity_id,
-    //         'company_id' => $request->company_id,
-    //     ]);
-
-    //     $meeting_monitor->client_monitor_id = $client_monitor->id;
-    //     $meeting_monitor->save();
-
-    //     event(new RecordCreated($client_monitor));
+        $meeting_monitor->client_monitor_id = $client_monitor->id;
+        $meeting_monitor->save();
         
-    //     return to_route('client-monitors.index');
+        return to_route('crm.client-monitors.index');
     }
 
     
-    public function show(MeetingMonitor $meetingMonitor)
+    public function show($meeting_monitor_id)
     {
-        // $metting_monitor = MeetingMonitorResource::make(MettingMonitor::with('seller', 'oportunity', 'company', 'companyBranch', 'contact')->find($metting_monitor_id));
+        $meeting_monitor = MeetingMonitorResource::make(MeetingMonitor::with('seller', 'opportunity', 'customer', 'contact')->find($meeting_monitor_id));
 
-        // // return $metting_monitor;
-        // return inertia('MettingMonitor/Show', compact('metting_monitor'));
+        // return $meeting_monitor;
+        return inertia('CRM/MeetingMonitor/Show', compact('meeting_monitor'));
     }
 
     
-    public function edit(MeetingMonitor $meetingMonitor)
+    public function edit($meeting_monitor_id)
     {
-        // $metting_monitor = MeetingMonitorResource::make(MettingMonitor::with('oportunity', 'company', 'companyBranch', 'contact')->find($metting_monitor_id));
-        // $companies = Company::with('companyBranches.contacts')->get();
-        // $oportunities = OportunityResource::collection(Oportunity::with('company')->latest()->get());
-        // $users = User::where('is_active', true)->get();
+        $meeting_monitor = MeetingMonitorResource::make(MeetingMonitor::with('opportunity', 'customer', 'contact')->find($meeting_monitor_id));
+        $customers = CustomerResource::collection(Customer::with('contacts')->latest()->get());
+        $opportunities = OpportunityResource::collection(Opportunity::with('customer')->latest()->get());
+        $users = User::where('is_active', true)->get();
 
-        // return inertia('MettingMonitor/Edit', compact('metting_monitor', 'oportunities', 'companies', 'users'));
+        // return $meeting_monitor;
+
+        return inertia('CRM/MeetingMonitor/Edit', compact('meeting_monitor', 'opportunities', 'customers', 'users'));
     }
 
     
-    public function update(Request $request, MeetingMonitor $meetingMonitor)
+    public function update(Request $request, MeetingMonitor $meeting_monitor)
     {
-        // $request->validate([
-        //     'is_oportunity' => 'boolean',
-        //     'meeting_date' => 'required|date',
-        //     'time' => 'required',
-        //     'oportunity_id' => 'nullable',
-        //     'company_id' => 'nullable',
-        //     'company_branch_id' => 'nullable',
-        //     'contact_id' => 'nullable',
-        //     'contact_name' => 'nullable|string',
-        //     'phone' => 'nullable',
-        //     'meeting_via' => 'required',
-        //     'location' => 'nullable',
-        //     'description' => 'required',
-        //     'participants' => 'required|array|min:1',
-        // ]);
+        $request->validate([
+            'opportunity_id' => 'required',
+            'time' => 'required',
+            'customer_id' => 'required',
+            'meeting_date' => 'required|date',
+            'branch' => 'required|string',
+            'contact_id' => 'required',
+            'contact_name' => 'required|string',
+            'contact_phone' => 'required|string',
+            'meeting_via' => 'required|string',
+            'location' => 'required|string',
+            'description' => 'required|string',
+            'participants' => 'required|array|min:1',
+        ]);
 
-        // $metting_monitor = MettingMonitor::find($metting_monitor_id);
-        
-        // $metting_monitor->update($request->all());
-        
-        // event(new RecordEdited($metting_monitor));
-        
-        // $client_monitor = ClientMonitor::where('oportunity_id', $metting_monitor->oportunity_id)->first();
+        $meeting_monitor->update($request->all());
+                
+        $client_monitor = ClientMonitor::where('opportunity_id', $meeting_monitor->opportunity_id)->first();
         
 
-        // $client_monitor->update([
-        //     'date' => $request->meeting_date,
-        //     'concept' => $request->description,
-        //     'oportunity_id' => $request->oportunity_id,
-        //     'company_id' => $request->company_id,
-        // ]);
+        $client_monitor->update([
+            'date' => $request->meeting_date,
+            'concept' => $request->description,
+            'oportunity_id' => $request->opportunity_id,
+            'company_id' => $request->customer_id,
+        ]);
         
-        // return to_route('meeting-monitors.show', ['meeting_monitor'=> $metting_monitor]);
+        return to_route('crm.meeting-monitors.show', ['meeting_monitor'=> $meeting_monitor]);
     }
 
     
-    public function destroy($meeting_monitor)
+    public function destroy($meeting_monitor_id)
     {
-        // $metting_monitor = MettingMonitor::find($metting_monitor);
-        // $client_monitor = ClientMonitor::where('oportunity_id', $metting_monitor->oportunity_id)->first();
-        // $client_monitor->delete();
-        // $metting_monitor->delete();
-        // event(new RecordDeleted($metting_monitor));
+        $meeting_monitor = MeetingMonitor::find($meeting_monitor_id);
+        $client_monitor = ClientMonitor::where('opportunity_id', $meeting_monitor->oportunity_id)->first();
+        $client_monitor->delete();
+        $meeting_monitor->delete();
 
-        // return to_route('client-monitors.index');
+        return to_route('crm.client-monitors.index');
     }
 }

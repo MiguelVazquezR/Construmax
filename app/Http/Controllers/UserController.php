@@ -26,10 +26,11 @@ class UserController extends Controller
     {
         $request->validate([
             'name' => 'required|string|max:255',
-            'email' => 'required|string|max:255',
+            'email' => 'required|string|max:255|unique:users',
             'employee_properties.department' => 'required|string|max:255',
             'employee_properties.position' => 'required|string|max:255',
             'employee_properties.phone' => 'required|string|max:15',
+            'roles' => 'required|array|min:1',
         ]);
 
         $user = User::create($request->all() + ['password' => bcrypt('Construmax123')]);
@@ -57,10 +58,11 @@ class UserController extends Controller
     {
         $request->validate([
             'name' => 'required|string|max:255',
-            'email' => 'required|string|max:255',
+            'email' => 'required|string|max:255|unique:users,email,'.$user->id,
             'employee_properties.department' => 'required|string|max:255',
             'employee_properties.position' => 'required|string|max:255',
             'employee_properties.phone' => 'required|string|max:15',
+            'roles' => 'required|array|min:1',
         ]);
 
         $user->update($request->all());

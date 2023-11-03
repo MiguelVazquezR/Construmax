@@ -38,7 +38,7 @@
 
       <!----- Datos del contacto ----------------------------------------------------------------->
       <h2 class="font-bold mt-7 col-span-2">Datos del contacto</h2>
-      <div class="bg-[#f2f2f2] col-span-full p-5 grid grid-cols-2 gap-x-4 gap-y-2">
+      <div class="bg-[#f2f2f2] col-span-full p-5 grid grid-cols-2 gap-x-4 gap-y-2 rounded-[3px]">
         <div>
           <InputLabel value="Nombre *" class="ml-2" />
           <input v-model="contact.name" type="text" class="input mt-1" placeholder="Asignar una Nombre">
@@ -91,19 +91,21 @@
       </div>
 
       <!-- lista de contactos -->
-      <div v-for="(item, index) in form.contacts" :key="index" class="bg-[#f2f2f2] p-5">
+      <div v-for="(item, index) in form.contacts" :key="index" class="bg-[#f2f2f2] p-5 mt-2 rounded-[3px]">
         <header class="flex justify-between items-center">
           <h2 class="font-bold text-sm mb-2">Contacto {{ (index + 1) }}</h2>
           <div class="flex space-x-1 items-center">
-            <el-popconfirm confirm-button-text="Si" cancel-button-text="No" icon-color="#FD8827" title="¿Remover?"
-              @confirm="deleteContact(index)">
+            <el-popconfirm v-if="contactEditIndex != index" confirm-button-text="Si" cancel-button-text="No"
+              icon-color="#FD8827" title="¿Remover?" @confirm="deleteContact(index)">
               <template #reference>
                 <SecondaryButton>
                   <i class="fa-regular fa-trash-can text-primary text-sm cursor-pointer"></i>
                 </SecondaryButton>
               </template>
             </el-popconfirm>
-            <SecondaryButton @click="editContact(index)">Editar</SecondaryButton>
+            <SecondaryButton v-if="contactEditIndex != index" @click="editContact(index)">Editar</SecondaryButton>
+            <label v-else class="text-[#0355B5] bg-[#B9D9FE] text-sm rounded-[15px] px-4 py-2">En edición <i
+                class="fa-solid fa-arrow-up"></i></label>
           </div>
         </header>
         <div class="grid grid-cols-3 gap-x-3 gap-y-2 text-xs">

@@ -13,7 +13,7 @@
     <p>{{ opportunity?.contact_name ? opportunity?.contact_name : opportunity?.contact?.name }}</p>
     <p>${{ opportunity?.amount.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",") }}</p>
     <div class="flex justify-between">
-      <p class="text-gray-400">Actividades <span class="text-white rounded-full px-1 bg-secondary text-xs">{{ opportunity?.opportunityTasks?.length }}</span></p>
+      <p class="text-gray-400">Actividades <span class="text-white rounded-full px-2 bg-primary text-xs">{{ opportunity?.opportunityTasks?.length }}</span></p>
       <p>{{ opportunity?.created_at?.diffForHumans }}</p>
     </div>
   </div>

@@ -1,8 +1,13 @@
 <?php
 
+use App\Http\Controllers\ClientMonitorController;
 use App\Http\Controllers\CRMController;
 use App\Http\Controllers\CustomerController;
+use App\Http\Controllers\EmailMonitorController;
+use App\Http\Controllers\MeetingMonitorController;
 use App\Http\Controllers\OpportunityController;
+use App\Http\Controllers\OpportunityTaskController;
+use App\Http\Controllers\PaymentMonitorController;
 use App\Http\Controllers\PMSController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\ProjectGroupController;
@@ -35,6 +40,26 @@ Route::get('crm/dashboard', [CRMController::class, 'dashboard'])->middleware('au
 Route::resource('customers', CustomerController::class)->middleware('auth')->names('crm.customers');
 Route::resource('opportunities', OpportunityController::class)->middleware('auth')->names('crm.opportunities');
 Route::put('/opportunities/update-status/{opportunity_id}', [OpportunityController::class, 'updateStatus'])->name('crm.opportunities.update-status')->middleware('auth');
+
+// ------- CRM (opportunityTasks Routes)  ---------
+Route::resource('opportunity-tasks', OpportunityTaskController::class)->except(['store', 'create'])->names('crm.opportunity-tasks')->middleware('auth');
+Route::get('opportunity-tasks/create/{opportunity_id}', [OpportunityTaskController::class, 'create'])->name('crm.opportunity-tasks.create')->middleware('auth');
+Route::post('opportunity-tasks/store/{opportunity_id}', [OpportunityTaskController::class, 'store'])->name('crm.opportunity-tasks.store')->middleware('auth');
+Route::post('opportunity-tasks/{opportunity_task}/comment', [OpportunityTaskController::class, 'comment'])->name('crm.opportunity-tasks.comment')->middleware('auth');
+Route::put('opportunity-tasks/mark-as-done/{opportunityTask}', [OpportunityTaskController::class, 'markAsDone'])->name('crm.opportunity-tasks.mark-as-done')->middleware('auth');
+
+// ------- CRM (Client monior Routes)  ---------
+Route::resource('client-monitors', ClientMonitorController::class)->names('crm.client-monitors')->middleware('auth');
+
+// ------- CRM (Payment monior Routes)  ---------
+Route::resource('payment-monitors', PaymentMonitorController::class)->names('crm.payment-monitors')->middleware('auth');
+Route::post('payment-monitors/update-with-media/{payment_monitor}', [PaymentMonitorController::class, 'updateWithMedia'])->name('crm.payment-monitors.update-with-media')->middleware('auth');
+
+// ------- CRM (meeting monior Routes)  ---------
+Route::resource('meeting-monitors', MeetingMonitorController::class)->names('crm.meeting-monitors')->middleware('auth');
+
+// ------- CRM (email monior Routes)  ---------
+Route::resource('email-monitors', EmailMonitorController::class)->names('crm.email-monitors')->middleware('auth');
 
 // settings routes
 Route::resource('settings', SettingController::class)->middleware('auth');

@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 
@@ -23,6 +24,7 @@ class Opportunity extends Model implements HasMedia
         'start_date',
         'close_date',
         'finished_at',
+        'paid_at',
         'contact_id',
         'customer_id',
         'customer_name',
@@ -37,6 +39,7 @@ class Opportunity extends Model implements HasMedia
         'start_date' => 'date',
         'close_date' => 'date',
         'finished_at' => 'datetime',
+        'paid_at' => 'datetime',
     ];
 
     // relationships
@@ -63,6 +66,16 @@ class Opportunity extends Model implements HasMedia
     public function tags()
     {
         return $this->morphToMany(Tag::class, 'taggable');
+    }
+
+    public function opportunityTasks() :HasMany
+    {
+        return $this->hasMany(OpportunityTask::class);
+    }
+
+    public function clientMonitors(): HasMany
+    {
+        return $this->hasMany(ClientMonitor::class);
     }
 
     public function users()

@@ -27,32 +27,10 @@
               </p>
             </div>
           </div>
-          <Link v-if="$page.props.auth.user.permissions?.includes('Crear oportunidades') || true
+          <Link v-if="$page.props.auth.user.permissions?.includes('Crear oportunidades')
             " :href="route('crm.opportunities.create')">
           <PrimaryButton class="rounded-lg">Nueva oportunidad</PrimaryButton>
           </Link>
-          <!-- <Dropdown
-            align="right"
-            width="48"
-            v-if="$page.props.auth.user.permissions.includes('Eliminar oportunidades')"
-          >
-            <template #trigger>
-              <button class="h-9 px-3 rounded-lg bg-[#D9D9D9] flex items-center text-sm">
-                Más <i class="fa-solid fa-chevron-down text-[11px] ml-2"></i>
-              </button>
-            </template>
-            <template #content>
-              <DropdownLink
-                @click="showConfirmModal = true"
-                as="button"
-                v-if="
-                  $page.props.auth.user.permissions.includes('Eliminar oportunidades')
-                "
-              >
-                Eliminar
-              </DropdownLink>
-            </template>
-          </Dropdown> -->
         </div>
       </div>
     </div>
@@ -109,44 +87,21 @@
         </div>
       </section>
 
-      <!-- ---- En progreso --- -->
+      <!-- ---- Cerrada --- -->
       <section class="seccion">
         <h2 class="text-[#FD8827] bg-[#FEDBBD] border border-[#9A9A9A] py-1">
-          En progreso
+          Cerrada
         </h2>
         <div class="border border-[#9A9A9A] p-2 min-h-full">
           <!-- <p class="text-[#9A9A9A] cursor-pointer mt-1">+ Agregar</p> -->
           <p class="text-primary text-xl my-2">
             ${{
-              inProgressTotal?.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",") ?? "0.00"
+              closedTotal?.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",") ?? "0.00"
             }}
           </p>
           <draggable @start="handleStartDrag" @add="handleAddDrag" @end="drag = false"
-            v-model="progressOpportunitiesLocal" :animation="300" item-key="id" tag="ul" group="oportunities"
-            id="progress" :class="drag && !progressOpportunitiesLocal?.length ? 'h-40' : ''">
-            <template #item="{ element: opportunity }">
-              <li>
-                <OpportunityCard class="my-3" :opportunity="opportunity" />
-              </li>
-            </template>
-          </draggable>
-          <div class="text-center" v-if="!progressOpportunitiesLocal?.length">
-            <p class="text-xs text-gray-500 mt-6">No hay oportunidades en este estatus</p>
-          </div>
-        </div>
-      </section>
-
-      <!-- ---- Cerrada --- -->
-      <section class="seccion">
-        <h2 class="text-[#37951F] bg-[#AFFDB2] border border-[#9A9A9A] py-1">Cerrada</h2>
-        <div class="border border-[#9A9A9A] p-2 min-h-full">
-          <!-- <p class="text-[#9A9A9A] cursor-pointer mt-1">+ Agregar</p> -->
-          <p class="text-primary text-xl my-2">
-            ${{ closedTotal?.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",") ?? "0.00" }}
-          </p>
-          <draggable @start="handleStartDrag" @add="handleAddDrag" @end="drag = false" v-model="closedOpportunitiesLocal"
-            :animation="300" item-key="id" tag="ul" group="oportunities" id="closed"
-            :class="drag && !closedOpportunitiesLocal?.length ? 'h-40' : ''">
+            v-model="closedOpportunitiesLocal" :animation="300" item-key="id" tag="ul" group="oportunities"
+            id="closed" :class="drag && !closedOpportunitiesLocal?.length ? 'h-40' : ''">
             <template #item="{ element: opportunity }">
               <li>
                 <OpportunityCard class="my-3" :opportunity="opportunity" />
@@ -154,6 +109,29 @@
             </template>
           </draggable>
           <div class="text-center" v-if="!closedOpportunitiesLocal?.length">
+            <p class="text-xs text-gray-500 mt-6">No hay oportunidades en este estatus</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ---- Pagado --- -->
+      <section class="seccion">
+        <h2 class="text-[#37951F] bg-[#AFFDB2] border border-[#9A9A9A] py-1">Pagado</h2>
+        <div class="border border-[#9A9A9A] p-2 min-h-full">
+          <!-- <p class="text-[#9A9A9A] cursor-pointer mt-1">+ Agregar</p> -->
+          <p class="text-primary text-xl my-2">
+            ${{ paidTotal?.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",") ?? "0.00" }}
+          </p>
+          <draggable @start="handleStartDrag" @add="handleAddDrag" @end="drag = false" v-model="paidOpportunitiesLocal"
+            :animation="300" item-key="id" tag="ul" group="oportunities" id="paid"
+            :class="drag && !paidOpportunitiesLocal?.length ? 'h-40' : ''">
+            <template #item="{ element: opportunity }">
+              <li>
+                <OpportunityCard class="my-3" :opportunity="opportunity" />
+              </li>
+            </template>
+          </draggable>
+          <div class="text-center" v-if="!paidOpportunitiesLocal?.length">
             <p class="text-xs text-gray-500 mt-6">No hay oportunidades en este estatus</p>
           </div>
         </div>
@@ -205,13 +183,19 @@
               <th class="font-bold pb-5">
                 Cerrada el <i class="fa-solid fa-arrow-down-long ml-3"></i>
               </th>
+              <th class="font-bold pb-5">
+                Pagado el <i class="fa-solid fa-arrow-down-long ml-3"></i>
+              </th>
               <th></th>
             </tr>
           </thead>
           <tbody>
-            <tr v-for="opportunity in filteredTableData" :key="opportunity.id"
-              class="mb-4 cursor-pointer `hover:`bg-primarylight"
-              @click="$inertia.get(route('oportunities.show', opportunity.id))">
+            <tr
+              v-for="opportunity in filteredTableData"
+              :key="opportunity.id"
+              class="mb-4 cursor-pointer hover:bg-primarylight"
+              @click="$inertia.get(route('crm.opportunities.show', opportunity.id))"
+            >
               <td class="text-left py-2 px-2 rounded-l-full">
                 {{ opportunity.name }}
               </td>
@@ -228,6 +212,9 @@
               </td>
               <td class="text-left py-2 px-2">
                 {{ opportunity.finished_at ?? "--" }}
+              </td>
+              <td class="text-left py-2 px-2">
+                {{ opportunity.paid_at ?? "--" }}
               </td>
               <td v-if="$page.props.auth.user.permissions?.includes('Eliminar oportunidades') || true
                 " class="text-left py-2 px-2 rounded-r-full">
@@ -268,13 +255,13 @@ export default {
       type_view: "Kanban",
       newTotal: null,
       pendingTotal: null,
-      inProgressTotal: null,
       closedTotal: null,
+      paidTotal: null,
       lostTotal: null,
       newOpportunitiesLocal: [],
       pendingOpportunitiesLocal: [],
-      progressOpportunitiesLocal: [],
       closedOpportunitiesLocal: [],
+      paidOpportunitiesLocal: [],
       lostOpportunitiesLocal: [],
       drag: false,
       draggingOpportunityId: null,
@@ -308,10 +295,10 @@ export default {
         status = "Nueva";
       } else if (evt.to.id === "pending") {
         status = "Pendiente";
-      } else if (evt.to.id === "progress") {
-        status = "En proceso";
       } else if (evt.to.id === "closed") {
         status = "Cerrada";
+      } else if (evt.to.id === "paid") {
+        status = "Pagado";
       } else if (evt.to.id === "lost") {
         status = "Perdida";
       }
@@ -338,9 +325,9 @@ export default {
         return 'text-[#9A9A9A] bg-[#CCCCCCCC]';
       } else if (opportunity.status === 'Pendiente') {
         return 'text-[#C88C3C] bg-[#F3FD85]';
-      } else if (opportunity.status === 'En proceso') {
-        return 'text-[#FD8827] bg-[#FEDBBD]';
       } else if (opportunity.status === 'Cerrada') {
+        return 'text-[#FD8827] bg-[#FEDBBD]';
+      } else if (opportunity.status === 'Pagado') {
         return 'text-[#37951F] bg-[#ADFEB5]';
       } else if (opportunity.status === 'Perdida') {
         return 'text-[#9E0FA9] bg-[#F7B7FC]';
@@ -353,11 +340,11 @@ export default {
       this.pendingOpportunitiesLocal = this.opportunitiesLocal.filter(
         (opportunity) => opportunity.status === "Pendiente"
       );
-      this.progressOpportunitiesLocal = this.opportunitiesLocal.filter(
-        (opportunity) => opportunity.status === "En proceso"
-      );
       this.closedOpportunitiesLocal = this.opportunitiesLocal.filter(
         (opportunity) => opportunity.status === "Cerrada"
+      );
+      this.paidOpportunitiesLocal = this.opportunitiesLocal.filter(
+        (opportunity) => opportunity.status === "Pagado"
       );
       this.lostOpportunitiesLocal = this.opportunitiesLocal.filter(
         (opportunity) => opportunity.status === "Perdida"
@@ -372,11 +359,11 @@ export default {
         (total, opportunity) => total + opportunity.amount,
         0
       );
-      this.inProgressTotal = this.progressOpportunitiesLocal.reduce(
+      this.closedTotal = this.closedOpportunitiesLocal.reduce(
         (total, opportunity) => total + opportunity.amount,
         0
       );
-      this.closedTotal = this.closedOpportunitiesLocal.reduce(
+      this.paidTotal = this.paidOpportunitiesLocal.reduce(
         (total, opportunity) => total + opportunity.amount,
         0
       );
@@ -392,6 +379,7 @@ export default {
         message: "Oportunidad eliminada",
         type: "success",
       });
+      window.location.reload();
     },
   },
   computed: {

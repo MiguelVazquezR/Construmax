@@ -7,7 +7,7 @@ defineProps({
 <template>
     <div v-show="message">
         <p class="text-xs text-red-400">
-            {{ message }}
+           * {{ message }}
         </p>
     </div>
 </template>

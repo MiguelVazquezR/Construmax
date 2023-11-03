@@ -59,8 +59,14 @@ export default {
                             show: this.$page.props.auth.user.permissions.includes('Ver oportunidades'),
                             active: route().current('crm.opportunities.*'),
                         },
+                        {
+                            label: 'Seguimiento integral',
+                            route: route('crm.client-monitors.index'),
+                            show: this.$page.props.auth.user.permissions.includes('Ver seguimiento integral'),
+                            active: route().current('crm.client-monitors.*'),
+                        },
                     ],
-                    show: ['Ver clientes', 'Ver oportunidades'].some(permission => this.$page.props.auth.user.permissions.includes(permission)),
+                    show: ['Ver clientes', 'Ver oportunidades', 'Ver seguimiento integral'].some(permission => this.$page.props.auth.user.permissions.includes(permission)),
                 },
                 {
                     label: 'Proyectos',

@@ -191,7 +191,7 @@
           <p class="text-[#9A9A9A] ml-7 text-xs">Solo los usuarios de proyecto pueden ver y acceder a este proyecto</p>
         </div>
       </div>
-      <section class="rounded-[10px] py-12 mx-7 mt-5 max-h-[540px] col-span-full border border-gray3">
+      <section class="rounded-[10px] py-12 mx-7 mt-5 max-h-[580px] col-span-full border border-gray3">
         <div class="flex px-16 mb-8">
           <div v-if="typeAccessProject === 'Private'" class="w-full">
             <h2 class="font-bold text-sm my-2 ml-2 col-span-full">Asignar participantes </h2>
@@ -212,7 +212,7 @@
               <h2 class="font-bold border-b border-gray3 w-2/3 pl-3">Usuarios</h2>
               <h2 class="font-bold border-b border-gray3 w-1/3">Permisos</h2>
             </div>
-            <div class="pl-3 overflow-y-auto min-h-[100px] max-h-[340px]">
+            <div class="pl-3 overflow-y-auto min-h-[100px] max-h-[380px]">
               <div class="flex mt-2 border-b border-gray3" v-for="user in form.selectedUsersToPermissions" :key="user.id">
                 <div class="w-2/3 flex space-x-2">
                   <div v-if="$page.props.jetstream.managesProfilePhotos" class="flex text-sm rounded-full w-12">

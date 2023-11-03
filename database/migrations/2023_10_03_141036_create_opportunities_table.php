@@ -24,12 +24,12 @@ return new class extends Migration
             $table->string('branch')->nullable();
             $table->string('status');
             $table->text('description')->nullable();
-            $table->unsignedFloat('amount');
+            $table->unsignedFloat('amount', 10, 2);
             $table->date('start_date');
             $table->date('close_date');
             $table->timestamp('finished_at')->nullable(); //fecha en la cual se cerró la oportunidad
             $table->timestamp('paid_at')->nullable(); //fecha en la cual se cerró la oportunidad
-            $table->foreignId('contact_id')->constrained();
+            $table->foreignId('contact_id')->nullable()->constrained();
             $table->foreignId('customer_id')->nullable()->constrained();
             $table->foreignId('user_id')->constrained();
             $table->unsignedBigInteger('seller_id');

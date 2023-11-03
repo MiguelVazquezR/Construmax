@@ -27,7 +27,7 @@ class ProjectController extends Controller
         $customers = Customer::with(['opportunities', 'contacts'])->get();
         $project_groups = ProjectGroupResource::collection(ProjectGroup::all());
         $tags = TagResource::collection(Tag::where('type', 'projects')->get());
-        $users = User::where('is_active', true)->get();
+        $users = User::whereNotIn('id', [1])->where('is_active', true)->get();
 
         return inertia('PMS/Project/Create', compact('customers', 'project_groups', 'tags', 'users'));
     }
@@ -94,7 +94,7 @@ class ProjectController extends Controller
         $customers = Customer::with(['opportunities', 'contacts'])->get();
         $project_groups = ProjectGroupResource::collection(ProjectGroup::all());
         $tags = TagResource::collection(Tag::where('type', 'projects')->get());
-        $users = User::where('is_active', true)->get();
+        $users = User::whereNotIn('id', [1])->where('is_active', true)->get();
         $media = $project->getMedia()->all();
 
         return inertia('PMS/Project/Edit', compact('customers', 'project_groups', 'tags', 'users', 'project', 'media'));

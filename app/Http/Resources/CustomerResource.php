@@ -29,6 +29,8 @@ class CustomerResource extends JsonResource
             'invoice_use' => $this->invoice_use,
             'user' => $this->whenLoaded('user'),
             'contacts' => $this->whenLoaded('contacts'),
+            'opportunities' => OpportunityResource::collection($this->whenLoaded('opportunities')),
+            'clientMonitors' => ClientMonitorResource::collection($this->whenLoaded('clientMonitors')),
             'tags' => TagResource::collection($this->whenLoaded('tags')),
             'created_at' => $this->created_at?->isoFormat('DD MMMM YYYY'),
             'updated_at' => $this->updated_at?->isoFormat('DD MMMM YYYY'),

@@ -23,9 +23,9 @@
                     Nuevo cliente
                     <template #dropdown>
                         <el-dropdown-menu>
-                            <el-dropdown-item @click="update">Enviar correo</el-dropdown-item>
-                            <el-dropdown-item @click="showConfirmModal = true">Registar pago</el-dropdown-item>
-                            <el-dropdown-item @click="showConfirmModal = true">Agendar cita</el-dropdown-item>
+                            <el-dropdown-item @click="$inertia.get(route('crm.email-monitors.create'))">Enviar correo</el-dropdown-item>
+                            <el-dropdown-item @click="$inertia.get(route('crm.payment-monitors.create'))">Registar pago</el-dropdown-item>
+                            <el-dropdown-item @click="$inertia.get(route('crm.meeting-monitors.create'))">Agendar cita</el-dropdown-item>
                         </el-dropdown-menu>
                     </template>
                 </el-dropdown>
@@ -103,21 +103,46 @@
 
                 <div class="flex items-center justify-end space-x-2 col-span-2 mr-4 mt-16">
                     <el-tooltip content="Agendar reunión" placement="top">
-                        <i @click="$inertia.get(route('meeting-monitors.create'))"
+                        <i @click="$inertia.get(route('crm.meeting-monitors.create'))"
                             class="fa-regular fa-calendar text-primary cursor-pointer text-lg px-3 border-r border-[#9a9a9a]"></i>
                     </el-tooltip>
                     <el-tooltip content="Registrar pago" placement="top">
-                        <i @click="$inertia.get(route('payment-monitors.create'))"
+                        <i @click="$inertia.get(route('crm.payment-monitors.create'))"
                             class="fa-solid fa-money-bill text-primary cursor-pointer text-lg px-3 border-r border-[#9a9a9a]"></i>
                     </el-tooltip>
                     <el-tooltip content="Enviar correo" placement="top">
-                        <i class="fa-regular fa-envelope text-primary cursor-pointer text-lg px-3"></i>
+                        <i @click="$inertia.get(route('crm.email-monitors.create'))"
+                         class="fa-regular fa-envelope text-primary cursor-pointer text-lg px-3"></i>
                     </el-tooltip>
                 </div>
 
             </div>
         </div>
         <!-- ------------- info project ends 1 ------------- -->
+
+        <!-- -------------Oportunidades starts 2 ------------- -->
+      <div v-if="currentTab == 2" class="p-7 w-full mx-auto my-4">
+      <div v-if="currentCustomer?.opportunities.length">
+        <CustomerOpportunityTable :opportunities="currentCustomer?.opportunities" />
+      </div>
+      <div class="flex flex-col text-center justify-center" v-else>
+        <p class="text-sm text-center">No hay oportunidades para mostrar</p>
+        <i class="fa-regular fa-folder-open text-9xl mt-16 text-gray-400/30"></i>
+      </div>
+      </div>
+      <!-- ------------- Oportunidades ends 2 ------------- -->
+
+      <!-- -------------Seguimiento integral starts 3 ------------- -->
+      <div v-if="currentTab == 3" class="p-7 w-full mx-auto my-4">
+      <div v-if=" currentCustomer?.clientMonitors?.length">
+        <CustomerClientMonitorTable :client_monitors="currentCustomer?.clientMonitors" />
+      </div>
+      <div class="flex flex-col text-center justify-center" v-else>
+        <p class="text-sm text-center">No hay Seguimiento para mostrar</p>
+        <i class="fa-regular fa-folder-open text-9xl mt-16 text-gray-400/30"></i>
+      </div>
+      </div>
+      <!-- ------------- Seguimiento integral ends 3 ------------- -->
     </AppLayout>
 </template>
 
@@ -125,6 +150,8 @@
 import AppLayout from "@/Layouts/AppLayout.vue";
 import PrimaryButton from "@/Components/PrimaryButton.vue";
 import SecondaryButton from "@/Components/SecondaryButton.vue";
+import CustomerOpportunityTable from "@/Components/MyComponents/CRM/CustomerOpportunityTable.vue";
+import CustomerClientMonitorTable from "@/Components/MyComponents/CRM/CustomerClientMonitorTable.vue";
 import Tab from "@/Components/MyComponents/Tab.vue";
 import Tag from "@/Components/MyComponents/Tag.vue";
 import { Link } from "@inertiajs/vue3";
@@ -148,6 +175,8 @@ export default {
         AppLayout,
         PrimaryButton,
         SecondaryButton,
+        CustomerOpportunityTable,
+        CustomerClientMonitorTable,
         Tab,
         Link,
         Tag,

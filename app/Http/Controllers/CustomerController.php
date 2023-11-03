@@ -63,7 +63,9 @@ class CustomerController extends Controller
 
     public function show(Customer $customer)
     {
-        $customers = CustomerResource::collection(Customer::with(['user', 'tags', 'contacts'])->latest()->get());
+        $customers = CustomerResource::collection(Customer::with(['user', 'tags', 'contacts', 'opportunities', 'clientMonitors' => ['emailMonitor', 'paymentMonitor', 'meetingMonitor', 'seller']])->latest()->get());
+
+        // return $customers;
 
         return inertia('CRM/Customer/Show', compact('customer', 'customers'));
     }

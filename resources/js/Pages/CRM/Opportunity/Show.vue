@@ -42,7 +42,7 @@
             'Eliminar oportunidades'
           ) || $page.props.auth.user.permissions?.includes('Registrar pagos en seguimiento integral') 
           || $page.props.auth.user.permissions?.includes('Agendar citas en seguimiento integral') 
-          || $page.props.auth.user.permissions?.includes('Agendar citas en seguimiento integral') 
+          || $page.props.auth.user.permissions?.includes('Enviar correos en seguimiento integral') 
             ">
             <template #trigger>
               <button v-if="currentTab == 1 || currentTab == 3" class="h-9 px-3 rounded-lg bg-[#D9D9D9] flex items-center text-sm">
@@ -50,16 +50,16 @@
               </button>
             </template>
             <template #content>
-              <DropdownLink :href="route('payment-monitors.create')"
+              <DropdownLink :href="route('crm.payment-monitors.create')"
                 v-if="currentTab == 3 && $page.props.auth.user.permissions?.includes('Registrar pagos en seguimiento integral')">
                 Registrar Pago
               </DropdownLink>
-              <DropdownLink :href="route('meeting-monitors.create')"
+              <DropdownLink :href="route('crm.meeting-monitors.create')"
                 v-if="currentTab == 3 && $page.props.auth.user.permissions?.includes('Agendar citas en seguimiento integral')">
                 Agendar Cita
               </DropdownLink>
-              <DropdownLink :href="route('meeting-monitors.create')"
-                v-if="currentTab == 3 && $page.props.auth.user.permissions?.includes('Agendar citas en seguimiento integral')">
+              <DropdownLink :href="route('crm.email-monitors.create')"
+                v-if="currentTab == 3 && $page.props.auth.user.permissions?.includes('Enviar correos en seguimiento integral')">
                 Enviar correo
               </DropdownLink>
               <DropdownLink v-if="$page.props.auth.user.permissions?.includes('Eliminar oportunidades') && currentTab == 1
@@ -380,8 +380,68 @@
         </div>
       </div>
     </div>
-    <!-- {{ nextTasksList}} -->
     <!-- ------------- tab 2 atividades ends ------------ -->
+
+    <!-- ------------ tab 3 seguimiento integral starts ------------- -->
+    <div v-if="currentTab == 3" class="w-full mx-auto my-8">
+      <div v-if="currentOpportunity?.clientMonitors?.length" class="overflow-x-auto">
+        <table class="lg:w-[80%] w-full mx-auto text-sm">
+          <thead>
+            <tr class="text-center">
+              <th class="font-bold pb-5">
+                Folio <i class="fa-solid fa-arrow-down-long ml-3"></i>
+              </th>
+              <th class="font-bold pb-5">
+                Tipo que interacción <i class="fa-solid fa-arrow-down-long ml-3"></i>
+              </th>
+              <th class="font-bold pb-5">
+                Fecha <i class="fa-solid fa-arrow-down-long ml-3"></i>
+              </th>
+              <th class="font-bold pb-5">
+                Concepto <i class="fa-solid fa-arrow-down-long ml-3"></i>
+              </th>
+              <th class="font-bold pb-5">
+                Vededor <i class="fa-solid fa-arrow-down-long ml-3"></i>
+              </th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="monitor in currentOpportunity?.clientMonitors" :key="monitor"
+              class="mb-4">
+              <td @click="showMonitorType(monitor)"  class="text-center py-2 px-2 rounded-l-full text-primary hover:underline cursor-pointer">
+                {{ monitor.folio }}
+              </td>
+              <td class="text-center py-2 px-2">
+                <span class="py-1 px-4 rounded-full">{{ monitor.type }}</span>
+              </td>
+              <td class="text-center py-2 px-2">
+                <span class="py-1 px-2">{{ monitor.date }}</span>
+              </td>
+              <td class="text-center py-2 px-2">
+                {{ monitor.concept }}
+              </td>
+              <td @click="$inertia.get(route('users.show', monitor.seller?.id))" class="text-center py-2 px-2 text-primary hover:underline cursor-pointer">
+                {{ monitor.seller?.name }}
+              </td>
+              <td v-if="$page.props.auth.user.permissions.includes('Eliminar seguimiento integral')"
+                class="text-center py-2 px-2 rounded-r-full">
+                <el-popconfirm confirm-button-text="Si" cancel-button-text="No" icon-color="#D90537" title="¿Eliminar?"
+                  @confirm="deleteClientMonitor(monitor)">
+                  <template #reference>
+                    <i class="fa-regular fa-trash-can text-primary hover:bg-[#FEDBBD] rounded-full cursor-pointer p-2"></i>
+                  </template>
+                </el-popconfirm>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div v-else>
+        <p class="text-sm text-center text-gray-400">No hay seguimiento en esta oportunidad</p>
+      </div>
+    </div>
+    <!-- ------------ tab 3 seguimiento integral ends ------------- -->
 
     <ConfirmationModal :show="showConfirmModal" @close="showConfirmModal = false">
       <template #title> Eliminar oportunidad </template>
@@ -500,6 +560,35 @@ export default {
     opportunities: Object,
   },
   methods: {
+    showMonitorType(monitor) {
+      if (monitor.type == 'Correo') {
+        this.$inertia.get(route('crm.email-monitors.show', monitor.emailMonitor?.id));
+      } else if (monitor.type == 'Pago') {
+        this.$inertia.get(route('crm.payment-monitors.show', monitor.paymentMonitor?.id));
+      } else if (monitor.type == 'Reunión') {
+        this.$inertia.get(route('crm.meeting-monitors.show', monitor.meetingMonitor?.id));
+      }
+    },
+     async deleteClientMonitor(monitor) {
+      try {
+        const response = await axios.delete(route('crm.client-monitors.destroy', monitor.id));
+
+        if (response.status === 200) {
+          this.$notify({
+            title: "Correcto",
+            message: "Se ha eliminado correctamente",
+            type: "success",
+          });
+          const index = this.currentOpportunity.clientMonitors.findIndex(item => item.id === monitor.id);
+
+          if (index !== -1) {
+            this.currentOpportunity.clientMonitors.splice(index, 1);
+          }
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    },
     toBool(value) {
       if (value == 1 || value == true) return true;
       return false;

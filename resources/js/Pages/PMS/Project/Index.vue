@@ -77,7 +77,7 @@
               {{ project.limit_date }}
               <el-tooltip v-if="project.finished_at === null && limitDateHasPassed(project)" content="La fecha limite ha pasado"
                 placement="top">
-                <i class="fa-solid fa-circle-exclamation"></i>
+                <i class="fa-solid fa-triangle-exclamation"></i>
               </el-tooltip>
             </td>
             <td class="text-left py-2 px-2 rounded-r-full">

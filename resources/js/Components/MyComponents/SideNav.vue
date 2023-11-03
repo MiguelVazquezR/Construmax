@@ -48,16 +48,16 @@ export default {
                             active: route().current('crm.dashboard'),
                         },
                         {
-                            label: 'Oportunidades',
-                            route: route('crm.opportunities.index'),
-                            show: this.$page.props.auth.user.permissions.includes('Ver oportunidades'),
-                            active: route().current('crm.opportunities.*'),
-                        },
-                        {
                             label: 'Clientes',
                             route: route('crm.customers.index'),
                             show: this.$page.props.auth.user.permissions.includes('Ver clientes'),
                             active: route().current('crm.customers.*'),
+                        },
+                        {
+                            label: 'Oportunidades',
+                            route: route('crm.opportunities.index'),
+                            show: this.$page.props.auth.user.permissions.includes('Ver oportunidades'),
+                            active: route().current('crm.opportunities.*'),
                         },
                     ],
                     show: ['Ver clientes', 'Ver oportunidades'].some(permission => this.$page.props.auth.user.permissions.includes(permission)),

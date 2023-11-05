@@ -1,18 +1,20 @@
 <template>
-  <AppLayout title="Crear proyecto">
+  <AppLayout title="Editar Oportunidad">
     <div class="flex justify-between items-center text-lg mx-8 mt-8">
-      <b>Nuevo proyecto</b>
-      <Link :href="route('pms.projects.index')">
+      <b>Editar oportunidad</b>
+      <Link :href="route('crm.opportunities.show', opportunity)">
       <p class="flex items-center text-sm text-primary">
         <i class="fa-solid fa-arrow-left-long mr-2"></i>
         <span>Regresar</span>
       </p>
       </Link>
     </div>
-    <form @submit.prevent="store" class="mx-8 mt-3 grid grid-cols-2 gap-x-4 gap-y-2">
+
+    <form @submit.prevent="update" class="mx-8 mt-3 grid grid-cols-2 gap-x-4 gap-y-2">
       <div>
-        <InputLabel value="Título del proyecto *" class="ml-2" />
-        <input v-model="form.name" type="text" class="input mt-1" placeholder="Asignar un nombre al proyecto" required />
+        <InputLabel value="Nombre de la oportunidad *" class="ml-2" />
+        <input v-model="form.name" type="text" class="input mt-1" placeholder="Asignar un nombre a la oportunidad"
+          required />
         <InputError :message="form.errors.name" />
       </div>
       <div>
@@ -23,52 +25,104 @@
         </el-select>
         <InputError :message="form.errors.service_type" />
       </div>
-      <div>
-        <InputLabel value="Fecha de inicio *" class="ml-2" />
-        <el-date-picker v-model="form.start_date" type="date" placeholder="Inicio *" format="YYYY/MM/DD"
-          value-format="YYYY-MM-DD" />
-        <InputError :message="form.errors.start_date" />
+      <div class="relative">
+        <i :class="getColorStatus(form.status)" class="fa-solid fa-circle text-xs top-[2px] left-16 absolute z-30"></i>
+        <InputLabel value="Estatus" class="ml-2" />
+        <div class="flex items-center space-x-4">
+          <el-select class="w-full" v-model="form.status" clearable filterable placeholder="Seleccionar estatus"
+            no-data-text="No hay estatus registrados" no-match-text="No se encontraron coincidencias">
+            <el-option v-for="item in statuses" :key="item" :label="item.label" :value="item.label">
+              <span style="float: left"><i :class="item.color" class="fa-solid fa-circle"></i></span>
+              <span style="float: center; margin-left: 5px; font-size: 13px">{{
+                item.label
+              }}</span>
+            </el-option>
+          </el-select>
+        </div>
+        <InputError :message="form.errors.status" />
       </div>
       <div>
-        <InputLabel value="Fecha de límite *" class="ml-2" />
-        <el-date-picker v-model="form.limit_date" type="date" placeholder="Límite *" format="YYYY/MM/DD"
-          value-format="YYYY-MM-DD" />
-        <InputError :message="form.errors.limit_date" />
-      </div>
-      <div>
-        <InputLabel value="Responsable *" class="ml-2" />
-        <el-select v-model="form.owner_id" clearable placeholder="Seleccione" class="w-full mt-1"
-          no-data-text="No hay opciones para mostrar" no-match-text="No se encontraron coincidencias">
-          <el-option v-for="(item, index) in users" :key="item.id" :label="item.name" :value="item.id">
+        <InputLabel value="Responsable" class="ml-2" />
+        <el-select class="w-full" v-model="form.seller_id" clearable filterable placeholder="Seleccione"
+          no-data-text="No hay vendedores registrados" no-match-text="No se encontraron coincidencias">
+          <el-option v-for="seller in users.filter(
+            (user) => user.employee_properties?.department == 'Ventas'
+          )" :key="seller" :label="seller.name" :value="seller.id">
             <div v-if="$page.props.jetstream.managesProfilePhotos"
               class="flex text-sm rounded-full items-center mt-[3px]">
-              <img class="h-7 w-7 rounded-full object-cover mr-4" :src="item.profile_photo_url" :alt="item.name" />
-              <p>{{ item.name }}</p>
+              <img class="h-7 w-7 rounded-full object-cover mr-4" :src="seller.profile_photo_url" :alt="seller.name" />
+              <p>{{ seller.name }}</p>
             </div>
           </el-option>
         </el-select>
-        <InputError :message="form.errors.owner_id" />
       </div>
-      <div class="col-span-full ml-2 text-sm mt-3 flex">
-        <label class="flex items-center cursor-pointer flex-shrink-0 flex-grow-0">
-          <Checkbox v-model:checked="form.is_strict" name="strict" class="bg-transparent" />
-          <span class="mx-2">Proyecto estricto</span>
-          <el-tooltip content="Las tareas no pueden comenzar ni finalizar fuera de las fechas programadas de un proyecto"
-            placement="right">
-            <div class="rounded-full border border-primary w-3 h-3 flex items-center justify-center">
-              <i class="fa-solid fa-info text-primary text-[7px]"></i>
-            </div>
-          </el-tooltip>
-        </label>
+      <label class="inline-flex items-center col-span-full my-3">
+        <Checkbox v-model:checked="form.is_new_company" @change="handleChecked"
+          class="bg-transparent disabled:border-gray-400" />
+        <span class="ml-2 text-xs">Nuevo cliente</span>
+      </label>
+      <div v-if="form.is_new_company">
+        <InputLabel value="Cliente *" class="ml-2" />
+        <input v-model="form.customer_name" class="input" type="text" required />
+        <InputError :message="form.errors.contact_name" />
+      </div>
+      <div v-if="form.is_new_company">
+        <InputLabel value="Contacto *" class="ml-2" />
+        <input v-model="form.contact_name" class="input" type="text" required />
+        <InputError :message="form.errors.contact_name" />
+      </div>
+      <div v-if="form.is_new_company">
+        <InputLabel value="Teléfono *" class="ml-2" />
+        <input v-model="form.contact_phone" class="input" type="text" required />
+        <InputError :message="form.errors.contact_phone" />
+      </div>
+      <div v-if="!form.is_new_company">
+        <InputLabel value="Cliente *" class="ml-2" />
+        <el-select class="w-full" v-model="form.customer_id" clearable filterable placeholder="Seleccione"
+          no-data-text="No hay clientes registrados" no-match-text="No se encontraron coincidencias">
+          <el-option v-for="customer in customers.data" :key="customer.id" :label="customer.name" :value="customer.id" />
+        </el-select>
+        <InputError :message="form.errors.customer" />
+      </div>
+      <div v-if="!form.is_new_company">
+        <InputLabel value="Contacto *" class="ml-2" />
+        <el-select class="w-full" v-model="form.contact_id" clearable filterable placeholder="Seleccione"
+          no-data-text="No hay contactos registrados" no-match-text="No se encontraron coincidencias">
+          <el-option v-for="contact in customers.data.find(
+            (item) => item.id == form.customer_id
+          )?.contacts" :key="contact" :label="contact.name" :value="contact.id" />
+        </el-select>
+      </div>
+      <div v-if="!form.is_new_company">
+        <InputLabel value="Sucursal *" class="ml-2" />
+        <el-select class="w-full" v-model="form.branch" clearable filterable placeholder="Seleccione"
+          no-data-text="No hay sucursales registradas" no-match-text="No se encontraron coincidencias">
+          <el-option v-for="branch in customers.data.find(
+            (item) => item.id == form.customer_id
+          )?.contacts.find((item) => item.id == form.contact_id).additional.branches" :key="branch" :label="branch"
+            :value="branch" />
+        </el-select>
+      </div> <br>
+      <div class="mt-5">
+        <InputLabel value="Fecha de inicio *" class="ml-2" />
+        <el-date-picker class="w-full" v-model="form.start_date" type="date" placeholder="Inicio *" format="YYYY/MM/DD"
+          value-format="YYYY-MM-DD" />
+        <InputError :message="form.errors.start_date" />
+      </div>
+      <div class="mt-5">
+        <InputLabel value="Fecha de cierre *" class="ml-2" />
+        <el-date-picker class="w-full" v-model="form.close_date" type="date" placeholder="Cierre *" format="YYYY/MM/DD"
+          value-format="YYYY-MM-DD" />
+        <InputError :message="form.errors.close_date" />
       </div>
       <div class="mt-5 col-span-full">
         <InputLabel value="Descripción" class="ml-2" />
         <RichText @content="updateDescription($event)" :defaultValue="form.description" />
       </div>
-      <div class="ml-2 mt-2 col-span-full flex">
+      <div class="ml-4 mt-2 col-span-full flex">
         <FileUploader @files-selected="this.form.media = $event" />
       </div>
-      <div class="mt-5 col-span-full w-[calc(50%-16px)]">
+      <div class="mt-5 w-full">
         <div class="flex justify-between items-center mx-2">
           <InputLabel value="Etiquetas" />
           <button @click="showTagFormModal = true" type="button"
@@ -83,113 +137,67 @@
           </el-option>
         </el-select>
       </div>
-      <div class="col-span-full ml-2 text-sm mt-3 flex">
-        <label class="flex items-center cursor-pointer flex-shrink-0 flex-grow-0">
-          <Checkbox v-model:checked="form.is_internal" name="strict" class="bg-transparent" />
-          <span class="mx-2">Proyecto interno</span>
-          <el-tooltip
-            content="Seleccione esta opción si el proyecto es una iniciativa de la empresa y no esta relacionado con un cliente en específico"
-            placement="right">
-            <!-- <i class="fa-solid fa-circle-info text-primary text-xs ml-2"></i> -->
-            <div class="rounded-full border border-primary w-3 h-3 flex items-center justify-center">
-              <i class="fa-solid fa-info text-primary text-[7px]"></i>
-            </div>
+      <div class="mt-5">
+        <InputLabel value="Probabilidad %" />
+        <input v-model="form.probability" class="input mt-1" placeholder="Probabilidad de cierre" type="number" min="0"
+          max="100" />
+      </div>
+      <div class="w-full">
+        <div class="relative">
+          <i :class="getColorPriority(form.priority)" class="fa-solid fa-circle text-xs top-1 left-20 absolute z-30"></i>
+          <InputLabel value="Prioridad" />
+          <div class="flex items-center space-x-4">
+            <el-select class="w-full" v-model="form.priority" clearable filterable placeholder="Seleccione"
+              no-data-text="No hay opciones registradas" no-match-text="No se encontraron coincidencias">
+              <el-option v-for="item in priorities" :key="item" :label="item.label" :value="item.label">
+                <span style="float: left"><i :class="item.color" class="fa-solid fa-circle"></i></span>
+                <span style="float: center; margin-left: 5px; font-size: 13px">{{
+                  item.label
+                }}</span>
+              </el-option>
+            </el-select>
+            <InputError :message="form.errors.priority" />
+          </div>
+        </div>
+      </div>
+      <div v-if="form.status == 'Perdida'" class="w-full">
+        <label class="text-sm">Causa oportunidad perdida
+          <el-tooltip content="Escribe la causa por la cual se PERDIÓ esta oportunidad" placement="right">
+            <i class="fa-regular fa-circle-question ml-2 text-primary text-xs"></i>
           </el-tooltip>
         </label>
+        <input v-model="form.lost_oportunity_razon" class="input" type="text" />
+        <InputError :message="form.errors.lost_oportunity_razon" />
       </div>
-      <div class="mt-5 col-span-full w-[calc(50%-16px)]">
-        <div class="flex justify-between items-center mx-2">
-          <div class="flex items-center space-x-2">
-            <InputLabel value="Grupo" />
-            <el-tooltip content="Organice su proyecto en grupos. Seleccione o cree un grupo para asociar este proyecto"
-              placement="right">
-              <!-- <i class="fa-solid fa-circle-info text-primary text-xs ml-2"></i> -->
-              <div class="rounded-full border border-primary w-3 h-3 flex items-center justify-center">
-                <i class="fa-solid fa-info text-primary text-[7px]"></i>
-              </div>
-            </el-tooltip>
-          </div>
-          <button @click="showGroupFormModal = true" type="button" class="text-primary text-xs">
-            Agregar grupo nuevo
-          </button>
-        </div>
-        <el-select v-model="form.project_group_id" clearable placeholder="Seleccione" class="w-full mt-1"
-          no-data-text="No hay opciones para mostrar" no-match-text="No se encontraron coincidencias">
-          <el-option v-for="(item, index) in project_groups.data" :key="item.id" :label="item.name" :value="item.id" />
-        </el-select>
-        <InputError :message="form.errors.project_group_id" />
-      </div>
-      <h2 v-if="!form.is_internal" class="font-bold text-sm my-2 col-span-full">
-        Campos adicionales
-      </h2>
-      <div v-if="!form.is_internal">
-        <InputLabel value="Cliente *" class="ml-2" />
-        <el-select v-model="form.customer_id" @change="updateContacts()" clearable placeholder="Seleccione"
-          class="w-full mt-1" no-data-text="No hay opciones para mostrar" no-match-text="No se encontraron coincidencias">
-          <el-option v-for="(item, index) in customers" :key="item.id" :label="item.name" :value="item.id" />
-        </el-select>
-        <InputError :message="form.errors.customer_id" />
-      </div>
-      <div v-if="!form.is_internal">
-        <InputLabel value="Contacto *" class="ml-2" />
-        <el-select v-model="form.contact_id" @change="updateBranches()" clearable placeholder="Seleccione"
-          class="w-full mt-1" no-data-text="No hay opciones para mostrar" no-match-text="No se encontraron coincidencias">
-          <el-option v-for="(item, index) in contacts" :key="item.id" :label="item.name" :value="item.id" />
-        </el-select>
-        <InputError :message="form.errors.contact_id" />
-      </div>
-      <div v-if="!form.is_internal">
-        <InputLabel value="Sucursal *" class="ml-2" />
-        <el-select v-model="form.address" clearable placeholder="Seleccione" class="w-full mt-1"
-          no-data-text="No hay opciones para mostrar" no-match-text="No se encontraron coincidencias">
-          <el-option v-for="(item, index) in branches" :key="index" :label="item" :value="item" />
-        </el-select>
-        <InputError :message="form.errors.address" />
-      </div>
-      <div v-if="!form.is_internal">
-        <InputLabel value="OP *" class="ml-2" />
-        <el-select v-model="form.opportunity_id" clearable placeholder="Seleccione" class="w-full mt-1"
-          no-data-text="No hay opciones para mostrar" no-match-text="No se encontraron coincidencias">
-          <el-option v-for="(item, index) in opportunities" :key="item.id" :label="item.name" :value="item.id" />
-        </el-select>
-        <InputError :message="form.errors.opportunity_id" />
-      </div>
-      <h2 class="font-bold text-sm my-2 col-span-full">Presupuesto</h2>
-      <div>
-        <InputLabel value="Moneda" class="ml-2" />
-        <el-select v-model="form.currency" clearable placeholder="Seleccione" class="w-full mt-1"
-          no-data-text="No hay opciones para mostrar" no-match-text="No se encontraron coincidencias">
-          <el-option v-for="(item, index) in currencies" :key="index" :label="item.label" :value="item.value" />
-        </el-select>
-        <InputError :message="form.errors.currency" />
-      </div>
-      <div>
-        <InputLabel value="Monto" class="ml-2" />
-        <input v-model="form.budget" type="number" step="0.01" class="input mt-1" />
-        <InputError :message="form.errors.budget" />
+      <div class="w-full">
+        <label class="text-sm">Valor de oportunidad
+          <el-tooltip content="Monto esperado si se cierra la venta" placement="right">
+            <i class="fa-regular fa-circle-question ml-2 text-primary text-xs"></i>
+          </el-tooltip>
+        </label>
+        <input v-model="form.amount" class="input" type="number" min="0" step="0.01" />
+        <InputError :message="form.errors.amount" />
       </div>
       <h2 class="font-bold text-sm my-2 col-span-full">Acceso al proyecto</h2>
       <div class="col-span-full text-sm">
         <div class="my-1">
           <input v-model="typeAccessProject" value="Public"
             class="checked:bg-primary focus:text-primary focus:ring-primary border-black mr-3" type="radio"
-            name="typeAccessProject" />
+            name="typeAccessProject">
           <b>Público</b>
-          <p class="text-[#9A9A9A] ml-7 text-xs">
-            Los usuarios del portal solo pueden ver, seguir y comentar, mientras que los
-            usuarios del proyecto tendrán acceso directo.
-          </p>
+          <p class="text-[#9A9A9A] ml-7 text-xs">Los usuarios del portal solo pueden ver, seguir y comentar, mientras
+            que los usuarios del proyecto tendrán acceso directo.</p>
         </div>
         <div class="my-1">
           <input v-model="typeAccessProject" value="Private"
             class="checked:bg-primary focus:text-primary focus:ring-primary border-black mr-3" type="radio"
-            name="typeAccessProject" />
+            name="typeAccessProject">
           <b>Privado</b>
-          <p class="text-[#9A9A9A] ml-7 text-xs">
-            Solo los usuarios de proyecto pueden ver y acceder a este proyecto
+          <p class="text-[#9A9A9A] ml-7 text-xs">Solo los usuarios de proyecto pueden ver y acceder a este proyecto
           </p>
         </div>
       </div>
+
       <section class="rounded-[10px] py-12 mx-7 mt-5 max-h-[580px] col-span-full border border-gray3">
         <div class="flex px-16 mb-8">
           <div v-if="typeAccessProject === 'Private'" class="w-full">
@@ -199,13 +207,7 @@
             <el-select @change="addToSelectedUsers" filterable clearable placeholder="Seleccionar usuario" class="w-1/2"
               no-data-text="No hay más usuarios para añadir" no-match-text="No se encontraron coincidencias">
               <el-option v-for="(item, index) in availableUsersToPermissions" :key="item.id" :label="item.name"
-                :value="item.id">
-                <div v-if="$page.props.jetstream.managesProfilePhotos"
-                  class="flex text-sm rounded-full items-center mt-[3px]">
-                  <img class="h-7 w-7 rounded-full object-cover mr-4" :src="item.profile_photo_url" :alt="item.name" />
-                  <p>{{ item.name }}</p>
-                </div>
-              </el-option>
+                :value="item.id" />
             </el-select>
           </div>
           <ThirdButton v-if="typeAccessProject === 'Public'" type="button" class="ml-auto self-start"
@@ -294,31 +296,14 @@
           </div>
         </div>
       </section>
+
       <div class="col-span-full flex mt-8 mb-5 justify-end space-x-2">
-        <Link :href="route('pms.projects.index')">
+        <Link :href="route('crm.opportunities.index')">
         <CancelButton type="button">Cancelar</CancelButton>
         </Link>
-        <PrimaryButton :disabled="form.processing">Crear proyecto</PrimaryButton>
+        <PrimaryButton :disabled="form.processing">Crear oportunidad</PrimaryButton>
       </div>
     </form>
-
-    <!-- group form -->
-    <DialogModal :show="showGroupFormModal" @close="showGroupFormModal = false">
-      <template #title> Agregar grupo </template>
-      <template #content>
-        <form @submit.prevent="storeGroup" ref="groupForm">
-          <div>
-            <InputLabel value="Nombre del grupo *" class="ml-2" />
-            <input v-model="groupForm.name" type="text" class="input mt-1" placeholder="Escribe el nombre" required />
-            <InputError :message="groupForm.errors.name" />
-          </div>
-        </form>
-      </template>
-      <template #footer>
-        <CancelButton @click="showGroupFormModal = false" :disabled="groupForm.processing">Cancelar</CancelButton>
-        <PrimaryButton @click="submitGroupForm()" :disabled="groupForm.processing">Crear</PrimaryButton>
-      </template>
-    </DialogModal>
 
     <!-- tag form -->
     <DialogModal :show="showTagFormModal" @close="showTagFormModal = false">
@@ -350,60 +335,94 @@ import AppLayout from "@/Layouts/AppLayout.vue";
 import PrimaryButton from "@/Components/PrimaryButton.vue";
 import InputLabel from "@/Components/InputLabel.vue";
 import InputError from "@/Components/InputError.vue";
-import CancelButton from "@/Components/CancelButton.vue";
-import Checkbox from "@/Components/Checkbox.vue";
-import RichText from "@/Components/MyComponents/RichText.vue";
 import ThirdButton from "@/Components/ThirdButton.vue";
+import CancelButton from "@/Components/CancelButton.vue";
+import RichText from "@/Components/MyComponents/RichText.vue";
+import SecondaryButton from "@/Components/SecondaryButton.vue";
 import DialogModal from "@/Components/DialogModal.vue";
-import Tag from "@/Components/MyComponents/Tag.vue";
 import FileUploader from "@/Components/MyComponents/FileUploader.vue";
+import Checkbox from "@/Components/Checkbox.vue";
+import Tag from "@/Components/MyComponents/Tag.vue";
 import { Link, useForm } from "@inertiajs/vue3";
-import axios from "axios";
-//   import Pagination from "@/Components/MyComponents/Pagination.vue";
 
 export default {
   data() {
     const form = useForm({
-      name: null,
-      owner_id: this.$page.props.auth.user.id,
-      start_date: null,
-      limit_date: null,
-      is_strict: false,
-      is_internal: false,
-      description: null,
+      name: this.opportunity.name,
+      service_type: this.opportunity.service_type,
+      status: this.opportunity.status,
+      seller_id: this.opportunity.seller_id,
+      start_date: this.opportunity.start_date,
+      close_date: this.opportunity.close_date,
+      description: this.opportunity.description,
       tags: null,
-      project_group_id: null,
-      service_type: null,
-      address: null,
-      customer_id: null,
-      contact_id: null,
-      opportunity_id: null,
-      currency: "$MXN",
-      budget: null,
+      probability: this.opportunity.probability,
+      lost_oportunity_razon: this.opportunity.lost_oportunity_razon,
+      priority: this.opportunity.priority,
+      amount: this.opportunity.amount,
       selectedUsersToPermissions: [],
       media: [],
-      user_id: this.$page.props.auth.user.id,
-    });
+      is_new_company: false,
+      contact_id: this.opportunity.contact_id,
+      customer_id: this.opportunity.customer_id,
+      customer_name: this.opportunity.customer_name,
+      branch: this.opportunity.branch,
+      contact_name: this.opportunity.contact_name,
+      contact_phone: this.opportunity.contact_phone,
 
-    const groupForm = useForm({
-      name: null,
     });
 
     const tagForm = useForm({
       name: null,
       color: null,
     });
-
     return {
       form,
-      groupForm,
       tagForm,
-      showGroupFormModal: false,
       showTagFormModal: false,
+      company_branch: null,
+      showTagFormModal: false,
+      company_branch_obj: null,
+      typeAccessProject: 'Private',
+      // owner: this.$page.props.auth.user.name,
+      mediaNames: [], // Agrega esta propiedad para almacenar los nombres de los archivos
       editAccesFlag: true,
-      typeAccessProject: "Private",
-      search: "",
-      inputSearch: "",
+      statuses: [
+        {
+          label: "Nueva",
+          color: "text-[#9A9A9A]",
+        },
+        {
+          label: "Pendiente",
+          color: "text-[#F3FD85]",
+        },
+        {
+          label: "Cerrada",
+          color: "text-[#FEDBBD]",
+        },
+        {
+          label: "Pagado",
+          color: "text-[#AFFDB2]",
+        },
+        {
+          label: "Perdida",
+          color: "text-[#F7B7FC]",
+        },
+      ],
+      priorities: [
+        {
+          label: "Baja",
+          color: "text-[#87CEEB]",
+        },
+        {
+          label: "Media",
+          color: "text-[#D97705]",
+        },
+        {
+          label: "Alta",
+          color: "text-[#D90537]",
+        },
+      ],
       serviceTypes: [
         "Iluminacón",
         "Herrería",
@@ -422,100 +441,83 @@ export default {
         "Impermeabilización",
         "Servicios varios",
       ],
-      currencies: [
-        { label: "MXN - Peso Mexicano", value: "$MXN" },
-        { label: "USD - Dolar ", value: "$USD" },
-      ],
-      opportunities: [],
       contacts: [],
       branches: [],
-    };
+    }
   },
   components: {
     AppLayout,
     PrimaryButton,
-    CancelButton,
-    Link,
     InputLabel,
-    Checkbox,
-    RichText,
-    ThirdButton,
-    DialogModal,
     InputError,
-    Tag,
+    ThirdButton,
+    RichText,
+    CancelButton,
+    SecondaryButton,
+    DialogModal,
     FileUploader,
-    //   Pagination
+    Checkbox,
+    Link,
+    Tag,
   },
   props: {
-    customers: Array,
-    project_groups: Object,
-    tags: Object,
     users: Array,
+    tags: Object,
+    customers: Object,
+    opportunity: Object,
   },
-  computed: {},
   methods: {
-    updateContacts() {
-      const selectedCustomer = this.customers.find(
-        (item) => item.id === this.form.customer_id
-      );
+    update() {
+      if (this.form.media.length) {
+        this.form.post(route("crm.opportunities.update-with-media", this.opportunity.id), {
+          method: '_put',
+          onSuccess: () => {
+            this.$notify({
+              title: "Correcto",
+              message: "Se ha actualizado la oportunidad",
+              type: "success",
+            });
 
-      this.contacts = selectedCustomer ? selectedCustomer.contacts : [];
-      this.opportunities = selectedCustomer ? selectedCustomer.opportunities : [];
-    },
-    updateBranches() {
-      const selectedContact = this.contacts.find(
-        (item) => item.id === this.form.contact_id
-      );
-
-      this.branches = selectedContact ? selectedContact?.additional.branches : [];
-    },
-    store() {
-      this.form.post(route("pms.projects.store"), {
-        onSuccess: () => {
-          this.$notify({
-            title: "Correcto",
-            message: "Proyecto creado",
-            type: "success",
-          });
-        },
-      });
-    },
-    submitGroupForm() {
-      this.$refs.groupForm.dispatchEvent(new Event("submit", { cancelable: true }));
-    },
-    async storeGroup() {
-      try {
-        this.groupForm.processing = true;
-        const response = await axios.post(route("pms.project-groups.store"), {
-          name: this.groupForm.name,
-          user_id: this.$page.props.auth.user.id,
+          },
         });
+      } else {
+        this.form.put(route("crm.opportunities.update", this.opportunity.id), {
+          onSuccess: () => {
+            this.$notify({
+              title: "Correcto",
+              message: "Se ha actualizado la oportunidad",
+              type: "success",
+            });
 
-        if (response.status === 200) {
-          this.$notify({
-            title: "Correcto",
-            message: response.data.message,
-            type: "success",
-          });
-
-          this.showGroupFormModal = false;
-          this.project_groups.data.push(response.data.item);
-          this.groupForm.reset();
-          this.groupForm.errors = {};
-          this.form.project_group_id = response.data.item.id;
-        }
-      } catch (error) {
-        if (error.response.status === 422) {
-          // guardando errores de validacion a formulario para mostrarlos
-          this.groupForm.errors.name = error.response.data.errors.name[0];
-        }
-        console.log(error);
-      } finally {
-        this.groupForm.processing = false;
+          },
+        });
       }
     },
-    updateDescription(content) {
-      this.form.description = content;
+    getColorStatus(oportunityStatus) {
+      if (oportunityStatus === "Nueva") {
+        return "text-[#9A9A9A]";
+      } else if (oportunityStatus === "Pendiente") {
+        return "text-[#F3FD85]";
+      } else if (oportunityStatus === "Cerrada") {
+        return "text-[#FEDBBD]";
+      } else if (oportunityStatus === "Pagado") {
+        return "text-[#AFFDB2]";
+      } else if (oportunityStatus === "Perdida") {
+        return "text-[#F7B7FC]";
+      } else {
+        return "text-transparent";
+      }
+    },
+    getColorPriority(opportunityPriority) {
+      if (opportunityPriority === "Baja") {
+        return "text-[#87CEEB]";
+      } else if (opportunityPriority === "Media") {
+        return "text-[#D97705]";
+      } else if (opportunityPriority === "Alta") {
+        return "text-[#D90537]";
+      } else {
+        return "text-transparent";
+      }
     },
     submitTagForm() {
       this.$refs.tagForm.dispatchEvent(new Event("submit", { cancelable: true }));
@@ -526,7 +528,7 @@ export default {
         const response = await axios.post(route("pms.tags.store"), {
           name: this.tagForm.name,
           color: this.tagForm.color,
-          type: "projects",
+          type: "opportunities",
           user_id: this.$page.props.auth.user.id,
         });
 
@@ -553,6 +555,29 @@ export default {
       } finally {
         this.tagForm.processing = false;
       }
+    },
+    updateDescription(content) {
+      this.form.description = content;
+    },
+    handleChecked() {
+      //resetea la busqueda de contacto en formulario
+      this.form.customer_id = null;
+      this.form.branch = null;
+      this.form.contact_id = null;
+    },
+    updateContacts() {
+      const selectedCustomer = this.customers.data.find(
+        (item) => item.id === this.form.customer_id
+      );
+
+      this.contacts = selectedCustomer ? selectedCustomer.contacts : [];
+    },
+    updateBranches() {
+      const selectedContact = this.contacts.find(
+        (item) => item.id === this.form.contact_id
+      );
+
+      this.branches = selectedContact ? selectedContact?.additional.branches : [];
     },
     selectAdmins() {
       // obtener los usuarios admin para que siempre aparezcan en los proyectos y dar todos los permisos
@@ -636,8 +661,22 @@ export default {
     },
   },
   mounted() {
-    this.selectAdmins();
-    this.selectAuthUser();
+    // this.selectAdmins();
+    this.form.tags = this.opportunity.tags.map(tag => tag.id);
+
+    // inicializar permisos
+    this.opportunity.users.forEach(user => {
+      const participant = {
+        id: user.id,
+        name: user.name,
+        profile_photo_url: user.profile_photo_url,
+        employee_properties: user.employee_properties,
+        permissions: JSON.parse(user.pivot.permissions),
+      };
+      this.form.selectedUsersToPermissions.push(participant);
+    });
+    this.updateContacts();
+    this.updateBranches();
   },
-};
+}
 </script>

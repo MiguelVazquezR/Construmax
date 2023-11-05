@@ -47,7 +47,13 @@
           no-data-text="No hay vendedores registrados" no-match-text="No se encontraron coincidencias">
           <el-option v-for="seller in users.filter(
             (user) => user.employee_properties?.department == 'Ventas'
-          )" :key="seller" :label="seller.name" :value="seller.id" />
+          )" :key="seller" :label="seller.name" :value="seller.id">
+            <div v-if="$page.props.jetstream.managesProfilePhotos"
+              class="flex text-sm rounded-full items-center mt-[3px]">
+              <img class="h-7 w-7 rounded-full object-cover mr-4" :src="seller.profile_photo_url" :alt="seller.name" />
+              <p>{{ seller.name }}</p>
+            </div>
+          </el-option>
         </el-select>
       </div>
       <label class="inline-flex items-center col-span-full my-3">
@@ -172,57 +178,40 @@
         <input v-model="form.amount" class="input" type="number" min="0" step="0.01" />
         <InputError :message="form.errors.amount" />
       </div>
-      <!-- <h2 class="font-bold text-sm my-2 col-span-full">Acceso al proyecto</h2>
-        <div class="col-span-full text-sm">
-            <div class="my-1">
-                <input v-model="typeAccessProject" value="Public"
-                class="checked:bg-primary focus:text-primary focus:ring-primary border-black mr-3" type="radio"
-                name="typeAccessProject">
-                <b>Público</b>
-                <p class="text-[#9A9A9A] ml-7 text-xs">Los usuarios del portal solo pueden ver, seguir y comentar, mientras
-                que los usuarios del proyecto tendrán acceso directo.</p>
-            </div>
-            <div class="my-1">
-                <input v-model="typeAccessProject" value="Private"
-                class="checked:bg-primary focus:text-primary focus:ring-primary border-black mr-3" type="radio"
-                name="typeAccessProject">
-                <b>Privado</b>
-                <p class="text-[#9A9A9A] ml-7 text-xs">Solo los usuarios de proyecto pueden ver y acceder a este proyecto
-                </p>
-            </div>
+      <h2 class="font-bold text-sm my-2 col-span-full">Acceso al proyecto</h2>
+      <div class="col-span-full text-sm">
+        <div class="my-1">
+          <input v-model="typeAccessProject" value="Public"
+            class="checked:bg-primary focus:text-primary focus:ring-primary border-black mr-3" type="radio"
+            name="typeAccessProject">
+          <b>Público</b>
+          <p class="text-[#9A9A9A] ml-7 text-xs">Los usuarios del portal solo pueden ver, seguir y comentar, mientras
+            que los usuarios del proyecto tendrán acceso directo.</p>
         </div>
+        <div class="my-1">
+          <input v-model="typeAccessProject" value="Private"
+            class="checked:bg-primary focus:text-primary focus:ring-primary border-black mr-3" type="radio"
+            name="typeAccessProject">
+          <b>Privado</b>
+          <p class="text-[#9A9A9A] ml-7 text-xs">Solo los usuarios de proyecto pueden ver y acceder a este proyecto
+          </p>
+        </div>
+      </div>
 
-        <section
-        class="rounded-[10px] py-12 mx-7 mt-5 max-h-[540px] col-span-full border border-gray3"
-      >
+      <section class="rounded-[10px] py-12 mx-7 mt-5 max-h-[580px] col-span-full border border-gray3">
         <div class="flex px-16 mb-8">
           <div v-if="typeAccessProject === 'Private'" class="w-full">
             <h2 class="font-bold text-sm my-2 ml-2 col-span-full">
               Asignar participantes
             </h2>
-            <el-select
-              @change="addToSelectedUsers"
-              filterable
-              clearable
-              placeholder="Seleccionar usuario"
-              class="w-1/2"
-              no-data-text="No hay más usuarios para añadir"
-              no-match-text="No se encontraron coincidencias"
-            >
-              <el-option
-                v-for="(item, index) in availableUsersToPermissions"
-                :key="item.id"
-                :label="item.name"
-                :value="item.id"
-              />
+            <el-select @change="addToSelectedUsers" filterable clearable placeholder="Seleccionar usuario" class="w-1/2"
+              no-data-text="No hay más usuarios para añadir" no-match-text="No se encontraron coincidencias">
+              <el-option v-for="(item, index) in availableUsersToPermissions" :key="item.id" :label="item.name"
+                :value="item.id" />
             </el-select>
           </div>
-          <ThirdButton
-            v-if="typeAccessProject === 'Public'"
-            type="button"
-            class="ml-auto self-start"
-            @click.stop="editAccesFlag = !editAccesFlag"
-          >
+          <ThirdButton v-if="typeAccessProject === 'Public'" type="button" class="ml-auto self-start"
+            @click.stop="editAccesFlag = !editAccesFlag">
             {{ editAccesFlag ? "Actualizar" : "Editar" }}
           </ThirdButton>
         </div>
@@ -232,22 +221,11 @@
               <h2 class="font-bold border-b border-gray3 w-2/3 pl-3">Usuarios</h2>
               <h2 class="font-bold border-b border-gray3 w-1/3">Permisos</h2>
             </div>
-            <div class="pl-3 overflow-y-auto min-h-[100px] max-h-[340px]">
-              <div
-                class="flex mt-2 border-b border-gray3"
-                v-for="user in form.selectedUsersToPermissions"
-                :key="user.id"
-              >
+            <div class="pl-3 overflow-y-auto min-h-[100px] max-h-[380px]">
+              <div class="flex mt-2 border-b border-gray3" v-for="user in form.selectedUsersToPermissions" :key="user.id">
                 <div class="w-2/3 flex space-x-2">
-                  <div
-                    v-if="$page.props.jetstream.managesProfilePhotos"
-                    class="flex text-sm rounded-full w-12"
-                  >
-                    <img
-                      class="h-10 w-10 rounded-full object-cover"
-                      :src="user.profile_photo_url"
-                      :alt="user.name"
-                    />
+                  <div v-if="$page.props.jetstream.managesProfilePhotos" class="flex text-sm rounded-full w-12">
+                    <img class="h-10 w-10 rounded-full object-cover" :src="user.profile_photo_url" :alt="user.name" />
                   </div>
                   <div class="text-sm w-full">
                     <p>{{ user.name }}</p>
@@ -261,101 +239,53 @@
                 <div class="w-1/3 flex items-center justify-between">
                   <div class="space-y-1 mb-2">
                     <label class="flex items-center">
-                      <Checkbox
-                        :disabled="!editAccesFlag || user.employee_properties === null"
-                        v-model="user.permissions[0]"
-                        :checked="user.permissions[0]"
-                      />
-                      <span
-                        :class="
-                          !editAccesFlag || user.employee_properties === null
-                            ? 'text-gray-500/80 cursor-not-allowed'
-                            : ''
-                        "
-                        class="ml-2 text-xs"
-                      >
+                      <Checkbox :disabled="!editAccesFlag || user.employee_properties === null"
+                        v-model:checked="user.permissions[0]" :checked="user.permissions[0]" />
+                      <span :class="!editAccesFlag || user.employee_properties === null
+                        ? 'text-gray-500/80 cursor-not-allowed'
+                        : ''
+                        " class="ml-2 text-xs">
                         Crea tareas
                       </span>
                     </label>
                     <label class="flex items-center">
-                      <Checkbox
-                        :disabled="!editAccesFlag || user.employee_properties === null"
-                        v-model="user.permissions[1]"
-                        :checked="user.permissions[1]"
-                      />
-                      <span
-                        :class="
-                          !editAccesFlag || user.employee_properties === null
-                            ? 'text-gray-500/80 cursor-not-allowed'
-                            : ''
-                        "
-                        class="ml-2 text-xs"
-                        >Ver</span
-                      >
+                      <Checkbox :disabled="!editAccesFlag || user.employee_properties === null"
+                        v-model:checked="user.permissions[1]" :checked="user.permissions[1]" />
+                      <span :class="!editAccesFlag || user.employee_properties === null
+                        ? 'text-gray-500/80 cursor-not-allowed'
+                        : ''
+                        " class="ml-2 text-xs">Ver</span>
                     </label>
                     <label class="flex items-center">
-                      <Checkbox
-                        :disabled="!editAccesFlag || user.employee_properties === null"
-                        v-model="user.permissions[2]"
-                        :checked="user.permissions[2]"
-                      />
-                      <span
-                        :class="
-                          !editAccesFlag || user.employee_properties === null
-                            ? 'text-gray-500/80 cursor-not-allowed'
-                            : ''
-                        "
-                        class="ml-2 text-xs"
-                        >Editar</span
-                      >
+                      <Checkbox :disabled="!editAccesFlag || user.employee_properties === null"
+                        v-model:checked="user.permissions[2]" :checked="user.permissions[2]" />
+                      <span :class="!editAccesFlag || user.employee_properties === null
+                        ? 'text-gray-500/80 cursor-not-allowed'
+                        : ''
+                        " class="ml-2 text-xs">Editar</span>
                     </label>
                     <label class="flex items-center">
-                      <Checkbox
-                        :disabled="!editAccesFlag || user.employee_properties === null"
-                        v-model="user.permissions[3]"
-                        :checked="user.permissions[3]"
-                      />
-                      <span
-                        :class="
-                          !editAccesFlag || user.employee_properties === null
-                            ? 'text-gray-500/80 cursor-not-allowed'
-                            : ''
-                        "
-                        class="ml-2 text-xs"
-                        >Eliminar</span
-                      >
+                      <Checkbox :disabled="!editAccesFlag || user.employee_properties === null"
+                        v-model:checked="user.permissions[3]" :checked="user.permissions[3]" />
+                      <span :class="!editAccesFlag || user.employee_properties === null
+                        ? 'text-gray-500/80 cursor-not-allowed'
+                        : ''
+                        " class="ml-2 text-xs">Eliminar</span>
                     </label>
                     <label class="flex items-center">
-                      <Checkbox
-                        :disabled="!editAccesFlag || user.employee_properties === null"
-                        v-model="user.permissions[4]"
-                        :checked="user.permissions[4]"
-                      />
-                      <span
-                        :class="
-                          !editAccesFlag || user.employee_properties === null
-                            ? 'text-gray-500/80 cursor-not-allowed'
-                            : ''
-                        "
-                        class="ml-2 text-xs"
-                        >Comentar</span
-                      >
+                      <Checkbox :disabled="!editAccesFlag || user.employee_properties === null"
+                        v-model:checked="user.permissions[4]" :checked="user.permissions[4]" />
+                      <span :class="!editAccesFlag || user.employee_properties === null
+                        ? 'text-gray-500/80 cursor-not-allowed'
+                        : ''
+                        " class="ml-2 text-xs">Comentar</span>
                     </label>
                   </div>
-                  <el-popconfirm
-                    v-if="typeAccessProject === 'Private'"
-                    confirm-button-text="Si"
-                    cancel-button-text="No"
-                    icon-color="#FD8827"
-                    title="Remover?"
-                    @confirm="removeUserFromPermissions(user.id)"
-                  >
+                  <el-popconfirm v-if="typeAccessProject === 'Private'" confirm-button-text="Si" cancel-button-text="No"
+                    icon-color="#FD8827" title="Remover?" @confirm="removeUserFromPermissions(user.id)">
                     <template #reference>
-                      <button
-                        :disabled="user.employee_properties == null"
-                        type="button"
-                        class="text-primary mr-10 disabled:cursor-not-allowed disabled:opacity-50"
-                      >
+                      <button :disabled="user.employee_properties == null" type="button"
+                        class="text-primary mr-10 disabled:cursor-not-allowed disabled:opacity-50">
                         <i class="fa-regular fa-circle-xmark"></i>
                       </button>
                     </template>
@@ -365,7 +295,7 @@
             </div>
           </div>
         </div>
-      </section> -->
+      </section>
 
       <div class="col-span-full flex mt-8 mb-5 justify-end space-x-2">
         <Link :href="route('crm.opportunities.index')">
@@ -614,16 +544,28 @@ export default {
       this.form.branch = null;
       this.form.contact_id = null;
     },
-    addToSelectedUsers(userId) {
-      const user = this.users.find(item => item.id === userId);
-      const defaultPermissions = [false, true, false, false, true];
-      let foundUser = {
-        id: user.id,
-        name: user.name,
-        profile_photo_url: user.profile_photo_url,
-        permissions: [...defaultPermissions],
-      };
-      this.form.selectedUsersToPermissions.push(foundUser);
+    selectAdmins() {
+      // obtener los usuarios admin para que siempre aparezcan en los proyectos y dar todos los permisos
+      let admins = this.users.filter((item) => item.employee_properties == null);
+      admins.forEach((admin) => {
+        const defaultPermissions = [true, true, true, true, true];
+        admin.permissions = defaultPermissions;
+      });
+      this.form.selectedUsersToPermissions = admins;
+    },
+    selectAuthUser() {
+      if (this.$page.props.auth.user.employee_properties !== null) {
+        // obtener usuario que esta creando el proyecto para dar todos los permisos
+        const user = this.users.find((item) => item.id === this.$page.props.auth.user.id);
+        const defaultPermissions = [true, true, true, true, true];
+        let authUser = {
+          id: user.id,
+          name: user.name,
+          profile_photo_url: user.profile_photo_url,
+          permissions: [...defaultPermissions],
+        };
+        this.form.selectedUsersToPermissions.push(authUser);
+      }
     },
     removeUserFromPermissions(userId) {
       const index = this.form.selectedUsersToPermissions.findIndex(
@@ -632,8 +574,17 @@ export default {
 
       this.form.selectedUsersToPermissions.splice(index, 1);
     },
-    updateDescription(content) {
-      this.form.description = content;
+    addToSelectedUsers(userId) {
+      const user = this.users.find((item) => item.id === userId);
+      const defaultPermissions = [false, true, false, false, true];
+      let foundUser = {
+        id: user.id,
+        name: user.name,
+        employee_properties: user.employee_properties,
+        profile_photo_url: user.profile_photo_url,
+        permissions: [...defaultPermissions],
+      };
+      this.form.selectedUsersToPermissions.push(foundUser);
     },
   },
   computed: {
@@ -649,6 +600,34 @@ export default {
 
       return availableUsers;
     },
+  },
+  watch: {
+    typeAccessProject(newVal) {
+      this.selectAdmins();
+      if (newVal === "Public") {
+        let defaultPermissions = [false, true, false, false, true];
+        let usersWithSelectedProperties = this.users
+          .filter((element) => element.employee_properties !== null)
+          .map((user) => ({
+            id: user.id,
+            name: user.name,
+            employee_properties: user.employee_properties,
+            profile_photo_url: user.profile_photo_url,
+            permissions: [...defaultPermissions],
+          }));
+        this.form.selectedUsersToPermissions = [
+          ...this.form.selectedUsersToPermissions,
+          ...usersWithSelectedProperties,
+        ];
+        this.editAccesFlag = false;
+      } else {
+        this.editAccesFlag = true;
+      }
+    },
+  },
+  mounted() {
+    this.selectAdmins();
+    this.selectAuthUser();
   },
 }
 </script>

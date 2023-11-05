@@ -84,11 +84,25 @@ class User extends Authenticatable
         ])->withTimestamps();
     }
 
+    public function opportunities()
+    {
+        return $this->belongsToMany(Opportunity::class)
+        ->withPivot([
+            'id',
+            'permissions',
+        ])->withTimestamps();
+    }
+
     public function tasks()
     {
         return $this->belongsToMany(Task::class)
         ->withPivot([
             'id',
         ])->withTimestamps();
+    }
+
+    public function activities()
+    {
+        return $this->hasMany(OpportunityTask::class);
     }
 }

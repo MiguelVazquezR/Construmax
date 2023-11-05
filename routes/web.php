@@ -27,7 +27,6 @@ Route::get('pms/dashboard', [PMSController::class, 'dashboard'])->middleware('au
 Route::resource('projects', ProjectController::class)->middleware('auth')->names('pms.projects');
 Route::resource('tasks', TaskController::class)->middleware('auth')->names('pms.tasks');
 Route::resource('project-groups', ProjectGroupController::class)->middleware('auth')->names('pms.project-groups');
-Route::post('projects/update-with-media/{project}', [ProjectController::class, 'updateWithMedia'])->name('pms.projects.update-with-media')->middleware('auth');
 Route::resource('tags', TagController::class)->middleware('auth')->names('pms.tags');
 Route::post('tasks-{task}-comment', [TaskController::class, 'comment'])->name('pms.tasks.comment')->middleware('auth');
 Route::put('tasks-{task}-pause-play', [TaskController::class, 'pausePlayTask'])->name('pms.tasks.pause-play')->middleware('auth');
@@ -40,8 +39,9 @@ Route::get('crm/dashboard', [CRMController::class, 'dashboard'])->middleware('au
 Route::resource('customers', CustomerController::class)->middleware('auth')->names('crm.customers');
 Route::resource('opportunities', OpportunityController::class)->middleware('auth')->names('crm.opportunities');
 Route::put('/opportunities/update-status/{opportunity_id}', [OpportunityController::class, 'updateStatus'])->name('crm.opportunities.update-status')->middleware('auth');
+Route::post('opportunities/update-with-media/{opportunity}', [OpportunityTaskController::class, 'updateWithMedia'])->name('crm.opportunity.update-with-media')->middleware('auth');
 
-// ------- CRM (opportunityTasks Routes)  ---------
+// ------- CRM (opportunities Routes)  ---------
 Route::resource('opportunity-tasks', OpportunityTaskController::class)->except(['store', 'create'])->names('crm.opportunity-tasks')->middleware('auth');
 Route::get('opportunity-tasks/create/{opportunity_id}', [OpportunityTaskController::class, 'create'])->name('crm.opportunity-tasks.create')->middleware('auth');
 Route::post('opportunity-tasks/store/{opportunity_id}', [OpportunityTaskController::class, 'store'])->name('crm.opportunity-tasks.store')->middleware('auth');

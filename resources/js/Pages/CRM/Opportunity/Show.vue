@@ -30,14 +30,6 @@
           </el-select>
         </div>
         <div class="flex items-center space-x-2">
-          <el-tooltip v-if="$page.props.auth.user.permissions.includes('Editar oportunidades') && tabs == 1"
-            content="Editar oportunidad" placement="top">
-            <Link :href="route('crm.opportunities.edit', selectedOpportunity)">
-            <button class="w-9 h-9 rounded-lg bg-[#D9D9D9]">
-              <i class="fa-solid fa-pen text-sm"></i>
-            </button>
-            </Link>
-          </el-tooltip>
           <Dropdown align="right" width="48" v-if="$page.props.auth.user.permissions?.includes(
             'Eliminar oportunidades'
           ) || $page.props.auth.user.permissions?.includes('Registrar pagos en seguimiento integral') 
@@ -45,7 +37,7 @@
           || $page.props.auth.user.permissions?.includes('Enviar correos en seguimiento integral') 
             ">
             <template #trigger>
-              <button v-if="currentTab == 1 || currentTab == 3" class="h-9 px-3 rounded-lg bg-[#D9D9D9] flex items-center text-sm">
+              <button v-if="currentTab == 3" class="h-9 px-3 rounded-lg bg-[#D9D9D9] flex items-center text-sm">
                 Más <i class="fa-solid fa-chevron-down text-[11px] ml-2"></i>
               </button>
             </template>
@@ -62,10 +54,6 @@
                 v-if="currentTab == 3 && $page.props.auth.user.permissions?.includes('Enviar correos en seguimiento integral')">
                 Enviar correo
               </DropdownLink>
-              <DropdownLink v-if="$page.props.auth.user.permissions?.includes('Eliminar oportunidades') && currentTab == 1
-                " @click="showConfirmModal = true" as="button">
-                Eliminar
-              </DropdownLink>
             </template>
           </Dropdown>
           <div class="flex items-center">
@@ -80,6 +68,9 @@
                 class="fa-solid fa-pencil ml-3 text-primary rounded-full p-2 bg-[#FEDBBD] cursor-pointer"
               ></i>
             </Link>
+            <i v-if="this.$page.props.auth.user.permissions.includes('Eliminar oportunidades') && currentTab == 1" 
+                @click="showConfirmModal = true"
+                class="fa-regular fa-trash-can ml-3 text-primary rounded-full p-2 bg-[#FEDBBD] cursor-pointer"></i>
           </div>
           <el-tooltip v-if="currentTab == 2 || toBool(authUserPermissions[0])" content="Crear actividad en la oportunidad"
             placement="top">
@@ -445,7 +436,20 @@
     <!-- ------------ tab 3 seguimiento integral ends ------------- -->
 
     <!-- ------------ tab 4 Historial starts ------------- -->
-
+    <div class="lg:mx-16 mx-2 my-4" v-if="currentTab == 4">
+      <div v-if="currentOpportunity?.activities?.length">
+        <ul>
+          <li class="mb-1" v-for="(activity, index) in currentOpportunity?.activities" :key="index">
+            <span class="mr-2">{{ index + 1 }}.</span> 
+            <span @click="$inertia.get(route('users.show', activity.user.id))" class="text-primary hover:underline cursor-pointer mr-2">{{ activity.user.name}}</span>
+            <span>{{ activity.description}} el {{ activity.created_at }}</span>
+          </li>
+        </ul>
+      </div>
+      <div v-else>
+        <p class="text-sm text-center text-gray-400">No hay historial en esta oportunidad</p>
+      </div>
+    </div>
     <!-- ------------ tab 4 Historial ends ------------- -->
 
     <!-- ------------ tab 5 Ecuesta post venta starts ------------- -->
@@ -553,6 +557,7 @@
 import AppLayout from "@/Layouts/AppLayout.vue";
 import PrimaryButton from "@/Components/PrimaryButton.vue";
 import SecondaryButton from "@/Components/SecondaryButton.vue";
+import CancelButton from "@/Components/CancelButton.vue";
 import Tab from "@/Components/MyComponents/Tab.vue";
 import Tag from "@/Components/MyComponents/Tag.vue";
 import ConfirmationModal from "@/Components/ConfirmationModal.vue";
@@ -613,6 +618,7 @@ export default {
     AppLayout,
     PrimaryButton,
     SecondaryButton,
+    CancelButton,
     ConfirmationModal,
     OpportunityTaskCard,
     Modal,
@@ -707,6 +713,8 @@ export default {
           this.currentOpportunity.opportunityTasks.find(
             (item) => item.id === data
           ).finished_at = new Date();
+
+          this.currentOpportunity.activities = response.data.item.opportunity.activities;
         }
       } catch (error) {
         console.log(error);
@@ -719,6 +727,7 @@ export default {
 
       if (index !== -1) {
         this.currentOpportunity.opportunityTasks[index] = task;
+        this.currentOpportunity.activities = task.opportunity.activities;
       }
     },
     getColorStatus() {
@@ -783,6 +792,7 @@ export default {
           this.currentOpportunity.finished_at = response.data.item.finished_at;
           this.currentOpportunity.paid_at = response.data.item.paid_at;
           this.currentOpportunity.lost_oportunity_razon = response.data.item.lost_oportunity_razon;
+          this.currentOpportunity.activities = response.data.item.activities;
 
         }
       } catch (error) {

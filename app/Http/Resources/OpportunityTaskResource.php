@@ -45,7 +45,7 @@ class OpportunityTaskResource extends JsonResource
             'media' => $this->getMedia()->all(),
             'reminder' => $this->reminder,
             'user' => $this->whenLoaded('user'),
-            'opportunity' => $this->whenLoaded('opportunity'),
+            'opportunity' => OpportunityResource::make($this->whenLoaded('opportunity')),
             'asigned' => $this->whenLoaded('asigned'),
             'comments' => $this->whenLoaded('comments'),
             'created_at' => $this->created_at?->isoFormat('DD MMMM YYYY'),

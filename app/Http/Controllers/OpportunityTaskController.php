@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Resources\OpportunityTaskResource;
+use App\Models\Activity;
 use App\Models\Comment;
 use App\Models\OpportunityTask;
 use App\Models\User;
@@ -41,9 +42,16 @@ class OpportunityTaskController extends Controller
             'opportunity_id' => $opportunity_id,
         ]);
 
-
         // archivos adjuntos
         $opportunity_task->addAllMediaFromRequest()->each(fn ($file) => $file->toMediaCollection());
+
+        //Crea el registro de una actividad para el historial de esa oportunidad --------------------------
+        $asigned = User::find($request->asigned_id); //recupero el objeto del asignado a la actividad para la descripción.
+        Activity::create([
+            'description' => 'creó la actividad "' . $request->name . '" y la asignó a ' . $asigned->name,
+            'user_id' => auth()->id(),
+            'opportunity_id' => $opportunity_id,
+        ]);
 
         return to_route('crm.opportunities.show', ['opportunity'=> $opportunity_task->opportunity_id, 'defaultTab' => 2]);
     }
@@ -80,7 +88,15 @@ class OpportunityTaskController extends Controller
             $opportunity_task->comments()->save($comment);
         }
 
-        return response()->json(['item' => OpportunityTaskResource::make($opportunity_task->fresh(['asigned','opportunity','user','comments.user']))]);
+        //Crea el registro de una actividad para el historial de esa oportunidad --------------------------
+        $asigned = User::find($request->asigned_id); //recupero el objeto del asignado a la actividad para la descripción.
+        Activity::create([
+            'description' => 'editó la actividad "' . $opportunity_task->name . '" y la asignó a ' . $asigned->name,
+            'user_id' => auth()->id(),
+            'opportunity_id' => $opportunity_task->opportunity_id,
+        ]);
+
+        return response()->json(['item' => OpportunityTaskResource::make($opportunity_task->fresh(['asigned','opportunity.activities.user','user','comments.user']))]);
     }
 
     
@@ -96,6 +112,15 @@ class OpportunityTaskController extends Controller
         $opportunity_task->update([
             'finished_at' => now()
         ]);
+
+        //Crea el registro de una actividad para el historial de esa oportunidad --------------------------
+        Activity::create([
+            'description' => 'marcó como terminada la actividad "' . $opportunity_task->name . '"',
+            'user_id' => auth()->id(),
+            'opportunity_id' => $opportunity_task->opportunity_id,
+        ]);
+
+        return response()->json(['item' => OpportunityTaskResource::make($opportunity_task->fresh(['asigned','opportunity.activities.user']))]);
     }
 
     public function comment(Request $request, OpportunityTask $opportunity_task)

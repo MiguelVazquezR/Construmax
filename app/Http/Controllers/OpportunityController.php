@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Resources\CustomerResource;
 use App\Http\Resources\OpportunityResource;
 use App\Http\Resources\TagResource;
+use App\Models\Activity;
 use App\Models\Customer;
 use App\Models\Opportunity;
 use App\Models\Tag;
@@ -79,15 +80,23 @@ class OpportunityController extends Controller
         // Adjunta las etiquetas al proyecto utilizando la relación polimórfica
         $opportunity->tags()->attach($tagIds);
 
-        // archivos adjuntos
+        // archivos adjuntos ----------
         $opportunity->addAllMediaFromRequest()->each(fn ($file) => $file->toMediaCollection());
+
+
+        //Crea el registro de una actividad para el historial de esa oportunidad --------------------------
+        Activity::create([
+            'description' => 'creó la oportunidad',
+            'user_id' => auth()->id(),
+            'opportunity_id' => $opportunity->id,
+        ]);
 
         return to_route('crm.opportunities.index');
     }
 
     public function show(Opportunity $opportunity)
     {
-        $opportunities = OpportunityResource::collection(Opportunity::with(['contact', 'tags', 'media', 'user', 'seller', 'survey', 'clientMonitors' => ['emailMonitor', 'paymentMonitor', 'meetingMonitor', 'seller'], 'opportunityTasks' => ['asigned', 'media', 'opportunity', 'user', 'comments.user']])->latest()->get());
+        $opportunities = OpportunityResource::collection(Opportunity::with(['contact', 'tags', 'media', 'user', 'seller', 'survey', 'activities' => ['user'], 'clientMonitors' => ['emailMonitor', 'paymentMonitor', 'meetingMonitor', 'seller'], 'opportunityTasks' => ['asigned', 'media', 'opportunity', 'user', 'comments.user']])->latest()->get());
 
         // return $opportunities;
 
@@ -144,6 +153,15 @@ class OpportunityController extends Controller
                 'lost_oportunity_razon' => null,
             ]);
         }
+        
+        //Crea el registro de una actividad para el historial de esa oportunidad
+        Activity::create([
+            'description' => 'cambió el estatus de la oportunidad a "' . $request->status . '"',
+            'user_id' => auth()->id(),
+            'opportunity_id' => $opportunity->id,
+        ]);
+
+        $opportunity->load('activities.user'); //carga la relación de activities
 
         return response()->json(['item' => OpportunityResource::make($opportunity)]);
     }

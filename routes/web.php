@@ -39,7 +39,7 @@ Route::get('crm/dashboard', [CRMController::class, 'dashboard'])->middleware('au
 Route::resource('customers', CustomerController::class)->middleware('auth')->names('crm.customers');
 Route::resource('opportunities', OpportunityController::class)->middleware('auth')->names('crm.opportunities');
 Route::put('/opportunities/update-status/{opportunity_id}', [OpportunityController::class, 'updateStatus'])->name('crm.opportunities.update-status')->middleware('auth');
-Route::post('opportunities/update-with-media/{opportunity}', [OpportunityTaskController::class, 'updateWithMedia'])->name('crm.opportunity.update-with-media')->middleware('auth');
+Route::post('opportunities/update-with-media/{opportunity}', [OpportunityController::class, 'updateWithMedia'])->name('crm.opportunities.update-with-media')->middleware('auth');
 
 // ------- CRM (opportunities Routes)  ---------
 Route::resource('opportunity-tasks', OpportunityTaskController::class)->except(['store', 'create'])->names('crm.opportunity-tasks')->middleware('auth');

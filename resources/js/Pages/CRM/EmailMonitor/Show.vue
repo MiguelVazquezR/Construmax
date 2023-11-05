@@ -40,7 +40,8 @@
         <p class="font-bold col-span-2 mb-2">Información de la oportunidad</p>
 
           <span class="text-gray-500 my-2">Folio de oportunidad</span>
-          <a class="hover:underline text-primary" :href="route('crm.opportunities.show', email_monitor.data.opportunity?.id)"><span>{{ email_monitor.data.opportunity?.folio }}</span></a>
+          <a class="hover:underline text-primary" :href="route('crm.opportunities.show', email_monitor.data.opportunity?.id)">
+            <span>{{ email_monitor.data.opportunity?.folio }} - {{ email_monitor.data.opportunity?.name }}</span></a>
           <span class="text-gray-500 my-2">Vendedor</span>
           <span>{{ email_monitor.data.seller?.name }}</span>
         </div>

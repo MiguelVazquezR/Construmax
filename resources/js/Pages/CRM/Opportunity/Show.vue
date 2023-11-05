@@ -92,9 +92,9 @@
             <PrimaryButton class="rounded-md w-[132px]">Enviar correo</PrimaryButton>
             <!-- </Link> -->
           </el-tooltip>
-          <el-tooltip v-if="currentTab == 5 && currentOpportunity?.finished_at"
+          <el-tooltip v-if="currentTab == 5 && (currentOpportunity?.finished_at || currentOpportunity?.paid_at)"
             content="Genera la url para la encuesta de satisfacción" placement="top">
-            <PrimaryButton @click="generateSurveyUrl" class="rounded-md">Generar url</PrimaryButton>
+            <PrimaryButton @click="generateSurveyUrl" class="rounded-md w-[120px]">Generar url</PrimaryButton>
           </el-tooltip>
         </div>
       </div>
@@ -248,20 +248,21 @@
         </div>
 
         <div class="flex items-center justify-end space-x-2 col-span-2 mr-4">
-          <el-tooltip content="Agendar reunión" placement="top">
+          <el-tooltip v-if="$page.props.auth.user.permissions?.includes('Agendar citas en seguimiento integral')" content="Agendar reunión" placement="top">
             <i
-              @click="$inertia.get(route('meeting-monitors.create'))"
+              @click="$inertia.get(route('crm.meeting-monitors.create'))"
               class="fa-regular fa-calendar text-primary cursor-pointer text-lg px-3 border-r border-[#9a9a9a]"
             ></i>
           </el-tooltip>
-          <el-tooltip content="Registrar pago" placement="top">
+          <el-tooltip v-if="$page.props.auth.user.permissions?.includes('Registrar pagos en seguimiento integral')" content="Registrar pago" placement="top">
             <i
-              @click="$inertia.get(route('payment-monitors.create'))"
+              @click="$inertia.get(route('crm.payment-monitors.create'))"
               class="fa-solid fa-money-bill text-primary cursor-pointer text-lg px-3 border-r border-[#9a9a9a]"
             ></i>
           </el-tooltip>
-          <el-tooltip content="Enviar correo" placement="top">
+          <el-tooltip v-if="$page.props.auth.user.permissions?.includes('Enviar correos en seguimiento integral')" content="Enviar correo" placement="top">
             <i
+              @click="$inertia.get(route('crm.email-monitors.create'))"
               class="fa-regular fa-envelope text-primary cursor-pointer text-lg px-3"
             ></i>
           </el-tooltip>
@@ -443,6 +444,72 @@
     </div>
     <!-- ------------ tab 3 seguimiento integral ends ------------- -->
 
+    <!-- ------------ tab 4 Historial starts ------------- -->
+
+    <!-- ------------ tab 4 Historial ends ------------- -->
+
+    <!-- ------------ tab 5 Ecuesta post venta starts ------------- -->
+    <div v-if="currentTab == 5" class="w-11/12 mx-auto my-8">
+      <table v-if="currentOpportunity?.survey" class="lg:w-[80%] w-full mx-auto text-sm">
+        <thead>
+          <tr class="text-center">
+            <th class="font-bold pb-5">
+              ID <i class="fa-solid fa-arrow-down-long ml-3"></i>
+            </th>
+            <el-tooltip
+              content="En una escala del 0 al 10, ¿qué tan satisfecho/a estás con la calidad de nuestros productos?"
+              placement="top">
+              <th class="font-bold pb-5">
+                P1 <i class="fa-solid fa-arrow-down-long ml-3"></i>
+              </th>
+            </el-tooltip>
+            <el-tooltip content="¿Nuestros productos cumplieron con tus expectativas?" placement="top">
+              <th class="font-bold pb-5">
+                P2 <i class="fa-solid fa-arrow-down-long ml-3"></i>
+              </th>
+            </el-tooltip>
+            <el-tooltip content="¿Consideras que nuestro equipo de trabajo fue profesional y cortés?" placement="top">
+              <th class="font-bold pb-5">
+                P3 <i class="fa-solid fa-arrow-down-long ml-3"></i>
+              </th>
+            </el-tooltip>
+            <el-tooltip content="¿Recomendarías nuestros productos a otros?" placement="top">
+              <th class="font-bold pb-5">
+                P4 <i class="fa-solid fa-arrow-down-long ml-3"></i>
+              </th>
+            </el-tooltip>
+            <th class="font-bold pb-5">Comentario</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="mb-4 hover:bg-[#dfdbdba8]">
+            <td class="text-center py-2 px-2 rounded-l-full">
+              {{ currentOpportunity?.survey?.opportunity_id }}
+            </td>
+            <td class="text-center py-2 px-2">
+              <span class="py-1 px-4 rounded-full">{{ currentOpportunity?.survey?.p1 }}</span>
+            </td>
+            <td class="text-center py-2 px-2">
+              <span class="py-1 px-2 rounded-full">{{ currentOpportunity?.survey?.p2 }}</span>
+            </td>
+            <td class="text-center py-2 px-2">
+              {{ currentOpportunity?.survey?.p3 }}
+            </td>
+            <td class="text-center py-2 px-2">
+              {{ currentOpportunity?.survey?.p4 }}
+            </td>
+            <td class="text-center py-2 px-2 rounded-r-full">
+              {{ currentOpportunity?.survey?.p5 }}
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <div v-else>
+        <p class="text-sm text-center text-gray-400">No se ha contestado la encuesta</p>
+      </div>
+    </div>
+    <!-- ------------ tab 5 Ecuesta post venta ends ------------- -->
+
     <ConfirmationModal :show="showConfirmModal" @close="showConfirmModal = false">
       <template #title> Eliminar oportunidad </template>
       <template #content> ¿Continuar con la eliminación? </template>
@@ -471,7 +538,7 @@
           <textarea
             v-model="lost_oportunity_razon"
             required
-            class="textarea mt-3"
+            class="input h-24 mt-3"
           ></textarea>
         </div>
         <div class="flex justify-end space-x-3 pt-5 pb-1">

@@ -87,7 +87,7 @@ class OpportunityController extends Controller
 
     public function show(Opportunity $opportunity)
     {
-        $opportunities = OpportunityResource::collection(Opportunity::with(['contact', 'tags', 'media', 'user', 'seller','clientMonitors' => ['emailMonitor', 'paymentMonitor', 'meetingMonitor', 'seller'], 'opportunityTasks' => ['asigned', 'media', 'opportunity', 'user', 'comments.user']])->latest()->get());
+        $opportunities = OpportunityResource::collection(Opportunity::with(['contact', 'tags', 'media', 'user', 'seller', 'survey', 'clientMonitors' => ['emailMonitor', 'paymentMonitor', 'meetingMonitor', 'seller'], 'opportunityTasks' => ['asigned', 'media', 'opportunity', 'user', 'comments.user']])->latest()->get());
 
         // return $opportunities;
 
@@ -113,6 +113,8 @@ class OpportunityController extends Controller
     {
         $opportunity = Opportunity::find($opportunity_id);
 
+        // return $request;
+
         if ($request->status == 'Cerrada') {
             $opportunity->update([
                 'status' => $request->status,
@@ -126,7 +128,7 @@ class OpportunityController extends Controller
                 'paid_at' => now(),
                 'lost_oportunity_razon' => null,
             ]);
-        } elseif ($request->status == 'Perdida') {
+        } elseif ($request->status == "Perdida") {
             $opportunity->update([
                 'status' => $request->status,
                 'finished_at' => null,

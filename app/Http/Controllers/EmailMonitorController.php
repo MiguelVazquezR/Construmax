@@ -55,6 +55,7 @@ class EmailMonitorController extends Controller
             'seller_id' => auth()->id(),
             'opportunity_id' => $request->opportunity_id,
             'customer_id' => $request->customer_id,
+            'monitor_id' => $email_monitor->id,
         ]);
 
         $email_monitor->client_monitor_id = $client_monitor->id;
@@ -94,7 +95,7 @@ class EmailMonitorController extends Controller
     public function destroy($email_monitor_id)
     {
         $email_monitor = EmailMonitor::find($email_monitor_id);
-        $client_monitor = ClientMonitor::where('opportunity_id', $email_monitor->opportunity_id)->first();
+        $client_monitor = ClientMonitor::where('monitor_id', $email_monitor->id)->where('type', 'Correo electrónico')->first();
         $client_monitor->delete();
         $email_monitor->delete();
 

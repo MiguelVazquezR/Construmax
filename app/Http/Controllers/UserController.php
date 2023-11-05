@@ -106,4 +106,11 @@ class UserController extends Controller
 
         return to_route('users.index');
     }
+
+    public function getPendentTasks()
+    {
+        $pendent = auth()->user()->tasks()->whereIn('status', ['Por hacer', 'En curso'])->get();
+
+        return response()->json(['items' => $pendent]);
+    }
 }

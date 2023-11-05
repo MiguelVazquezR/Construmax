@@ -4,7 +4,7 @@
             <h1>Inicio</h1>
 
             <!-- Estadistics -->
-            <h2 class="text-primary lg:text-xl text-lg lg:mt-6 mt-6 font-bold">Proyectos</h2>
+            <h2 class="text-primary lg:text-xl text-lg lg:mt-6 mt-6 font-bold">Proyectos en progreso</h2>
             <div class="lg:grid grid-cols-2 gap-5 mt-4 space-y-4 lg:space-y-0">
                 <StackedColumn100Chart :options="projecsProgressChartOptions" title="Progreso de proyectos"
                     icon="<i class='fa-regular fa-flag ml-2'></i>" />
@@ -21,7 +21,7 @@
             <div class="lg:grid grid-cols-2 gap-5 mt-4 space-y-4 lg:space-y-0">
                 <PendentTasks
                     :tasks="[{ title: 'Alta IMSS de colaboradores nuevos', status: 'En curso', start_date: '12/09/2023', priority: 'Alta' }]" />
-                <LateTasks
+                <LateTasks v-if="this.$page.props.auth.user.permissions.includes('Crear proyectos')"
                     :tasks="[{ title: 'Alta IMSS de colaboradores nuevos', project: { project_name: 'Dalton Honda' }, late_days: 7, participants: [{ profile_photo_url: 'https://ui-avatars.com/api/?name=S+a&color=7F9CF5&background=EBF4FF', name: 'Miguel VR' }, { profile_photo_url: 'https://ui-avatars.com/api/?name=A+v&color=7F12F5&background=EB44FF', name: 'Angel VR' }] }]" />
                 <StackedBars100Chart :options="myProyectsProgressChartOptions" title="Mis proyectos"
                     icon="<i class='fa-solid fa-chart-simple ml-2'></i>" />

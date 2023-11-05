@@ -6,7 +6,7 @@
     </div>
     <div class="flex justify-between items-center text-lg mx-8 mt-2">
       <b>{{ task.data.name }}</b>
-      <Link :href="route('pms.projects.show', { project: task.data.project.id, defaultTab: 2 })
+      <Link :href="route('pms.projects.show', { project: task.data.project?.id, defaultTab: 2 })
         ">
       <p class="flex items-center text-sm text-primary">
         <i class="fa-solid fa-arrow-left-long mr-2"></i>
@@ -96,7 +96,7 @@
         <el-select class="w-full" v-model="form.participants" clearable filterable multiple :disabled="!canEdit"
           placeholder="Seleccionar participantes" no-data-text="No hay usuarios registrados"
           no-match-text="No se encontraron coincidencias">
-          <el-option v-for="user in task.data.project.users" :key="user.id" :label="user.name" :value="user.id" />
+          <el-option v-for="user in task.data.project.users" :key="user?.id" :label="user.name" :value="user?.id" />
         </el-select>
         <InputError :message="form.errors.participants" />
       </div>
@@ -125,13 +125,13 @@
       </div>
       <div>
         <InputLabel value="Fecha de inicio" class="ml-2" />
-        <el-date-picker v-model="form.start_date" type="date" :disabled="authUser.id != task.data.user.id && authUser.id != task.data.project_owner.id
+        <el-date-picker v-model="form.start_date" type="date" :disabled="authUser?.id != task.data.user?.id && authUser?.id != task.data.project_owner?.id
           " placeholder="Fecha de inicio *" format="YYYY/MM/DD" value-format="YYYY-MM-DD" />
         <InputError :message="form.errors.start_date" />
       </div>
       <div>
         <InputLabel value="Fecha de final" class="ml-2" />
-        <el-date-picker v-model="form.limit_date" type="date" :disabled="authUser.id != task.data.user.id && authUser.id != task.data.project_owner.id
+        <el-date-picker v-model="form.limit_date" type="date" :disabled="authUser?.id != task.data.user?.id && authUser?.id != task.data.project_owner?.id
           " placeholder="Fecha límite *" format="YYYY/MM/DD" value-format="YYYY-MM-DD" />
         <InputError :message="form.errors.limit_date" />
       </div>
@@ -314,11 +314,11 @@ export default {
   computed: {
     authUser() {
       return this.task.data.project.users.find(
-        (item) => item.id == this.$page.props.auth.user?.id
+        (item) => item?.id == this.$page.props.auth.user?.id
       );
     },
     authUserIsParticipant() {
-      return this.task.data.project.users?.some((user) => user.id === this.authUser?.id);
+      return this.task.data.project.users?.some((user) => user?.id === this.authUser?.id);
     },
     authUserPermissions() {
       const permissions = this.authUser?.pivot.permissions;
@@ -338,7 +338,7 @@ export default {
       }
     },
     copyToClipboard() {
-      const textToCopy = "http://localhost:8000/tasks-format/" + this.task.data.id;
+      const textToCopy = "http://localhost:8000/tasks-format/" + this.task.data?.id;
 
       // Create a temporary input element
       const input = document.createElement("input");
@@ -372,7 +372,7 @@ export default {
     async updateStatus() {
       try {
         const response = await axios.put(
-          route("pms.tasks.update-status", this.task.data.id),
+          route("pms.tasks.update-status", this.task.data?.id),
           {
             status: this.form.status,
           }
@@ -405,7 +405,7 @@ export default {
     },
     async playPauseTask() {
       try {
-        const response = await axios.put(route("pms.tasks.pause-play", this.task.data.id), { reazon: this.pausaReazon });
+        const response = await axios.put(route("pms.tasks.pause-play", this.task.data?.id), { reazon: this.pausaReazon });
 
         if (response.status === 200) {
           this.task.data = response.data.item;
@@ -448,7 +448,7 @@ export default {
         this.sendingComments = true;
         try {
           const response = await axios.post(
-            route("pms.tasks.comment", this.task.data.id),
+            route("pms.tasks.comment", this.task.data?.id),
             {
               comment: this.form.comment,
               mentions: editor.mentions,
@@ -505,7 +505,7 @@ export default {
 
   mounted() {
     this.showStrictProjectMessage = this.task.data.project.is_strict;
-    this.form.participants = this.task.data.users.map((user) => user.id);
+    this.form.participants = this.task.data.users.map((user) => user?.id);
   },
 };
 </script>

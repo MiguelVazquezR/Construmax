@@ -26,30 +26,30 @@
                         <tr v-for="task in tasks" :key="task.id" class="text-xs w-full">
                             <td class="w-1/6 text-start">
                                 <div class="flex items-center">
-                                    <el-tooltip :content="task.participants[0].name" placement="top">
+                                    <el-tooltip :content="task.users[0].name" placement="top">
                                         <figure class="w-6 h-6 rounded-full">
-                                            <img :src="task.participants[0].profile_photo_url" class="w-full rounded-full">
+                                            <img :src="task.users[0].profile_photo_url" class="w-full rounded-full">
                                         </figure>
                                     </el-tooltip>
                                     <el-tooltip placement="top">
                                         <template #content>
-                                            <li v-for="(participant, index) in task.participants.filter((item, index) => index !== 0)"
+                                            <li v-for="(participant, index) in task.users.filter((item, index) => index !== 0)"
                                                 :key="index" class="ml-2 text-xs">
                                                 {{ participant.name }}
                                             </li>
                                         </template>
-                                        <span v-if="task.participants.length > 1" class="ml-1 text-primary text-xs">
-                                            +{{ (task.participants.length - 1) }}
+                                        <span v-if="task.users.length > 1" class="ml-1 text-primary text-xs">
+                                            +{{ (task.users.length - 1) }}
                                         </span>
                                     </el-tooltip>
                                 </div>
                             </td>
                             <td class="w-1/2 text-start truncate pr-4">
-                                <el-tooltip :content="task.title" placement="top">
-                                    {{ task.title }}
+                                <el-tooltip :content="task.name" placement="top">
+                                    {{ task.name }}
                                 </el-tooltip>
                             </td>
-                            <td class="w-1/6 text-start truncate">{{ task.project.project_name }}</td>
+                            <td class="w-1/6 text-start truncate pr-4">{{ task.project.name }}</td>
                             <td class="w-1/6 text-start">{{ task.late_days }} día(s)</td>
                         </tr>
                     </tbody>
@@ -74,7 +74,7 @@ export default {
         async fetchLateTasks() {
             this.loading = true;
             try {
-                const response = await axios.get(route('tasks.get-late-tasks'));
+                const response = await axios.get(route('pms.tasks.get-late-tasks'));
 
                 if (response.status === 200) {
                     this.tasks = response.data.items;
@@ -85,8 +85,8 @@ export default {
             }
         }
     },
-    // mounted() {
-    //     this.fetchLateTasks();
-    // }
+    mounted() {
+        this.fetchLateTasks();
+    }
 }
 </script>

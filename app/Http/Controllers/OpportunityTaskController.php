@@ -19,7 +19,7 @@ class OpportunityTaskController extends Controller
     
     public function create($opportunity_id)
     {
-        $users = User::where('is_active', true)->get();
+        $users = User::whereNotIn('id', [1])->where('is_active', true)->get();
 
         return inertia('CRM/OpportunityTask/Create', compact('users', 'opportunity_id'));
     }

@@ -13,8 +13,6 @@ class ClientMonitorController extends Controller
     {
         $client_monitors = ClientMonitorResource::collection(ClientMonitor::with('customer', 'seller', 'opportunity', 'emailMonitor', 'paymentMonitor', 'meetingMonitor')->latest()->get());
 
-        // return $client_monitors;
-
         return inertia('CRM/ClientMonitor/Index', compact('client_monitors'));
     }
 

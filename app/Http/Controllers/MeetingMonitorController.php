@@ -25,9 +25,8 @@ class MeetingMonitorController extends Controller
     {
         $customers = CustomerResource::collection(Customer::with('contacts')->latest()->get());
         $opportunities = OpportunityResource::collection(Opportunity::with('customer')->latest()->get());
-        $users = User::where('is_active', true)->get();
+        $users = User::whereNotIn('id', [1])->where('is_active', true)->get();
 
-        // return $opportunities;
         return inertia('CRM/MeetingMonitor/Create', compact('customers', 'opportunities', 'users'));
     }
 
@@ -71,7 +70,6 @@ class MeetingMonitorController extends Controller
     {
         $meeting_monitor = MeetingMonitorResource::make(MeetingMonitor::with('seller', 'opportunity', 'customer', 'contact')->find($meeting_monitor_id));
 
-        // return $meeting_monitor;
         return inertia('CRM/MeetingMonitor/Show', compact('meeting_monitor'));
     }
 
@@ -81,9 +79,7 @@ class MeetingMonitorController extends Controller
         $meeting_monitor = MeetingMonitorResource::make(MeetingMonitor::with('opportunity', 'customer', 'contact')->find($meeting_monitor_id));
         $customers = CustomerResource::collection(Customer::with('contacts')->latest()->get());
         $opportunities = OpportunityResource::collection(Opportunity::with('customer')->latest()->get());
-        $users = User::where('is_active', true)->get();
-
-        // return $meeting_monitor;
+        $users = User::whereNotIn('id', [1])->where('is_active', true)->get();
 
         return inertia('CRM/MeetingMonitor/Edit', compact('meeting_monitor', 'opportunities', 'customers', 'users'));
     }

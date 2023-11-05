@@ -65,8 +65,6 @@ class CustomerController extends Controller
     {
         $customers = CustomerResource::collection(Customer::with(['user', 'tags', 'contacts', 'opportunities', 'clientMonitors' => ['emailMonitor', 'paymentMonitor', 'meetingMonitor', 'seller']])->latest()->get());
 
-        // return $customers;
-
         return inertia('CRM/Customer/Show', compact('customer', 'customers'));
     }
 
@@ -80,7 +78,6 @@ class CustomerController extends Controller
 
     public function update(Request $request, Customer $customer)
     {
-        // return $request->all();
         $request->validate([
             'name' => 'required|string',
             'rfc' => 'required|string',

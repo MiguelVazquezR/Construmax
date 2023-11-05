@@ -16,7 +16,7 @@
       </el-select>
       <div class="flex items-center space-x-2">
         <PrimaryButton v-if="this.$page.props.auth.user.permissions.includes('Crear usuarios')" @click="$inertia.get(route('users.create'))">Agregar usuario</PrimaryButton>
-        <SecondaryButton v-if="this.$page.props.auth.user.permissions.includes('Editar usuarios')" @click="$inertia.get(route('users.edit', this.currentUser))" class="!text-lg"><i
+        <SecondaryButton v-if="this.$page.props.auth.user.permissions.includes('Editar usuarios') && currentUser?.employee_properties !== null" @click="$inertia.get(route('users.edit', this.currentUser))" class="!text-lg"><i
             class="fa-solid fa-pen"></i></SecondaryButton>
       </div>
     </div>
@@ -30,13 +30,13 @@
         <span class="text-gray-500">Nombre</span>
         <span>{{ currentUser?.name }}</span>
         <span class="text-gray-500">Departamento</span>
-        <span>{{ currentUser?.employee_properties?.department }}</span>
+        <span>{{ currentUser?.employee_properties?.department ?? 'Dirección' }}</span>
         <span class="text-gray-500">Puesto</span>
-        <span>{{ currentUser?.employee_properties?.position }}</span>
+        <span>{{ currentUser?.employee_properties?.position ?? 'Dirección' }}</span>
         <span class="text-gray-500">Correo electrónico</span>
         <span>{{ currentUser?.email }}</span>
         <span class="text-gray-500">Teléfono</span>
-        <span>{{ currentUser?.employee_properties?.phone }}</span>
+        <span>{{ currentUser?.employee_properties?.phone ?? '--' }}</span>
         <span class="text-gray-500">Estado</span>
         <span :class="{ 'text-green-600': currentUser?.is_active, 'text-red-600': !currentUser?.is_active, }">{{
           currentUser?.is_active ? 'Activo' : 'Inactivo' }}</span>

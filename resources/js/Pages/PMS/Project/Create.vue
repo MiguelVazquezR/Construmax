@@ -132,8 +132,8 @@
       </div>
       <div v-if="!form.is_internal">
         <InputLabel value="Contacto *" class="ml-2" />
-        <el-select v-model="form.contact_id" @change="updateBranches()" clearable placeholder="Seleccione" class="w-full mt-1"
-          no-data-text="No hay opciones para mostrar" no-match-text="No se encontraron coincidencias">
+        <el-select v-model="form.contact_id" @change="updateBranches()" clearable placeholder="Seleccione"
+          class="w-full mt-1" no-data-text="No hay opciones para mostrar" no-match-text="No se encontraron coincidencias">
           <el-option v-for="(item, index) in contacts" :key="item.id" :label="item.name" :value="item.id" />
         </el-select>
         <InputError :message="form.errors.contact_id" />
@@ -199,7 +199,13 @@
             <el-select @change="addToSelectedUsers" filterable clearable placeholder="Seleccionar usuario" class="w-1/2"
               no-data-text="No hay más usuarios para añadir" no-match-text="No se encontraron coincidencias">
               <el-option v-for="(item, index) in availableUsersToPermissions" :key="item.id" :label="item.name"
-                :value="item.id" />
+                :value="item.id">
+                <div v-if="$page.props.jetstream.managesProfilePhotos"
+                  class="flex text-sm rounded-full items-center mt-[3px]">
+                  <img class="h-7 w-7 rounded-full object-cover mr-4" :src="item.profile_photo_url" :alt="item.name" />
+                  <p>{{ item.name }}</p>
+                </div>
+              </el-option>
             </el-select>
           </div>
           <ThirdButton v-if="typeAccessProject === 'Public'" type="button" class="ml-auto self-start"
@@ -234,8 +240,8 @@
                       <Checkbox :disabled="!editAccesFlag || user.employee_properties === null"
                         v-model="user.permissions[0]" :checked="user.permissions[0]" />
                       <span :class="!editAccesFlag || user.employee_properties === null
-                          ? 'text-gray-500/80 cursor-not-allowed'
-                          : ''
+                        ? 'text-gray-500/80 cursor-not-allowed'
+                        : ''
                         " class="ml-2 text-xs">
                         Crea tareas
                       </span>
@@ -244,32 +250,32 @@
                       <Checkbox :disabled="!editAccesFlag || user.employee_properties === null"
                         v-model="user.permissions[1]" :checked="user.permissions[1]" />
                       <span :class="!editAccesFlag || user.employee_properties === null
-                          ? 'text-gray-500/80 cursor-not-allowed'
-                          : ''
+                        ? 'text-gray-500/80 cursor-not-allowed'
+                        : ''
                         " class="ml-2 text-xs">Ver</span>
                     </label>
                     <label class="flex items-center">
                       <Checkbox :disabled="!editAccesFlag || user.employee_properties === null"
                         v-model="user.permissions[2]" :checked="user.permissions[2]" />
                       <span :class="!editAccesFlag || user.employee_properties === null
-                          ? 'text-gray-500/80 cursor-not-allowed'
-                          : ''
+                        ? 'text-gray-500/80 cursor-not-allowed'
+                        : ''
                         " class="ml-2 text-xs">Editar</span>
                     </label>
                     <label class="flex items-center">
                       <Checkbox :disabled="!editAccesFlag || user.employee_properties === null"
                         v-model="user.permissions[3]" :checked="user.permissions[3]" />
                       <span :class="!editAccesFlag || user.employee_properties === null
-                          ? 'text-gray-500/80 cursor-not-allowed'
-                          : ''
+                        ? 'text-gray-500/80 cursor-not-allowed'
+                        : ''
                         " class="ml-2 text-xs">Eliminar</span>
                     </label>
                     <label class="flex items-center">
                       <Checkbox :disabled="!editAccesFlag || user.employee_properties === null"
                         v-model="user.permissions[4]" :checked="user.permissions[4]" />
                       <span :class="!editAccesFlag || user.employee_properties === null
-                          ? 'text-gray-500/80 cursor-not-allowed'
-                          : ''
+                        ? 'text-gray-500/80 cursor-not-allowed'
+                        : ''
                         " class="ml-2 text-xs">Comentar</span>
                     </label>
                   </div>
@@ -584,6 +590,7 @@ export default {
       let foundUser = {
         id: user.id,
         name: user.name,
+        employee_properties: user.employee_properties,
         profile_photo_url: user.profile_photo_url,
         permissions: [...defaultPermissions],
       };
@@ -614,6 +621,7 @@ export default {
           .map((user) => ({
             id: user.id,
             name: user.name,
+            employee_properties: user.employee_properties,
             profile_photo_url: user.profile_photo_url,
             permissions: [...defaultPermissions],
           }));

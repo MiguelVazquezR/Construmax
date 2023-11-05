@@ -17,18 +17,14 @@ class OpportunityController extends Controller
     {
         $opportunities = OpportunityResource::collection(Opportunity::with('contact', 'opportunityTasks')->latest()->get());
         
-        // return $opportunities; 
-
         return inertia('CRM/Opportunity/Index', compact('opportunities'));
     }
 
     public function create()
     {
-        $users = User::all();
+        $users = User::whereNotIn('id', [1])->get();
         $tags = TagResource::collection(Tag::where('type', 'opportunities')->get());
         $customers = CustomerResource::collection(Customer::with('contacts')->latest()->get());
-
-        // return $customers;
 
         return inertia('CRM/Opportunity/Create', compact('users', 'tags', 'customers'));
     }

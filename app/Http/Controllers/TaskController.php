@@ -15,7 +15,7 @@ class TaskController extends Controller
     public function create(Request $request)
     {
         $projects = Project::with(['users'])->latest()->get();
-        $users = User::where('is_active', true)->get();
+        $users = User::whereNotIn('id', [1])->where('is_active', true)->get();
         $parent_id = $request->input('projectId') ?? 1;
 
         return inertia('PMS/Task/Create', compact('projects', 'users', 'parent_id'));
@@ -45,8 +45,6 @@ class TaskController extends Controller
             // Adjuntar el usuario a la tarea
             $task->users()->attach($user_id);
         }
-
-        // event(new RecordCreated($task));
 
         $task->addAllMediaFromRequest('media')->each(fn ($file) => $file->toMediaCollection());
 
@@ -161,8 +159,6 @@ class TaskController extends Controller
     public function taskFormat($task_id)
     {
         $task = TaskResource::make(Task::with('project.users', 'user')->find($task_id));
-
-        // return $task;
 
         return inertia('PMS/Project/TaskFormat', compact('task'));
     }

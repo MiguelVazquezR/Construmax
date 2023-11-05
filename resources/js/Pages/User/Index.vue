@@ -39,16 +39,16 @@
                             {{ user.name }}
                         </td>
                         <td class="text-left py-2">
-                            {{ user.employee_properties.department }}
+                            {{ user.employee_properties?.department ?? 'Dirección' }}
                         </td>
                         <td class="text-left py-2">
-                            {{ user.employee_properties.position }}
+                            {{ user.employee_properties?.position ?? 'Dirección' }}
                         </td>
                         <td class="text-left py-2">
                             {{ user.email }}
                         </td>
                         <td class="text-left py-2">
-                            {{ user.employee_properties.phone }}
+                            {{ user.employee_properties?.phone ?? '--' }}
                         </td>
                         <td class="text-left py-2 px-2 rounded-r-full" :class="{ 'text-red-600': !user.is_active }">
                             {{ user.is_active ? 'Activo' : 'Inactivo' }}

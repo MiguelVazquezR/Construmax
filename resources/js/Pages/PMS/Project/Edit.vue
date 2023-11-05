@@ -198,7 +198,13 @@
             <el-select @change="addToSelectedUsers" filterable clearable placeholder="Seleccionar usuario" class="w-1/2"
               no-data-text="No hay más usuarios para añadir" no-match-text="No se encontraron coincidencias">
               <el-option v-for="(item, index) in availableUsersToPermissions" :key="item.id" :label="item.name"
-                :value="item.id" />
+                :value="item.id">
+                <div v-if="$page.props.jetstream.managesProfilePhotos"
+                  class="flex text-sm rounded-full items-center mt-[3px]">
+                  <img class="h-7 w-7 rounded-full object-cover mr-4" :src="item.profile_photo_url" :alt="item.name" />
+                  <p>{{ item.name }}</p>
+                </div>
+              </el-option>
             </el-select>
           </div>
           <ThirdButton v-if="typeAccessProject === 'Public'" type="button" class="ml-auto self-start"
@@ -574,10 +580,16 @@ export default {
       this.form.selectedUsersToPermissions.splice(index, 1);
     },
     addToSelectedUsers(userId) {
-      let user = this.users.find(item => item.id === userId);
+      const user = this.users.find((item) => item.id === userId);
       const defaultPermissions = [false, true, false, false, true];
-      user.permissions = defaultPermissions;
-      this.form.selectedUsersToPermissions.push(user);
+      let foundUser = {
+        id: user.id,
+        name: user.name,
+        employee_properties: user.employee_properties,
+        profile_photo_url: user.profile_photo_url,
+        permissions: [...defaultPermissions],
+      };
+      this.form.selectedUsersToPermissions.push(foundUser);
     },
     handleSearch() {
       this.search = this.inputSearch;
@@ -645,22 +657,27 @@ export default {
   },
   watch: {
     typeAccessProject(newVal) {
-      if (newVal === 'Public') {
-        this.form.selectedUsersToPermissions = this.users;
-        this.form.selectedUsersToPermissions.forEach(user => {
-          let defaultPermissions = [true, true, true, true, true];
-          if (user.employee_properties) {
-            defaultPermissions = [false, true, false, false, true];
-          }
-
-          user.permissions = defaultPermissions;
-        });
+      this.selectAdmins();
+      if (newVal === "Public") {
+        let defaultPermissions = [false, true, false, false, true];
+        let usersWithSelectedProperties = this.users
+          .filter((element) => element.employee_properties !== null)
+          .map((user) => ({
+            id: user.id,
+            name: user.name,
+            employee_properties: user.employee_properties,
+            profile_photo_url: user.profile_photo_url,
+            permissions: [...defaultPermissions],
+          }));
+        this.form.selectedUsersToPermissions = [
+          ...this.form.selectedUsersToPermissions,
+          ...usersWithSelectedProperties,
+        ];
         this.editAccesFlag = false;
       } else {
-        this.selectAdmins();
         this.editAccesFlag = true;
       }
-    }
+    },
   },
   mounted() {
     // this.selectAdmins();
@@ -672,6 +689,7 @@ export default {
         id: user.id,
         name: user.name,
         profile_photo_url: user.profile_photo_url,
+        employee_properties: user.employee_properties,
         permissions: JSON.parse(user.pivot.permissions),
       };
       this.form.selectedUsersToPermissions.push(participant);

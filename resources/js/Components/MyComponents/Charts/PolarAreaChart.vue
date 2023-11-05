@@ -32,6 +32,9 @@ export default {
                 fill: {
                     opacity: 0.8
                 },
+                yaxis: {
+                    show: false
+                },
                 responsive: [{
                     breakpoint: 480,
                     options: {

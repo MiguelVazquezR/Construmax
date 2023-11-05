@@ -11,7 +11,7 @@ class UserController extends Controller
 {
     public function index()
     {
-        $users = UserResource::collection(User::whereNotNull('employee_properties')->latest()->get());
+        $users = UserResource::collection(User::whereNotIn('id', [1])->latest()->get());
         return inertia('User/Index', compact('users'));
     }
 
@@ -41,7 +41,7 @@ class UserController extends Controller
 
     public function show(User $user)
     {
-        $users = User::whereNotNull('employee_properties')->get();
+        $users = User::whereNotIn('id', [1])->get();
 
         return inertia('User/Show', compact('user', 'users'));
     }

@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\OpportunityResource;
 use App\Http\Resources\OpportunityTaskResource;
 use App\Models\Activity;
 use App\Models\Comment;
+use App\Models\Opportunity;
 use App\Models\OpportunityTask;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -102,7 +104,18 @@ class OpportunityTaskController extends Controller
     
     public function destroy(OpportunityTask $opportunity_task)
     {
+        //Crea el registro de una actividad para el historial de esa oportunidad --------------------------
+        Activity::create([
+            'description' => 'eliminó la actividad "' . $opportunity_task->name . '"',
+            'user_id' => auth()->id(),
+            'opportunity_id' => $opportunity_task->opportunity_id,
+        ]);
+
+        $opportunity_id = $opportunity_task->opportunity_id; // guarda el id de la oportunidad antes de eliminar la tarea.
+
         $opportunity_task->delete();
+
+        return response()->json(['item' => OpportunityResource::make(Opportunity::with('activities.user')->find($opportunity_id))]);
     }
 
     public function markAsDone($opportunity_task_id)

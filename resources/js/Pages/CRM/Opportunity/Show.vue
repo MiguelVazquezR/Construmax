@@ -692,6 +692,7 @@ export default {
           if (index !== -1) {
             this.currentOpportunity.opportunityTasks.splice(index, 1);
           }
+            this.currentOpportunity.activities = response.data.item.activities;
         }
       } catch (error) {
         console.log(error);

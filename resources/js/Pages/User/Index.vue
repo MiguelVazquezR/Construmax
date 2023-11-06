@@ -96,14 +96,15 @@ export default {
             if (!this.search) {
                 return this.users.data;
             } else {
+                const employees = this.users.data.filter(item => item.employee_properties);
                 return this.users.data.filter(
                     (user) =>
-                        user.id.toString().toLowerCase().includes(this.search.toLowerCase()) ||
-                        user.name.toLowerCase().includes(this.search.toLowerCase()) ||
-                        user.employee_properties.department.toLowerCase().includes(this.search.toLowerCase()) ||
-                        user.employee_properties.phone.toLowerCase().includes(this.search.toLowerCase()) ||
-                        user.employee_properties.position.toLowerCase().includes(this.search.toLowerCase()) ||
-                        user.email.toLowerCase().includes(this.search.toLowerCase())
+                            user.id.toString().toLowerCase().includes(this.search.toLowerCase()) ||
+                            user.name.toLowerCase().includes(this.search.toLowerCase()) ||
+                            user.employee_properties?.department.toLowerCase().includes(this.search.toLowerCase()) ||
+                            user.employee_properties?.phone.toLowerCase().includes(this.search.toLowerCase()) ||
+                            user.employee_properties?.position.toLowerCase().includes(this.search.toLowerCase()) ||
+                            user.email.toLowerCase().includes(this.search.toLowerCase())   
                 )
             }
         }

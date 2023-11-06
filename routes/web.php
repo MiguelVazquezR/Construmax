@@ -106,3 +106,8 @@ Route::get('/storage-link', function () {
     Artisan::call('storage:link');
     return 'Virtual link created!.';
 });
+
+Route::get('/migrate', function () {
+    Artisan::call('migrate');
+    return 'migrations completed!.';
+});

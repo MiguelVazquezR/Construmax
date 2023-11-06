@@ -8,6 +8,7 @@ use App\Http\Resources\TagResource;
 use App\Models\Activity;
 use App\Models\Customer;
 use App\Models\Opportunity;
+use App\Models\OpportunityTask;
 use App\Models\Tag;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -83,6 +84,46 @@ class OpportunityController extends Controller
         // archivos adjuntos ----------
         $opportunity->addAllMediaFromRequest()->each(fn ($file) => $file->toMediaCollection());
 
+        $time = \Carbon\Carbon::createFromFormat('h A', '7 PM')->format('H:i:s'); //tiempo limite de realización de tarea en formato am y pm
+        //Tarea 1. Contacto al cliente
+        OpportunityTask::create([
+            'name' => 'Contacto al cliente',
+            'limit_date' => now()->addDays(2),
+            'time' =>  $time,
+            'finished_at' => null,
+            'description' => 'Tener contacto con el cliente',
+            'priority' => 'Media',
+            'reminder' => null,
+            'user_id' => auth()->id(),
+            'opportunity_id' => $opportunity->id,
+            'asigned_id' => auth()->id(),
+        ]);
+        //Tarea 2. Cotizar
+        OpportunityTask::create([
+            'name' => 'Cotizar',
+            'limit_date' => now()->addDays(4),
+            'time' =>  $time,
+            'finished_at' => null,
+            'description' => 'Hacer cotización',
+            'priority' => 'Media',
+            'reminder' => null,
+            'user_id' => auth()->id(),
+            'opportunity_id' => $opportunity->id,
+            'asigned_id' => auth()->id(),
+        ]);
+        //Tarea 3. Enviar cotización
+        OpportunityTask::create([
+            'name' => 'Enviar cotización',
+            'limit_date' => now()->addDays(6),
+            'time' =>  $time,
+            'finished_at' => null,
+            'description' => 'Enviar cotización al cliente',
+            'priority' => 'Media',
+            'reminder' => null,
+            'user_id' => auth()->id(),
+            'opportunity_id' => $opportunity->id,
+            'asigned_id' => auth()->id(),
+        ]);
 
         //Crea el registro de una actividad para el historial de esa oportunidad --------------------------
         Activity::create([

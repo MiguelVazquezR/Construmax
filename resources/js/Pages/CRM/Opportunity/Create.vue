@@ -67,11 +67,11 @@
                 )" :key="seller" :label="seller.name" :value="seller.id" />
             </el-select>
         </div>
-        <label class="inline-flex items-center col-span-2 my-3">
+        <!-- <label class="inline-flex items-center col-span-2 my-3">
             <Checkbox v-model:checked="form.is_new_company" @change="handleChecked"
               class="bg-transparent disabled:border-gray-400" />
             <span class="ml-2 text-xs">Nuevo cliente</span>
-          </label>
+          </label> -->
           <div class="flex justify-between space-x-3 col-span-2" v-if="form.is_new_company">
             <div class="w-full">
                 <InputLabel value="Cliente *" class="ml-2" />

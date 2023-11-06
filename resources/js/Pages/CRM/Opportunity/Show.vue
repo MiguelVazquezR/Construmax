@@ -79,9 +79,9 @@
             </Link>
           </el-tooltip>
           <el-tooltip v-if="currentTab == 3" content="Enviar un correo a prospecto" placement="top">
-            <!-- <Link :href="route('crm.opportunity-tasks.create', selectedOpportunity)"> -->
+            <Link :href="route('crm.email-monitors.create', selectedOpportunity)">
             <PrimaryButton class="rounded-md w-[132px]">Enviar correo</PrimaryButton>
-            <!-- </Link> -->
+            </Link>
           </el-tooltip>
           <el-tooltip v-if="currentTab == 5 && (currentOpportunity?.finished_at || currentOpportunity?.paid_at)"
             content="Genera la url para la encuesta de satisfacción" placement="top">

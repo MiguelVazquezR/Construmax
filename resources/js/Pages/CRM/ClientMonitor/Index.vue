@@ -6,54 +6,31 @@
 
     <div class="flex justify-between mt-5 mx-1 lg:mx-16">
       <div class="w-1/3 relative">
-        <input
-          @keyup.enter="handleSearch"
-          v-model="inputSearch"
-          class="input pr-8"
-          placeholder="Buscar"
-        />
-        <i
-          class="fa-solid fa-magnifying-glass absolute top-2 right-4 text-xs text-gray2"
-        ></i>
+        <input @keyup.enter="handleSearch" v-model="inputSearch" class="input pr-8" placeholder="Buscar" />
+        <i class="fa-solid fa-magnifying-glass absolute top-2 right-4 text-xs text-gray2"></i>
       </div>
       <div class="flex items-center">
-        <el-dropdown
-          v-if="
-            this.$page.props.auth.user.permissions.includes(
-              'Enviar correos en seguimiento integral'
-            ) ||
-            this.$page.props.auth.user.permissions.includes(
-              'Agendar citas en seguimiento integral'
-            ) ||
-            this.$page.props.auth.user.permissions.includes(
-              'Registrar pagos en seguimiento integral'
-            )
-          "
-          split-button
-          type="primary"
-          @click="$inertia.get(route('crm.email-monitors.create'))"
-        >
+        <el-dropdown v-if="this.$page.props.auth.user.permissions.includes(
+          'Enviar correos en seguimiento integral'
+        ) ||
+          this.$page.props.auth.user.permissions.includes(
+            'Agendar citas en seguimiento integral'
+          ) ||
+          this.$page.props.auth.user.permissions.includes(
+            'Registrar pagos en seguimiento integral'
+          )
+          " split-button type="primary" @click="$inertia.get(route('crm.email-monitors.create'))">
           Enviar correo
           <template #dropdown>
             <el-dropdown-menu>
-              <el-dropdown-item
-                @click="$inertia.get(route('crm.meeting-monitors.create'))"
-                v-if="
-                  this.$page.props.auth.user.permissions.includes(
-                    'Agendar citas en seguimiento integral'
-                  )
-                "
-                >Agendar cita</el-dropdown-item
-              >
-              <el-dropdown-item
-              @click="$inertia.get(route('crm.payment-monitors.create'))"
-                v-if="
-                  this.$page.props.auth.user.permissions.includes(
-                    'Registrar pagos en seguimiento integral'
-                  )
-                "
-                >Registar pago</el-dropdown-item
-              >
+              <el-dropdown-item @click="$inertia.get(route('crm.meeting-monitors.create'))" v-if="this.$page.props.auth.user.permissions.includes(
+                'Agendar citas en seguimiento integral'
+              )
+                ">Agendar cita</el-dropdown-item>
+              <el-dropdown-item @click="$inertia.get(route('crm.payment-monitors.create'))" v-if="this.$page.props.auth.user.permissions.includes(
+                'Registrar pagos en seguimiento integral'
+              )
+                ">Registar pago</el-dropdown-item>
             </el-dropdown-menu>
           </template>
         </el-dropdown>
@@ -61,9 +38,9 @@
     </div>
 
 
-     <!-- ----------- Client monitor table ----------- -->
+    <!-- ----------- Client monitor table ----------- -->
     <div class="w-11/12 mx-2 my-16">
-      <table v-if="filteredTableData.length" class="w-full mx-auto text-sm">
+      <table v-if="filteredTableData.length" class="w-full mx-auto text-xs">
         <thead>
           <tr class="text-center">
             <th class="font-bold pb-5 px-5">
@@ -88,46 +65,35 @@
           </tr>
         </thead>
         <tbody>
-          <tr  v-for="monitor in filteredTableData" :key="monitor.id"
-            class="mb-4"
-          >
-            <td @click="showMonitorType(monitor)" class="text-center py-2 px-2 rounded-l-full text-primary hover:underline cursor-pointer">
-              {{ monitor.folio}}
+          <tr v-for="monitor in filteredTableData" :key="monitor.id" class="mb-4">
+            <td @click="showMonitorType(monitor)"
+              class="text-center py-2 px-2 rounded-l-full text-primary hover:underline cursor-pointer">
+              {{ monitor.folio }}
             </td>
-            <td @click="$inertia.get(route('crm.customers.show', monitor.customer?.id))" class="text-center py-2 px-2 text-primary hover:underline cursor-pointer">
+            <td @click="$inertia.get(route('crm.customers.show', monitor.customer?.id))"
+              class="text-center py-2 px-2 text-primary hover:underline cursor-pointer">
               {{ monitor.customer?.name }}
             </td>
             <td class="text-center py-2 px-2">
-              <span
-                class="py-1 px-4 rounded-full"
-                >{{ monitor.type }}</span
-              >
+              <span class="py-1 px-4 rounded-full">{{ monitor.type }}</span>
             </td>
             <td class="text-center py-2 px-2">
-              <span
-                class="py-1 px-2 rounded-full"
-                >{{ monitor.date }}</span
-              >
+              <span class="py-1 px-2 rounded-full">{{ monitor.date }}</span>
             </td>
             <td class="text-center py-2 px-2 truncate">
               {{ monitor.concept }}
             </td>
-            <td @click="$inertia.get(route('users.show', monitor.seller?.id))" class="text-center py-2 px-2 text-primary hover:underline cursor-pointer">
+            <td @click="$inertia.get(route('users.show', monitor.seller?.id))"
+              class="text-center py-2 px-2 text-primary hover:underline cursor-pointer">
               {{ monitor.seller?.name }}
             </td>
-            <td
-              v-if="$page.props.auth.user.permissions.includes('Eliminar seguimiento integral')"
-              class="text-center py-2 px-2 rounded-r-full"
-            >
-              <el-popconfirm
-                confirm-button-text="Si"
-                cancel-button-text="No"
-                icon-color="#D90537"
-                title="¿Eliminar?"
-                @confirm="deleteClientMonitor(monitor)"
-              >
+            <td v-if="$page.props.auth.user.permissions.includes('Eliminar seguimiento integral')"
+              class="text-center py-2 px-2 rounded-r-full">
+              <el-popconfirm confirm-button-text="Si" cancel-button-text="No" icon-color="#D90537" title="¿Eliminar?"
+                @confirm="deleteClientMonitor(monitor)">
                 <template #reference>
-                  <i @click.stop="" class="fa-regular fa-trash-can text-primary cursor-pointer p-2 hover:bg-[#FEDBBD] rounded-full"></i>
+                  <i @click.stop=""
+                    class="fa-regular fa-trash-can text-primary cursor-pointer p-2 hover:bg-[#FEDBBD] rounded-full"></i>
                 </template>
               </el-popconfirm>
             </td>
@@ -151,8 +117,8 @@ import axios from 'axios';
 export default {
   data() {
     return {
-        search: "",
-        inputSearch: "",
+      search: "",
+      inputSearch: "",
     };
   },
   components: {
@@ -174,25 +140,25 @@ export default {
         this.$inertia.get(route('crm.meeting-monitors.show', monitor.meetingMonitor?.id));
       }
     },
-     handleSearch() {
+    handleSearch() {
       this.search = this.inputSearch;
     },
     async deleteClientMonitor(monitor) {
       try {
         const response = await axios.delete(route('crm.client-monitors.destroy', monitor.id));
 
-      if (response.status === 200) {
-           this.$notify({
+        if (response.status === 200) {
+          this.$notify({
             title: "Correcto",
             message: "Se ha eliminado correctamente",
             type: "success",
           });
-        const index = this.client_monitors.data.findIndex(item => item.id === monitor.id);
+          const index = this.client_monitors.data.findIndex(item => item.id === monitor.id);
 
-        if (index !== -1) {
-          this.client_monitors.data.splice(index, 1);
+          if (index !== -1) {
+            this.client_monitors.data.splice(index, 1);
+          }
         }
-      }
       } catch (error) {
         console.log(error);
       }
@@ -213,7 +179,7 @@ export default {
       }
     },
   },
-  
+
 };
 </script>
 

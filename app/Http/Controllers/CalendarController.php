@@ -54,6 +54,7 @@ class CalendarController extends Controller
             'start_date' => 'required',
         ]);
 
+        $participants = [];
         // procesar arreglo de participantes
         foreach ($request->participants as $key => $participantId) {
             $participants[] = [
@@ -73,7 +74,6 @@ class CalendarController extends Controller
             'start_time' => $request->start_time,
             'end_time' => $request->end_time,
             'start_date' => $request->start_date,
-            'finish_date' => $request->finish_date,
             'participants' => $participants,
             'user_id' => auth()->id(),
         ]);

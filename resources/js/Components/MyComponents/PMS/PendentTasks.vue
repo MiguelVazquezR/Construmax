@@ -25,8 +25,8 @@
                     <tbody>
                         <tr v-for="task in tasks" :key="task.id" class="text-xs w-full">
                             <td class="w-1/2 text-start truncate">
-                                <el-tooltip :content="task.title" placement="top">
-                                    {{ task.title }}
+                                <el-tooltip :content="task.name" placement="top">
+                                    {{ task.name }}
                                 </el-tooltip>
                             </td>
                             <td class="w-1/6 text-center">{{ task.priority }}</td>
@@ -75,8 +75,8 @@ export default {
             }
         }
     },
-    // mounted() {
-    //     this.fetchPendentTasks();
-    // }
+    mounted() {
+        this.fetchPendentTasks();
+    }
 }
 </script>

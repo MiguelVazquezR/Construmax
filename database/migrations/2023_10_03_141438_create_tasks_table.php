@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('department');
             $table->string('priority');
             $table->string('status')->default('Por hacer');
+            $table->text('pausa_reazon')->nullable();
             $table->boolean('is_paused')->default(0);
             $table->date('start_date');
             $table->date('limit_date');

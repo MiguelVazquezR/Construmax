@@ -39,11 +39,14 @@
                 </div>
             </div>
             <div v-if="currentTab == 1" class="flex space-x-2 w-full justify-end">
-                <PrimaryButton @click="$inertia.get(route('pms.projects.create'))">Nuevo proyecto</PrimaryButton>
-                <SecondaryButton @click="$inertia.get(route('pms.projects.edit', currentProject?.id ?? 1))"><i class="fa-solid fa-pen"></i></SecondaryButton>
+                <PrimaryButton v-if="this.$page.props.auth.user.permissions.includes('Crear proyectos')" @click="$inertia.get(route('pms.projects.create'))">Nuevo proyecto</PrimaryButton>
+                <SecondaryButton v-if="this.$page.props.auth.user.permissions.includes('Editar proyectos')" @click="$inertia.get(route('pms.projects.edit', currentProject?.id ?? 1))"><i
+                        class="fa-solid fa-pen"></i></SecondaryButton>
             </div>
             <div v-if="currentTab == 2 || currentTab == 3" class="flex space-x-2 w-full justify-end">
-                <PrimaryButton @click="$inertia.get(route('pms.tasks.create', {projectId: currentProject?.id ?? 1}))">Nueva tarea</PrimaryButton>
+                <PrimaryButton @click="$inertia.get(route('pms.tasks.create', { projectId: currentProject?.id ?? 1 }))">
+                    Nueva
+                    tarea</PrimaryButton>
             </div>
         </div>
 
@@ -66,10 +69,16 @@
             <div class="grid grid-cols-2 text-left p-4 md:ml-10 border-r-2 border-gray-[#cccccc] items-center">
                 <p class="text-secondary col-span-2 mb-2 font-bold">Información del proyecto</p>
 
+                <span class="text-gray-500">Folio</span>
+                <span>{{ currentProject?.folio }}</span>
                 <span class="text-gray-500">Creado por</span>
                 <span>{{ currentProject?.user?.name }}</span>
                 <span class="text-gray-500 my-2">Creado el</span>
                 <span>{{ currentProject?.created_at }}</span>
+                <span class="text-gray-500 my-2">Responsable</span>
+                <span>{{ currentProject?.owner.name }}</span>
+                <span class="text-gray-500 my-2">Tipo de servicio</span>
+                <span>{{ currentProject?.service_type }}</span>
                 <span class="text-gray-500 my-2">Fecha de inicio</span>
                 <span>{{ currentProject?.start_date }}</span>
                 <span class="text-gray-500 my-2">Fecha final</span>
@@ -104,6 +113,10 @@
                 <span v-if="!currentProject?.is_internal">{{
                     currentProject?.opportunity?.customer?.name
                 }}</span>
+                <span v-if="!currentProject?.is_internal" class="text-gray-500 my-2">Contacto</span>
+                <span v-if="!currentProject?.is_internal">{{
+                    currentProject?.contact?.name
+                }}</span>
                 <span v-if="!currentProject?.is_internal" class="text-gray-500 my-2">Sucursal</span>
                 <span v-if="!currentProject?.is_internal">{{
                     currentProject?.address
@@ -122,15 +135,11 @@
                 <span>{{ currentProject?.currency }}</span>
                 <span class="text-gray-500">Monto</span>
                 <span>${{ currentProject?.budget?.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",") }}</span>
-                <span class="text-gray-500 my-2">Método de facturación</span>
-                <span>{{ currentProject?.invoice_type }}</span>
 
                 <p class="text-secondary col-span-full mt-7 font-bold">Etiquetas</p>
                 <div class="col-span-full flex space-x-3">
                     <Tag v-for="(item, index) in currentProject?.tags" :key="index" :name="item.name" :color="item.color" />
                 </div>
-
-
                 <p class="text-secondary col-span-full font-bold mt-7">Documentos adjuntos</p>
                 <li v-for="file in currentProject?.media" :key="file"
                     class="flex items-center justify-between col-span-full">
@@ -139,10 +148,6 @@
                         <span class="ml-2">{{ file.file_name }}</span>
                     </a>
                 </li>
-                <!-- <ul>
-                    
-                    <li v-for="file in currentProject?.media" :key="file" class="mt-1">{{ file.file_name }}</li>
-                </ul> -->
             </div>
         </div>
         <!-- ------------- info project ends 1 ------------- -->
@@ -159,8 +164,10 @@
                     :class="(drag && !pendingTasksList?.length) ? 'h-40' : ''">
                     <template #item="{ element: task }">
                         <li>
+                            <Link :href="route('pms.tasks.show', task.id)">
                             <ProjectTaskCard @updated-status="updateTask($event)" :taskComponent="task" :users="users"
                                 :id="task.id" />
+                            </Link>
                         </li>
                     </template>
                 </draggable>
@@ -180,7 +187,9 @@
                     :class="(drag && !inProgressTasksList?.length) ? 'h-40' : ''">
                     <template #item="{ element: task }">
                         <li>
+                            <Link :href="route('pms.tasks.show', task.id)">
                             <ProjectTaskCard @updated-status="updateTask($event)" :taskComponent="task" :users="users" />
+                            </Link>
                         </li>
                     </template>
                 </draggable>
@@ -200,7 +209,9 @@
                     :class="(drag && !finishedTasksList?.length) ? 'h-40' : ''">
                     <template #item="{ element: task }">
                         <li>
+                            <Link :href="route('pms.tasks.show', task.id)">
                             <ProjectTaskCard @updated-status="updateTask($event)" :taskComponent="task" :users="users" />
+                            </Link>
                         </li>
                     </template>
                 </draggable>
@@ -222,7 +233,7 @@
             <div class="text-right mr-9">
                 <div class="border border-[#9A9A9A] rounded-md inline-flex justify-end mt-4">
                     <p :class="period == 'Mes' ? 'bg-primary text-white rounded-sm' : 'border-[#9A9A9A]'
-                        " @click="period = 'Mes'" class="px-4 py-2 text-[#9A9A9A] cursor-pointer border-x">
+                        " @click="period = 'Mes'" class="px-4 py-2 text-[#9A9A9A] cursor-pointer">
                         Mes
                     </p>
                     <p :class="period == 'Bimestre'
@@ -244,8 +255,8 @@ import AppLayout from "@/Layouts/AppLayout.vue";
 import PrimaryButton from "@/Components/PrimaryButton.vue";
 import SecondaryButton from "@/Components/SecondaryButton.vue";
 import ProjectTaskCard from "@/Components/MyComponents/ProjectTaskCard.vue";
-import GanttDiagramMonth from "@/Components/MyComponents/GanttDiagramMonth.vue";
-import GanttDiagramBimester from "@/Components/MyComponents/GanttDiagramBimester.vue";
+import GanttDiagramMonth from "@/Components/MyComponents/PMS/GanttDiagramMonth.vue";
+import GanttDiagramBimester from "@/Components/MyComponents/PMS/GanttDiagramBimester.vue";
 import Tab from "@/Components/MyComponents/Tab.vue";
 import Tag from "@/Components/MyComponents/Tag.vue";
 import Dropdown from "@/Components/Dropdown.vue";
@@ -258,11 +269,10 @@ import draggable from 'vuedraggable';
 export default {
     data() {
         return {
-            selectedProyect: "",
+            selectedProject: "",
             currentTab: 1,
             uniqueUsers: [],
             maxUsersToShow: 3,
-            selectedProject: "",
             currentProject: null,
             period: "Mes", //period of time in cronograma table tab 3
             pendingTasksList: [],
@@ -297,6 +307,7 @@ export default {
         projects: Object,
         project: Object,
         users: Array,
+        defaultTab: Number,
     },
     methods: {
         getFileTypeIcon(fileName) {
@@ -331,7 +342,7 @@ export default {
         },
         async updateTaskStatus(status) {
             try {
-                const response = await axios.put(route('tasks.update-status', this.draggingTaskId), { status: status });
+                const response = await axios.put(route('pms.tasks.update-status', this.draggingTaskId), { status: status });
 
                 if (response.status === 200) {
                     const taskIndex = this.currentProject.tasks.findIndex(item => item.id === this.draggingTaskId);
@@ -365,6 +376,14 @@ export default {
             this.pendingTasks();
             this.inProgressTasks();
             this.finishedTasks();
+
+            // Verificar si hay tareas en el proyecto y si la primera tarea tiene una fecha de inicio
+            if (this.currentProject && this.currentProject.tasks.length > 0) {
+                const firstTask = this.currentProject.tasks[0];
+                if (firstTask && firstTask.start_date) {
+                    this.currentDate = new Date(firstTask.start_date);
+                }
+            }
         },
     },
     computed: {
@@ -406,20 +425,15 @@ export default {
             this.currentProject = this.projects.data.find((item) => item.id == newVal);
             this.uniqueUsers = [];
             this.updateTasksLists();
-
-            // Verificar si hay tareas en el proyecto y si la primera tarea tiene una fecha de inicio
-            if (this.currentProject && this.currentProject.tasks.length > 0) {
-                const firstTask = this.currentProject.tasks[0];
-                if (firstTask && firstTask.start_date) {
-                    this.currentDate = new Date(firstTask.start_date);
-                }
-            }
         },
     },
-
     mounted() {
         this.selectedProject = this.project.data.id;
         this.currentProject = this.projects.data.find((item) => item.id == this.selectedProject);
+        if (this.defaultTab !== null) {
+            this.currentTab = this.defaultTab;
+        }
+        this.updateTasksLists();
     },
 };
 </script>

@@ -24,10 +24,10 @@ class ProjectController extends Controller
 
     public function create()
     {
-        $customers = Customer::with(['opportunities'])->get();
+        $customers = Customer::with(['opportunities', 'contacts'])->get();
         $project_groups = ProjectGroupResource::collection(ProjectGroup::all());
         $tags = TagResource::collection(Tag::where('type', 'projects')->get());
-        $users = User::where('is_active', true)->get();
+        $users = User::whereNotIn('id', [1])->where('is_active', true)->get();
 
         return inertia('PMS/Project/Create', compact('customers', 'project_groups', 'tags', 'users'));
     }
@@ -42,7 +42,6 @@ class ProjectController extends Controller
                 return !$request->input('is_internal');
             })],
             'service_type' => 'required|string',
-            'invoice_type' => 'required|string|max:255',
             'is_strict' => 'boolean',
             'is_internal' => 'boolean',
             'budget' => 'required|numeric|min:0',
@@ -50,6 +49,7 @@ class ProjectController extends Controller
             'limit_date' => 'required|date',
             'project_group_id' => 'required|numeric|min:1',
             'user_id' => 'required|numeric|min:1',
+            'contact_id' => 'required|numeric|min:1',
             'opportunity_id' => [Rule::requiredIf(function () use ($request) {
                 return !$request->input('is_internal');
             })],
@@ -80,26 +80,121 @@ class ProjectController extends Controller
 
     public function show(Project $project)
     {
-        $project = ProjectResource::make(Project::with(['tasks' => ['users', 'project', 'user'], 'projectGroup', 'opportunity.customer', 'tags', 'users'])->find($project->id));
-        $projects = ProjectResource::collection(Project::with(['tasks' => ['users', 'project', 'user', 'comments.user', 'media'], 'user', 'users', 'opportunity.customer', 'projectGroup', 'tags'])->latest()->get());
+        $project = ProjectResource::make(Project::with(['tasks' => ['users', 'project', 'user'], 'projectGroup', 'opportunity.customer', 'tags', 'users', 'owner', 'contact'])->find($project->id));
+        $projects = ProjectResource::collection(Project::with(['tasks' => ['users', 'project', 'user', 'comments.user', 'media'], 'user', 'users', 'opportunity.customer', 'projectGroup', 'tags', 'owner', 'contact'])->latest()->get());
         $users = User::all();
+        $defaultTab = request('defaultTab');
 
-        return inertia('PMS/Project/Show', compact(['project', 'projects', 'users']));
+        return inertia('PMS/Project/Show', compact(['project', 'projects', 'users', 'defaultTab']));
     }
 
     public function edit(Project $project)
     {
-        $customers = Customer::with(['opportunities'])->get();
+        $project = $project->fresh(['tags', 'opportunity.customer', 'owner', 'users']);
+        $customers = Customer::with(['opportunities', 'contacts'])->get();
         $project_groups = ProjectGroupResource::collection(ProjectGroup::all());
         $tags = TagResource::collection(Tag::where('type', 'projects')->get());
-        $users = User::where('is_active', true)->get();
+        $users = User::whereNotIn('id', [1])->where('is_active', true)->get();
+        $media = $project->getMedia()->all();
 
-        return inertia('PMS/Project/Edit', compact('customers', 'project_groups', 'tags', 'users', 'project'));
+        return inertia('PMS/Project/Edit', compact('customers', 'project_groups', 'tags', 'users', 'project', 'media'));
     }
 
     public function update(Request $request, Project $project)
     {
-        //
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'description' => 'nullable|string|max:255',
+            'currency' => 'required|string|max:255',
+            'address' => [Rule::requiredIf(function () use ($request) {
+                return !$request->input('is_internal');
+            })],
+            'service_type' => 'required|string',
+            'is_strict' => 'boolean',
+            'is_internal' => 'boolean',
+            'budget' => 'required|numeric|min:0',
+            'start_date' => 'required|date',
+            'limit_date' => 'required|date',
+            'project_group_id' => 'required|numeric|min:1',
+            'user_id' => 'required|numeric|min:1',
+            'contact_id' => 'required|numeric|min:1',
+            'opportunity_id' => [Rule::requiredIf(function () use ($request) {
+                return !$request->input('is_internal');
+            })],
+            'owner_id' => 'required|numeric|min:1',
+        ]);
+
+
+        $project->update($validated);
+
+        // permisos
+        // Eliminar todos los permisos actuales para el proyecto
+        $project->users()->detach();
+        foreach ($request->selectedUsersToPermissions as $user) {
+            $allowedUser = [
+                "permissions" => json_encode($user['permissions']), // Serializa los permisos en formato JSON
+            ];
+            $project->users()->attach($user['id'], $allowedUser);
+        }
+
+        // etiquetas
+        // Obtiene los IDs de las etiquetas seleccionadas desde el formulario
+        $tagIds = $request->input('tags', []);
+        // Adjunta las etiquetas al proyecto utilizando la relación polimórfica
+        $project->tags()->sync($tagIds);
+
+        return to_route('pms.projects.show', $project);
+        //event(new RecordEdited($project));
+    }
+
+    public function updateWithMedia(Request $request, Project $project)
+    {
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'description' => 'nullable|string|max:255',
+            'currency' => 'required|string|max:255',
+            'address' => [Rule::requiredIf(function () use ($request) {
+                return !$request->input('is_internal');
+            })],
+            'service_type' => 'required|string',
+            'is_strict' => 'boolean',
+            'is_internal' => 'boolean',
+            'budget' => 'required|numeric|min:0',
+            'start_date' => 'required|date',
+            'limit_date' => 'required|date',
+            'project_group_id' => 'required|numeric|min:1',
+            'user_id' => 'required|numeric|min:1',
+            'contact_id' => 'required|numeric|min:1',
+            'opportunity_id' => [Rule::requiredIf(function () use ($request) {
+                return !$request->input('is_internal');
+            })],
+            'owner_id' => 'required|numeric|min:1',
+        ]);
+
+
+        $project->update($validated);
+
+        // permisos
+        // Eliminar todos los permisos actuales para el proyecto
+        $project->users()->detach();
+        foreach ($request->selectedUsersToPermissions as $user) {
+            $allowedUser = [
+                "permissions" => json_encode($user['permissions']), // Serializa los permisos en formato JSON
+            ];
+            $project->users()->attach($user['id'], $allowedUser);
+        }
+
+        // etiquetas
+        // Obtiene los IDs de las etiquetas seleccionadas desde el formulario
+        $tagIds = $request->input('tags', []);
+        // Adjunta las etiquetas al proyecto utilizando la relación polimórfica
+        $project->tags()->sync($tagIds);
+
+        // archivos adjuntos
+        $project->addAllMediaFromRequest()->each(fn ($file) => $file->toMediaCollection());
+
+        return to_route('pms.projects.show', $project);
+        //event(new RecordEdited($project));
     }
 
     public function destroy(Project $project)

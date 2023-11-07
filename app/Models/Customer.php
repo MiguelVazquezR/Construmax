@@ -4,6 +4,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Customer extends Model
 {
@@ -11,30 +13,38 @@ class Customer extends Model
 
     protected $fillable = [
         'name',
-        'branches',
         'currency',
         'rfc',
-        'zipcode',
         'user_id',
-    ];
-
-    protected $casts = [
-        'branches' => 'array',
+        'invoicing_method',
+        'payment_method',
+        'invoice_use',
     ];
 
     // relationships
     public function contacts()
     {
-        return $this->hasMany(Contact::class);
+        return $this->morphMany(Contact::class, 'contactable');
     }
 
     public function tags()
     {
-        return $this->morphMany(Tag::class, 'taggable');
+        return $this->morphToMany(Tag::class, 'taggable');
     }
 
     public function opportunities()
     {
         return $this->hasMany(Opportunity::class);
     }
+
+    public function user() :BelongsTo
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    public function clientMonitors(): HasMany
+    {
+        return $this->hasMany(ClientMonitor::class);
+    }
+
 }

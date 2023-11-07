@@ -15,11 +15,22 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('priority');
+            $table->unsignedTinyInteger('probability')->nullable();
+            $table->string('lost_oportunity_razon')->nullable();
+            $table->string('service_type');
+            $table->string('contact_name')->nullable();
+            $table->string('contact_phone')->nullable();
+            $table->string('customer_name')->nullable();
+            $table->string('branch')->nullable();
             $table->string('status');
-            $table->unsignedFloat('amount');
+            $table->text('description')->nullable();
+            $table->unsignedFloat('amount', 10, 2);
+            $table->date('start_date');
             $table->date('close_date');
-            $table->foreignId('contact_id')->constrained();
-            $table->foreignId('customerS_id')->constrained();
+            $table->timestamp('finished_at')->nullable(); //fecha en la cual se cerró la oportunidad
+            $table->timestamp('paid_at')->nullable(); //fecha en la cual se cerró la oportunidad
+            $table->foreignId('contact_id')->nullable()->constrained();
+            $table->foreignId('customer_id')->nullable()->constrained();
             $table->foreignId('user_id')->constrained();
             $table->unsignedBigInteger('seller_id');
             $table->foreign('seller_id')->references('id')->on('users');

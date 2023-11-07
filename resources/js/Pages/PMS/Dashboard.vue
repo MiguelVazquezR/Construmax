@@ -4,7 +4,7 @@
             <h1>Inicio</h1>
 
             <!-- Estadistics -->
-            <h2 class="text-primary lg:text-xl text-lg lg:mt-6 mt-6 font-bold">Proyectos</h2>
+            <h2 class="text-primary lg:text-xl text-lg lg:mt-6 mt-6 font-bold">Proyectos en progreso</h2>
             <div class="lg:grid grid-cols-2 gap-5 mt-4 space-y-4 lg:space-y-0">
                 <StackedColumn100Chart :options="projecsProgressChartOptions" title="Progreso de proyectos"
                     icon="<i class='fa-regular fa-flag ml-2'></i>" />
@@ -21,14 +21,13 @@
             <div class="lg:grid grid-cols-2 gap-5 mt-4 space-y-4 lg:space-y-0">
                 <PendentTasks
                     :tasks="[{ title: 'Alta IMSS de colaboradores nuevos', status: 'En curso', start_date: '12/09/2023', priority: 'Alta' }]" />
-                <LateTasks
+                <LateTasks v-if="this.$page.props.auth.user.permissions.includes('Crear proyectos')"
                     :tasks="[{ title: 'Alta IMSS de colaboradores nuevos', project: { project_name: 'Dalton Honda' }, late_days: 7, participants: [{ profile_photo_url: 'https://ui-avatars.com/api/?name=S+a&color=7F9CF5&background=EBF4FF', name: 'Miguel VR' }, { profile_photo_url: 'https://ui-avatars.com/api/?name=A+v&color=7F12F5&background=EB44FF', name: 'Angel VR' }] }]" />
-                <StackedBars100Chart :options="myTasksProgressChartOptions" title="Progreso de mis tareas"
-                    icon="<i class='fa-solid fa-bars-progress ml-2'></i>" />
                 <StackedBars100Chart :options="myProyectsProgressChartOptions" title="Mis proyectos"
                     icon="<i class='fa-solid fa-chart-simple ml-2'></i>" />
+                <StackedBars100Chart :options="myTasksProgressChartOptions" title="Progreso de mis tareas"
+                    icon="<i class='fa-solid fa-bars-progress ml-2'></i>" />
             </div>
-
         </div>
     </AppLayout>
 </template>
@@ -50,63 +49,84 @@ export default {
             taskStatusChartOptions: {
                 colors: ['#BEBFC1', '#FD8827', '#45E142',],
                 labels: ['Sin iniciar', 'En curso', 'Terminado'],
-                series: [44, 55, 13],
+                series: this.totalTasksByStatus(),
             },
             projecsProgressChartOptions: {
                 colors: ['#BEBFC1', '#FD8827', '#45E142',],
-                categories: ['Dalton Honda', 'Grupo Plascencia', 'Grupo Plascencia', 'BMW placas', 'BMW placas'],
+                categories: this.projects_progress.map(item => item.name),
                 series: [{
                     name: 'Por hacer',
-                    data: [5, 10, 3, 7, 2]
+                    data: this.projects_progress.map(project => {
+                        return project.tasks.filter(task => task.status === 'Por hacer').length;
+                    }),
                 }, {
                     name: 'En curso',
-                    data: [3, 3, 2, 8, 1]
+                    data: this.projects_progress.map(project => {
+                        return project.tasks.filter(task => task.status === 'En curso').length;
+                    }),
                 }, {
                     name: 'Terminado',
-                    data: [1, 7, 5, 5, 2]
+                    data: this.projects_progress.map(project => {
+                        return project.tasks.filter(task => task.status === 'Terminada').length;
+                    }),
                 }],
             },
             projectGroupsChartOptions: {
                 colors: ['#F2C940', '#FD8827', '#97989A', '#313131', '#FB2A2A'],
-                labels: ['Construcción', 'Mantenimiento', 'Ventas', 'Costos', 'Proyectos internos'],
-                series: [44, 19, 22, 41, 12],
+                labels: this.project_groups.map(item => item.name),
+                series: this.projectGroupCounts(),
             },
             tasksPrioritiesChartOptions: {
                 colors: ['#87CEEB', '#F2C940', '#FB2A2A'],
                 labels: ['Baja', 'Media', 'Alta'],
-                series: [44, 19, 22],
+                series: this.totalTasksByPriority(),
             },
             myTasksProgressChartOptions: {
                 colors: ['#BEBFC1', '#FD8827', '#45E142',],
-                categories: ['Dalton Honda', 'Grupo Plascencia', 'Grupo Plascencia',],
+                categories: this.projectsWithAssignedTasks().map(item => item.name),
                 series: [{
                     name: 'Por hacer',
-                    data: [2, 1, 3]
+                    data: this.projectsWithAssignedTasks().map(project => {
+                        return project.tasks.filter(task => task.status === 'Por hacer').length;
+                    })
                 }, {
                     name: 'En curso',
-                    data: [1, 1, 1]
+                    data: this.projectsWithAssignedTasks().map(project => {
+                        return project.tasks.filter(task => task.status === 'En curso').length;
+                    })
                 }, {
                     name: 'Terminado',
-                    data: [1, 0, 0]
+                    data: this.projectsWithAssignedTasks().map(project => {
+                        return project.tasks.filter(task => task.status === 'Terminada').length;
+                    })
                 }],
             },
             myProyectsProgressChartOptions: {
                 colors: ['#BEBFC1', '#FD8827', '#45E142',],
-                categories: ['Dalton Honda', 'Grupo Plascencia', 'Grupo Plascencia',],
+                categories: this.my_projects.map(item => item.name),
                 series: [{
                     name: 'Por hacer',
-                    data: [6, 11, 3]
+                    data: this.my_projects.map(project => {
+                        return project.tasks.filter(task => task.status === 'Por hacer').length;
+                    }),
                 }, {
                     name: 'En curso',
-                    data: [3, 3, 2]
+                    data: this.my_projects.map(project => {
+                        return project.tasks.filter(task => task.status === 'En curso').length;
+                    }),
                 }, {
                     name: 'Terminado',
-                    data: [0, 7, 5]
+                    data: this.my_projects.map(project => {
+                        return project.tasks.filter(task => task.status === 'Terminada').length;
+                    }),
                 }],
             },
         }
     },
     props: {
+        projects_progress: Array,
+        project_groups: Array,
+        my_projects: Array,
     },
     components: {
         AppLayout,
@@ -120,7 +140,61 @@ export default {
         StackedBars100Chart,
     },
     methods: {
+        projectsWithAssignedTasks() {
+            return this.projects_progress.filter(project => {
+                // Verifica si al menos una tarea en el proyecto tiene a tu usuario por su ID
+                return project.tasks.some(task => task.users.some(user => user.id === this.$page.props.auth.user.id));
+            });
+        },
+        projectGroupCounts() {
+            const counts = {};
 
+            // Inicializa el objeto counts con cero para cada grupo
+            this.project_groups.forEach(group => {
+                counts[group.name] = 0;
+            });
+
+            // Realiza el conteo de proyectos en cada grupo
+            this.projects_progress.forEach(project => {
+                const groupName = project.project_group.name;
+                if (counts[groupName] !== undefined) {
+                    counts[groupName]++;
+                }
+            });
+
+            // Convierte el objeto counts en un array de objetos
+            return Object.values(counts);
+        },
+        totalTasksByStatus() {
+            const totalPorHacer = this.projects_progress.reduce((count, project) => {
+                return count + project.tasks.filter(task => task.status === 'Por hacer').length;
+            }, 0);
+
+            const totalEnCurso = this.projects_progress.reduce((count, project) => {
+                return count + project.tasks.filter(task => task.status === 'En curso').length;
+            }, 0);
+
+            const totalTerminada = this.projects_progress.reduce((count, project) => {
+                return count + project.tasks.filter(task => task.status === 'Terminada').length;
+            }, 0);
+
+            return [totalPorHacer, totalEnCurso, totalTerminada];
+        },
+        totalTasksByPriority() {
+            const totalLow = this.projects_progress.reduce((count, project) => {
+                return count + project.tasks.filter(task => task.priority === 'Baja').length;
+            }, 0);
+
+            const totalMedium = this.projects_progress.reduce((count, project) => {
+                return count + project.tasks.filter(task => task.priority === 'Media').length;
+            }, 0);
+
+            const totalHigh = this.projects_progress.reduce((count, project) => {
+                return count + project.tasks.filter(task => task.priority === 'Alta').length;
+            }, 0);
+
+            return [totalLow, totalMedium, totalHigh];
+        },
     },
     mounted() {
 

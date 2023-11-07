@@ -15,7 +15,7 @@ class TaskController extends Controller
     public function create(Request $request)
     {
         $projects = Project::with(['users'])->latest()->get();
-        $users = User::where('is_active', true)->get();
+        $users = User::whereNotIn('id', [1])->where('is_active', true)->get();
         $parent_id = $request->input('projectId') ?? 1;
 
         return inertia('PMS/Task/Create', compact('projects', 'users', 'parent_id'));
@@ -27,7 +27,7 @@ class TaskController extends Controller
         $request->validate([
             'project_id' => 'required',
             'name' => 'required|string',
-            'description' => 'required',
+            'description' => 'nullable',
             'department' => 'required|string',
             'participants' => 'required|array|min:1',
             'priority' => 'required|string',
@@ -46,17 +46,17 @@ class TaskController extends Controller
             $task->users()->attach($user_id);
         }
 
-        // event(new RecordCreated($task));
-
         $task->addAllMediaFromRequest('media')->each(fn ($file) => $file->toMediaCollection());
 
-        return to_route('pms.projects.show', ['project' => $request->project_id]);
+        return to_route('pms.projects.show', ['project' => $request->project_id, 'defaultTab' => 2]);
     }
 
 
     public function show(Task $task)
     {
-        //
+        $task = TaskResource::make(Task::with(['project.users', 'user', 'users', 'comments.user', 'media'])->find($task->id));
+
+        return inertia('PMS/Task/Show', compact('task'));
     }
 
 
@@ -79,11 +79,7 @@ class TaskController extends Controller
 
         $task->update($validated);
 
-        //agregar nuevos participantes
-        foreach ($request->participants as $user_id) {
-            // Adjuntar el usuario a la tarea
-            $task->participants()->attach($user_id);
-        }
+        $task->users()->sync($request->participants);
 
         if ($request->comment) {
             $comment = new Comment([
@@ -95,15 +91,15 @@ class TaskController extends Controller
 
         $this->handleUpdatedTaskStatus($task->project_id);
 
-        // event(new RecordEdited($task));
-
-        return response()->json(['item' => TaskResource::make($task->fresh(['participants', 'project', 'user', 'comments.user', 'media']))]);
+        return to_route('pms.projects.show', ['project' => $task->project_id, 'defaultTab' => 2]);
     }
 
 
     public function destroy(Task $task)
     {
-        //
+        $task->delete();
+
+        return to_route('pms.projects.show', ['project' => $task->project_id, 'defaultTab' => 2]);
     }
 
 
@@ -115,25 +111,26 @@ class TaskController extends Controller
             'user_id' => auth()->id(),
         ]);
         $task->comments()->save($comment);
-        // event(new RecordCreated($comment)); me dice que el id del usuario no tiene un valor por default.
-        // return to_route('projects.show', ['project' => $request->project_id]);
+
         return response()->json(['item' => $comment->fresh('user')]);
     }
 
-    public function pausePlayTask(Task $task)
+    public function pausePlayTask(Task $task, Request $request)
     {
         if ($task->is_paused) {
             $task->update([
-                'is_paused' => false
+                'is_paused' => false,
+                'pausa_reazon' => null
             ]);
         } else {
             $task->update([
-                'is_paused' => true
+                'is_paused' => true,
+                'pausa_reazon' => $request->reazon
             ]);
         }
         $task->save();
 
-        return response()->json(['item' => TaskResource::make($task->fresh(['participants', 'project', 'user', 'comments.user', 'media']))]);
+        return response()->json(['item' => TaskResource::make($task->fresh(['project.users', 'user', 'users', 'comments.user', 'media']))]);
     }
 
     public function updateStatus(Task $task, Request $request)
@@ -146,12 +143,12 @@ class TaskController extends Controller
 
     public function getLateTasks()
     {
-        $late_tasks = Task::with(['participants', 'project'])->where('status', '!=', 'Terminada')->whereDate('end_date', '<', today())->get();
-        
+        $late_tasks = Task::with(['users', 'project'])->where('status', '!=', 'Terminada')->whereDate('limit_date', '<', today())->get();
+
         $currentDate = today();
 
         $late_tasks = $late_tasks->map(function ($task) use ($currentDate) {
-            $lateDays = $task->end_date->diffInDays($currentDate); // Calcula la diferencia en días entre end_date y la fecha actual
+            $lateDays = $task->limit_date->diffInDays($currentDate); // Calcula la diferencia en días entre end_date y la fecha actual
             $task['late_days'] = $lateDays; // Agrega la propiedad "late_days" al objeto de la tarea
             return $task;
         });
@@ -159,17 +156,25 @@ class TaskController extends Controller
         return response()->json(['items' => $late_tasks]);
     }
 
-    private function handleUpdatedTaskStatus($project_id) {
-         // Obtén el proyecto al que pertenece la tarea
-         $project = Project::with('tasks')->find($project_id);
- 
-         // Verifica si todas las tareas del proyecto están terminadas y actualiza propiedad finished_at
-          if ($project->tasks->where('status', 'Terminada')->count() === $project->tasks->count()) {
+    public function taskFormat($task_id)
+    {
+        $task = TaskResource::make(Task::with('project.users', 'user')->find($task_id));
+
+        return inertia('PMS/Project/TaskFormat', compact('task'));
+    }
+
+    private function handleUpdatedTaskStatus($project_id)
+    {
+        // Obtén el proyecto al que pertenece la tarea
+        $project = Project::with('tasks')->find($project_id);
+
+        // Verifica si todas las tareas del proyecto están terminadas y actualiza propiedad finished_at
+        if ($project->tasks->where('status', 'Terminada')->count() === $project->tasks->count()) {
             $project->finished_at = now();
             $project->save();
-          } else if ($project->finished_at !== null) {
+        } else if ($project->finished_at !== null) {
             $project->finished_at = null;
             $project->save();
-          }
+        }
     }
 }

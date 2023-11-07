@@ -2,7 +2,7 @@
     <AppLayout title="Crear tarea">
         <div class="flex justify-between items-center text-lg mx-8 mt-8">
             <b>Nueva tarea</b>
-            <Link :href="route('pms.projects.show', parent_id)">
+            <Link :href="route('pms.projects.show', { project: parent_id, defaultTab: 2 })">
             <p class="flex items-center text-sm text-primary">
                 <i class="fa-solid fa-arrow-left-long mr-2"></i>
                 <span>Regresar</span>

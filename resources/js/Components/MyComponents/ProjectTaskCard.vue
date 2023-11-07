@@ -1,8 +1,5 @@
 <template>
-  <div @click="
-    taskInformationModal = true;
-  titemToShow = taskComponentLocal;
-  " :class="priorities.find(item => item.label == taskComponentLocal?.priority.label)?.borderColor"
+  <div :class="priorities.find(item => item.label == taskComponentLocal?.priority.label)?.borderColor"
     class="shadow-md shadow-gray-400/100 border border-t-[#d9d9d9] border-r-[#d9d9d9] border-b-[#d9d9d9] h-36 rounded-r-md border-l-4 py-2 px-3 cursor-pointer my-3">
     <!-- ------------ top ------------------ -->
     <!-- <el-tooltip :content="'Prioridad: ' + taskComponentLocal?.priority.label" placement="top"> -->
@@ -12,9 +9,11 @@
         <i class="fa-solid fa-ellipsis-vertical text-lg"></i>
       </div>
       <div @click.stop="" class="flex cursor-default">
-        <p v-if="taskComponentLocal?.is_paused" class="mr-4 rounded-full text-primary bg-[#EDEDED] px-2">
-          {{ "Pausado" }}
-        </p>
+        <el-tooltip :content="taskComponentLocal?.pausa_reazon" placement="top">
+          <p v-if="taskComponentLocal?.is_paused" class="mr-4 rounded-full text-primary bg-[#EDEDED] px-2">
+            {{ "Pausado" }}
+          </p>
+        </el-tooltip>
         <p class="mr-5">{{ taskComponentLocal?.created_at }}</p>
       </div>
     </div>
@@ -45,7 +44,7 @@
             <p class="text-primary mr-1"> + {{ taskComponentLocal?.users.length - 2 }}</p>
             <template #content>
               <div>
-                <p v-for="user in taskComponentLocal?.users.slice(1, taskComponentLocal?.users.length)" :key="user">{{
+                <p v-for="user in taskComponentLocal?.users.slice(2, taskComponentLocal?.users.length)" :key="user">{{
                   user.name }}</p>
               </div>
             </template>
@@ -212,7 +211,7 @@
               <a :href="file?.original_url" target="_blank" v-for="file in taskComponentLocal?.media" :key="file"
                 class="flex justify-between items-center cursor-pointer">
                 <div class="flex space-x-7 items-center">
-                  <img src="@/../../public/images/adobepdf.png" :alt="file?.file_name" />
+                  <!-- <img src="@/../../public/images/adobepdf.png" :alt="file?.file_name" /> -->
                   <p>{{ file?.file_name }}sss</p>
                 </div>
                 <i class="fa-solid fa-download text-right text-sm text-[#9a9a9a]"></i>

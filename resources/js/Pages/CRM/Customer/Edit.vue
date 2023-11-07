@@ -125,6 +125,7 @@
           </ul>
         </div>
       </div>
+      <InputError :message="form.errors.contacts" />
       <!----- Datos adicionales ----------------------------------------------------------------->
       <h2 class="font-bold mt-7 col-span-2">Datos adicionales</h2>
       <div>

@@ -33,7 +33,7 @@
             <InputLabel value="Fecha límite *" class="ml-2" />
             <el-date-picker v-model="form.limit_date" type="date" placeholder="Fecha límite *" format="YYYY/MM/DD"
             value-format="YYYY-MM-DD" :disabled-date="disabledDate" />
-            <InputError :message="form.errors.name" />
+            <InputError :message="form.errors.limit_date" />
         </div>
         <div>
             <InputLabel value="Hora *" class="ml-2" />
@@ -54,8 +54,8 @@
                   }}</span>
                 </el-option>
               </el-select>
-              <InputError :message="form.errors.priority" />
             </div>
+              <InputError :message="form.errors.priority" />
         </div>
         <div class="mt-5 col-span-full">
           <label>Descripción</label>

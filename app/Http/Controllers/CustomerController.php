@@ -30,8 +30,9 @@ class CustomerController extends Controller
         $request->validate([
             'name' => 'required|string',
             'rfc' => 'required|string',
-            'contacts' => 'required|array|min:1',
+            'contacts' => 'array|min:1',
             'invoicing_method' => 'required',
+            'currency' => 'required',
             'payment_method' => 'required',
             'invoice_use' => 'required',
         ]);

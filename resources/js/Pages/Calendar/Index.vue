@@ -49,11 +49,12 @@
               <div v-for="task in tasks.data" :key="task.id">
                 <div class="" v-if="isTaskDay(task, day)">
                   <div @click.stop="selectedTask = task; selectedDay = day"
-                    class="bg-primarylight border-primary border-l-4 border h-5 rounded-sm my-1 text-xs justify-between px-1 items-center cursor-pointer flex relative">
-                    <p class="text-start w-5/6 truncate" :class="task.status == 'Terminada' ? 'line-through' : null">
+                  :class="task.status == 'Terminada' ? 'bg-[#AFFD82] border-[#37951F]' : 'bg-primarylight'"
+                    class="border-primary border-l-4 border h-5 rounded-sm my-1 text-xs justify-between px-1 items-center cursor-pointer flex relative">
+                    <p class="text-start w-5/6 truncate">
                       {{ task.title }}
                     </p>
-                    <div class="1/4">
+                    <div>
                       <svg v-if="task.type == 'Evento'" xmlns="http://www.w3.org/2000/svg" width="14" height="14"
                         fill="currentColor" class="bi bi-calendar4-event" viewBox="0 0 16 16">
                         <path
@@ -69,11 +70,28 @@
                       </svg>
                     </div>
                     <div v-if="selectedTask === task && selectedDay == day" style="z-index: 999;"
-                      class="px-1 pb-3 absolute -bottom-56 w-56 h-auto bg-white rounded-md border cursor-default">
+                      class="px-1 pb-3 absolute -bottom-56 w-56 h-auto bg-white rounded-md border cursor-default shadow-lg">
                       <!-- --- Head --- -->
                       <div class="flex items-center justify-end">
-                        <p class="border inline rounded-md py-[1px] px-[2px] bg-primarylight border-primary">
-                          {{ selectedTask.type }}</p>
+                        <p class="border rounded-md py-[1px] px-[2px] bg-primarylight border-primary flex">
+                          {{ selectedTask.type }}
+                        <div class="ml-1">
+                          <svg v-if="selectedTask.type == 'Evento'" xmlns="http://www.w3.org/2000/svg" width="12" height="12"
+                            fill="currentColor" class="bi bi-calendar4-event" viewBox="0 0 16 16">
+                            <path
+                              d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5zM2 2a1 1 0 0 0-1 1v1h14V3a1 1 0 0 0-1-1H2zm13 3H1v9a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V5z" />
+                            <path
+                              d="M11 7.5a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1z" />
+                          </svg>
+                          <svg v-else xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor"
+                            class="bi bi-check2-circle" viewBox="0 0 16 16">
+                            <path
+                              d="M2.5 8a5.5 5.5 0 0 1 8.25-4.764.5.5 0 0 0 .5-.866A6.5 6.5 0 1 0 14.5 8a.5.5 0 0 0-1 0 5.5 5.5 0 1 1-11 0z" />
+                            <path
+                              d="M15.354 3.354a.5.5 0 0 0-.708-.708L8 9.293 5.354 6.646a.5.5 0 1 0-.708.708l3 3a.5.5 0 0 0 .708 0l7-7z" />
+                          </svg>
+                        </div>
+                        </p>
                         <i @click.stop="selectedTask = null; selectedDay = null"
                           class="fa-solid fa-xmark text-xs p-2 ml-4 cursor-pointer"></i>
                       </div>

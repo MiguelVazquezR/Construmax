@@ -15,7 +15,7 @@
             </div>
         </div>
 
-        <div class="lg:px-16 px-4 py-7 text-sm overflow-x-auto">
+        <div class="lg:px-16 px-4 py-7 text-xs overflow-x-auto">
             <table v-if="filteredTableData.length" class="w-full mx-auto">
                 <thead>
                     <tr class="text-left">

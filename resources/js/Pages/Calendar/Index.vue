@@ -1,15 +1,11 @@
 <template>
   <AppLayout title="Calendario">
-        <div class="relative overflow-hidden">
-            <div class="flex justify-between text-lg mx-2 lg:mx-14 mt-2">
-                <span>Calendario</span>
-                <Link :href="route('dashboard')"
-                class="cursor-pointer w-7 h-7 rounded-full hover:bg-[#D9D9D9] flex items-center justify-center">
-                <i class="fa-solid fa-xmark"></i>
-                </Link>
-            </div>
+    <div class="relative overflow-hidden">
+      <div class="flex justify-between text-lg mx-2 lg:mx-14 mt-2">
+        <span>Calendario</span>
+      </div>
 
-        <div class="flex justify-between text-lg mx-2 lg:mx-14 mt-11">
+      <div class="flex justify-between text-lg mx-2 lg:mx-14">
         <!-- <span class="text-primary text-sm cursor-pointer">Mes <i class="fa-solid fa-angle-down text-xs ml-2"></i></span> -->
         <span></span>
         <div class="flex justify-between items-center lg:w-1/5">
@@ -24,21 +20,20 @@
         </div>
         <div class="flex space-x-2">
           <Link :href="route('calendars.create')">
-          <PrimaryButton>+ Agendar</PrimaryButton>
+          <PrimaryButton>Agendar</PrimaryButton>
           </Link>
         </div>
       </div>
-      <div class="mx-14">
+      <!-- <div class="mx-14">
         <button @click="showPendentInvitationsModal = true" v-if="pendent_invitations.length"
           class="bg-[#FEDBBD] text-[#FD8827] px-2 py-1 rounded-[5px] text-sm">Invitaciones pendientes <span
             class="ml-2">({{
               pendent_invitations.length }})</span></button>
-      </div>
-      <NotificationCenter module="calendar" />
+      </div> -->
       <!-- -------------- calendar section --------------- -->
       <section @click="selectedDay = null" class="w-11/12 mx-auto mb-24 min-h-screen">
-        <table class="w-full mt-12">
-          <tr class="text-center">
+        <table class="w-full mt-8">
+          <tr class="text-center text-xs">
             <th class="py-2 w-[14.28%] border border-[#9A9A9A]">DOM</th>
             <th class="py-2 w-[14.28%] border border-[#9A9A9A]">LUN</th>
             <th class="py-2 w-[14.28%] border border-[#9A9A9A]">MAR</th>
@@ -47,23 +42,56 @@
             <th class="py-2 w-[14.28%] border border-[#9A9A9A]">VIE</th>
             <th class="py-2 w-[14.28%] border border-[#9A9A9A]">SAB</th>
           </tr>
-          <tr v-for="(week, index) in weeks" :key="index" class="text-sm text-right">
+          <tr v-for="(week, index) in weeks" :key="index" class="text-xs text-right">
             <td v-for="day in week" :key="day" class="h-32 pb-4 border border-[#9A9A9A] relative">
               <p class="absolute bottom-0 right-3">{{ day }}</p>
               <!-- Agregar línea para tareas y eventos -->
               <div v-for="task in tasks.data" :key="task.id">
                 <div class="" v-if="isTaskDay(task, day)">
                   <div @click.stop="selectedTask = task; selectedDay = day"
-                    :class="task.type === 'Tarea' ? 'bg-[#B9D9FE] border-[#0355B5] border-l-4 border' : 'bg-[#FEDBBD] border-primary border-l-4 border'"
-                    class="h-5 rounded-sm my-1 text-xs justify-center items-center cursor-pointer flex relative">
-                    <p>{{ task.title }} <i v-if="task.status === 'Terminada'"
-                        class="fa-regular fa-circle-check ml-3 text-xs font-bolds"></i></p>
+                  :class="task.status == 'Terminada' ? 'bg-[#AFFD82] border-[#37951F]' : 'bg-primarylight'"
+                    class="border-primary border-l-4 border h-5 rounded-sm my-1 text-xs justify-between px-1 items-center cursor-pointer flex relative">
+                    <p class="text-start w-5/6 truncate">
+                      {{ task.title }}
+                    </p>
+                    <div>
+                      <svg v-if="task.type == 'Evento'" xmlns="http://www.w3.org/2000/svg" width="14" height="14"
+                        fill="currentColor" class="bi bi-calendar4-event" viewBox="0 0 16 16">
+                        <path
+                          d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5zM2 2a1 1 0 0 0-1 1v1h14V3a1 1 0 0 0-1-1H2zm13 3H1v9a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V5z" />
+                        <path d="M11 7.5a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1z" />
+                      </svg>
+                      <svg v-else xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                        class="bi bi-check2-circle" viewBox="0 0 16 16">
+                        <path
+                          d="M2.5 8a5.5 5.5 0 0 1 8.25-4.764.5.5 0 0 0 .5-.866A6.5 6.5 0 1 0 14.5 8a.5.5 0 0 0-1 0 5.5 5.5 0 1 1-11 0z" />
+                        <path
+                          d="M15.354 3.354a.5.5 0 0 0-.708-.708L8 9.293 5.354 6.646a.5.5 0 1 0-.708.708l3 3a.5.5 0 0 0 .708 0l7-7z" />
+                      </svg>
+                    </div>
                     <div v-if="selectedTask === task && selectedDay == day" style="z-index: 999;"
-                      class="px-1 pb-3 absolute -bottom-56 w-56 h-auto bg-white rounded-md border cursor-default">
+                      class="px-1 pb-3 absolute -bottom-56 w-56 h-auto bg-white rounded-md border cursor-default shadow-lg">
                       <!-- --- Head --- -->
                       <div class="flex items-center justify-end">
-                        <p :class="selectedTask.type === 'Tarea' ? 'border-[#0355B5] bg-[#B9D9FE]' : 'bg-[#FEDBBD] border-primary'"
-                          class="border inline rounded-md py-[1px] px-[2px]">{{ selectedTask.type }}</p>
+                        <p class="border rounded-md py-[1px] px-[2px] bg-primarylight border-primary flex">
+                          {{ selectedTask.type }}
+                        <div class="ml-1">
+                          <svg v-if="selectedTask.type == 'Evento'" xmlns="http://www.w3.org/2000/svg" width="12" height="12"
+                            fill="currentColor" class="bi bi-calendar4-event" viewBox="0 0 16 16">
+                            <path
+                              d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5zM2 2a1 1 0 0 0-1 1v1h14V3a1 1 0 0 0-1-1H2zm13 3H1v9a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V5z" />
+                            <path
+                              d="M11 7.5a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1z" />
+                          </svg>
+                          <svg v-else xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor"
+                            class="bi bi-check2-circle" viewBox="0 0 16 16">
+                            <path
+                              d="M2.5 8a5.5 5.5 0 0 1 8.25-4.764.5.5 0 0 0 .5-.866A6.5 6.5 0 1 0 14.5 8a.5.5 0 0 0-1 0 5.5 5.5 0 1 1-11 0z" />
+                            <path
+                              d="M15.354 3.354a.5.5 0 0 0-.708-.708L8 9.293 5.354 6.646a.5.5 0 1 0-.708.708l3 3a.5.5 0 0 0 .708 0l7-7z" />
+                          </svg>
+                        </div>
+                        </p>
                         <i @click.stop="selectedTask = null; selectedDay = null"
                           class="fa-solid fa-xmark text-xs p-2 ml-4 cursor-pointer"></i>
                       </div>
@@ -151,7 +179,7 @@
 
       </template>
     </DialogModal>
-    </AppLayout>
+  </AppLayout>
 </template>
 
 <script>
@@ -161,7 +189,6 @@ import SecondaryButton from "@/Components/SecondaryButton.vue";
 import Dropdown from "@/Components/Dropdown.vue";
 import DropdownLink from "@/Components/DropdownLink.vue";
 import DialogModal from "@/Components/DialogModal.vue";
-import NotificationCenter from "@/Components/MyComponents/NotificationCenter.vue";
 import axios from 'axios';
 import moment from 'moment';
 import { format } from 'date-fns';
@@ -169,31 +196,30 @@ import { es } from 'date-fns/locale';
 import { Link } from "@inertiajs/vue3";
 
 export default {
-data(){
-    return{ 
-        currentMonth: new Date(),
-        selectedTask: null, // Variable para realizar un seguimiento de la tarea seleccionada
-        selectedDay: null, // Seguinmiento del dia seleccionado
-        showPendentInvitationsModal: false,
-        pendent_invitations_local: this.pendent_invitations,
+  data() {
+    return {
+      currentMonth: new Date(),
+      selectedTask: null, // Variable para realizar un seguimiento de la tarea seleccionada
+      selectedDay: null, // Seguinmiento del dia seleccionado
+      showPendentInvitationsModal: false,
+      pendent_invitations_local: this.pendent_invitations,
     }
-},
-components:{
+  },
+  components: {
     AppLayout,
     PrimaryButton,
     SecondaryButton,
     Link,
     Dropdown,
     DropdownLink,
-    NotificationCenter,
     DialogModal,
-},
-props:{
+  },
+  props: {
     tasks: Object,
     pendent_invitations: Array,
-},
-methods:{
-     async setAttendanceConfirmation(status, index) {
+  },
+  methods: {
+    async setAttendanceConfirmation(status, index) {
       this.loading = true;
       try {
         const response = await axios.put(route('calendars.set-attendance-confirmation', this.pendent_invitations[index].id), {
@@ -297,8 +323,8 @@ methods:{
       }
       return ''; // Manejar el caso en el que la fecha sea nula
     }
-},
-computed: {
+  },
+  computed: {
     weeks() {
       const firstDayOfMonth = new Date(this.currentMonth.getFullYear(), this.currentMonth.getMonth(), 1);
       const lastDayOfMonth = new Date(this.currentMonth.getFullYear(), this.currentMonth.getMonth() + 1, 0);

@@ -163,9 +163,9 @@
     <!-- ------------ Kanban view ends ----------------- -->
 
     <!-- ------------ Lista view starts ----------------- -->
-    <div v-if="type_view === 'Lista'" class="w-11/12 mx-auto my-16">
+    <div v-if="type_view === 'Lista'" class="w-full mx-auto my-16 text-xs">
       <div v-if="opportunities.data.length">
-        <table class="lg:w-[90%] w-full mx-auto">
+        <table class="lg:w-[95%] w-full mx-auto">
           <thead>
             <tr class="text-left">
               <th class="font-bold pb-5">
@@ -196,11 +196,11 @@
               class="mb-4 cursor-pointer hover:bg-primarylight"
               @click="$inertia.get(route('crm.opportunities.show', opportunity.id))"
             >
-              <td class="text-left py-2 px-2 rounded-l-full">
+              <td :title="opportunity.name" class="text-left py-2 px-2 rounded-l-full max-w-[220px] truncate pr-2">
                 {{ opportunity.name }}
               </td>
               <td class="text-left py-2 px-2">
-                <span class="py-1 px-4 rounded-full" :class="getStatusStyles(opportunity)">{{ opportunity.status }}</span>
+                <span class="py-1 px-4 rounded-full border border-white" :class="getStatusStyles(opportunity)">{{ opportunity.status }}</span>
               </td>
               <td class="text-left py-2 px-2">
                 <span class="py-1 px-2 rounded-full">{{

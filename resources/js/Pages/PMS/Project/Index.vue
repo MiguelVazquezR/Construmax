@@ -16,7 +16,7 @@
       </div>
     </div>
 
-    <div class="lg:px-16 px-4 py-7 text-sm overflow-x-auto">
+    <div class="lg:px-16 px-4 py-7 text-xs overflow-x-auto">
       <table v-if="filteredTableData.length" class="w-full mx-auto">
         <thead>
           <tr class="text-left">
@@ -41,7 +41,7 @@
             <td class="text-left py-2 pr-2 pl-4 rounded-l-full">
               {{ project.folio }}
             </td>
-            <td class="text-left py-2">
+            <td :title="project.name" class="text-left py-2 max-w-[220px] truncate pr-2">
               {{ project.name }}
             </td>
             <td class="text-left py-2">

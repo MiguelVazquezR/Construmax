@@ -24,7 +24,7 @@
     </div>
 
 <!-- Customer table ----------------------------------------------------------------------------------------------------->
-    <div v-if="customers?.data.length" class="lg:px-16 px-4 py-7 text-sm overflow-x-auto">
+    <div v-if="customers?.data.length" class="lg:px-16 px-4 py-7 text-xs overflow-x-auto">
       <table class="w-full mx-auto">
         <thead>
           <tr class="text-left">

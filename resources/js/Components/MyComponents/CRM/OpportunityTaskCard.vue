@@ -5,9 +5,9 @@
       <i :class="getPriorityStyles()" class="fa-solid fa-circle text-[9px] absolute top-3 right-2 p-1"></i>
     </el-tooltip>
     <div class="py-3 px-4">
-      <p :class="opportunityTask?.finished_at ? 'line-through' : ''">{{ opportunityTask?.name }}</p>
+      <p class="truncate" :class="opportunityTask?.finished_at ? 'line-through' : ''">{{ opportunityTask?.name }}</p>
       <div class="flex justify-between items-center">
-        <p class="text-gray-400 mt-3 mb-2">Asignado a</p>
+        <p class="text-gray-400 mt-3 mb-2">Responsable</p>
         <el-tooltip v-if="opportunityTask?.media?.length" content="Archivos adjuntos" placement="top">
           <i @click.stop="" class="fa-solid fa-paperclip rounded-full p-2"></i>
         </el-tooltip>
@@ -47,7 +47,7 @@
 
       <div class="flex justify-between items-center">
         <h2 class="font-bold">Información de la actividad</h2>
-        <ThirdButton type="button" v-if="toBool(authUserPermissions[2]) || true" @click="canEdit = true">Editar</ThirdButton>
+        <ThirdButton type="button" v-if="toBool(authUserPermissions[2])" @click="canEdit = true">Editar</ThirdButton>
       </div>
 
     <div class="grid grid-cols-2 gap-x-4 gap-y-2">    
@@ -64,7 +64,7 @@
         <input :value="opportunityTask.user.name" disabled class="input mt-1 cursor-not-allowed" type="text">
       </div>
       <div class="mt-1">
-        <InputLabel value="Asignado a" class="ml-2" />
+        <InputLabel value="Responsable" class="ml-2" />
         <el-select v-model="form.asigned_id" clearable filterable placeholder="Seleccionar usuario"
           :disabled="!canEdit" no-data-text="No hay usuarios registrados" no-match-text="No se encontraron coincidencias">
           <el-option v-for="user in users" :key="user" :label="user.name" :value="user.id" />
@@ -123,21 +123,24 @@
       </div>
 
 
-      <h2 class="font-bold py-5 col-span-2">Comentarios</h2>
+      <h2 class="font-bold py-4 col-span-2">Comentarios</h2>
 
       <!-- ------- Comments ------- -->
-      <div class="mt-7 col-span-2">
-        <figure class="flex space-x-2 mt-4" v-for="comment in opportunityTask?.comments" :key="comment">
-          <div v-if="$page.props.jetstream.managesProfilePhotos" class="flex text-sm rounded-full w-10">
-            <img class="h-8 w-8 rounded-full object-cover" :src="comment.user?.profile_photo_url"
-              :alt="comment.user?.name" />
-          </div>
-          <div class="text-sm w-full">
-            <p class="font-bold">{{ comment.user?.name }}</p>
-            <p v-html="comment.content"></p>
-          </div>
-        </figure>
-        <div v-if="toBool(authUserPermissions[4])" class="flex space-x-1 mt-5">
+      <div class="mt-1 col-span-2">
+        <section v-if="opportunityTask?.comments?.length > 0">
+          <figure class="flex space-x-2 mt-4" v-for="comment in opportunityTask?.comments" :key="comment">
+            <div v-if="$page.props.jetstream.managesProfilePhotos" class="flex text-sm rounded-full w-10">
+              <img class="h-8 w-8 rounded-full object-cover" :src="comment.user?.profile_photo_url"
+                :alt="comment.user?.name" />
+            </div>
+            <div class="text-sm w-full">
+              <p class="font-bold">{{ comment.user?.name }}</p>
+              <p v-html="comment.content"></p>
+            </div>
+          </figure>
+        </section>
+        <p class="text-sm text-center text-gray-600" v-else>No hay comentarios</p>
+        <div v-if="toBool(authUserPermissions[4]) && !opportunityTask?.finished_at" class="flex space-x-1 mt-5">
           <div v-if="$page.props.jetstream.managesProfilePhotos" class="flex text-sm rounded-full w-10">
             <img class="h-8 w-8 rounded-full object-cover" :src="$page.props.auth.user.profile_photo_url"
               :alt="$page.props.auth.user.name" />
@@ -152,7 +155,7 @@
           Marcar como hecho
           <template #dropdown>
             <el-dropdown-menu>
-              <el-dropdown-item v-if="toBool(authUserPermissions[3] || true)" @click="showConfirmModal = true">Eliminar</el-dropdown-item>
+              <el-dropdown-item v-if="toBool(authUserPermissions[3])" @click="showConfirmModal = true">Eliminar</el-dropdown-item>
             </el-dropdown-menu>
           </template>
         </el-dropdown>
@@ -191,7 +194,7 @@ import axios from "axios";
 export default {
   data() {
     const form = useForm({
-      asigned_id: this.opportunityTask.asigned.id,
+      asigned_id: parseInt(this.opportunityTask.asigned.id),
       limit_date: this.opportunityTask.limit_date_raw,
       time: this.opportunityTask.time_raw,
       priority: this.opportunityTask.priority,

@@ -230,7 +230,7 @@
         </table>
       </div>
       <div v-else>
-        <p class="text-sm text-center">No hay oportunidades para mostrar</p>
+        <p class="text-sm text-center">No hay oportunidades</p>
       </div>
     </div>
     <!-- ------------ Lista view ends ----------------- -->
@@ -449,7 +449,7 @@ export default {
 }
 
 .seccion {
-  flex: 0 0 25%;
+  flex: 0 0 22%;
   /* Establece el ancho de cada sección al 25% */
 }
 </style>

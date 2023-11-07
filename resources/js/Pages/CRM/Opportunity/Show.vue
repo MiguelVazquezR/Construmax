@@ -330,6 +330,27 @@
         </div>
       </div>
 
+      <!-- -- ATRASADAS -- -->
+      <div class="lg:border-r lg:mb-0 mb-16 border-[#9A9A9A] h-auto lg:px-4 seccion mx-2">
+        <h2 class="font-bold mb-10 first-letter ml-2">
+          ATRASADAS <span class="font-normal ml-7">{{ lateTasksList.length }}</span>
+        </h2>
+        <OpportunityTaskCard
+          @updated-opportunityTask="updateOpportunityTask"
+          @delete-task="deleteTask"
+          @task-done="markAsDone"
+          class="mb-3"
+          v-for="lateTask in lateTasksList"
+          :key="lateTask"
+          :opportunityTask="lateTask"
+          :users="currentOpportunity?.users"
+        />
+        <div class="text-center" v-if="!lateTasksList.length">
+          <p class="text-xs text-gray-500">No hay tareas para mostrar</p>
+          <i class="fa-regular fa-folder-open text-9xl text-gray-300/50 mt-16"></i>
+        </div>
+      </div>
+
       <!-- -- TERMINADAS -- -->
       <div class="lg:border-r lg:mb-0 mb-16 border-[#9A9A9A] h-auto lg:px-4 seccion mx-2">
         <h2 class="font-bold mb-10 first-letter ml-2">
@@ -351,26 +372,6 @@
         </div>
       </div>
 
-      <!-- -- ATRASADAS -- -->
-      <div class="lg:border-r lg:mb-0 mb-16 border-[#9A9A9A] h-auto lg:px-4 seccion mx-2">
-        <h2 class="font-bold mb-10 first-letter ml-2">
-          ATRASADAS <span class="font-normal ml-7">{{ lateTasksList.length }}</span>
-        </h2>
-        <OpportunityTaskCard
-          @updated-opportunityTask="updateOpportunityTask"
-          @delete-task="deleteTask"
-          @task-done="markAsDone"
-          class="mb-3"
-          v-for="lateTask in lateTasksList"
-          :key="lateTask"
-          :opportunityTask="lateTask"
-          :users="currentOpportunity?.users"
-        />
-        <div class="text-center" v-if="!lateTasksList.length">
-          <p class="text-xs text-gray-500">No hay tareas para mostrar</p>
-          <i class="fa-regular fa-folder-open text-9xl text-gray-300/50 mt-16"></i>
-        </div>
-      </div>
     </div>
     <!-- ------------- tab 2 atividades ends ------------ -->
 
@@ -885,7 +886,7 @@ export default {
 }
 
 .seccion {
-  flex: 0 0 25%;
+  flex: 0 0 22%;
   /* Establece el ancho de cada sección al 25% */
 }
 

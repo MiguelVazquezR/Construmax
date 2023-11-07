@@ -234,6 +234,31 @@
       </div>
     </div>
     <!-- ------------ Lista view ends ----------------- -->
+
+<!-- ------- lost modal -------- -->
+     <Modal :show="showLostOpportunityModal" @close="showLostOpportunityModal = false">
+      <div class="mx-7 my-4 space-y-4 relative">
+        <div>
+          <label
+            >Causa oportunidad perdida
+            <el-tooltip
+              content="Escribe la causa por la cual se PERDIÓ esta oportunidad"
+              placement="top"
+            >
+              <i class="fa-regular fa-circle-question ml-2 text-primary text-xs"></i>
+            </el-tooltip>
+          </label>
+          <textarea
+            v-model="lost_oportunity_razon"
+            required
+            class="input h-24 mt-3"
+          ></textarea>
+        </div>
+        <div class="flex justify-end space-x-3 pt-5 pb-1">
+          <PrimaryButton @click="updateOpportunityStatus('Perdida')">Actualizar estatus</PrimaryButton>
+        </div>
+      </div>
+    </Modal>
   </AppLayout>
 </template>
 <script>
@@ -243,6 +268,7 @@ import DropdownLink from "@/Components/DropdownLink.vue";
 import PrimaryButton from "@/Components/PrimaryButton.vue";
 import OpportunityCard from "@/Components/MyComponents/CRM/OpportunityCard.vue";
 import SecondaryButton from "@/Components/SecondaryButton.vue";
+import Modal from "@/Components/Modal.vue";
 import draggable from "vuedraggable";
 import { Link } from "@inertiajs/vue3";
 
@@ -252,6 +278,8 @@ export default {
       search: "",
       inputSearch: "",
       show_type_view: false,
+      showLostOpportunityModal: false,
+      lost_oportunity_razon: null,
       type_view: "Kanban",
       newTotal: null,
       pendingTotal: null,
@@ -276,6 +304,7 @@ export default {
     SecondaryButton,
     OpportunityCard,
     draggable,
+    Modal,
     Link,
   },
   props: {
@@ -303,12 +332,18 @@ export default {
         status = "Perdida";
       }
 
-      this.updateOpportunityStatus(status);
+      if (evt.to.id === "lost") {
+        this.showLostOpportunityModal = true;
+      } else {
+        this.updateOpportunityStatus(status);
+      }
+
       this.drag = false;
     },
     async updateOpportunityStatus(status) {
+      this.showLostOpportunityModal = false;
       try {
-        const response = await axios.put(route('crm.opportunities.update-status', this.draggingOpportunityId), { status: status });
+        const response = await axios.put(route('crm.opportunities.update-status', this.draggingOpportunityId), { status: status, lost_oportunity_razon: this.lost_oportunity_razon });
 
         if (response.status === 200) {
           const OpportunityIndex = this.opportunitiesLocal.findIndex(item => item.id === this.draggingOpportunityId);

@@ -38,7 +38,7 @@
         <div>
             <InputLabel value="Hora *" class="ml-2" />
             <input v-model="form.time" class="input" type="time">
-            <InputError :message="form.errors.limit_date" />
+            <InputError :message="form.errors.time" />
         </div>
         <div class="relative">
             <i :class="getColorPriority(form.priority)"

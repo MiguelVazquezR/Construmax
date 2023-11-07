@@ -6,24 +6,22 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class Activity extends Model
+class Survey extends Model
 {
     use HasFactory;
 
     protected $fillable = [
-        'description',
-        'user_id',
+        'p1',
+        'p2',
+        'p3',
+        'p4',
+        'p5',
         'opportunity_id',
     ];
 
     //relationships
-    public function user() :BelongsTo
-    {
-        return $this->belongsTo(User::class);
-    }
-
     public function opportunity() :BelongsTo
     {
-        return $this->belongsTo(Opportunity::class);
+       return $this->belongsTo(Opportunity::class);
     }
 }

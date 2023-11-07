@@ -43,7 +43,7 @@ class MeetingMonitorController extends Controller
             'contact_name' => 'required|string',
             'contact_phone' => 'required|string',
             'meeting_via' => 'required|string',
-            'location' => 'required|string',
+            'location' => 'nullable|string',
             'description' => 'required|string',
             'participants' => 'required|array|min:1',
         ]);
@@ -57,6 +57,7 @@ class MeetingMonitorController extends Controller
             'seller_id' => auth()->id(),
             'opportunity_id' => $request->opportunity_id,
             'customer_id' => $request->customer_id,
+            'monitor_id' => $meeting_monitor->id,
         ]);
 
         $meeting_monitor->client_monitor_id = $client_monitor->id;
@@ -97,7 +98,7 @@ class MeetingMonitorController extends Controller
             'contact_name' => 'required|string',
             'contact_phone' => 'required|string',
             'meeting_via' => 'required|string',
-            'location' => 'required|string',
+            'location' => 'nullable|string',
             'description' => 'required|string',
             'participants' => 'required|array|min:1',
         ]);
@@ -121,7 +122,7 @@ class MeetingMonitorController extends Controller
     public function destroy($meeting_monitor_id)
     {
         $meeting_monitor = MeetingMonitor::find($meeting_monitor_id);
-        $client_monitor = ClientMonitor::where('opportunity_id', $meeting_monitor->oportunity_id)->first();
+        $client_monitor = ClientMonitor::where('monitor_id', $meeting_monitor->id)->where('type', 'Reunión')->first();
         $client_monitor->delete();
         $meeting_monitor->delete();
 

@@ -152,8 +152,7 @@
           Marcar como hecho
           <template #dropdown>
             <el-dropdown-menu>
-              <el-dropdown-item v-if="toBool(authUserPermissions[2])" @click="canEdit = true">Editar</el-dropdown-item>
-              <el-dropdown-item v-if="toBool(authUserPermissions[3])" @click="showConfirmModal = true">Eliminar</el-dropdown-item>
+              <el-dropdown-item v-if="toBool(authUserPermissions[3] || true)" @click="showConfirmModal = true">Eliminar</el-dropdown-item>
             </el-dropdown-menu>
           </template>
         </el-dropdown>

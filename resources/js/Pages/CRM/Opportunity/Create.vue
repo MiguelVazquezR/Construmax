@@ -158,6 +158,28 @@
             </el-select>
             <InputError :message="form.errors.priority" />
           </div>
+          <!-- <label class="inline-flex items-center col-span-2 my-3">
+            <Checkbox v-model:checked="form.is_new_company" @change="handleChecked"
+              class="bg-transparent disabled:border-gray-400" />
+            <span class="ml-2 text-xs">Nuevo cliente</span>
+          </label> -->
+          <div class="flex justify-between space-x-3 col-span-2" v-if="form.is_new_company">
+            <div class="w-full">
+              <InputLabel value="Cliente *" class="ml-2" />
+              <input v-model="form.customer_name" class="input" type="text" required />
+              <InputError :message="form.errors.contact_name" />
+            </div>
+            <div class="w-full">
+              <InputLabel value="Contacto *" class="ml-2" />
+              <input v-model="form.contact_name" class="input" type="text" required />
+              <InputError :message="form.errors.contact_name" />
+            </div>
+            <div class="w-full">
+              <InputLabel value="Teléfono *" class="ml-2" />
+              <input v-model="form.contact_phone" class="input" type="text" required />
+              <InputError :message="form.errors.contact_phone" />
+            </div>
+          </div>
         </div>
       </div>
       <div v-if="form.status == 'Perdida'" class="w-full">

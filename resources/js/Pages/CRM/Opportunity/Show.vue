@@ -30,14 +30,6 @@
           </el-select>
         </div>
         <div class="flex items-center space-x-2">
-          <el-tooltip v-if="$page.props.auth.user.permissions.includes('Editar oportunidades') && tabs == 1"
-            content="Editar oportunidad" placement="top">
-            <Link :href="route('crm.opportunities.edit', selectedOpportunity)">
-            <button class="w-9 h-9 rounded-lg bg-[#D9D9D9]">
-              <i class="fa-solid fa-pen text-sm"></i>
-            </button>
-            </Link>
-          </el-tooltip>
           <Dropdown align="right" width="48" v-if="$page.props.auth.user.permissions?.includes(
             'Eliminar oportunidades'
           ) || $page.props.auth.user.permissions?.includes('Registrar pagos en seguimiento integral') 
@@ -45,7 +37,7 @@
           || $page.props.auth.user.permissions?.includes('Enviar correos en seguimiento integral') 
             ">
             <template #trigger>
-              <button v-if="currentTab == 1 || currentTab == 3" class="h-9 px-3 rounded-lg bg-[#D9D9D9] flex items-center text-sm">
+              <button v-if="currentTab == 3" class="h-9 px-3 rounded-lg bg-[#D9D9D9] flex items-center text-sm">
                 Más <i class="fa-solid fa-chevron-down text-[11px] ml-2"></i>
               </button>
             </template>
@@ -62,10 +54,6 @@
                 v-if="currentTab == 3 && $page.props.auth.user.permissions?.includes('Enviar correos en seguimiento integral')">
                 Enviar correo
               </DropdownLink>
-              <DropdownLink v-if="$page.props.auth.user.permissions?.includes('Eliminar oportunidades') && currentTab == 1
-                " @click="showConfirmModal = true" as="button">
-                Eliminar
-              </DropdownLink>
             </template>
           </Dropdown>
           <div class="flex items-center">
@@ -80,6 +68,9 @@
                 class="fa-solid fa-pencil ml-3 text-primary rounded-full p-2 bg-[#FEDBBD] cursor-pointer"
               ></i>
             </Link>
+            <i v-if="this.$page.props.auth.user.permissions.includes('Eliminar oportunidades') && currentTab == 1" 
+                @click="showConfirmModal = true"
+                class="fa-regular fa-trash-can ml-3 text-primary rounded-full p-2 bg-[#FEDBBD] cursor-pointer"></i>
           </div>
           <el-tooltip v-if="currentTab == 2 || toBool(authUserPermissions[0])" content="Crear actividad en la oportunidad"
             placement="top">
@@ -88,13 +79,13 @@
             </Link>
           </el-tooltip>
           <el-tooltip v-if="currentTab == 3" content="Enviar un correo a prospecto" placement="top">
-            <!-- <Link :href="route('crm.opportunity-tasks.create', selectedOpportunity)"> -->
+            <Link :href="route('crm.email-monitors.create', selectedOpportunity)">
             <PrimaryButton class="rounded-md w-[132px]">Enviar correo</PrimaryButton>
-            <!-- </Link> -->
+            </Link>
           </el-tooltip>
-          <el-tooltip v-if="currentTab == 5 && currentOpportunity?.finished_at"
+          <el-tooltip v-if="currentTab == 5 && (currentOpportunity?.finished_at || currentOpportunity?.paid_at)"
             content="Genera la url para la encuesta de satisfacción" placement="top">
-            <PrimaryButton @click="generateSurveyUrl" class="rounded-md">Generar url</PrimaryButton>
+            <PrimaryButton @click="generateSurveyUrl" class="rounded-md w-[120px]">Generar url</PrimaryButton>
           </el-tooltip>
         </div>
       </div>
@@ -248,20 +239,21 @@
         </div>
 
         <div class="flex items-center justify-end space-x-2 col-span-2 mr-4">
-          <el-tooltip content="Agendar reunión" placement="top">
+          <el-tooltip v-if="$page.props.auth.user.permissions?.includes('Agendar citas en seguimiento integral')" content="Agendar reunión" placement="top">
             <i
-              @click="$inertia.get(route('meeting-monitors.create'))"
+              @click="$inertia.get(route('crm.meeting-monitors.create'))"
               class="fa-regular fa-calendar text-primary cursor-pointer text-lg px-3 border-r border-[#9a9a9a]"
             ></i>
           </el-tooltip>
-          <el-tooltip content="Registrar pago" placement="top">
+          <el-tooltip v-if="$page.props.auth.user.permissions?.includes('Registrar pagos en seguimiento integral')" content="Registrar pago" placement="top">
             <i
-              @click="$inertia.get(route('payment-monitors.create'))"
+              @click="$inertia.get(route('crm.payment-monitors.create'))"
               class="fa-solid fa-money-bill text-primary cursor-pointer text-lg px-3 border-r border-[#9a9a9a]"
             ></i>
           </el-tooltip>
-          <el-tooltip content="Enviar correo" placement="top">
+          <el-tooltip v-if="$page.props.auth.user.permissions?.includes('Enviar correos en seguimiento integral')" content="Enviar correo" placement="top">
             <i
+              @click="$inertia.get(route('crm.email-monitors.create'))"
               class="fa-regular fa-envelope text-primary cursor-pointer text-lg px-3"
             ></i>
           </el-tooltip>
@@ -443,6 +435,85 @@
     </div>
     <!-- ------------ tab 3 seguimiento integral ends ------------- -->
 
+    <!-- ------------ tab 4 Historial starts ------------- -->
+    <div class="lg:mx-16 mx-2 my-4" v-if="currentTab == 4">
+      <div v-if="currentOpportunity?.activities?.length">
+        <ul>
+          <li class="mb-1" v-for="(activity, index) in currentOpportunity?.activities" :key="index">
+            <span class="mr-2">{{ index + 1 }}.</span> 
+            <span @click="$inertia.get(route('users.show', activity.user.id))" class="text-primary hover:underline cursor-pointer mr-2">{{ activity.user.name}}</span>
+            <span>{{ activity.description}} el {{ activity.created_at }}</span>
+          </li>
+        </ul>
+      </div>
+      <div v-else>
+        <p class="text-sm text-center text-gray-400">No hay historial en esta oportunidad</p>
+      </div>
+    </div>
+    <!-- ------------ tab 4 Historial ends ------------- -->
+
+    <!-- ------------ tab 5 Ecuesta post venta starts ------------- -->
+    <div v-if="currentTab == 5" class="w-11/12 mx-auto my-8">
+      <table v-if="currentOpportunity?.survey" class="lg:w-[80%] w-full mx-auto text-sm">
+        <thead>
+          <tr class="text-center">
+            <th class="font-bold pb-5">
+              ID <i class="fa-solid fa-arrow-down-long ml-3"></i>
+            </th>
+            <el-tooltip
+              content="En una escala del 0 al 10, ¿qué tan satisfecho/a estás con la calidad de nuestros productos?"
+              placement="top">
+              <th class="font-bold pb-5">
+                P1 <i class="fa-solid fa-arrow-down-long ml-3"></i>
+              </th>
+            </el-tooltip>
+            <el-tooltip content="¿Nuestros productos cumplieron con tus expectativas?" placement="top">
+              <th class="font-bold pb-5">
+                P2 <i class="fa-solid fa-arrow-down-long ml-3"></i>
+              </th>
+            </el-tooltip>
+            <el-tooltip content="¿Consideras que nuestro equipo de trabajo fue profesional y cortés?" placement="top">
+              <th class="font-bold pb-5">
+                P3 <i class="fa-solid fa-arrow-down-long ml-3"></i>
+              </th>
+            </el-tooltip>
+            <el-tooltip content="¿Recomendarías nuestros productos a otros?" placement="top">
+              <th class="font-bold pb-5">
+                P4 <i class="fa-solid fa-arrow-down-long ml-3"></i>
+              </th>
+            </el-tooltip>
+            <th class="font-bold pb-5">Comentario</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="mb-4 hover:bg-[#dfdbdba8]">
+            <td class="text-center py-2 px-2 rounded-l-full">
+              {{ currentOpportunity?.survey?.opportunity_id }}
+            </td>
+            <td class="text-center py-2 px-2">
+              <span class="py-1 px-4 rounded-full">{{ currentOpportunity?.survey?.p1 }}</span>
+            </td>
+            <td class="text-center py-2 px-2">
+              <span class="py-1 px-2 rounded-full">{{ currentOpportunity?.survey?.p2 }}</span>
+            </td>
+            <td class="text-center py-2 px-2">
+              {{ currentOpportunity?.survey?.p3 }}
+            </td>
+            <td class="text-center py-2 px-2">
+              {{ currentOpportunity?.survey?.p4 }}
+            </td>
+            <td class="text-center py-2 px-2 rounded-r-full">
+              {{ currentOpportunity?.survey?.p5 }}
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <div v-else>
+        <p class="text-sm text-center text-gray-400">No se ha contestado la encuesta</p>
+      </div>
+    </div>
+    <!-- ------------ tab 5 Ecuesta post venta ends ------------- -->
+
     <ConfirmationModal :show="showConfirmModal" @close="showConfirmModal = false">
       <template #title> Eliminar oportunidad </template>
       <template #content> ¿Continuar con la eliminación? </template>
@@ -471,7 +542,7 @@
           <textarea
             v-model="lost_oportunity_razon"
             required
-            class="textarea mt-3"
+            class="input h-24 mt-3"
           ></textarea>
         </div>
         <div class="flex justify-end space-x-3 pt-5 pb-1">
@@ -486,6 +557,7 @@
 import AppLayout from "@/Layouts/AppLayout.vue";
 import PrimaryButton from "@/Components/PrimaryButton.vue";
 import SecondaryButton from "@/Components/SecondaryButton.vue";
+import CancelButton from "@/Components/CancelButton.vue";
 import Tab from "@/Components/MyComponents/Tab.vue";
 import Tag from "@/Components/MyComponents/Tag.vue";
 import ConfirmationModal from "@/Components/ConfirmationModal.vue";
@@ -546,6 +618,7 @@ export default {
     AppLayout,
     PrimaryButton,
     SecondaryButton,
+    CancelButton,
     ConfirmationModal,
     OpportunityTaskCard,
     Modal,
@@ -619,6 +692,7 @@ export default {
           if (index !== -1) {
             this.currentOpportunity.opportunityTasks.splice(index, 1);
           }
+            this.currentOpportunity.activities = response.data.item.activities;
         }
       } catch (error) {
         console.log(error);
@@ -640,6 +714,8 @@ export default {
           this.currentOpportunity.opportunityTasks.find(
             (item) => item.id === data
           ).finished_at = new Date();
+
+          this.currentOpportunity.activities = response.data.item.opportunity.activities;
         }
       } catch (error) {
         console.log(error);
@@ -652,6 +728,7 @@ export default {
 
       if (index !== -1) {
         this.currentOpportunity.opportunityTasks[index] = task;
+        this.currentOpportunity.activities = task.opportunity.activities;
       }
     },
     getColorStatus() {
@@ -716,6 +793,7 @@ export default {
           this.currentOpportunity.finished_at = response.data.item.finished_at;
           this.currentOpportunity.paid_at = response.data.item.paid_at;
           this.currentOpportunity.lost_oportunity_razon = response.data.item.lost_oportunity_razon;
+          this.currentOpportunity.activities = response.data.item.activities;
 
         }
       } catch (error) {

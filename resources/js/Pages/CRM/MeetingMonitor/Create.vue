@@ -73,7 +73,7 @@
             <InputError :message="form.errors.meeting_via" />
         </div>
         <div class="w-full">
-            <InputLabel value="Ubicación *" class="ml-2" />
+            <InputLabel value="Ubicación" class="ml-2" />
             <input v-model="form.location" class="input" type="text">
             <InputError :message="form.errors.location" />
         </div>

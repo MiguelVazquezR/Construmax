@@ -103,16 +103,11 @@
             :value="branch" />
         </el-select>
       </div> <br>
-      <div class="mt-5">
-        <InputLabel value="Fecha de inicio *" class="ml-2" />
-        <el-date-picker class="w-full" v-model="form.start_date" type="date" placeholder="Inicio *" format="YYYY/MM/DD"
-          value-format="YYYY-MM-DD" />
+      <div>
+        <InputLabel value="Duración *" class="ml-2" />
+        <el-date-picker @change="handleDateRange" v-model="range" type="daterange" range-separator="A"
+          start-placeholder="Fecha de inicio" end-placeholder="Fecha de cierre" value-format="YYYY-MM-DD" />
         <InputError :message="form.errors.start_date" />
-      </div>
-      <div class="mt-5">
-        <InputLabel value="Fecha de cierre *" class="ml-2" />
-        <el-date-picker class="w-full" v-model="form.close_date" type="date" placeholder="Cierre *" format="YYYY/MM/DD"
-          value-format="YYYY-MM-DD" />
         <InputError :message="form.errors.close_date" />
       </div>
       <div class="mt-5 col-span-full">
@@ -383,6 +378,7 @@ export default {
       company_branch: null,
       showTagFormModal: false,
       company_branch_obj: null,
+      range: null,
       typeAccessProject: 'Private',
       // owner: this.$page.props.auth.user.name,
       mediaNames: [], // Agrega esta propiedad para almacenar los nombres de los archivos
@@ -677,6 +673,9 @@ export default {
     });
     this.updateContacts();
     this.updateBranches();
+
+    // inicializar fechas en range
+    this.range = [this.opportunity.start_date, this.opportunity.close_date];
   },
 }
 </script>

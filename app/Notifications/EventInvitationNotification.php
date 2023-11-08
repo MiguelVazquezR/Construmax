@@ -14,9 +14,9 @@ class EventInvitationNotification extends Notification
     /**
      * Create a new notification instance.
      */
-    public function __construct(public $calendar)
+    public function __construct(public $calendar, public $user_name)
     {
-        //
+        
     }
 
     public function via(object $notifiable): array
@@ -34,7 +34,7 @@ class EventInvitationNotification extends Notification
             ->subject('Invitación a evento')
             ->markdown('emails.event-invitation', [
                 'greeting' => '¡Hola!',
-                'intro' => "$notifiable->name te ha invitado al evento <span class='text-primary'>{$this->calendar->title}</span>",
+                'intro' => "<span class='text-primary'>$this->user_name</span> te ha invitado al evento <span class='text-primary'>{$this->calendar->title}</span>",
                 'url' => route('calendars.index'),
                 'salutation' => 'Saludos,',
             ]);
@@ -43,7 +43,7 @@ class EventInvitationNotification extends Notification
     public function toArray(object $notifiable): array
     {
         return [
-            'description' => "$notifiable->name te ha invitado al evento <span class='text-primary'>{$this->calendar->title}</span>",
+            'description' => "<span class='text-primary'>$this->user_name</span> te ha invitado al evento <span class='text-primary'>{$this->calendar->title}</span>",
             'module' => 'calendars',
             'url' => route('calendars.index'),
         ];

@@ -14,7 +14,7 @@ class NewProjectNotification extends Notification
     /**
      * Create a new notification instance.
      */
-    public function __construct(public $project)
+    public function __construct(public $project, public $user_name)
     {
         //
     }
@@ -34,7 +34,7 @@ class NewProjectNotification extends Notification
             ->subject('Nuevo proyecto')
             ->markdown('emails.new-project', [
                 'greeting' => '¡Hola!',
-                'intro' => "Eres participante en un nuevo proyecto llamado <span class='text-primary'>{$this->project->name}</span> creado por <span class='text-primary'>$notifiable->name</span>",
+                'intro' => "Eres participante en un nuevo proyecto llamado <span class='text-primary'>{$this->project->name}</span> creado por <span class='text-primary'>$this->user_name</span>",
                 'url' => route('pms.projects.show', $this->project->id),
                 'salutation' => 'Saludos,',
             ]);
@@ -43,7 +43,7 @@ class NewProjectNotification extends Notification
     public function toArray(object $notifiable): array
     {
         return [
-            'description' => "Eres participante en un nuevo proyecto llamado <span class='text-primary'>{$this->project->name}</span> creado por <span class='text-primary'>$notifiable->name</span>",
+            'description' => "Eres participante en un nuevo proyecto llamado <span class='text-primary'>{$this->project->name}</span> creado por <span class='text-primary'>$this->user_name</span>",
             'module' => "projects",
             'url' => route('pms.projects.show', $this->project->id),
         ];

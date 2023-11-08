@@ -26,8 +26,7 @@
       <div>
         <InputLabel value="Duración *" class="ml-2" />
         <el-date-picker @change="handleDateRange" v-model="range" type="daterange" range-separator="A"
-          start-placeholder="Fecha de inicio" end-placeholder="Fecha límite" value-format="YYYY-MM-DD"
-          :disabled-date="disabledStartOrLimitDate" />
+          start-placeholder="Fecha de inicio" end-placeholder="Fecha límite" value-format="YYYY-MM-DD" />
         <InputError :message="form.errors.start_date" />
         <InputError :message="form.errors.limit_date" />
       </div>
@@ -455,15 +454,6 @@ export default {
     handleDateRange(range) {
       this.form.start_date = range[0];
       this.form.limit_date = range[1];
-
-      const date1 = parseISO(range[0]);
-      const date2 = parseISO(range[1]);
-
-      // Compara si son del mismo día
-      if (isSameDay(date1, date2)) {
-        this.canSelectTime = true;
-      }
-
     },
     updateContacts() {
       const selectedCustomer = this.customers.find(

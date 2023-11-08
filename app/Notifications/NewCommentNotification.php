@@ -14,7 +14,7 @@ class NewCommentNotification extends Notification
     /**
      * Create a new notification instance.
      */
-    public function __construct(public $concept_type, public $concept_name, public $module, public $url)
+    public function __construct(public $concept_type, public $concept_name, public $module, public $url, public $user_name)
     {
         //
     }
@@ -34,7 +34,7 @@ class NewCommentNotification extends Notification
             ->subject('Nuevo comentario')
             ->markdown('emails.new-comment', [
                 'greeting' => '¡Hola!',
-                'intro' => "$notifiable->name hizo un comentario en la $this->concept_type <span class='text-primary'>{$this->concept_name}</span>",
+                'intro' => "<span class='text-primary'>$this->user_name</span> hizo un comentario en la $this->concept_type <span class='text-primary'>{$this->concept_name}</span>",
                 'url' => $this->url,
                 'salutation' => 'Saludos,',
             ]);
@@ -43,7 +43,7 @@ class NewCommentNotification extends Notification
     public function toArray(object $notifiable): array
     {
         return [
-            'description' => "$notifiable->name hizo un comentario en la $this->concept_type <span class='text-primary'>{$this->concept_name}</span>",
+            'description' => "<span class='text-primary'>$this->user_name</span> hizo un comentario en la $this->concept_type <span class='text-primary'>{$this->concept_name}</span>",
             'module' => $this->module,
             'url' => $this->url,
         ];

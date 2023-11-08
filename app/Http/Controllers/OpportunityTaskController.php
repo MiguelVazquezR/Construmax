@@ -151,7 +151,7 @@ class OpportunityTaskController extends Controller
          // notificar a usuarios participantes
          foreach ($opportunity_task->users as $user) {
             if ($user->id !== auth()->id()) {
-                $user->notify(new NewCommentNotification('actividad', $opportunity_task->name, 'opportunities', route('crm.opportunity-tasks.show', $opportunity_task)));
+                $user->notify(new NewCommentNotification('actividad', $opportunity_task->name, 'opportunities', route('crm.opportunity-tasks.show', $opportunity_task), auth()->user()->name));
             }
         }
 
@@ -159,7 +159,7 @@ class OpportunityTaskController extends Controller
         $mentions = $request->mentions;
         foreach ($mentions as $mention) {
             $user = User::find($mention['id']);
-            $user->notify(new MentionInCommentNotification('actividad', $opportunity_task->name, 'opportunities', route('crm.opportunity-tasks.show', $opportunity_task)));
+            $user->notify(new MentionInCommentNotification('actividad', $opportunity_task->name, 'opportunities', route('crm.opportunity-tasks.show', $opportunity_task), auth()->user()->name));
         }
 
         return response()->json(['item' => $comment->fresh('user')]);

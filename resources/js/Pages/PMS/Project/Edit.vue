@@ -24,15 +24,11 @@
         <InputError :message="form.errors.service_type" />
       </div>
       <div>
-        <InputLabel value="Fecha de inicio *" class="ml-2" />
-        <el-date-picker v-model="form.start_date" type="date" placeholder="Inicio *" format="YYYY/MM/DD"
-          value-format="YYYY-MM-DD" />
+        <InputLabel value="Duración *" class="ml-2" />
+        <el-date-picker @change="handleDateRange" v-model="range" type="daterange" range-separator="A"
+          start-placeholder="Fecha de inicio" end-placeholder="Fecha límite" value-format="YYYY-MM-DD"
+          :disabled-date="disabledStartOrLimitDate" />
         <InputError :message="form.errors.start_date" />
-      </div>
-      <div>
-        <InputLabel value="Fecha de límite *" class="ml-2" />
-        <el-date-picker v-model="form.limit_date" type="date" placeholder="Límite *" format="YYYY/MM/DD"
-          value-format="YYYY-MM-DD" />
         <InputError :message="form.errors.limit_date" />
       </div>
       <div>
@@ -398,6 +394,7 @@ export default {
       showGroupFormModal: false,
       showTagFormModal: false,
       editAccesFlag: true,
+      range: null,
       typeAccessProject: 'Private',
       search: '',
       inputSearch: '',
@@ -455,6 +452,10 @@ export default {
 
   },
   methods: {
+    handleDateRange(range) {
+      this.form.start_date = range[0];
+      this.form.limit_date = range[1];
+    },
     toBool(value) {
       if (value == 1 || value == true) return true;
       return false;
@@ -701,6 +702,9 @@ export default {
     });
     this.updateContacts();
     this.updateBranches();
+
+    // inicializar fechas en range
+    this.range = [this.project.start_date, this.project.limit_date];
   }
 }
 </script>

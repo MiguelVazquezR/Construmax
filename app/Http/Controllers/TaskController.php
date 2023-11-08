@@ -50,7 +50,7 @@ class TaskController extends Controller
             // notificar a usuarios que no sean el que crea la tarea
             $user = User::find($user_id);
             if ($user->id !== auth()->id()) {
-                $user->notify(new AssignedTaskNotification($task));
+                $user->notify(new AssignedTaskNotification($task, auth()->user()->name));
             }
         }
 
@@ -122,7 +122,7 @@ class TaskController extends Controller
         // notificar a usuarios participantes
         foreach ($task->users as $user) {
             if ($user->id !== auth()->id()) {
-                $user->notify(new NewCommentNotification('Tarea', $task->name, 'projects', route('pms.tasks.show', $task)));
+                $user->notify(new NewCommentNotification('Tarea', $task->name, 'projects', route('pms.tasks.show', $task), auth()->user()->name));
             }
         }
 
@@ -130,7 +130,7 @@ class TaskController extends Controller
         $mentions = $request->mentions;
         foreach ($mentions as $mention) {
             $user = User::find($mention['id']);
-            $user->notify(new MentionInCommentNotification('Tarea', $task->name, 'projects', route('pms.tasks.show', $task)));
+            $user->notify(new MentionInCommentNotification('Tarea', $task->name, 'projects', route('pms.tasks.show', $task), auth()->user()->name));
         }
         
         return response()->json(['item' => $comment->fresh('user')]);

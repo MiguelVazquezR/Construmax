@@ -14,7 +14,7 @@ class MentionInCommentNotification extends Notification
     /**
      * Create a new notification instance.
      */
-    public function __construct(public $concept_type, public $concept_name, public $module, public $url)
+    public function __construct(public $concept_type, public $concept_name, public $module, public $url, public $user_name)
     {
         //
     }
@@ -34,7 +34,7 @@ class MentionInCommentNotification extends Notification
             ->subject('Mención en comentario')
             ->markdown('emails.mention-in-comment', [
                 'greeting' => '¡Hola!',
-                'intro' => "$notifiable->name te mencionó en un comentario de la $this->concept_type <span class='text-primary'>{$this->concept_name}</span>",
+                'intro' => "<span class='text-primary'>$this->user_name</span> te mencionó en un comentario de la $this->concept_type <span class='text-primary'>{$this->concept_name}</span>",
                 'url' => $this->url,
                 'salutation' => 'Saludos,',
             ]);
@@ -43,7 +43,7 @@ class MentionInCommentNotification extends Notification
     public function toArray(object $notifiable): array
     {
         return [
-            'description' => "$notifiable->name te mencionó en un comentario de la $this->concept_type <span class='text-primary'>{$this->concept_name}</span>",
+            'description' => "<span class='text-primary'>$this->user_name</span> te mencionó en un comentario de la $this->concept_type <span class='text-primary'>{$this->concept_name}</span>",
             'module' => $this->module,
             'url' => $this->url,
         ];

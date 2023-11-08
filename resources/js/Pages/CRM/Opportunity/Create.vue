@@ -103,16 +103,11 @@
             :value="branch" />
         </el-select>
       </div> <br>
-      <div class="mt-5">
-        <InputLabel value="Fecha de inicio *" class="ml-2" />
-        <el-date-picker class="w-full" v-model="form.start_date" type="date" placeholder="Inicio *" format="YYYY/MM/DD"
-          value-format="YYYY-MM-DD" />
+      <div>
+        <InputLabel value="Duración *" class="ml-2" />
+        <el-date-picker @change="handleDateRange" v-model="range" type="daterange" range-separator="A"
+          start-placeholder="Fecha de inicio" end-placeholder="Fecha de cierre" value-format="YYYY-MM-DD" />
         <InputError :message="form.errors.start_date" />
-      </div>
-      <div class="mt-5">
-        <InputLabel value="Fecha de cierre *" class="ml-2" />
-        <el-date-picker class="w-full" v-model="form.close_date" type="date" placeholder="Cierre *" format="YYYY/MM/DD"
-          value-format="YYYY-MM-DD" />
         <InputError :message="form.errors.close_date" />
       </div>
       <div class="mt-5 col-span-full">
@@ -403,6 +398,7 @@ export default {
       tagForm,
       showTagFormModal: false,
       company_branch: null,
+      range: null,
       showTagFormModal: false,
       company_branch_obj: null,
       typeAccessProject: 'Private',
@@ -486,6 +482,10 @@ export default {
     customers: Object,
   },
   methods: {
+    handleDateRange(range) {
+      this.form.start_date = range[0];
+      this.form.close_date = range[1];
+    },
     store() {
       this.form.post(route("crm.opportunities.store"), {
         onSuccess: () => {

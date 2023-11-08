@@ -14,9 +14,9 @@ class AssignedTaskNotification extends Notification
     /**
      * Create a new notification instance.
      */
-    public function __construct(public $task)
+    public function __construct(public $task, public $user_name)
     {
-        //
+
     }
 
     public function via(object $notifiable): array
@@ -34,7 +34,7 @@ class AssignedTaskNotification extends Notification
             ->subject('Nueva tarea asignada')
             ->markdown('emails.assigned-task', [
                 'greeting' => '¡Hola!',
-                'intro' => "<span class='text-primary'>$notifiable->name</span> te ha asignado la tarea <span class='text-primary'>{$this->task->name}</span>, ve a revisarla",
+                'intro' => "<span class='text-primary'>$this->user_name</span> te ha asignado la tarea <span class='text-primary'>{$this->task->name}</span>, ve a revisarla",
                 'url' => route('pms.projects.show', ['project' => $this->task->project->id, 'defaultTab' => 2]),
                 'salutation' => 'Saludos,',
             ]);
@@ -43,7 +43,7 @@ class AssignedTaskNotification extends Notification
     public function toArray(object $notifiable): array
     {
         return [
-            'description' => "<span class='text-primary'>$notifiable->name</span> te ha asignado la tarea <span class='text-primary'>{$this->task->name}</span>, ve a revisarla",
+            'description' => "<span class='text-primary'>$this->user_name</span> te ha asignado la tarea <span class='text-primary'>{$this->task->name}</span>, ve a revisarla",
             'module' => "projects",
             'url' => route('pms.projects.show', ['project' => $this->task->project->id, 'defaultTab' => 2]),
         ];

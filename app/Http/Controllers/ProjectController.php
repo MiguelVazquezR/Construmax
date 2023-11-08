@@ -62,15 +62,15 @@ class ProjectController extends Controller
 
         // permisos
         foreach ($request->selectedUsersToPermissions as $user) {
-            $user = User::find($user['id']);
+            $_user = User::find($user['id']);
             $allowedUser = [
                 "permissions" => json_encode($user['permissions']), // Serializa los permisos en formato JSON
             ];
             $project->users()->attach($user['id'], $allowedUser);
 
             // notificar a usuarios que no sean el que crea el proyecto
-            if ($user->id !== auth()->id()) {
-                $user->notify(new NewProjectNotification($project));
+            if ($_user->id !== auth()->id()) {
+                $_user->notify(new NewProjectNotification($project, auth()->user()->name));
             }
         }
 
@@ -145,9 +145,9 @@ class ProjectController extends Controller
             $project->users()->attach($user['id'], $allowedUser);
 
             // notificar a usuarios que no sean el que edita el proyecto
-            $user = User::find($user['id']);
-            if ($user->id !== auth()->id()) {
-                $user->notify(new UpdatedProjectNotification($project));
+            $_user = User::find($user['id']);
+            if ($_user->id !== auth()->id()) {
+                $_user->notify(new UpdatedProjectNotification($project, auth()->user()->name));
             }
         }
 
@@ -196,6 +196,12 @@ class ProjectController extends Controller
                 "permissions" => json_encode($user['permissions']), // Serializa los permisos en formato JSON
             ];
             $project->users()->attach($user['id'], $allowedUser);
+
+            // notificar a usuarios que no sean el que edita el proyecto
+            $_user = User::find($user['id']);
+            if ($_user->id !== auth()->id()) {
+                $_user->notify(new UpdatedProjectNotification($project, auth()->user()->name));
+            }
         }
 
         // etiquetas

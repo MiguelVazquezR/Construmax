@@ -16,7 +16,8 @@
                                 </button>
                             </div>
                         </Accordion>
-                        <button v-else @click="goToRoute(menu.route)" v-if="menu.show" :active="menu.active" :title="menu.label"
+                        <button v-else @click="goToRoute(menu.route)" v-if="menu.show" :active="menu.active"
+                            :title="menu.label"
                             class="w-full text-start px-2 mb-1 flex justify-between text-xs rounded-md py-1"
                             :class="menu.active ? 'bg-[#FD8827] text-white' : 'hover:text-[#FD8827]'">
                             <p class="w-full truncate"><span v-html="menu.icon"></span> {{ menu.label }}</p>

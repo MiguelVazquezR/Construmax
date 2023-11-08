@@ -95,9 +95,9 @@ export default {
     const form = useForm({
       name: this.user.name,
       employee_properties: {
-        department: this.user.employee_properties.department,
-        position: this.user.employee_properties.position,
-        phone: this.user.employee_properties.phone,
+        department: this.user.employee_properties?.department,
+        position: this.user.employee_properties?.position,
+        phone: this.user.employee_properties?.phone,
       },
       email: this.user.email,
       roles: this.user_roles

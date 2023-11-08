@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Resources\CalendarResource;
 use App\Models\Calendar;
 use App\Models\User;
+use App\Notifications\EventInvitationNotification;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 
@@ -79,10 +80,10 @@ class CalendarController extends Controller
         ]);
 
         // notificar a participantes
-        // foreach ($request->participants as $participant_id) {
-        //     $participant = User::find($participant_id);
-        //     $participant->notify(new EventInvitationNotification($calendar));
-        // }
+        foreach ($request->participants as $participant_id) {
+            $participant = User::find($participant_id);
+            $participant->notify(new EventInvitationNotification($calendar));
+        }
 
         return to_route('calendars.index');
     }

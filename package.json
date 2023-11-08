@@ -23,6 +23,7 @@
     "dependencies": {
         "apexcharts": "^3.43.0",
         "date-fns": "^2.30.0",
+        "date-fns-tz": "^2.0.0",
         "element-plus": "^2.3.14",
         "moment": "^2.29.4",
         "vue3-apexcharts": "^1.4.4",

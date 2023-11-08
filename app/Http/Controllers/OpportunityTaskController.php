@@ -9,6 +9,8 @@ use App\Models\Comment;
 use App\Models\Opportunity;
 use App\Models\OpportunityTask;
 use App\Models\User;
+use App\Notifications\MentionInCommentNotification;
+use App\Notifications\NewCommentNotification;
 use Illuminate\Http\Request;
 
 class OpportunityTaskController extends Controller
@@ -145,6 +147,20 @@ class OpportunityTaskController extends Controller
         ]);
 
         $opportunity_task->comments()->save($comment);
+
+         // notificar a usuarios participantes
+         foreach ($opportunity_task->users as $user) {
+            if ($user->id !== auth()->id()) {
+                $user->notify(new NewCommentNotification('actividad', $opportunity_task->name, 'opportunities', route('crm.opportunity-tasks.show', $opportunity_task), auth()->user()->name));
+            }
+        }
+
+        // notificar a mencionados 
+        $mentions = $request->mentions;
+        foreach ($mentions as $mention) {
+            $user = User::find($mention['id']);
+            $user->notify(new MentionInCommentNotification('actividad', $opportunity_task->name, 'opportunities', route('crm.opportunity-tasks.show', $opportunity_task), auth()->user()->name));
+        }
 
         return response()->json(['item' => $comment->fresh('user')]);
     }

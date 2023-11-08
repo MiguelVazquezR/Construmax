@@ -26,7 +26,7 @@
         <InputError :message="form.errors.service_type" />
       </div>
       <div class="relative">
-        <i :class="getColorStatus(form.status)" class="fa-solid fa-circle text-xs top-[2px] left-16 absolute z-30"></i>
+        <i :class="getColorStatus(form.status)" class="fa-solid fa-circle text-xs top-[2px] left-20 absolute z-30"></i>
         <InputLabel value="Estatus *" class="ml-2" />
         <div class="flex items-center space-x-4">
           <el-select class="w-full" v-model="form.status" clearable filterable placeholder="Seleccionar estatus"
@@ -115,7 +115,7 @@
       </div>
       <div class="mt-5 col-span-full">
         <InputLabel value="Descripción" class="ml-2" />
-        <RichText @content="updateDescription($event)" :defaultValue="form.description" />
+        <RichText @content="updateDescription($event)" />
       </div>
       <div class="ml-4 mt-2 col-span-full flex">
         <FileUploader @files-selected="this.form.media = $event" />
@@ -411,7 +411,7 @@ export default {
       statuses: [
         {
           label: "Nueva",
-          color: "text-[#9A9A9A]",
+          color: "text-[#f2f2f2]",
         },
         {
           label: "Pendiente",
@@ -437,7 +437,7 @@ export default {
         },
         {
           label: "Media",
-          color: "text-[#D97705]",
+          color: "text-[#F2C940]",
         },
         {
           label: "Alta",
@@ -500,9 +500,12 @@ export default {
         },
       });
     },
+    updateDescription(content) {
+      this.form.description = content;
+    },
     getColorStatus(oportunityStatus) {
       if (oportunityStatus === "Nueva") {
-        return "text-[#9A9A9A]";
+        return "text-[#f2f2f2]";
       } else if (oportunityStatus === "Pendiente") {
         return "text-[#F3FD85]";
       } else if (oportunityStatus === "Cerrada") {
@@ -519,7 +522,7 @@ export default {
       if (opportunityPriority === "Baja") {
         return "text-[#87CEEB]";
       } else if (opportunityPriority === "Media") {
-        return "text-[#D97705]";
+        return "text-[#F2C940]";
       } else if (opportunityPriority === "Alta") {
         return "text-[#D90537]";
       } else {

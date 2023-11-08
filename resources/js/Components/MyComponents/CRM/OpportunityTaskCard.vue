@@ -219,11 +219,11 @@ export default {
         },
         {
           label: "Media",
-          color: "text-orange-500",
+          color: "text-[#F2C940]",
         },
         {
           label: "Alta",
-          color: "text-red-600",
+          color: "text-[#FB2A2A]",
         },
       ],
     }
@@ -304,9 +304,9 @@ export default {
       if (this.opportunityTask?.priority === 'Baja') {
         return 'text-[#87CEEB]';
       } else if (this.opportunityTask?.priority === 'Media') {
-        return 'text-[#D97705]';
+        return 'text-[#F2C940]';
       } else if (this.opportunityTask?.priority === 'Alta') {
-        return 'text-[#D90537]';
+        return 'text-[#FB2A2A]';
       }
     },
     disabledDate(time) {
@@ -317,9 +317,9 @@ export default {
       if (taskPriority === "Baja") {
         return "text-[#87CEEB]";
       } else if (taskPriority === "Media") {
-        return "text-orange-500";
+        return "text-[#F2C940]";
       } else {
-        return "text-red-600";
+        return "text-[#FB2A2A]";
       }
     },
     async comment(opportunityTask) {

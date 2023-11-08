@@ -186,7 +186,7 @@ class OpportunityController extends Controller
         // Obtiene los IDs de las etiquetas seleccionadas desde el formulario
         $tagIds = $request->input('tags', []);
         // Adjunta las etiquetas a la oportunidad utilizando la relación polimórfica
-        $opportunity->tags()->attach($tagIds);
+        $opportunity->tags()->sync($tagIds);
 
         return to_route('crm.opportunities.show', $opportunity->id);
     }
@@ -234,7 +234,7 @@ class OpportunityController extends Controller
         // Obtiene los IDs de las etiquetas seleccionadas desde el formulario
         $tagIds = $request->input('tags', []);
         // Adjunta las etiquetas a la oportunidad utilizando la relación polimórfica
-        $opportunity->tags()->attach($tagIds);
+        $opportunity->tags()->sync($tagIds);
 
         // archivos adjuntos
         $opportunity->addAllMediaFromRequest()->each(fn ($file) => $file->toMediaCollection());

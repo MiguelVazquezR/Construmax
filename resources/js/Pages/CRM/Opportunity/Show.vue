@@ -4,37 +4,25 @@
       <div class="flex justify-between text-lg mx-2 lg:mx-14 mt-11">
         <span>Oportunidades</span>
         <Link :href="route('crm.opportunities.index')">
-          <p class="flex items-center text-sm text-primary">
-            <i class="fa-solid fa-arrow-left-long mr-2"></i>
-            <span>Regresar</span>
-          </p>
+        <p class="flex items-center text-sm text-primary">
+          <i class="fa-solid fa-arrow-left-long mr-2"></i>
+          <span>Regresar</span>
+        </p>
         </Link>
       </div>
       <div class="flex justify-between mt-5 mx-2 lg:mx-14">
         <div class="md:w-full mr-2 flex items-center">
-          <el-select
-            v-model="selectedOpportunity"
-            clearable
-            filterable
-            placeholder="Buscar proyecto"
-            class="w-1/2 mr-4"
-            no-data-text="No hay clientes registrados"
-            no-match-text="No se encontraron coincidencias"
-          >
-            <el-option
-              v-for="item in opportunities.data"
-              :key="item.id"
-              :label="item.name"
-              :value="item.id"
-            />
+          <el-select v-model="selectedOpportunity" clearable filterable placeholder="Buscar proyecto" class="w-1/2 mr-4"
+            no-data-text="No hay clientes registrados" no-match-text="No se encontraron coincidencias">
+            <el-option v-for="item in opportunities.data" :key="item.id" :label="item.name" :value="item.id" />
           </el-select>
         </div>
         <div class="flex items-center space-x-2">
           <Dropdown align="right" width="48" v-if="$page.props.auth.user.permissions?.includes(
             'Eliminar oportunidades'
-          ) || $page.props.auth.user.permissions?.includes('Registrar pagos en seguimiento integral') 
-          || $page.props.auth.user.permissions?.includes('Agendar citas en seguimiento integral') 
-          || $page.props.auth.user.permissions?.includes('Enviar correos en seguimiento integral') 
+          ) || $page.props.auth.user.permissions?.includes('Registrar pagos en seguimiento integral')
+            || $page.props.auth.user.permissions?.includes('Agendar citas en seguimiento integral')
+            || $page.props.auth.user.permissions?.includes('Enviar correos en seguimiento integral')
             ">
             <template #trigger>
               <button v-if="currentTab == 3" class="h-9 px-3 rounded-lg bg-[#D9D9D9] flex items-center text-sm">
@@ -57,20 +45,18 @@
             </template>
           </Dropdown>
           <div class="flex items-center">
-            <el-tooltip v-if="$page.props.auth.user.permissions?.includes('Crear oportunidades') && currentTab == 1 "
+            <el-tooltip v-if="$page.props.auth.user.permissions?.includes('Crear oportunidades') && currentTab == 1"
               content="Crear oportunidad" placement="top">
               <Link :href="route('crm.opportunities.create')">
               <PrimaryButton class="rounded-md w-[166px]">Nueva oportunidad</PrimaryButton>
               </Link>
             </el-tooltip>
-              <Link v-if="currentTab == 1" :href="route('crm.opportunities.edit', selectedOpportunity)">
-              <i
-                class="fa-solid fa-pencil ml-3 text-primary rounded-full p-2 bg-[#FEDBBD] cursor-pointer"
-              ></i>
+            <Link v-if="currentTab == 1" :href="route('crm.opportunities.edit', selectedOpportunity)">
+            <i class="fa-solid fa-pencil ml-3 text-primary rounded-full p-2 bg-[#FEDBBD] cursor-pointer"></i>
             </Link>
-            <i v-if="this.$page.props.auth.user.permissions.includes('Eliminar oportunidades') && currentTab == 1" 
-                @click="showConfirmModal = true"
-                class="fa-regular fa-trash-can ml-3 text-primary rounded-full p-2 bg-[#FEDBBD] cursor-pointer"></i>
+            <i v-if="this.$page.props.auth.user.permissions.includes('Eliminar oportunidades') && currentTab == 1"
+              @click="showConfirmModal = true"
+              class="fa-regular fa-trash-can ml-3 text-primary rounded-full p-2 bg-[#FEDBBD] cursor-pointer"></i>
           </div>
           <el-tooltip v-if="currentTab == 2 || toBool(authUserPermissions[0])" content="Crear actividad en la oportunidad"
             placement="top">
@@ -102,25 +88,15 @@
     <!-- ------------- tabs section starts ------------- -->
     <div class="border-y-2 border-[#cccccc] flex justify-between items-center py-2">
       <div class="flex">
-        <Tab
-          @click="currentTab = index + 1"
-          :label="tab"
-          :active="currentTab == index + 1"
-          v-for="(tab, index) in tabs"
-          :key="index"
-        />
+        <Tab @click="currentTab = index + 1" :label="tab" :active="currentTab == index + 1" v-for="(tab, index) in tabs"
+          :key="index" />
       </div>
     </div>
     <!-- ------------- tabs section ends ------------- -->
 
     <!-- ------------- Informacion general Starts 1 ------------- -->
-    <div
-      v-if="currentTab == 1"
-      class="md:grid grid-cols-2 border-b-2 border-[#cccccc] text-sm"
-    >
-      <div
-        class="grid grid-cols-2 text-left p-4 md:ml-10 border-r-2 border-gray-[#cccccc] items-center"
-      >
+    <div v-if="currentTab == 1" class="md:grid grid-cols-2 border-b-2 border-[#cccccc] text-sm">
+      <div class="grid grid-cols-2 text-left p-4 md:ml-10 border-r-2 border-gray-[#cccccc] items-center">
         <p class="text-secondary col-span-2 mb-2">Información de la oportunidad</p>
 
         <span class="text-gray-500">Folio</span>
@@ -135,32 +111,15 @@
         <span>{{ currentOpportunity?.user?.name }}</span>
         <span class="text-gray-500 my-2">Responsable</span>
         <span>{{ currentOpportunity?.seller?.name }}</span>
-        <!-- <span class="text-gray-500 my-2">Estatus</span>
-          <p :class="getStatusStyles()" class="rounded-full px-2 py-1 w-1/2 text-center">{{ currentOpportunity?.status }}</p> -->
         <span class="text-gray-500 my-2">Estatus</span>
-        <div class="flex items-center space-x-4 relative">
-          <!-- <i :class="getColorStatus()" class="fa-solid fa-circle absolute -left-3 top-4"></i> -->
-          <el-select
-            @change="
-              status == 'Perdida' ? (showLostOpportunityModal = true) : updateStatus()
-            "
-            class="lg:w-1/2 mt-2"
-            v-model="status"
-            clearable
-            filterable
-            placeholder="Seleccionar estatus"
-            no-data-text="No hay estatus registrados"
-            no-match-text="No se encontraron coincidencias"
-          >
-            <el-option
-              v-for="item in statuses"
-              :key="item"
-              :label="item.label"
-              :value="item.label"
-            >
-              <span style="float: left"
-                ><i :class="item.color" class="fa-solid fa-circle"></i
-              ></span>
+        <div class="flex items-center relative">
+          <div :class="getColorStatus()" class="absolute -left-10 top-5 rounded-full w-3 h-3"></div>
+          <el-select @change="
+            status == 'Perdida' ? (showLostOpportunityModal = true) : updateStatus()
+            " class="lg:w-1/2 mt-2" v-model="status" clearable filterable placeholder="Seleccionar estatus"
+            no-data-text="No hay estatus registrados" no-match-text="No se encontraron coincidencias">
+            <el-option v-for="item in statuses" :key="item" :label="item.label" :value="item.label">
+              <span style="float: left"><i :class="item.color" class="fa-solid fa-circle"></i></span>
               <span style="float: center; margin-left: 5px; font-size: 13px">{{
                 item.label
               }}</span>
@@ -177,33 +136,26 @@
         <span>${{ currentOpportunity?.amount?.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",") }}</span>
         <span class="text-gray-500 my-2">Prioridad</span>
         <div class="relative">
+          <div :class="getColorPriority(currentOpportunity?.priority.label)" class="absolute -left-10 top-1 rounded-full w-3 h-3"></div>
           <span>{{ currentOpportunity?.priority.label }}</span>
-          <i :class="getColorPriority(currentOpportunity?.priority)" class="fa-solid fa-circle text-xs absolute -left-12 top-[2px]"></i>
         </div>
         <span v-if="currentOpportunity?.finished_at" class="text-gray-500 my-2">Cerrada el</span>
-        <span v-if="currentOpportunity?.finished_at" class="bg-green-300 py-1 px-2 rounded-full">{{ currentOpportunity?.finished_at }}</span>
+        <span v-if="currentOpportunity?.finished_at" class="bg-green-300 py-1 px-2 rounded-full">{{
+          currentOpportunity?.finished_at }}</span>
         <span v-if="currentOpportunity?.paid_at" class="text-gray-500 my-2">Pagado el</span>
-        <span v-if="currentOpportunity?.paid_at" class="bg-green-300 py-1 px-2 rounded-full">{{ currentOpportunity?.paid_at }}</span>
-        <span v-if="currentOpportunity?.lost_oportunity_razon" class="text-gray-500 my-2"
-          >Causa de pérdida</span
-        >
-        <span
-          class="bg-red-300 py-1 px-2 rounded-full"
-          v-if="currentOpportunity?.lost_oportunity_razon"
-          >{{ currentOpportunity?.lost_oportunity_razon }}</span
-        >
+        <span v-if="currentOpportunity?.paid_at" class="bg-green-300 py-1 px-2 rounded-full">{{
+          currentOpportunity?.paid_at }}</span>
+        <span v-if="currentOpportunity?.lost_oportunity_razon" class="text-gray-500 my-2">Causa de pérdida</span>
+        <span class="bg-red-300 py-1 px-2 rounded-full" v-if="currentOpportunity?.lost_oportunity_razon">{{
+          currentOpportunity?.lost_oportunity_razon }}</span>
       </div>
 
       <div class="grid grid-cols-2 text-left p-4 md:ml-10 items-center">
         <p class="text-secondary col-span-2 mb-2">Usuarios</p>
 
         <div v-if="uniqueAsignedNames">
-          <span
-            v-for="asignedName in uniqueAsignedNames"
-            :key="asignedName"
-            class="text-gray-500"
-            >{{ asignedName }}</span
-          >
+          <span v-for="asignedName in uniqueAsignedNames" :key="asignedName" class="text-gray-500">{{ asignedName
+          }}</span>
           <span>{{ currentOpportunity?.company_branch }}</span>
         </div>
         <p class="text-sm text-gray-400" v-else>
@@ -212,11 +164,8 @@
 
         <p class="text-secondary col-span-2 mb-2 mt-5">Archivos adjuntos</p>
         <div v-if="currentOpportunity?.media?.length">
-          <li
-            v-for="file in currentOpportunity?.media"
-            :key="file"
-            class="flex items-center justify-between col-span-full"
-          >
+          <li v-for="file in currentOpportunity?.media" :key="file"
+            class="flex items-center justify-between col-span-full">
             <a :href="file.original_url" target="_blank" class="flex items-center">
               <i :class="getFileTypeIcon(file.file_name)"></i>
               <span class="ml-2">{{ file.file_name }}</span>
@@ -230,32 +179,24 @@
 
         <p class="text-secondary col-span-full mt-7 mb-2">Etiquetas</p>
         <div class="col-span-full flex space-x-3">
-          <Tag
-            v-for="(item, index) in currentOpportunity?.tags"
-            :key="index"
-            :name="item.name"
-            :color="item.color"
-          />
+          <Tag v-for="(item, index) in currentOpportunity?.tags" :key="index" :name="item.name" :color="item.color" />
         </div>
 
         <div class="flex items-center justify-end space-x-2 col-span-2 mr-4">
-          <el-tooltip v-if="$page.props.auth.user.permissions?.includes('Agendar citas en seguimiento integral')" content="Agendar reunión" placement="top">
-            <i
-              @click="$inertia.get(route('crm.meeting-monitors.create'))"
-              class="fa-regular fa-calendar text-primary cursor-pointer text-lg px-3 border-r border-[#9a9a9a]"
-            ></i>
+          <el-tooltip v-if="$page.props.auth.user.permissions?.includes('Agendar citas en seguimiento integral')"
+            content="Agendar reunión" placement="top">
+            <i @click="$inertia.get(route('crm.meeting-monitors.create'))"
+              class="fa-regular fa-calendar text-primary cursor-pointer text-lg px-3 border-r border-[#9a9a9a]"></i>
           </el-tooltip>
-          <el-tooltip v-if="$page.props.auth.user.permissions?.includes('Registrar pagos en seguimiento integral')" content="Registrar pago" placement="top">
-            <i
-              @click="$inertia.get(route('crm.payment-monitors.create'))"
-              class="fa-solid fa-money-bill text-primary cursor-pointer text-lg px-3 border-r border-[#9a9a9a]"
-            ></i>
+          <el-tooltip v-if="$page.props.auth.user.permissions?.includes('Registrar pagos en seguimiento integral')"
+            content="Registrar pago" placement="top">
+            <i @click="$inertia.get(route('crm.payment-monitors.create'))"
+              class="fa-solid fa-money-bill text-primary cursor-pointer text-lg px-3 border-r border-[#9a9a9a]"></i>
           </el-tooltip>
-          <el-tooltip v-if="$page.props.auth.user.permissions?.includes('Enviar correos en seguimiento integral')" content="Enviar correo" placement="top">
-            <i
-              @click="$inertia.get(route('crm.email-monitors.create'))"
-              class="fa-regular fa-envelope text-primary cursor-pointer text-lg px-3"
-            ></i>
+          <el-tooltip v-if="$page.props.auth.user.permissions?.includes('Enviar correos en seguimiento integral')"
+            content="Enviar correo" placement="top">
+            <i @click="$inertia.get(route('crm.email-monitors.create'))"
+              class="fa-regular fa-envelope text-primary cursor-pointer text-lg px-3"></i>
           </el-tooltip>
         </div>
       </div>
@@ -270,16 +211,9 @@
         <h2 class="font-bold mb-10">
           TERMINAR HOY <span class="font-normal ml-7">{{ todayTasksList?.length }}</span>
         </h2>
-        <OpportunityTaskCard
-          @updated-opportunityTask="updateOpportunityTask"
-          @delete-task="deleteTask"
-          @task-done="markAsDone"
-          class="mb-3"
-          v-for="todayTask in todayTasksList"
-          :key="todayTask"
-          :opportunityTask="todayTask"
-          :users="currentOpportunity?.users"
-        />
+        <OpportunityTaskCard @updated-opportunityTask="updateOpportunityTask" @delete-task="deleteTask"
+          @task-done="markAsDone" class="mb-3" v-for="todayTask in todayTasksList" :key="todayTask"
+          :opportunityTask="todayTask" :users="currentOpportunity?.users" />
         <div class="text-center" v-if="!todayTasksList.length">
           <p class="text-xs text-gray-500">No hay tareas para mostrar</p>
           <i class="fa-regular fa-folder-open text-9xl text-gray-300/50 mt-16"></i>
@@ -292,16 +226,9 @@
           TERMINAR ESTA SEMANA
           <span class="font-normal ml-7">{{ thisWeekTasksList?.length }}</span>
         </h2>
-        <OpportunityTaskCard
-          @updated-opportunityTask="updateOpportunityTask"
-          @delete-task="deleteTask"
-          @task-done="markAsDone"
-          class="mb-3"
-          v-for="thisWeekTask in thisWeekTasksList"
-          :key="thisWeekTask"
-          :opportunityTask="thisWeekTask"
-          :users="currentOpportunity?.users"
-        />
+        <OpportunityTaskCard @updated-opportunityTask="updateOpportunityTask" @delete-task="deleteTask"
+          @task-done="markAsDone" class="mb-3" v-for="thisWeekTask in thisWeekTasksList" :key="thisWeekTask"
+          :opportunityTask="thisWeekTask" :users="currentOpportunity?.users" />
         <div class="text-center" v-if="!thisWeekTasksList.length">
           <p class="text-xs text-gray-500">No hay tareas para mostrar</p>
           <i class="fa-regular fa-folder-open text-9xl text-gray-300/50 mt-16"></i>
@@ -314,16 +241,9 @@
           ACTIVIDADES PROXIMAS
           <span class="font-normal ml-7">{{ nextTasksList?.length }}</span>
         </h2>
-        <OpportunityTaskCard
-          @updated-opportunityTask="updateOpportunityTask"
-          @delete-task="deleteTask"
-          @task-done="markAsDone"
-          class="mb-3"
-          v-for="nextTask in nextTasksList"
-          :key="nextTask"
-          :opportunityTask="nextTask"
-          :users="currentOpportunity?.users"
-        />
+        <OpportunityTaskCard @updated-opportunityTask="updateOpportunityTask" @delete-task="deleteTask"
+          @task-done="markAsDone" class="mb-3" v-for="nextTask in nextTasksList" :key="nextTask"
+          :opportunityTask="nextTask" :users="currentOpportunity?.users" />
         <div class="text-center" v-if="!nextTasksList?.length">
           <p class="text-xs text-gray-500">No hay tareas para mostrar</p>
           <i class="fa-regular fa-folder-open text-9xl text-gray-300/50 mt-16"></i>
@@ -335,16 +255,9 @@
         <h2 class="font-bold mb-10 first-letter ml-2">
           ATRASADAS <span class="font-normal ml-7">{{ lateTasksList.length }}</span>
         </h2>
-        <OpportunityTaskCard
-          @updated-opportunityTask="updateOpportunityTask"
-          @delete-task="deleteTask"
-          @task-done="markAsDone"
-          class="mb-3"
-          v-for="lateTask in lateTasksList"
-          :key="lateTask"
-          :opportunityTask="lateTask"
-          :users="currentOpportunity?.users"
-        />
+        <OpportunityTaskCard @updated-opportunityTask="updateOpportunityTask" @delete-task="deleteTask"
+          @task-done="markAsDone" class="mb-3" v-for="lateTask in lateTasksList" :key="lateTask"
+          :opportunityTask="lateTask" :users="currentOpportunity?.users" />
         <div class="text-center" v-if="!lateTasksList.length">
           <p class="text-xs text-gray-500">No hay tareas para mostrar</p>
           <i class="fa-regular fa-folder-open text-9xl text-gray-300/50 mt-16"></i>
@@ -356,16 +269,9 @@
         <h2 class="font-bold mb-10 first-letter ml-2">
           TERMINADAS <span class="font-normal ml-7">{{ finishedTasksList?.length }}</span>
         </h2>
-        <OpportunityTaskCard
-          @updated-opportunityTask="updateOpportunityTask"
-          @delete-task="deleteTask"
-          @task-done="markAsDone"
-          class="mb-3"
-          v-for="finishedTask in finishedTasksList"
-          :key="finishedTask"
-          :opportunityTask="finishedTask"
-          :users="currentOpportunity?.users"
-        />
+        <OpportunityTaskCard @updated-opportunityTask="updateOpportunityTask" @delete-task="deleteTask"
+          @task-done="markAsDone" class="mb-3" v-for="finishedTask in finishedTasksList" :key="finishedTask"
+          :opportunityTask="finishedTask" :users="currentOpportunity?.users" />
         <div class="text-center" v-if="!finishedTasksList.length">
           <p class="text-xs text-gray-500">No hay tareas para mostrar</p>
           <i class="fa-regular fa-folder-open text-9xl text-gray-300/50 mt-16"></i>
@@ -400,9 +306,9 @@
             </tr>
           </thead>
           <tbody>
-            <tr v-for="monitor in currentOpportunity?.clientMonitors" :key="monitor"
-              class="mb-4">
-              <td @click="showMonitorType(monitor)"  class="text-center py-2 px-2 rounded-l-full text-primary hover:underline cursor-pointer">
+            <tr v-for="monitor in currentOpportunity?.clientMonitors" :key="monitor" class="mb-4">
+              <td @click="showMonitorType(monitor)"
+                class="text-center py-2 px-2 rounded-l-full text-primary hover:underline cursor-pointer">
                 {{ monitor.folio }}
               </td>
               <td class="text-center py-2 px-2">
@@ -414,7 +320,8 @@
               <td class="text-center py-2 px-2">
                 {{ monitor.concept }}
               </td>
-              <td @click="$inertia.get(route('users.show', monitor.seller?.id))" class="text-center py-2 px-2 text-primary hover:underline cursor-pointer">
+              <td @click="$inertia.get(route('users.show', monitor.seller?.id))"
+                class="text-center py-2 px-2 text-primary hover:underline cursor-pointer">
                 {{ monitor.seller?.name }}
               </td>
               <td v-if="$page.props.auth.user.permissions.includes('Eliminar seguimiento integral')"
@@ -422,7 +329,8 @@
                 <el-popconfirm confirm-button-text="Si" cancel-button-text="No" icon-color="#D90537" title="¿Eliminar?"
                   @confirm="deleteClientMonitor(monitor)">
                   <template #reference>
-                    <i class="fa-regular fa-trash-can text-primary hover:bg-[#FEDBBD] rounded-full cursor-pointer p-2"></i>
+                    <i
+                      class="fa-regular fa-trash-can text-primary hover:bg-[#FEDBBD] rounded-full cursor-pointer p-2"></i>
                   </template>
                 </el-popconfirm>
               </td>
@@ -441,9 +349,10 @@
       <div v-if="currentOpportunity?.activities?.length">
         <ul>
           <li class="mb-1" v-for="(activity, index) in currentOpportunity?.activities" :key="index">
-            <span class="mr-2">{{ index + 1 }}.</span> 
-            <span @click="$inertia.get(route('users.show', activity.user.id))" class="text-primary hover:underline cursor-pointer mr-2">{{ activity.user.name}}</span>
-            <span>{{ activity.description}} el {{ activity.created_at }}</span>
+            <span class="mr-2">{{ index + 1 }}.</span>
+            <span @click="$inertia.get(route('users.show', activity.user.id))"
+              class="text-primary hover:underline cursor-pointer mr-2">{{ activity.user.name }}</span>
+            <span>{{ activity.description }} el {{ activity.created_at }}</span>
           </li>
         </ul>
       </div>
@@ -520,9 +429,7 @@
       <template #content> ¿Continuar con la eliminación? </template>
       <template #footer>
         <div>
-          <CancelButton @click="showConfirmModal = false" class="mr-2"
-            >Cancelar</CancelButton
-          >
+          <CancelButton @click="showConfirmModal = false" class="mr-2">Cancelar</CancelButton>
           <PrimaryButton @click="deleteItem">Eliminar</PrimaryButton>
         </div>
       </template>
@@ -531,20 +438,12 @@
     <Modal :show="showLostOpportunityModal" @close="showLostOpportunityModal = false">
       <div class="mx-7 my-4 space-y-4 relative">
         <div>
-          <label
-            >Causa oportunidad perdida
-            <el-tooltip
-              content="Escribe la causa por la cual se PERDIÓ esta oportunidad"
-              placement="top"
-            >
+          <label>Causa oportunidad perdida
+            <el-tooltip content="Escribe la causa por la cual se PERDIÓ esta oportunidad" placement="top">
               <i class="fa-regular fa-circle-question ml-2 text-primary text-xs"></i>
             </el-tooltip>
           </label>
-          <textarea
-            v-model="lost_oportunity_razon"
-            required
-            class="input h-24 mt-3"
-          ></textarea>
+          <textarea v-model="lost_oportunity_razon" required class="input h-24 mt-3"></textarea>
         </div>
         <div class="flex justify-end space-x-3 pt-5 pb-1">
           <PrimaryButton @click="updateStatus">Actualizar estatus</PrimaryButton>
@@ -594,7 +493,7 @@ export default {
       statuses: [
         {
           label: "Nueva",
-          color: "text-[#9A9A9A]",
+          color: "text-[#f2f2f2]",
         },
         {
           label: "Pendiente",
@@ -643,7 +542,7 @@ export default {
         this.$inertia.get(route('crm.meeting-monitors.show', monitor.meetingMonitor?.id));
       }
     },
-     async deleteClientMonitor(monitor) {
+    async deleteClientMonitor(monitor) {
       try {
         const response = await axios.delete(route('crm.client-monitors.destroy', monitor.id));
 
@@ -693,7 +592,7 @@ export default {
           if (index !== -1) {
             this.currentOpportunity.opportunityTasks.splice(index, 1);
           }
-            this.currentOpportunity.activities = response.data.item.activities;
+          this.currentOpportunity.activities = response.data.item.activities;
         }
       } catch (error) {
         console.log(error);
@@ -748,14 +647,15 @@ export default {
       }
     },
     getColorPriority(priority) {
-      if (priority === "Baja") {
-        return "text-[#87CEEB]";
-      } else if (priority === "Media") {
-        return "text-[#D97705]";
-      } else if (priority === "Alta") {
-        return "text-[#D90537]";
+      
+      if (priority == "Baja") {
+        return "bg-[#87CEEB]";
+      } else if (priority == "Media") {
+        return "bg-[#F2C940]";
+      } else if (priority == "Alta") {
+        return "bg-[#FB2A2A]";
       } else {
-        return "text-transparent";
+        return "bg-transparent";
       }
     },
     getFileTypeIcon(fileName) {
@@ -844,7 +744,7 @@ export default {
       }
     },
     todayTasksList() {
-       return (this.todayTasksList = this.currentOpportunity.opportunityTasks?.filter(
+      return (this.todayTasksList = this.currentOpportunity.opportunityTasks?.filter(
         (opportunity) =>
           opportunity.deadline_status === "Terminar hoy" && !opportunity.finished_at
       ));

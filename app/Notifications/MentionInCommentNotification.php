@@ -32,9 +32,9 @@ class MentionInCommentNotification extends Notification
     {
         return (new MailMessage)
             ->subject('Mención en comentario')
-            ->markdown('emails.mention-in-comment', [
+            ->markdown('emails.default-template', [
                 'greeting' => '¡Hola!',
-                'intro' => "<span class='text-primary'>$this->user_name</span> te mencionó en un comentario de la $this->concept_type <span class='text-primary'>{$this->concept_name}</span>",
+                'intro' => "$this->user_name te mencionó en un comentario de la $this->concept_type {$this->concept_name}",
                 'url' => $this->url,
                 'salutation' => 'Saludos,',
             ]);

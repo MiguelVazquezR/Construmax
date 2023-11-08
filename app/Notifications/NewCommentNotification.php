@@ -24,7 +24,7 @@ class NewCommentNotification extends Notification
         if (app()->environment() === 'local') {
             return ['database'];
         } else {
-            return ['mail', 'database'];
+            return ['database'];
         }
     }
 
@@ -32,9 +32,9 @@ class NewCommentNotification extends Notification
     {
         return (new MailMessage)
             ->subject('Nuevo comentario')
-            ->markdown('emails.new-comment', [
+            ->markdown('emails.default-template', [
                 'greeting' => '¡Hola!',
-                'intro' => "<span class='text-primary'>$this->user_name</span> hizo un comentario en la $this->concept_type <span class='text-primary'>{$this->concept_name}</span>",
+                'intro' => "$this->user_name hizo un comentario en la $this->concept_type {$this->concept_name}",
                 'url' => $this->url,
                 'salutation' => 'Saludos,',
             ]);

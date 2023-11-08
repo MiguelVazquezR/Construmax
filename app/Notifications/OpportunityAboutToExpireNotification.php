@@ -32,9 +32,9 @@ class OpportunityAboutToExpireNotification extends Notification
     {
         return (new MailMessage)
             ->subject('Oportunidad por expirar')
-            ->markdown('emails.opportunity-about-to-expire', [
+            ->markdown('emails.default-template', [
                 'greeting' => '¡Hola!',
-                'intro' => "Hoy es el día límite para terminar la oportunidad <span class='text-primary'>{$this->opportunity->name}</span>",
+                'intro' => "Hoy es el día límite para terminar la oportunidad {$this->opportunity->name}",
                 'url' => route('crm.opportunities.show', $this->opportunity->id),
                 'salutation' => 'Saludos,',
             ]);

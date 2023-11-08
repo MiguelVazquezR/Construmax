@@ -32,9 +32,9 @@ class TaskAboutToExpireNotification extends Notification
     {
         return (new MailMessage)
             ->subject('Tarea por expirar')
-            ->markdown('emails.task-about-to-expire', [
+            ->markdown('emails.default-template', [
                 'greeting' => '¡Hola!',
-                'intro' => "Hoy es el día límite para terminar la tarea <span class='text-primary'>{$this->task->name}</span>",
+                'intro' => "Hoy es el día límite para terminar la tarea '{$this->task->name}'",
                 'url' => route('pms.projects.show', ['project' => $this->task->project->id, 'defaultTab' => 2]),
                 'salutation' => 'Saludos,',
             ]);

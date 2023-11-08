@@ -32,9 +32,9 @@ class EventInvitationNotification extends Notification
     {
         return (new MailMessage)
             ->subject('Invitación a evento')
-            ->markdown('emails.event-invitation', [
+            ->markdown('emails.default-template', [
                 'greeting' => '¡Hola!',
-                'intro' => "<span class='text-primary'>$this->user_name</span> te ha invitado al evento <span class='text-primary'>{$this->calendar->title}</span>",
+                'intro' => "$this->user_name te ha invitado al evento {$this->calendar->title}",
                 'url' => route('calendars.index'),
                 'salutation' => 'Saludos,',
             ]);

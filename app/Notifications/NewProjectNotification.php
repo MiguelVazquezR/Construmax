@@ -24,7 +24,7 @@ class NewProjectNotification extends Notification
         if (app()->environment() === 'local') {
             return ['database'];
         } else {
-            return ['mail', 'database'];
+            return ['database'];
         }
     }
 
@@ -32,9 +32,9 @@ class NewProjectNotification extends Notification
     {
         return (new MailMessage)
             ->subject('Nuevo proyecto')
-            ->markdown('emails.new-project', [
+            ->markdown('emails.default-template', [
                 'greeting' => '¡Hola!',
-                'intro' => "Eres participante en un nuevo proyecto llamado <span class='text-primary'>{$this->project->name}</span> creado por <span class='text-primary'>$this->user_name</span>",
+                'intro' => "Eres participante en un nuevo proyecto llamado '{$this->project->name}', creado por <span class='text-primary'>$this->user_name</span>",
                 'url' => route('pms.projects.show', $this->project->id),
                 'salutation' => 'Saludos,',
             ]);

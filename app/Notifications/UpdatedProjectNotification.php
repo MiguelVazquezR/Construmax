@@ -24,7 +24,7 @@ class UpdatedProjectNotification extends Notification
         if (app()->environment() === 'local') {
             return ['database'];
         } else {
-            return ['mail', 'database'];
+            return ['database'];
         }
     }
 
@@ -32,9 +32,9 @@ class UpdatedProjectNotification extends Notification
     {
         return (new MailMessage)
             ->subject('Proyecto editado')
-            ->markdown('emails.updated-project', [
+            ->markdown('emails.default-template', [
                 'greeting' => '¡Hola!',
-                'intro' => "<span class='text-primary'>$this->user_name</span> ha editado el proyecto <span class='text-primary'>{$this->project->name}</span>, ve a revisar los cambios",
+                'intro' => "$this->user_name ha editado el proyecto '{$this->project->name}', ve a revisar los cambios",
                 'url' => route('pms.projects.show', $this->project->id),
                 'salutation' => 'Saludos,',
             ]);

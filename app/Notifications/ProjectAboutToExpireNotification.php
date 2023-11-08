@@ -32,9 +32,9 @@ class ProjectAboutToExpireNotification extends Notification
     {
         return (new MailMessage)
             ->subject('Proyecto por expirar')
-            ->markdown('emails.project-about-to-expire', [
+            ->markdown('emails.default-template', [
                 'greeting' => '¡Hola!',
-                'intro' => "Hoy es el día límite para terminar el proyecto <span class='text-primary'>{$this->project->name}</span>",
+                'intro' => "Hoy es el día límite para terminar el proyecto {$this->project->name}",
                 'url' => route('pms.projects.show', $this->project->id),
                 'salutation' => 'Saludos,',
             ]);

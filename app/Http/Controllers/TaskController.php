@@ -7,6 +7,9 @@ use App\Models\Comment;
 use App\Models\Project;
 use App\Models\Task;
 use App\Models\User;
+use App\Notifications\AssignedTaskNotification;
+use App\Notifications\MentionInCommentNotification;
+use App\Notifications\NewCommentNotification;
 use Illuminate\Validation\Rule;
 use Illuminate\Http\Request;
 
@@ -44,6 +47,11 @@ class TaskController extends Controller
         foreach ($request->participants as $user_id) {
             // Adjuntar el usuario a la tarea
             $task->users()->attach($user_id);
+            // notificar a usuarios que no sean el que crea la tarea
+            $user = User::find($user_id);
+            if ($user->id !== auth()->id()) {
+                $user->notify(new AssignedTaskNotification($task));
+            }
         }
 
         $task->addAllMediaFromRequest('media')->each(fn ($file) => $file->toMediaCollection());
@@ -68,7 +76,6 @@ class TaskController extends Controller
 
     public function update(Request $request, Task $task)
     {
-        // return $request->priority;
         $validated = $request->validate([
             'status' => 'required|string',
             'description' => 'required',
@@ -112,6 +119,20 @@ class TaskController extends Controller
         ]);
         $task->comments()->save($comment);
 
+        // notificar a usuarios participantes
+        foreach ($task->users as $user) {
+            if ($user->id !== auth()->id()) {
+                $user->notify(new NewCommentNotification('Tarea', $task->name, 'projects', route('pms.tasks.show', $task)));
+            }
+        }
+
+        // notificat a mencionados 
+        $mentions = $request->mentions;
+        foreach ($mentions as $mention) {
+            $user = User::find($mention['id']);
+            $user->notify(new MentionInCommentNotification('Tarea', $task->name, 'projects', route('pms.tasks.show', $task)));
+        }
+        
         return response()->json(['item' => $comment->fresh('user')]);
     }
 

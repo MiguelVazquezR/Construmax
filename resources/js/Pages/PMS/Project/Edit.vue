@@ -455,6 +455,10 @@ export default {
 
   },
   methods: {
+    toBool(value) {
+      if (value == 1 || value == true) return true;
+      return false;
+    },
     getFileTypeIcon(fileName) {
       // Asocia extensiones de archivo a iconos
       const fileExtension = fileName.split('.').pop().toLowerCase();
@@ -685,12 +689,13 @@ export default {
 
     // inicializar permisos
     this.project.users.forEach(user => {
+      const permissions = JSON.parse(user.pivot.permissions).map(item => this.toBool(item));
       const participant = {
         id: user.id,
         name: user.name,
         profile_photo_url: user.profile_photo_url,
         employee_properties: user.employee_properties,
-        permissions: JSON.parse(user.pivot.permissions),
+        permissions: permissions,
       };
       this.form.selectedUsersToPermissions.push(participant);
     });

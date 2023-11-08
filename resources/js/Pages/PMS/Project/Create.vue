@@ -24,15 +24,11 @@
         <InputError :message="form.errors.service_type" />
       </div>
       <div>
-        <InputLabel value="Fecha de inicio *" class="ml-2" />
-        <el-date-picker v-model="form.start_date" type="date" placeholder="Inicio *" format="YYYY/MM/DD"
-          value-format="YYYY-MM-DD" />
+        <InputLabel value="Duración *" class="ml-2" />
+        <el-date-picker @change="handleDateRange" v-model="range" type="daterange" range-separator="A"
+          start-placeholder="Fecha de inicio" end-placeholder="Fecha límite" value-format="YYYY-MM-DD"
+          :disabled-date="disabledStartOrLimitDate" />
         <InputError :message="form.errors.start_date" />
-      </div>
-      <div>
-        <InputLabel value="Fecha de límite *" class="ml-2" />
-        <el-date-picker v-model="form.limit_date" type="date" placeholder="Límite *" format="YYYY/MM/DD"
-          value-format="YYYY-MM-DD" />
         <InputError :message="form.errors.limit_date" />
       </div>
       <div>
@@ -359,6 +355,7 @@ import Tag from "@/Components/MyComponents/Tag.vue";
 import FileUploader from "@/Components/MyComponents/FileUploader.vue";
 import { Link, useForm } from "@inertiajs/vue3";
 import axios from "axios";
+import { isSameDay, parseISO } from "date-fns";
 //   import Pagination from "@/Components/MyComponents/Pagination.vue";
 
 export default {
@@ -401,6 +398,7 @@ export default {
       showGroupFormModal: false,
       showTagFormModal: false,
       editAccesFlag: true,
+      range: null,
       typeAccessProject: "Private",
       search: "",
       inputSearch: "",
@@ -454,6 +452,19 @@ export default {
   },
   computed: {},
   methods: {
+    handleDateRange(range) {
+      this.form.start_date = range[0];
+      this.form.limit_date = range[1];
+
+      const date1 = parseISO(range[0]);
+      const date2 = parseISO(range[1]);
+
+      // Compara si son del mismo día
+      if (isSameDay(date1, date2)) {
+        this.canSelectTime = true;
+      }
+
+    },
     updateContacts() {
       const selectedCustomer = this.customers.find(
         (item) => item.id === this.form.customer_id

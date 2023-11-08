@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\NotificationResource;
 use App\Http\Resources\UserResource;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -73,7 +74,7 @@ class UserController extends Controller
 
     public function getNotifications()
     {
-        $items = auth()->user()->notifications;
+        $items = NotificationResource::collection(auth()->user()->notifications);
 
         return response()->json(compact('items'));
     }

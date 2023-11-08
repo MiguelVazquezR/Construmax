@@ -10,6 +10,8 @@ use App\Models\Project;
 use App\Models\ProjectGroup;
 use App\Models\Tag;
 use App\Models\User;
+use App\Notifications\NewProjectNotification;
+use App\Notifications\UpdatedProjectNotification;
 use Illuminate\Validation\Rule;
 use Illuminate\Http\Request;
 
@@ -60,10 +62,16 @@ class ProjectController extends Controller
 
         // permisos
         foreach ($request->selectedUsersToPermissions as $user) {
+            $user = User::find($user['id']);
             $allowedUser = [
                 "permissions" => json_encode($user['permissions']), // Serializa los permisos en formato JSON
             ];
             $project->users()->attach($user['id'], $allowedUser);
+
+            // notificar a usuarios que no sean el que crea el proyecto
+            if ($user->id !== auth()->id()) {
+                $user->notify(new NewProjectNotification($project));
+            }
         }
 
         // etiquetas
@@ -135,6 +143,12 @@ class ProjectController extends Controller
                 "permissions" => json_encode($user['permissions']), // Serializa los permisos en formato JSON
             ];
             $project->users()->attach($user['id'], $allowedUser);
+
+            // notificar a usuarios que no sean el que edita el proyecto
+            $user = User::find($user['id']);
+            if ($user->id !== auth()->id()) {
+                $user->notify(new UpdatedProjectNotification($project));
+            }
         }
 
         // etiquetas

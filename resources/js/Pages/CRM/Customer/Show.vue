@@ -167,7 +167,7 @@ export default {
                 'Información general',
                 'Oportunidades',
                 'Seguimiento integral',
-                'Historial',
+                // 'Historial',
             ],
         }
     },

@@ -2,7 +2,7 @@
 <div class="overflow-x-auto">
     <table class="w-full mx-auto">
         <thead>
-          <tr class="text-center">
+          <tr class="text-left">
             <th class="font-bold pb-5">
               Folio <i class="fa-solid fa-arrow-down-long ml-3 px-14 lg:px-2"></i>
             </th>
@@ -25,25 +25,25 @@
             class="mb-4 cursor-pointer hover:bg-[#FEDBBD]"
             @click="showMonitorType(monitor)"
           >
-            <td class="text-center text-secondary py-2 px-2 rounded-l-full">
+            <td class="text-left text-secondary py-2 px-2 rounded-l-full">
               {{ monitor.folio }}
             </td>
-            <td class="text-center py-2 px-2 ">
+            <td class="text-left py-2 px-2 ">
               {{ monitor.type }}
             </td>
-            <td class="text-center py-2 px-2">
+            <td class="text-left py-2 px-2">
               <span
-                class="py-1 px-4 rounded-full"
+                class="py-1 rounded-full"
                 >{{ monitor.date }}</span
               >
             </td>
-            <td class="text-center py-2 px-2">
+            <td class="text-left py-2 px-2">
               <span
                 class="py-1 px-2"
                 >{{ monitor.concept}}</span
               >
             </td>
-            <td class="text-center py-2 px-2 rounded-r-full">
+            <td class="text-left py-2 px-2 rounded-r-full">
               {{ monitor.seller?.name }}
             </td>
           </tr>

@@ -5,12 +5,14 @@ namespace App\Http\Controllers;
 use App\Http\Resources\CustomerResource;
 use App\Http\Resources\EmailMonitorResource;
 use App\Http\Resources\OpportunityResource;
+use App\Mail\EmailMonitorTemplateMail;
 use App\Models\ClientMonitor;
 use App\Models\Customer;
 use App\Models\EmailMonitor;
 use App\Models\Opportunity;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 
 class EmailMonitorController extends Controller
 {
@@ -59,10 +61,10 @@ class EmailMonitorController extends Controller
         $email_monitor->client_monitor_id = $client_monitor->id;
         $email_monitor->save();
 
-        // // enviar correo a contacto
-        // if (app()->environment() == 'production') {
-        //     Mail::to($request->contact_email)->send(new EmailMonitorTemplateMail($request->subject, $request->content));
-        // }
+        // enviar correo a contacto
+        if (app()->environment() == 'production' && $request->send_mail) {
+            Mail::to($request->contact_email)->send(new EmailMonitorTemplateMail($request->subject, $request->content));
+        }
 
         return to_route('crm.client-monitors.index');
     }

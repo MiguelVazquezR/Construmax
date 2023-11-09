@@ -82,7 +82,7 @@
             <div class="text-left px-10 py-4 border-l-2 border-gray-[#cccccc]">
                 <p class="text-secondary col-span-full mb-2 font-bold">Contacto (s)</p>
                 <div v-for="(item, index) in currentCustomer?.contacts" :key="index" class="bg-[#f2f2f2] rounded-[3px] p-5 mb-5">
-                    <h2 class="font-bold text-sm mb-2">Contacto {{ (index + 1) }}</h2>
+                    <h2 class="font-bold text-xs mb-2">Contacto {{ (index + 1) }}</h2>
                     <div class="grid grid-cols-3 gap-x-3 gap-y-2 text-xs">
                         <span>Nombre</span>
                         <span class="col-span-2">{{ item.name }}</span>

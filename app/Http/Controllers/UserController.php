@@ -25,17 +25,24 @@ class UserController extends Controller
 
     public function store(Request $request)
     {
+        // dd($request->hasFile('photo'));
         $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|string|max:255|unique:users',
             'employee_properties.department' => 'required|string|max:255',
             'employee_properties.position' => 'required|string|max:255',
             'employee_properties.phone' => 'required|string|max:15',
-            'roles' => 'required|array|min:1',
+            // 'roles' => 'required|array|min:1',
+            'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
         $user = User::create($request->all() + ['password' => bcrypt('Construmax123')]);
         $user->syncRoles($request->roles);
+
+        // guardar foto de perfil en caso de haberse seleccionado una
+        if ($request->hasFile('photo')) {
+            $this->storeProfilePhoto($request, $user);
+        }
 
         return to_route('users.show', $user->id);
     }
@@ -59,11 +66,12 @@ class UserController extends Controller
     {
         $request->validate([
             'name' => 'required|string|max:255',
-            'email' => 'required|string|max:255|unique:users,email,'.$user->id,
+            'email' => 'required|string|max:255|unique:users,email,' . $user->id,
             'employee_properties.department' => 'required|string|max:255',
             'employee_properties.position' => 'required|string|max:255',
             'employee_properties.phone' => 'required|string|max:15',
             'roles' => 'required|array|min:1',
+            'photo' => 'image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
         $user->update($request->all());
@@ -100,7 +108,7 @@ class UserController extends Controller
 
         return to_route('users.show', $user->id);
     }
-    
+
     public function destroy(User $user)
     {
         $user->delete();
@@ -113,5 +121,16 @@ class UserController extends Controller
         $pendent = auth()->user()->tasks()->whereIn('status', ['Por hacer', 'En curso'])->get();
 
         return response()->json(['items' => $pendent]);
+    }
+
+    public function storeProfilePhoto($request, User $user)
+    {
+        // Guarda la imagen en el sistema de archivos.
+        $path = $request->file('photo')->store('public/profile-photos');
+
+        // Actualiza la propiedad 'profile_photo_path' del usuario actual.
+        $user->update([
+            'profile_photo_path' => $path,
+        ]);
     }
 }

@@ -1,5 +1,5 @@
 <template>
-<div class="overflow-x-auto">
+<div class="overflow-x-auto text-sm">
   <table class="w-full mx-auto">
         <thead>
           <tr class="text-left">
@@ -34,12 +34,12 @@
             <td class="text-left text-secondary py-2 px-2 rounded-l-full">
               {{ opportunity.folio }}
             </td>
-            <td class="text-left py-2 px-2 ">
+            <td class="text-left py-2 px-2 max-w-[150px] truncate pr-1">
               {{ opportunity.name }}
             </td>
             <td class="text-left py-2 px-2">
               <span
-                class="py-1 px-4 rounded-full"
+                class="py-1 px-4 rounded-full border border-white"
                 :class="getStatusStyles(opportunity)"
                 >{{ opportunity.status }}</span
               >

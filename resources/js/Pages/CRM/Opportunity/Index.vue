@@ -249,6 +249,22 @@
         </div>
       </div>
     </Modal>
+
+    <ConfirmationModal :show="showConfirmModal" @close="showConfirmModal = false">
+      <template #title>
+        Eliminar proyecto
+      </template>
+      <template #content>
+        Al eliminar la oportunidad se perderán permanentemente las actividades y los archivos relacionados, así como el
+        proyecto relacionado si es que se creó uno. ¿Deseas continuar?
+      </template>
+      <template #footer>
+        <div class="flex space-x-1">
+          <CancelButton @click="showConfirmModal = false">Cancelar</CancelButton>
+          <PrimaryButton @click="deleteProject()">Eliminar</PrimaryButton>
+        </div>
+      </template>
+    </ConfirmationModal>
   </AppLayout>
 </template>
 <script>
@@ -256,9 +272,11 @@ import AppLayout from "@/Layouts/AppLayout.vue";
 import Dropdown from "@/Components/Dropdown.vue";
 import DropdownLink from "@/Components/DropdownLink.vue";
 import PrimaryButton from "@/Components/PrimaryButton.vue";
+import CancelButton from "@/Components/CancelButton.vue";
 import OpportunityCard from "@/Components/MyComponents/CRM/OpportunityCard.vue";
 import SecondaryButton from "@/Components/SecondaryButton.vue";
 import Modal from "@/Components/Modal.vue";
+import ConfirmationModal from "@/Components/ConfirmationModal.vue";
 import draggable from "vuedraggable";
 import { Link } from "@inertiajs/vue3";
 
@@ -284,6 +302,8 @@ export default {
       drag: false,
       draggingOpportunityId: null,
       opportunitiesLocal: null,
+      showConfirmModal: false,
+      projectToDelete: null,
     };
   },
   components: {
@@ -291,10 +311,12 @@ export default {
     Dropdown,
     DropdownLink,
     PrimaryButton,
+    CancelButton,
     SecondaryButton,
     OpportunityCard,
     draggable,
     Modal,
+    ConfirmationModal,
     Link,
   },
   props: {

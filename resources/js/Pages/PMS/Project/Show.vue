@@ -304,7 +304,7 @@ export default {
         Tag,
     },
     props: {
-        projects: Object,
+        projects: Array,
         project: Object,
         users: Array,
         defaultTab: Number,

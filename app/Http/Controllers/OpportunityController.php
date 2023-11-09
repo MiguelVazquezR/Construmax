@@ -244,6 +244,21 @@ class OpportunityController extends Controller
 
     public function destroy(Opportunity $opportunity)
     {
+        // eliminar tareas y comentarios de proyectos
+        $tasks = $opportunity->project->tasks;
+        foreach ($tasks as $task) {
+            $task->comments()->delete();
+            $task->delete();
+        }
+        
+        // eliminar actividades y comentarios de oportunidad
+        $tasks = $opportunity->opportunityTasks;
+        foreach ($tasks as $task) {
+            $task->comments()->delete();
+            $task->delete();
+        }
+
+        // eliminar oportunidad
         $opportunity->delete();
 
         return to_route('crm.opportunities.index');

@@ -26,7 +26,7 @@ class ProjectController extends Controller
 
     public function create()
     {
-        $customers = Customer::with(['opportunities', 'contacts'])->get();
+        $customers = Customer::with(['opportunities.project', 'contacts'])->get();
         $project_groups = ProjectGroupResource::collection(ProjectGroup::all());
         $tags = TagResource::collection(Tag::where('type', 'projects')->get());
         $users = User::whereNotIn('id', [1])->where('is_active', true)->get();
@@ -219,6 +219,16 @@ class ProjectController extends Controller
 
     public function destroy(Project $project)
     {
-        //
+        // eliminar tareas y comentarios
+        $tasks = $project->tasks;
+        foreach ($tasks as $task) {
+            $task->comments()->delete();
+            $task->delete();
+        }
+
+        // eliminar proyecto
+        $project->delete();
+
+        return to_route('pms.projects.index');
     }
 }

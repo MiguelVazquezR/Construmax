@@ -218,5 +218,6 @@ return [
         'asigned_id' => 'asignado a',
         'meeting_date' => 'fecha de cita',
         'meeting_via' => 'vía de cita',
+        'photo' => 'foto',
     ],
 ]; 

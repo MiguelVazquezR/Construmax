@@ -66,7 +66,7 @@
       <div class="mt-5 col-span-full w-[calc(50%-16px)]">
         <div class="flex justify-between items-center mx-2">
           <InputLabel value="Etiquetas" />
-          <button @click="showTagFormModal = true" type="button"
+          <button v-if="$page.props.auth.user.permissions?.includes('Crear etiquetas de proyectos')" @click="showTagFormModal = true" type="button"
             class="rounded-full border border-primary w-4 h-4 flex items-center justify-center">
             <i class="fa-solid fa-plus text-primary text-[9px]"></i>
           </button>
@@ -144,7 +144,7 @@
       <div v-if="!form.is_internal">
         <InputLabel value="OP *" class="ml-2" />
         <el-select v-model="form.opportunity_id" clearable placeholder="Seleccione" class="w-full mt-1"
-          no-data-text="No hay opciones para mostrar" no-match-text="No se encontraron coincidencias">
+          no-data-text="El cliente no tiene oportunidades disponibles o las que existen ya han sido asignadas a un proyecto" no-match-text="No se encontraron coincidencias">
           <el-option v-for="(item, index) in opportunities" :key="item.id" :label="item.name" :value="item.id" />
         </el-select>
         <InputError :message="form.errors.opportunity_id" />
@@ -402,7 +402,7 @@ export default {
       search: "",
       inputSearch: "",
       serviceTypes: [
-        "Iluminacón",
+        "Iluminación",
         "Herrería",
         "Acabados",
         "Eléctrico",
@@ -461,7 +461,7 @@ export default {
       );
 
       this.contacts = selectedCustomer ? selectedCustomer.contacts : [];
-      this.opportunities = selectedCustomer ? selectedCustomer.opportunities : [];
+      this.opportunities = selectedCustomer ? selectedCustomer.opportunities.filter(item => !item.project) : [];
     },
     updateBranches() {
       const selectedContact = this.contacts.find(

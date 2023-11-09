@@ -124,15 +124,10 @@
         <InputError :message="form.errors.priority" />
       </div>
       <div>
-        <InputLabel value="Fecha de inicio" class="ml-2" />
-        <el-date-picker v-model="form.start_date" type="date" :disabled="authUser?.id != task.data.user?.id && authUser?.id != task.data.project_owner?.id
-          " placeholder="Fecha de inicio *" format="YYYY/MM/DD" value-format="YYYY-MM-DD" />
+        <InputLabel value="Duración *" class="ml-2" />
+        <el-date-picker @change="handleDateRange" v-model="range" type="daterange" range-separator="A"
+          start-placeholder="Fecha de inicio" end-placeholder="Fecha límite" value-format="YYYY-MM-DD" />
         <InputError :message="form.errors.start_date" />
-      </div>
-      <div>
-        <InputLabel value="Fecha de final" class="ml-2" />
-        <el-date-picker v-model="form.limit_date" type="date" :disabled="authUser?.id != task.data.user?.id && authUser?.id != task.data.project_owner?.id
-          " placeholder="Fecha límite *" format="YYYY/MM/DD" value-format="YYYY-MM-DD" />
         <InputError :message="form.errors.limit_date" />
       </div>
       <!-- --------------------- currentTab -------------------- -->
@@ -145,7 +140,7 @@
           <div class="border-r-2 border-[#cccccc] h-7 ml-3"></div>
           <p @click="currentTab = 2" :class="currentTab == 2 ? 'border-b-2 border-primary text-primary' : ''"
             class="ml-3 h-8 p-1 cursor-pointer transition duration-300 ease-in-out text-xs md:text-base">
-            Documentos
+            Documentos ({{ task.data.media?.length }})
           </p>
         </div>
         <!-- -------------- Tab 1 comentarios starts ----------------->
@@ -259,6 +254,7 @@ export default {
       canEdit: false,
       showPauseModal: false,
       itemToShow: null,
+      range: null,
       pausaReazonValidation: null,
       pausaReazon: null,
       statuses: [
@@ -330,6 +326,10 @@ export default {
     },
   },
   methods: {
+    handleDateRange(range) {
+      this.form.start_date = range[0];
+      this.form.limit_date = range[1];
+    },
     handlePause() {
       if (!this.task.data.is_paused) {
         this.showPauseModal = true;
@@ -506,6 +506,9 @@ export default {
   mounted() {
     this.showStrictProjectMessage = this.task.data.project.is_strict;
     this.form.participants = this.task.data.users.map((user) => user?.id);
+
+    // inicializar fechas en range
+    this.range = [this.task.data.start_date_raw, this.task.data.limit_date_raw];
   },
 };
 </script>

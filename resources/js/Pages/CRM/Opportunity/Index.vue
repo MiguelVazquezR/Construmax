@@ -99,9 +99,9 @@
               closedTotal?.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",") ?? "0.00"
             }}
           </p>
-          <draggable @start="handleStartDrag" @add="handleAddDrag" @end="drag = false"
-            v-model="closedOpportunitiesLocal" :animation="300" item-key="id" tag="ul" group="oportunities"
-            id="closed" :class="drag && !closedOpportunitiesLocal?.length ? 'h-40' : ''">
+          <draggable @start="handleStartDrag" @add="handleAddDrag" @end="drag = false" v-model="closedOpportunitiesLocal"
+            :animation="300" item-key="id" tag="ul" group="oportunities" id="closed"
+            :class="drag && !closedOpportunitiesLocal?.length ? 'h-40' : ''">
             <template #item="{ element: opportunity }">
               <li>
                 <OpportunityCard class="my-3" :opportunity="opportunity" />
@@ -190,17 +190,15 @@
             </tr>
           </thead>
           <tbody>
-            <tr
-              v-for="opportunity in filteredTableData"
-              :key="opportunity.id"
+            <tr v-for="opportunity in filteredTableData" :key="opportunity.id"
               class="mb-4 cursor-pointer hover:bg-primarylight"
-              @click="$inertia.get(route('crm.opportunities.show', opportunity.id))"
-            >
+              @click="$inertia.get(route('crm.opportunities.show', opportunity.id))">
               <td :title="opportunity.name" class="text-left py-2 px-2 rounded-l-full max-w-[220px] truncate pr-2">
                 {{ opportunity.name }}
               </td>
               <td class="text-left py-2 px-2">
-                <span class="py-1 px-4 rounded-full border border-white" :class="getStatusStyles(opportunity)">{{ opportunity.status }}</span>
+                <span class="py-1 px-4 rounded-full border border-white" :class="getStatusStyles(opportunity)">{{
+                  opportunity.status }}</span>
               </td>
               <td class="text-left py-2 px-2">
                 <span class="py-1 px-2 rounded-full">{{
@@ -216,9 +214,9 @@
               <td class="text-left py-2 px-2">
                 {{ opportunity.paid_at ?? "--" }}
               </td>
-              <td v-if="$page.props.auth.user.permissions?.includes('Eliminar oportunidades') || true
-                " class="text-left py-2 px-2 rounded-r-full">
-                <el-popconfirm confirm-button-text="Si" cancel-button-text="No" icon-color="#D90537" title="¿Eliminar?"
+              <td v-if="$page.props.auth.user.permissions?.includes('Eliminar oportunidades')" @click.stop=""
+                class="text-left py-2 px-2 rounded-r-full">
+                <el-popconfirm confirm-button-text="Si" cancel-button-text="No" icon-color="#FD8827" title="¿Eliminar?"
                   @confirm="deleteOpportunity(opportunity)">
                   <template #reference>
                     <i @click.stop="" class="fa-regular fa-trash-can text-primary cursor-pointer p-2"></i>
@@ -235,24 +233,16 @@
     </div>
     <!-- ------------ Lista view ends ----------------- -->
 
-<!-- ------- lost modal -------- -->
-     <Modal :show="showLostOpportunityModal" @close="showLostOpportunityModal = false">
+    <!-- ------- lost modal -------- -->
+    <Modal :show="showLostOpportunityModal" @close="showLostOpportunityModal = false">
       <div class="mx-7 my-4 space-y-4 relative">
         <div>
-          <label
-            >Causa oportunidad perdida
-            <el-tooltip
-              content="Escribe la causa por la cual se PERDIÓ esta oportunidad"
-              placement="top"
-            >
+          <label>Causa oportunidad perdida
+            <el-tooltip content="Escribe la causa por la cual se PERDIÓ esta oportunidad" placement="top">
               <i class="fa-regular fa-circle-question ml-2 text-primary text-xs"></i>
             </el-tooltip>
           </label>
-          <textarea
-            v-model="lost_oportunity_razon"
-            required
-            class="input h-24 mt-3"
-          ></textarea>
+          <textarea v-model="lost_oportunity_razon" required class="input h-24 mt-3"></textarea>
         </div>
         <div class="flex justify-end space-x-3 pt-5 pb-1">
           <PrimaryButton @click="updateOpportunityStatus('Perdida')">Actualizar estatus</PrimaryButton>
@@ -414,7 +404,7 @@ export default {
         message: "Oportunidad eliminada",
         type: "success",
       });
-      window.location.reload();
+      // window.location.reload();
     },
   },
   computed: {

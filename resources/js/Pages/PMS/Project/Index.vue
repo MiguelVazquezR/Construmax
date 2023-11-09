@@ -75,13 +75,17 @@
             </td>
             <td class="text-left py-2 px-2" :class="getTextClass(project)">
               {{ project.limit_date }}
-              <el-tooltip v-if="project.finished_at === null && limitDateHasPassed(project)" content="La fecha limite ha pasado"
-                placement="top">
+              <el-tooltip v-if="project.finished_at === null && limitDateHasPassed(project)"
+                content="La fecha limite ha pasado" placement="top">
                 <i class="fa-solid fa-triangle-exclamation"></i>
               </el-tooltip>
             </td>
-            <td class="text-left py-2 px-2 rounded-r-full">
+            <td class="text-left py-2 px-2">
               {{ project.finished_at ?? '--' }}
+            </td>
+            <td v-if="$page.props.auth.user.permissions?.includes('Eliminar proyectos')"
+              class="text-left py-2 px-2 rounded-r-full">
+              <i @click.stop="prepareToDelete(project)" class="fa-regular fa-trash-can text-primary cursor-pointer p-2"></i>
             </td>
           </tr>
         </tbody>
@@ -92,14 +96,29 @@
         <!-- <Pagination :pagination="projects" /> -->
       </div>
     </div>
-
+    <ConfirmationModal :show="showConfirmModal" @close="showConfirmModal = false">
+      <template #title>
+        Eliminar proyecto
+      </template>
+      <template #content>
+        Al eliminar el proyecto se perderán permanentemente las tareas y los archivos relacionados. ¿Deseas continuar?
+      </template>
+      <template #footer>
+        <div class="flex space-x-1">
+          <CancelButton @click="showConfirmModal = false">Cancelar</CancelButton>
+          <PrimaryButton @click="deleteProject()">Eliminar</PrimaryButton>
+        </div>
+      </template>
+    </ConfirmationModal>
   </AppLayout>
 </template>
   
 <script>
 import AppLayout from "@/Layouts/AppLayout.vue";
 import PrimaryButton from "@/Components/PrimaryButton.vue";
+import CancelButton from "@/Components/CancelButton.vue";
 import SecondaryButton from "@/Components/SecondaryButton.vue";
+import ConfirmationModal from "@/Components/ConfirmationModal.vue";
 import moment from 'moment';
 //   import Pagination from "@/Components/MyComponents/Pagination.vue";
 
@@ -108,12 +127,16 @@ export default {
     return {
       search: '',
       inputSearch: '',
+      showConfirmModal: false,
+      projectToDelete: null,
     }
   },
   components: {
     AppLayout,
     PrimaryButton,
+    CancelButton,
     SecondaryButton,
+    ConfirmationModal,
     //   Pagination
   },
   props: {
@@ -129,6 +152,20 @@ export default {
       }
 
       return false;
+    },
+    prepareToDelete(project) {
+      this.projectToDelete = project.id;
+      this.showConfirmModal = true;
+    },
+    deleteProject() {
+      this.$inertia.delete(route('pms.projects.destroy', this.projectToDelete));
+      this.$notify({
+        title: "Éxito",
+        message: "Proyecto eliminado",
+        type: "success",
+      });
+      this.projectToDelete = null;
+      this.showConfirmModal = false;
     },
     getTextClass(project) {
       const today = moment();

@@ -25,7 +25,7 @@ class Task extends Model implements HasMedia
         'finished_at',
         'user_id',
         'project_id',
-        'opportunity_id',
+        // 'opportunity_id',
         'pausa_reazon',
     ];
 
@@ -53,10 +53,10 @@ class Task extends Model implements HasMedia
         return $this->belongsTo(Project::class);
     }
 
-    public function opportunity()
-    {
-        return $this->belongsTo(Opportunity::class);
-    }
+    // public function opportunity()
+    // {
+    //     return $this->belongsTo(Opportunity::class);
+    // }
 
     public function users()
     {

@@ -84,6 +84,11 @@ class Opportunity extends Model implements HasMedia
         return $this->hasOne(Survey::class);
     }
 
+    public function project() :HasOne
+    {
+        return $this->hasOne(Project::class);
+    }
+
     public function activities() :HasMany
     {
         return $this->hasMany(Activity::class);

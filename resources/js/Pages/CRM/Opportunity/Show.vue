@@ -52,11 +52,11 @@
               </Link>
             </el-tooltip>
             <Link v-if="currentTab == 1" :href="route('crm.opportunities.edit', selectedOpportunity)">
-            <i class="fa-solid fa-pencil ml-3 text-primary rounded-full p-2 bg-[#FEDBBD] cursor-pointer"></i>
+            <i class="fa-solid fa-pencil ml-3 text-primary rounded-full p-2 bg-primarylight cursor-pointer"></i>
             </Link>
             <i v-if="this.$page.props.auth.user.permissions.includes('Eliminar oportunidades') && currentTab == 1"
               @click="showConfirmModal = true"
-              class="fa-regular fa-trash-can ml-3 text-primary rounded-full p-2 bg-[#FEDBBD] cursor-pointer"></i>
+              class="fa-regular fa-trash-can ml-3 text-primary rounded-full p-2 bg-primarylight cursor-pointer"></i>
           </div>
           <el-tooltip v-if="currentTab == 2 || toBool(authUserPermissions[0])" content="Crear actividad en la oportunidad"
             placement="top">
@@ -572,7 +572,7 @@ export default {
     },
     deleteItem() {
       this.$inertia.delete(route("crm.opportunities.destroy", this.selectedOpportunity));
-      this.$inertia.get(route("crm.opportunities.index"));
+      // this.$inertia.get(route("crm.opportunities.index"));
     },
     async deleteTask(data) {
       try {

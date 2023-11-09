@@ -29,7 +29,7 @@ class TaskController extends Controller
     {
         $request->validate([
             'project_id' => 'required',
-            'name' => 'required|string',
+            'name' => 'required|string|max:255',
             'description' => 'nullable',
             'department' => 'required|string',
             'participants' => 'required|array|min:1',
@@ -77,8 +77,10 @@ class TaskController extends Controller
     public function update(Request $request, Task $task)
     {
         $validated = $request->validate([
-            'status' => 'required|string',
+            'status' => 'required|string|max:255',
             'description' => 'required',
+            'start_date' => 'required|date',
+            'limit_date' => 'required|date',
             'department' => 'required|string',
             'priority' => 'nullable|string',
             'participants' => 'required|array|min:1',
@@ -104,6 +106,7 @@ class TaskController extends Controller
 
     public function destroy(Task $task)
     {
+        $task->comments()->delete();
         $task->delete();
 
         return to_route('pms.projects.show', ['project' => $task->project_id, 'defaultTab' => 2]);

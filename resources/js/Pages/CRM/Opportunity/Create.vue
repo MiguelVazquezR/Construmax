@@ -123,7 +123,8 @@
       <div class="mt-5 w-full">
         <div class="flex justify-between items-center mx-2">
           <InputLabel value="Etiquetas" />
-          <button @click="showTagFormModal = true" type="button"
+          <button v-if="$page.props.auth.user.permissions?.includes('Crear etiquetas de oportunidades')"
+            @click="showTagFormModal = true" type="button"
             class="rounded-full border border-primary w-4 h-4 flex items-center justify-center">
             <i class="fa-solid fa-plus text-primary text-[9px]"></i>
           </button>
@@ -155,7 +156,7 @@
               </el-option>
             </el-select>
           </div>
-            <InputError :message="form.errors.priority" />
+          <InputError :message="form.errors.priority" />
           <!-- <label class="inline-flex items-center col-span-2 my-3">
             <Checkbox v-model:checked="form.is_new_company" @change="handleChecked"
               class="bg-transparent disabled:border-gray-400" />

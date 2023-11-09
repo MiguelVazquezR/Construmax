@@ -27,7 +27,7 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained();
             $table->foreignId('contact_id')->constrained();
             $table->unsignedBigInteger('opportunity_id')->nullable();
-            $table->foreign('opportunity_id')->references('id')->on('opportunities');
+            $table->foreign('opportunity_id')->references('id')->on('opportunities')->cascadeOnDelete();
             $table->unsignedBigInteger('project_group_id');
             $table->foreign('project_group_id')->references('id')->on('project_groups');
             $table->unsignedBigInteger('owner_id');

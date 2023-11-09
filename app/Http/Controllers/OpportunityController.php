@@ -245,13 +245,13 @@ class OpportunityController extends Controller
     public function destroy(Opportunity $opportunity)
     {
         $opportunity->delete();
+
+        return to_route('crm.opportunities.index');
     }
 
     public function updateStatus(Request $request, $opportunity_id)
     {
         $opportunity = Opportunity::find($opportunity_id);
-
-        // return $request;
 
         if ($request->status == 'Cerrada') {
             $opportunity->update([

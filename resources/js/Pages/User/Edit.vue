@@ -11,9 +11,11 @@
     </div>
     <div class="flex justify-end items-center mx-8 mt-8">
       <div class="flex items-center space-x-2">
-        <ThirdButton v-if="this.$page.props.auth.user.permissions.includes('Editar usuarios')" @click="toggleUserStatus()" class="!rounded-full">{{ user.is_active ? 'Marcar como inactivo' :
-          'Marcar como activo' }}</ThirdButton>
-        <el-popconfirm v-if="this.$page.props.auth.user.permissions.includes('Eliminar usuarios')" confirm-button-text="Si" cancel-button-text="No" icon-color="#FD8827" title="¿Continuar?"
+        <ThirdButton v-if="this.$page.props.auth.user.permissions.includes('Editar usuarios')" @click="toggleUserStatus()"
+          class="!rounded-full">{{ user.is_active ? 'Marcar como inactivo' :
+            'Marcar como activo' }}</ThirdButton>
+        <el-popconfirm v-if="this.$page.props.auth.user.permissions.includes('Eliminar usuarios')"
+          confirm-button-text="Si" cancel-button-text="No" icon-color="#FD8827" title="¿Continuar?"
           @confirm="deleteUser()">
           <template #reference>
             <SecondaryButton class="!text-lg">
@@ -25,9 +27,32 @@
     </div>
     <form @submit.prevent="update" class="mx-8 mt-10 grid grid-cols-4 gap-x-4 gap-y-2">
       <div>
-        <figure class="rounded-full w-52 h-52 mx-auto">
-          <img :src="user.profile_photo_url" class="rounded-full w-52 h-52">
-        </figure>
+        <div @click="openFileInput" v-if="!form.selectedImage"
+          class="rounded-full w-52 h-52 bg-gray2 mx-auto flex items-center justify-center cursor-pointer">
+          <label for="fileInput">
+            <i class="fa-solid fa-camera text-white text-3xl"></i>
+          </label>
+          <input @change="previewImage" type="file" id="fileInput" name="fileInput" style="display: none"
+            accept="image/*" />
+        </div>
+        <Dropdown v-else align="right" width="48">
+          <template #trigger>
+            <div class="rounded-full w-52 h-52 bg-gray2 mx-auto flex items-center justify-center cursor-pointer">
+              <img :src="form.selectedImage" alt="User Profile" class="object-cover rounded-full w-52 h-52 mx-auto" />
+              <input @change="previewImage" type="file" id="fileInput" name="fileInput" style="display: none"
+                accept="image/*" />
+            </div>
+          </template>
+          <template #content>
+            <DropdownLink @click="editProfilePhoto()" as="no-submit-button">
+              Editar
+            </DropdownLink>
+            <DropdownLink @click="deleteProfilePhoto()" as="no-submit-button">
+              Eliminar
+            </DropdownLink>
+          </template>
+        </Dropdown>
+        <InputError :message="form.errors.photo" />
       </div>
       <div class="col-span-3 grid grid-cols-2 gap-x-4 gap-y-2">
         <div>
@@ -88,6 +113,8 @@ import InputLabel from "@/Components/InputLabel.vue";
 import InputError from "@/Components/InputError.vue";
 import CancelButton from "@/Components/CancelButton.vue";
 import Checkbox from "@/Components/Checkbox.vue";
+import Dropdown from "@/Components/Dropdown.vue";
+import DropdownLink from "@/Components/DropdownLink.vue";
 import { Link, useForm } from "@inertiajs/vue3";
 
 export default {
@@ -100,7 +127,9 @@ export default {
         phone: this.user.employee_properties?.phone,
       },
       email: this.user.email,
-      roles: this.user_roles
+      roles: this.user_roles,
+      photo: null,
+      selectedImage: this.user.profile_photo_url,
     });
 
     return {
@@ -123,6 +152,8 @@ export default {
     Checkbox,
     InputError,
     Link,
+    Dropdown,
+    DropdownLink,
     //   Pagination
   },
   props: {
@@ -131,16 +162,52 @@ export default {
     user_roles: Array,
   },
   methods: {
+    openFileInput() {
+      // Al hacer clic en el div, activar el input de tipo "file" invisible
+      document.getElementById('fileInput').click();
+    },
+    previewImage(event) {
+      const file = event.target.files[0];
+      if (file) {
+        // Almacena el archivo seleccionado en una propiedad 'selectedImage'
+        this.form.photo = file;
+
+        // Crea una URL temporal para mostrar la vista previa
+        this.form.selectedImage = URL.createObjectURL(file);
+      }
+    },
+    editProfilePhoto() {
+      this.openFileInput();
+    },
+    deleteProfilePhoto() {
+      this.form.photo = null;
+      this.form.selectedImage = null;
+    },
     update() {
-      this.form.put(route("users.update", this.user), {
-        onSuccess: () => {
-          this.$notify({
-            title: "Correcto",
-            message: "Usuario actualizado",
-            type: "success",
-          });
-        },
-      });
+      if (this.form.photo) {
+        this.form.post(route("users.update-with-media", this.user.id), {
+          method: '_put',
+          onSuccess: () => {
+            this.$notify({
+              title: "Correcto",
+              message: "Usuario actualizado",
+              type: "success",
+            });
+
+          },
+        });
+      } else {
+        this.form.put(route("users.update", this.user.id), {
+          onSuccess: () => {
+            this.$notify({
+              title: "Correcto",
+              message: "Usuario actualizado",
+              type: "success",
+            });
+
+          },
+        });
+      }
     },
     toggleUserStatus() {
       this.$notify({

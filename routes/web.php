@@ -81,6 +81,7 @@ Route::get('users-get-pendent-tasks', [UserController::class, 'getPendentTasks']
 Route::delete('users-delete-notifications', [UserController::class, 'deleteNotifications'])->name('users.delete-user-notifications')->middleware('auth');
 Route::post('users-read-notifications', [UserController::class, 'readNotifications'])->name('users.read-user-notifications')->middleware('auth');
 Route::put('users-{user}-toggle-status', [UserController::class, 'toggleStatus'])->name('users.toggle-status')->middleware('auth');
+Route::post('users/update-with-media/{user}', [UserController::class, 'updateWithMedia'])->name('users.update-with-media')->middleware('auth');
 
 // ------- Roles and permissions Routes ---------
 Route::get('role-permission', [RolePermissionController::class, 'index'])->middleware('auth')->name('settings.role-permission.index');

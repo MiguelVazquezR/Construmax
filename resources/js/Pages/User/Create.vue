@@ -166,6 +166,7 @@ export default {
     },
     deleteProfilePhoto() {
       this.form.photo = null;
+      this.selectedImage = null;
     },
     store() {
       this.form.post(route("users.store"), {

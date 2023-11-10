@@ -53,7 +53,7 @@ class UserController extends Controller
 
     public function show(User $user)
     {
-        $users = User::whereNotIn('id', [1])->get();
+        $users = User::whereNotIn('id', [1])->get(['id', 'name']);
 
         return inertia('User/Show', compact('user', 'users'));
     }

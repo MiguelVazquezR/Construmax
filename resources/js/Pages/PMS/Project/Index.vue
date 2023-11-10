@@ -54,8 +54,8 @@
                 }}</span>
             </td>
             <td class="text-left py-2 flex space-x-1 items-center">
-              <p class="text-xs">{{ project.tasks.filter(task => task.status === 'Terminada').length }}</p>
-              <div class="relative bg-gray4 rounded-full h-5 w-24">
+              <p class="text-xs mt-1">{{ project.tasks.filter(task => task.status === 'Terminada').length }}</p>
+              <div class="relative bg-gray4 rounded-full h-5 w-24 mt-1 border border-white">
                 <div
                   :class="(project.tasks.filter(task => task.status === 'Terminada').length / project.tasks.length) * 100 == 100 ? 'rounded-full' : 'rounded-l-full'"
                   class="absolute top-0 left-0 bg-primary h-5"
@@ -65,7 +65,7 @@
                   Math.round((project.tasks.filter(task => task.status === 'Terminada').length / project.tasks.length) *
                     100) : '0' }}%</p>
               </div>
-              <p class="text-xs">{{ project.tasks.length }}</p>
+              <p class="text-xs mt-1">{{ project.tasks.length }}</p>
             </td>
             <td class="text-left py-2 px-2">
               {{ project.owner.name }}

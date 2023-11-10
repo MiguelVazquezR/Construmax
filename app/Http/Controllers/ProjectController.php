@@ -89,11 +89,9 @@ class ProjectController extends Controller
     public function show(Project $project)
     {
         $project = ProjectResource::make(Project::with(['tasks' => ['users', 'project', 'user'], 'projectGroup', 'opportunity.customer', 'tags', 'users', 'owner', 'contact'])->find($project->id));
-        // $projects = ProjectResource::collection(Project::with(['tasks' => ['users', 'project', 'user', 'comments.user', 'media'], 'user', 'users', 'opportunity.customer', 'projectGroup', 'tags', 'owner', 'contact'])->latest()->get());
         $projects = Project::latest()->get(['id', 'name']);
         $users = User::all();
         $defaultTab = request('defaultTab');
-        return $projects;
 
         return inertia('PMS/Project/Show', compact(['project', 'users', 'defaultTab', 'projects']));
     }
@@ -232,5 +230,12 @@ class ProjectController extends Controller
         $project->delete();
 
         return to_route('pms.projects.index');
+    }
+
+    public function getSelectedItem($project_id)
+    {
+        $project = ProjectResource::make(Project::with(['tasks' => ['users', 'project', 'user'], 'projectGroup', 'opportunity.customer', 'tags', 'users', 'owner', 'contact'])->find($project_id));
+        
+        return response()->json(['item' => $project]);
     }
 }

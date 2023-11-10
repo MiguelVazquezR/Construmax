@@ -39,23 +39,23 @@
 
 
     <!-- ----------- Client monitor table ----------- -->
-    <div class="w-11/12 mx-2 my-16">
+    <div class="w-11/12 mx-10 my-16">
       <table v-if="filteredTableData.length" class="w-full mx-auto text-xs">
         <thead>
-          <tr class="text-center">
-            <th class="font-bold pb-5 px-5">
+          <tr class="text-left">
+            <th class="font-bold pb-5 px-2">
               Folio <i class="fa-solid fa-arrow-down-long ml-3"></i>
             </th>
-            <th class="font-bold pb-5 px-4">
+            <th class="font-bold pb-5 px-2">
               Cliente <i class="fa-solid fa-arrow-down-long ml-3"></i>
             </th>
-            <th class="font-bold pb-5 px-7">
+            <th class="font-bold pb-5 px-2">
               Tipo de interacción <i class="fa-solid fa-arrow-down-long ml-3"></i>
             </th>
-            <th class="font-bold pb-5 px-10">
+            <th class="font-bold pb-5 px-2">
               Fecha<i class="fa-solid fa-arrow-down-long ml-3"></i>
             </th>
-            <th class="font-bold pb-5 px-7">
+            <th class="font-bold pb-5 px-2">
               Concepto <i class="fa-solid fa-arrow-down-long ml-3"></i>
             </th>
             <th class="font-bold pb-5">
@@ -67,28 +67,28 @@
         <tbody>
           <tr v-for="monitor in filteredTableData" :key="monitor.id" class="mb-4">
             <td @click="showMonitorType(monitor)"
-              class="text-center py-2 px-2 rounded-l-full text-primary hover:underline cursor-pointer">
+              class="py-2 px-2 rounded-l-full text-primary hover:underline cursor-pointer">
               {{ monitor.folio }}
             </td>
             <td @click="$inertia.get(route('crm.customers.show', monitor.customer?.id))"
-              class="text-center py-2 px-2 text-primary hover:underline cursor-pointer">
+              class="py-2 px-2 text-primary hover:underline cursor-pointer">
               {{ monitor.customer?.name }}
             </td>
-            <td class="text-center py-2 px-2">
-              <span class="py-1 px-4 rounded-full">{{ monitor.type }}</span>
+            <td class="py-2 px-2">
+              {{ monitor.type }}
             </td>
-            <td class="text-center py-2 px-2">
-              <span class="py-1 px-2 rounded-full">{{ monitor.date }}</span>
+            <td class="py-2 px-2">
+              {{ monitor.date }}
             </td>
-            <td class="text-center py-2 px-2 truncate">
+            <td class="py-2 px-2 truncate">
               {{ monitor.concept }}
             </td>
             <td @click="$inertia.get(route('users.show', monitor.seller?.id))"
-              class="text-center py-2 px-2 text-primary hover:underline cursor-pointer">
+              class="py-2 px-2 text-primary hover:underline cursor-pointer">
               {{ monitor.seller?.name }}
             </td>
             <td v-if="$page.props.auth.user.permissions.includes('Eliminar seguimiento integral')"
-              class="text-center py-2 px-2 rounded-r-full">
+              class="py-2 px-2 rounded-r-full">
               <el-popconfirm confirm-button-text="Si" cancel-button-text="No" icon-color="#D90537" title="¿Eliminar?"
                 @confirm="deleteClientMonitor(monitor)">
                 <template #reference>

@@ -24,26 +24,26 @@
           </div>
         </div>
 
-         <!-- ------------- tabs section starts ------------- -->
+         <!-- ------------- currentTab section starts ------------- -->
       <div class="border-y-2 border-[#cccccc] flex justify-between items-center py-2">
         <div class="flex">
-          <p @click="tabs = 1" :class="tabs == 1 ? 'bg-[#FEDBBD] rounded-xl text-primary' : ''
+          <p @click="currentTab = 1" :class="currentTab == 1 ? 'bg-[#FEDBBD] rounded-xl text-primary' : ''
             " class="md:ml-3 h-10 p-2 cursor-pointer transition duration-300 ease-in-out text-sm md:text-base">
             Pagos
           </p>
         </div>
       </div>
-      <!-- ------------- tabs section ends ------------- -->
+      <!-- ------------- currentTab section ends ------------- -->
 
        <!-- ------------- Pago Starts 1 ------------- -->
-      <div v-if="tabs == 1" class="md:grid grid-cols-2 border-b-2 border-[#cccccc] text-sm">
+      <div v-if="currentTab == 1" class="md:grid grid-cols-2 border-b-2 border-[#cccccc] text-sm">
         <div class="grid grid-cols-2 text-left p-4 md:ml-10 border-r-2 border-gray-[#cccccc] items-center">
 
         <p class="font-bold col-span-2 mb-2">Información de la oportunidad</p>
 
           <span class="text-gray-500 my-2">Folio de oportunidad</span>
           <a class="hover:underline text-primary" :href="route('crm.opportunities.show', payment_monitor.data.opportunity?.id)">
-            <span>{{ payment_monitor.data.opportunity?.folio }} - {{ payment_monitor.data.opportunity?.name }}</span></a>
+            <span>{{ payment_monitor.data.opportunity?.folio }} ({{ payment_monitor.data.opportunity?.name }})</span></a>
           <span class="text-gray-500 my-2">Vendedor</span>
           <span>{{ payment_monitor.data.seller?.name }}</span>
 
@@ -113,7 +113,7 @@ export default {
 data(){
     return {
         showConfirmModal: false,
-        tabs: 1,
+        currentTab: 1,
     }
 },
 components:{

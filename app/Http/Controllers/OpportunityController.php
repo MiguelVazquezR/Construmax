@@ -132,9 +132,11 @@ class OpportunityController extends Controller
 
     public function show(Opportunity $opportunity)
     {
-        $opportunities = OpportunityResource::collection(Opportunity::with(['contact', 'tags', 'media', 'users', 'user', 'seller', 'survey', 'activities' => ['user'], 'clientMonitors' => ['emailMonitor', 'paymentMonitor', 'meetingMonitor', 'seller'], 'opportunityTasks' => ['asigned', 'media', 'opportunity', 'user', 'comments.user']])->latest()->get());
+        $opportunity = OpportunityResource::make($opportunity->fresh(['contact', 'tags', 'media', 'users', 'user', 'seller', 'survey', 'activities' => ['user'], 'clientMonitors' => ['emailMonitor', 'paymentMonitor', 'meetingMonitor', 'seller'], 'opportunityTasks' => ['asigned', 'media', 'opportunity', 'user', 'comments.user']]));
+        $opportunities = Opportunity::latest()->get(['id', 'name']);
+        $defaultTab = request('defaultTab');
 
-        return inertia('CRM/Opportunity/Show', compact('opportunity', 'opportunities'));
+        return inertia('CRM/Opportunity/Show', compact('opportunity', 'opportunities', 'defaultTab'));
     }
 
     public function edit(Opportunity $opportunity)

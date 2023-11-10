@@ -33,6 +33,8 @@ Route::get('pms/dashboard', [PMSController::class, 'dashboard'])->middleware('au
 Route::resource('projects', ProjectController::class)->middleware('auth')->names('pms.projects');
 Route::resource('tasks', TaskController::class)->middleware('auth')->names('pms.tasks');
 Route::resource('project-groups', ProjectGroupController::class)->middleware('auth')->names('pms.project-groups');
+Route::post('projects/update-with-media/{project}', [ProjectController::class, 'updateWithMedia'])->name('pms.projects.update-with-media')->middleware('auth');
+Route::get('/projects-{project_id}-get', [ProjectController::class, 'getSelectedItem'])->middleware('auth')->name('pms.projects.get-item');
 Route::resource('tags', TagController::class)->middleware('auth')->names('pms.tags');
 Route::post('tasks-{task}-comment', [TaskController::class, 'comment'])->name('pms.tasks.comment')->middleware('auth');
 Route::put('tasks-{task}-pause-play', [TaskController::class, 'pausePlayTask'])->name('pms.tasks.pause-play')->middleware('auth');

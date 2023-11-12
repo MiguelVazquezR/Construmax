@@ -82,7 +82,7 @@ class CalendarController extends Controller
         // notificar a participantes
         foreach ($request->participants as $participant_id) {
             $participant = User::find($participant_id);
-            $participant->notify(new EventInvitationNotification($calendar));
+            $participant->notify(new EventInvitationNotification($calendar, auth()->user()->name));
         }
 
         return to_route('calendars.index');

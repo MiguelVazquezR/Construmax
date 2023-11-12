@@ -80,6 +80,7 @@ Route::resource('settings', SettingController::class)->middleware('auth');
 Route::resource('users', UserController::class)->middleware('auth');
 Route::get('users-get-notifications', [UserController::class, 'getNotifications'])->name('users.get-user-notifications')->middleware('auth');
 Route::get('users-get-pendent-tasks', [UserController::class, 'getPendentTasks'])->name('users.get-pendent-tasks')->middleware('auth');
+Route::get('users-get-meetings', [UserController::class, 'getMeetings'])->name('users.get-meetings')->middleware('auth');
 Route::delete('users-delete-notifications', [UserController::class, 'deleteNotifications'])->name('users.delete-user-notifications')->middleware('auth');
 Route::post('users-read-notifications', [UserController::class, 'readNotifications'])->name('users.read-user-notifications')->middleware('auth');
 Route::put('users-{user}-toggle-status', [UserController::class, 'toggleStatus'])->name('users.toggle-status')->middleware('auth');

@@ -6,7 +6,7 @@
             <!-- customers -->
             <h2 class="text-primary lg:text-xl text-lg lg:mt-6 mt-6 font-bold">Clientes</h2>
             <div class="lg:grid grid-cols-2 gap-x-16 gap-y-14 mt-4 space-y-4 lg:space-y-0">
-                <!-- <CustomerDates /> -->
+                <CustomerDates />
                 <!-- <BirthdateCardCustomer :contacts="customers_birthdays" /> -->
             </div>
 
@@ -20,18 +20,18 @@
             </div>
 
             <!-- sales -->
-            <h2 class="text-primary lg:text-xl text-lg lg:mt-6 mt-6 font-bold">Seguimiento de ventas</h2>
+            <!-- <h2 class="text-primary lg:text-xl text-lg lg:mt-6 mt-6 font-bold">Seguimiento de ventas</h2>
             <div class="lg:grid grid-cols-2 gap-x-16 gap-y-14 mt-4 space-y-4 lg:space-y-0">
                 <FunnelChart :options="funnelSalesChartOptions" title="Embudo de ventas"
                     icon='<i class="fa-solid fa-filter-circle-dollar ml-2"></i>' />
-                <!-- <RecentSales
-                    :sales="[{ close_date: '24 ago 2023', customer_name: 'BOSH', total_sold: '$19,458.5', seller: 'Evelin Montero' }]" /> -->
-            </div>
+                <RecentSales
+                    :sales="[{ close_date: '24 ago 2023', customer_name: 'BOSH', total_sold: '$19,458.5', seller: 'Evelin Montero' }]" />
+            </div> -->
 
             <!-- performance -->
             <h2 class="text-primary lg:text-xl text-lg lg:mt-6 mt-6 font-bold">Desempeño</h2>
             <div class="lg:grid grid-cols-2 gap-x-16 gap-y-14 mt-4 space-y-4 lg:space-y-0">
-                <GroupedBarChar :options="saleGoalsChartOptions" title="Objetivo de ventas"
+                <GroupedBarChar :options="saleGoalsChartOptions" title="Ventas totales por vendedor"
                     icon='<i class="fa-solid fa-bullseye ml-2"></i>' />
             </div>
 
@@ -41,12 +41,12 @@
 
 <script>
 // import BirthdateCardCustomer from '@/Components/MyComponents/BirthdateCardCustomer.vue';
-// import CustomerDates from '@/Components/MyComponents/CustomerDates.vue';
+import CustomerDates from '@/Components/MyComponents/CRM/CustomerDates.vue';
 import CancelButton from '@/Components/CancelButton.vue';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import PieChart from '@/Components/MyComponents/Charts/PieChart.vue';
 import BarChart from '@/Components/MyComponents/Charts/BarChart.vue';
-import FunnelChart from '@/Components/MyComponents/Charts/FunnelChart.vue';
+// import FunnelChart from '@/Components/MyComponents/Charts/FunnelChart.vue';
 // import RecentSales from '@/Components/MyComponents/Charts/RecentSales.vue';
 import GroupedBarChar from '@/Components/MyComponents/Charts/GroupedBarChar.vue';
 
@@ -58,12 +58,12 @@ export default {
         return {
             currentMonth: null,
             monthSalesChartOptions: {
-                colors: ['#31CB23', '#D47914', '#D90537', '#888888', '#0355B5', '#0397B5', '#A41314'],
-                labels: ['Porta placas', 'Tapetes', 'Emblemas', 'Llaveros', 'Parasoles', 'Termos', 'Perfumes'],
-                series: [44, 55, 13, 19, 6, 1, 1],
+                colors: ['#FD8827', '#45E142'],
+                labels: ['Mantenimiento', 'Construcción'],
+                series: [11, 19],
             },
             yearComparisonChartOptions: {
-                colors: ['#9A9A9A', '#0355B5', '#45E142',],
+                colors: ['#BEBFC1', '#FD8827'],
                 categories: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
                 series: [{
                     name: 'Año pasado',
@@ -83,7 +83,7 @@ export default {
                 }],
             },
             saleGoalsChartOptions: {
-                colors: ['#31CB23', '#D41614'],
+                colors: ['#45E142', '#FD8827'],
                 categories: ['Edgar Sherman', 'Norberto Platas', 'Santiago'],
                 series: [{
                     name: 'Meta',
@@ -104,10 +104,10 @@ export default {
         AppLayout,
         // BirthdateCardCustomer,
         CancelButton,
-        // CustomerDates,
+        CustomerDates,
         PieChart,
         BarChart,
-        FunnelChart,
+        // FunnelChart,
         // RecentSales,
         GroupedBarChar,
     },

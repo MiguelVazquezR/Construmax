@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Http\Resources\NotificationResource;
 use App\Http\Resources\UserResource;
+use App\Models\Calendar;
+use App\Models\MeetingMonitor;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -176,5 +178,16 @@ class UserController extends Controller
                 'profile_photo_path' => null,
             ]);
         }
+    }
+
+    public function getMeetings()
+    {
+        $meetings = MeetingMonitor::with('contact')
+            ->select('id', 'meeting_date', 'time', 'meeting_via', 'contact_name', 'description')
+            ->where('seller_id', auth()->id())
+            ->whereDate('meeting_date', '>=', today())
+            ->get();
+
+        return response()->json(['items' => $meetings]);
     }
 }

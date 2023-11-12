@@ -8,8 +8,8 @@
             <div class="lg:grid grid-cols-2 gap-5 mt-4 space-y-4 lg:space-y-0">
                 <StackedColumn100Chart :options="projecsProgressChartOptions" title="Progreso de proyectos"
                     icon="<i class='fa-regular fa-flag ml-2'></i>" />
-                <PieChart :options="taskStatusChartOptions" title="Estado de las Tareas"
-                    icon='<i class="fa-solid fa-clipboard-list ml-2"></i>' />
+                <!-- <PieChart :options="taskStatusChartOptions" title="Estado de las Tareas"
+                    icon='<i class="fa-solid fa-clipboard-list ml-2"></i>' /> -->
                 <DonutChart :options="projectGroupsChartOptions" title="Información de grupos de proyectos"
                     icon='<i class="fa-solid fa-circle-nodes ml-2"></i>' />
                 <PolarAreaChart :options="tasksPrioritiesChartOptions" title="Estado de Prioridades"
@@ -19,12 +19,12 @@
             <!-- performance -->
             <h2 class="text-primary lg:text-xl text-lg lg:mt-6 mt-6 font-bold">Desempeño</h2>
             <div class="lg:grid grid-cols-2 gap-5 mt-4 space-y-4 lg:space-y-0">
-                <PendentTasks
-                    :tasks="[{ title: 'Alta IMSS de colaboradores nuevos', status: 'En curso', start_date: '12/09/2023', priority: 'Alta' }]" />
+                <!-- <PendentTasks
+                    :tasks="[{ title: 'Alta IMSS de colaboradores nuevos', status: 'En curso', start_date: '12/09/2023', priority: 'Alta' }]" /> -->
                 <LateTasks v-if="this.$page.props.auth.user.permissions.includes('Crear proyectos')"
                     :tasks="[{ title: 'Alta IMSS de colaboradores nuevos', project: { project_name: 'Dalton Honda' }, late_days: 7, participants: [{ profile_photo_url: 'https://ui-avatars.com/api/?name=S+a&color=7F9CF5&background=EBF4FF', name: 'Miguel VR' }, { profile_photo_url: 'https://ui-avatars.com/api/?name=A+v&color=7F12F5&background=EB44FF', name: 'Angel VR' }] }]" />
-                <StackedBars100Chart :options="myProyectsProgressChartOptions" title="Mis proyectos"
-                    icon="<i class='fa-solid fa-chart-simple ml-2'></i>" />
+                <!-- <StackedBars100Chart :options="myProyectsProgressChartOptions" title="Mis proyectos"
+                    icon="<i class='fa-solid fa-chart-simple ml-2'></i>" /> -->
                 <StackedBars100Chart :options="myTasksProgressChartOptions" title="Progreso de mis tareas"
                     icon="<i class='fa-solid fa-bars-progress ml-2'></i>" />
             </div>

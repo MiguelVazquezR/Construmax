@@ -7,13 +7,14 @@
             <h2 class="text-primary lg:text-xl text-lg lg:mt-6 mt-6 font-bold">Clientes</h2>
             <div class="lg:grid grid-cols-2 gap-x-16 gap-y-14 mt-4 space-y-4 lg:space-y-0">
                 <CustomerDates />
-                <!-- <BirthdateCardCustomer :contacts="customers_birthdays" /> -->
             </div>
 
             <!-- Estadistics -->
             <h2 class="text-primary lg:text-xl text-lg lg:mt-6 mt-6 font-bold">Estadísticas</h2>
             <div class="lg:grid grid-cols-2 gap-x-16 gap-y-14 mt-4 space-y-4 lg:space-y-0">
-                <PieChart :options="monthSalesChartOptions" :title="'Ventas de ' + currentMonth"
+                <!-- <PieChart :options="monthSalesChartOptions" :title="'Ventas de ' + currentMonth + ' según tipo de servicio'"
+                    icon='<i class="fa-solid fa-hand-holding-dollar ml-2"></i>' /> -->
+                <BarChart :options="monthSalesChartOptions" :title="'Ventas de ' + currentMonth + ' según tipo de servicio'"
                     icon='<i class="fa-solid fa-hand-holding-dollar ml-2"></i>' />
                 <BarChart :options="yearComparisonChartOptions" title="Ventas año en curso vs anterior"
                     icon='<i class="fa-solid fa-scale-unbalanced-flip ml-2"></i>' />
@@ -34,20 +35,17 @@
                 <GroupedBarChar :options="saleGoalsChartOptions" title="Ventas totales por vendedor"
                     icon='<i class="fa-solid fa-bullseye ml-2"></i>' />
             </div>
-
+            {{ getMonthlySum(last_year_opportunities) }}
         </div>
     </AppLayout>
 </template>
 
 <script>
-// import BirthdateCardCustomer from '@/Components/MyComponents/BirthdateCardCustomer.vue';
 import CustomerDates from '@/Components/MyComponents/CRM/CustomerDates.vue';
 import CancelButton from '@/Components/CancelButton.vue';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import PieChart from '@/Components/MyComponents/Charts/PieChart.vue';
 import BarChart from '@/Components/MyComponents/Charts/BarChart.vue';
-// import FunnelChart from '@/Components/MyComponents/Charts/FunnelChart.vue';
-// import RecentSales from '@/Components/MyComponents/Charts/RecentSales.vue';
 import GroupedBarChar from '@/Components/MyComponents/Charts/GroupedBarChar.vue';
 
 import { format } from 'date-fns';
@@ -58,9 +56,12 @@ export default {
         return {
             currentMonth: null,
             monthSalesChartOptions: {
-                colors: ['#FD8827', '#45E142'],
-                labels: ['Mantenimiento', 'Construcción'],
-                series: [11, 19],
+                colors: ['#FEDBBD'],
+                categories: this.getMonthSales().map(item => item.type),
+                series: [{
+                    name: 'venta',
+                    data: this.getMonthSales().map(item => item.amount.toFixed(2))
+                }]
             },
             yearComparisonChartOptions: {
                 colors: ['#BEBFC1', '#FD8827'],
@@ -98,21 +99,71 @@ export default {
         }
     },
     props: {
-        customers_birthdays: Array,
+        month_opportunities: Array,
+        year_opportunities: Array,
+        last_year_opportunities: Array,
     },
     components: {
         AppLayout,
-        // BirthdateCardCustomer,
         CancelButton,
         CustomerDates,
         PieChart,
         BarChart,
-        // FunnelChart,
-        // RecentSales,
         GroupedBarChar,
     },
     methods: {
+        getMonthSales() {
+            // Utiliza un objeto para almacenar la información de cada tipo de servicio
+            const serviceTypeMap = {};
 
+            // Itera sobre las oportunidades y agrega cada service_type y amount al objeto
+            this.month_opportunities.forEach(opportunity => {
+                const { service_type, amount } = opportunity;
+
+                // Si el service_type no está en el objeto, crea una entrada con el monto actual
+                if (!serviceTypeMap[service_type]) {
+                    serviceTypeMap[service_type] = { type: service_type, amount: 0 };
+                }
+
+                // Suma el amount al monto existente
+                serviceTypeMap[service_type].amount += amount / 1000;
+            });
+
+            // Convierte el objeto a un array de objetos
+            return Object.values(serviceTypeMap);
+        },
+        getMonthlySum(opportunities) {
+            // Inicializa un objeto para almacenar la suma del monto por mes
+            const monthlySumMap = {};
+
+            // Crea un array con los nombres cortos de los meses
+            const monthsOrder = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
+
+            // Inicializa el objeto con todas las entradas para cada mes
+            monthsOrder.forEach(month => {
+                monthlySumMap[month] = { month, amount: 0 };
+            });
+
+            // Itera sobre las oportunidades y agrega el monto al mes correspondiente
+            opportunities.forEach(opportunity => {
+                const created_at = new Date(opportunity.created_at);
+                const month = created_at.toLocaleString('default', { month: 'short' });
+
+                // Verifica si la propiedad 'amount' existe en el objeto antes de sumar
+                if (monthlySumMap[month] && opportunity.amount !== null && typeof opportunity.amount === 'number') {
+                    // Suma el amount al monto existente
+                    monthlySumMap[month].amount += opportunity.amount;
+                }
+            });
+
+            // Convierte el objeto a un array de objetos
+            const monthlySumArray = Object.values(monthlySumMap);
+
+            // Ordena el array por el nombre del mes
+            monthlySumArray.sort((a, b) => monthsOrder.indexOf(a.month) - monthsOrder.indexOf(b.month));
+
+            return monthlySumArray;
+        }
     },
     mounted() {
         // Obtiene la fecha actual

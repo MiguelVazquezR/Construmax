@@ -126,7 +126,8 @@
       <div>
         <InputLabel value="Duración *" class="ml-2" />
         <el-date-picker @change="handleDateRange" v-model="range" type="daterange" range-separator="A"
-          start-placeholder="Fecha de inicio" end-placeholder="Fecha límite" value-format="YYYY-MM-DD" />
+          start-placeholder="Fecha de inicio" end-placeholder="Fecha límite" value-format="YYYY-MM-DD"
+          :disabled-date="disabledStartOrLimitDate" />
         <InputError :message="form.errors.start_date" />
         <InputError :message="form.errors.limit_date" />
       </div>
@@ -338,7 +339,7 @@ export default {
       }
     },
     copyToClipboard() {
-      const textToCopy = "http://localhost:8000/tasks-format/" + this.task.data?.id;
+      const textToCopy = window.location.origin + '/tasks-format/' + this.task.data?.id;
 
       // Create a temporary input element
       const input = document.createElement("input");
@@ -500,6 +501,16 @@ export default {
           });
         },
       });
+    },
+    // Función para deshabilitar fechas fuera del rango [start_date, limit_date]
+    disabledStartOrLimitDate(time) {
+      const project = this.task.data.project;
+      if (project.is_strict) {
+        const startTime = new Date(project.start_date).getTime();
+        const limitTime = new Date(project.limit_date).getTime();
+        return time.getTime() < startTime || time.getTime() > limitTime;
+      }
+      return false;
     },
   },
 

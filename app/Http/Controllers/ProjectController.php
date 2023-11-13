@@ -62,13 +62,17 @@ class ProjectController extends Controller
 
         // permisos
         foreach ($request->selectedUsersToPermissions as $user) {
-            $_user = User::find($user['id']);
+            $permissions_array = array_map(function ($item) {
+                // La función boolval() convierte un valor a booleano
+                return boolval($item);
+            }, $user['permissions']);
             $allowedUser = [
-                "permissions" => json_encode($user['permissions']), // Serializa los permisos en formato JSON
+                "permissions" => json_encode($permissions_array), // Serializa los permisos en formato JSON
             ];
             $project->users()->attach($user['id'], $allowedUser);
 
             // notificar a usuarios que no sean el que crea el proyecto
+            $_user = User::find($user['id']);
             if ($_user->id !== auth()->id()) {
                 $_user->notify(new NewProjectNotification($project, auth()->user()->name));
             }
@@ -88,7 +92,7 @@ class ProjectController extends Controller
 
     public function show(Project $project)
     {
-        $project = ProjectResource::make(Project::with(['tasks' => ['users', 'project', 'user'], 'projectGroup', 'opportunity.customer', 'tags', 'users', 'owner', 'contact'])->find($project->id));
+        $project = ProjectResource::make(Project::with(['tasks' => ['users', 'project', 'user'], 'projectGroup', 'opportunity.customer', 'tags', 'users', 'owner', 'contact', 'user'])->find($project->id));
         $projects = Project::latest()->get(['id', 'name']);
         $users = User::all();
         $defaultTab = request('defaultTab');
@@ -192,8 +196,12 @@ class ProjectController extends Controller
         // Eliminar todos los permisos actuales para el proyecto
         $project->users()->detach();
         foreach ($request->selectedUsersToPermissions as $user) {
+            $permissions_array = array_map(function ($item) {
+                // La función boolval() convierte un valor a booleano
+                return boolval($item);
+            }, $user['permissions']);
             $allowedUser = [
-                "permissions" => json_encode($user['permissions']), // Serializa los permisos en formato JSON
+                "permissions" => json_encode($permissions_array), // Serializa los permisos en formato JSON
             ];
             $project->users()->attach($user['id'], $allowedUser);
 
@@ -235,7 +243,7 @@ class ProjectController extends Controller
     public function getSelectedItem($project_id)
     {
         $project = ProjectResource::make(Project::with(['tasks' => ['users', 'project', 'user'], 'projectGroup', 'opportunity.customer', 'tags', 'users', 'owner', 'contact'])->find($project_id));
-        
+
         return response()->json(['item' => $project]);
     }
 }

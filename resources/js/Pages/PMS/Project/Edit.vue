@@ -1,7 +1,7 @@
 <template>
   <AppLayout title="Crear proyecto">
     <div class="flex justify-between items-center text-lg mx-8 mt-8">
-      <b>Nuevo proyecto</b>
+      <b>Editar proyecto</b>
       <Link :href="route('pms.projects.index')">
       <p class="flex items-center text-sm text-primary">
         <i class="fa-solid fa-arrow-left-long mr-2"></i>
@@ -646,7 +646,21 @@ export default {
         admin.permissions = defaultPermissions;
       });
       this.form.selectedUsersToPermissions = admins;
-    }
+    },
+    selectAuthUser() {
+      if (this.$page.props.auth.user.employee_properties !== null) {
+        // obtener usuario que esta creando el proyecto para dar todos los permisos
+        const user = this.users.find((item) => item.id === this.$page.props.auth.user.id);
+        const defaultPermissions = [true, true, true, true, true];
+        let authUser = {
+          id: user.id,
+          name: user.name,
+          profile_photo_url: user.profile_photo_url,
+          permissions: [...defaultPermissions],
+        };
+        this.form.selectedUsersToPermissions.push(authUser);
+      }
+    },
   },
   computed: {
     availableUsersToPermissions() {
@@ -680,6 +694,7 @@ export default {
         ];
         this.editAccesFlag = false;
       } else {
+        this.selectAuthUser();
         this.editAccesFlag = true;
       }
     },

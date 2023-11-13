@@ -632,6 +632,7 @@ export default {
         ];
         this.editAccesFlag = false;
       } else {
+        this.selectAuthUser();
         this.editAccesFlag = true;
       }
     },

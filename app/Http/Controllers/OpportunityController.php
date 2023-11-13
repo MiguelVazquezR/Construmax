@@ -55,7 +55,6 @@ class OpportunityController extends Controller
         ]);
 
         if ($request->status == 'Cerrada') {
-
             $opportunity = Opportunity::create($validated + ['user_id' => auth()->id(), 'finished_at' => now()]);
         } else {
 
@@ -64,8 +63,12 @@ class OpportunityController extends Controller
 
         // permisos
         foreach ($request->selectedUsersToPermissions as $user) {
+            $permissions_array = array_map(function ($item) {
+                // La función boolval() convierte un valor a booleano
+                return boolval($item);
+            }, $user['permissions']);
             $allowedUser = [
-                "permissions" => json_encode($user['permissions']), // Serializa los permisos en formato JSON
+                "permissions" => json_encode($permissions_array), // Serializa los permisos en formato JSON
             ];
             $opportunity->users()->attach($user['id'], $allowedUser);
         }
@@ -172,7 +175,11 @@ class OpportunityController extends Controller
             'contact_phone' => $request->is_new_company ? 'required' : 'nullable',
         ]);
 
-        $opportunity->update($validated);
+        if ($request->status == 'Cerrada' || $request->status == 'Pagado') {
+            $opportunity->update($validated + ['finished_at' => now()]);
+        } else {
+            $opportunity->update($validated + ['finished_at' => null]);
+        }
 
         // permisos
         // Eliminar todos los permisos actuales para la oportunidad
@@ -216,18 +223,22 @@ class OpportunityController extends Controller
             'contact_phone' => $request->is_new_company ? 'required' : 'nullable',
         ]);
 
-        if ($request->status == 'Cerrada') {
-            $opportunity = Opportunity::create($validated + ['user_id' => auth()->id(), 'finished_at' => now()]);
+        if ($request->status == 'Cerrada' || $request->status == 'Pagado') {
+            $opportunity->update($validated + ['finished_at' => now()]);
         } else {
-            $opportunity = Opportunity::create($validated + ['user_id' => auth()->id()]);
+            $opportunity->update($validated + ['finished_at' => null]);
         }
 
         // permisos
         // Eliminar todos los permisos actuales para la oportunidad
         $opportunity->users()->detach();
         foreach ($request->selectedUsersToPermissions as $user) {
+            $permissions_array = array_map(function ($item) {
+                // La función boolval() convierte un valor a booleano
+                return boolval($item);
+            }, $user['permissions']);
             $allowedUser = [
-                "permissions" => json_encode($user['permissions']), // Serializa los permisos en formato JSON
+                "permissions" => json_encode($permissions_array), // Serializa los permisos en formato JSON
             ];
             $opportunity->users()->attach($user['id'], $allowedUser);
         }

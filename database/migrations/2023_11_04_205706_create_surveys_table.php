@@ -11,10 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('customer_tag', function (Blueprint $table) {
+        Schema::create('surveys', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('customer_id')->constrained();
-            $table->foreignId('user_id')->constrained();
+            $table->unsignedTinyInteger('p1');
+            $table->string('p2');
+            $table->string('p3');
+            $table->string('p4');
+            $table->string('p5');
+            $table->foreignId('opportunity_id')->constrained()->cascadeOnDelete();
             $table->timestamps();
         });
     }
@@ -24,6 +28,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('customer_tag');
+        Schema::dropIfExists('surveys');
     }
 };

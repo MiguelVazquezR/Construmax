@@ -26,8 +26,8 @@
         <InputError :message="form.errors.service_type" />
       </div>
       <div class="relative">
-        <i :class="getColorStatus(form.status)" class="fa-solid fa-circle text-xs top-[2px] left-16 absolute z-30"></i>
-        <InputLabel value="Estatus" class="ml-2" />
+        <i :class="getColorStatus(form.status)" class="fa-solid fa-circle text-xs top-[2px] left-20 absolute z-30"></i>
+        <InputLabel value="Estatus *" class="ml-2" />
         <div class="flex items-center space-x-4">
           <el-select class="w-full" v-model="form.status" clearable filterable placeholder="Seleccionar estatus"
             no-data-text="No hay estatus registrados" no-match-text="No se encontraron coincidencias">
@@ -42,7 +42,7 @@
         <InputError :message="form.errors.status" />
       </div>
       <div>
-        <InputLabel value="Responsable" class="ml-2" />
+        <InputLabel value="Responsable *" class="ml-2" />
         <el-select class="w-full" v-model="form.seller_id" clearable filterable placeholder="Seleccione"
           no-data-text="No hay vendedores registrados" no-match-text="No se encontraron coincidencias">
           <el-option v-for="seller in users.filter(
@@ -55,12 +55,13 @@
             </div>
           </el-option>
         </el-select>
+        <InputError :message="form.errors.seller_id" />
       </div>
-      <label class="inline-flex items-center col-span-full my-3">
+      <!-- <label class="inline-flex items-center col-span-full my-3">
         <Checkbox v-model:checked="form.is_new_company" @change="handleChecked"
           class="bg-transparent disabled:border-gray-400" />
         <span class="ml-2 text-xs">Nuevo cliente</span>
-      </label>
+      </label> -->
       <div v-if="form.is_new_company">
         <InputLabel value="Cliente *" class="ml-2" />
         <input v-model="form.customer_name" class="input" type="text" required />
@@ -92,6 +93,7 @@
             (item) => item.id == form.customer_id
           )?.contacts" :key="contact" :label="contact.name" :value="contact.id" />
         </el-select>
+        <InputError :message="form.errors.contact_id" />
       </div>
       <div v-if="!form.is_new_company">
         <InputLabel value="Sucursal *" class="ml-2" />
@@ -102,17 +104,13 @@
           )?.contacts.find((item) => item.id == form.contact_id).additional.branches" :key="branch" :label="branch"
             :value="branch" />
         </el-select>
+        <InputError :message="$page.props.errors.branch" />
       </div> <br>
-      <div class="mt-5">
-        <InputLabel value="Fecha de inicio *" class="ml-2" />
-        <el-date-picker class="w-full" v-model="form.start_date" type="date" placeholder="Inicio *" format="YYYY/MM/DD"
-          value-format="YYYY-MM-DD" />
+      <div>
+        <InputLabel value="Duración *" class="ml-2" />
+        <el-date-picker @change="handleDateRange" v-model="range" type="daterange" range-separator="A"
+          start-placeholder="Fecha de inicio" end-placeholder="Fecha de cierre" value-format="YYYY-MM-DD" />
         <InputError :message="form.errors.start_date" />
-      </div>
-      <div class="mt-5">
-        <InputLabel value="Fecha de cierre *" class="ml-2" />
-        <el-date-picker class="w-full" v-model="form.close_date" type="date" placeholder="Cierre *" format="YYYY/MM/DD"
-          value-format="YYYY-MM-DD" />
         <InputError :message="form.errors.close_date" />
       </div>
       <div class="mt-5 col-span-full">
@@ -145,7 +143,7 @@
       <div class="w-full">
         <div class="relative">
           <i :class="getColorPriority(form.priority)" class="fa-solid fa-circle text-xs top-1 left-20 absolute z-30"></i>
-          <InputLabel value="Prioridad" />
+          <InputLabel value="Prioridad *" />
           <div class="flex items-center space-x-4">
             <el-select class="w-full" v-model="form.priority" clearable filterable placeholder="Seleccione"
               no-data-text="No hay opciones registradas" no-match-text="No se encontraron coincidencias">
@@ -161,7 +159,7 @@
         </div>
       </div>
       <div v-if="form.status == 'Perdida'" class="w-full">
-        <label class="text-sm">Causa oportunidad perdida
+        <label class="text-sm">Causa oportunidad perdida *
           <el-tooltip content="Escribe la causa por la cual se PERDIÓ esta oportunidad" placement="right">
             <i class="fa-regular fa-circle-question ml-2 text-primary text-xs"></i>
           </el-tooltip>
@@ -170,7 +168,7 @@
         <InputError :message="form.errors.lost_oportunity_razon" />
       </div>
       <div class="w-full">
-        <label class="text-sm">Valor de oportunidad
+        <label class="text-sm">Valor de oportunidad *
           <el-tooltip content="Monto esperado si se cierra la venta" placement="right">
             <i class="fa-regular fa-circle-question ml-2 text-primary text-xs"></i>
           </el-tooltip>
@@ -301,7 +299,7 @@
         <Link :href="route('crm.opportunities.index')">
         <CancelButton type="button">Cancelar</CancelButton>
         </Link>
-        <PrimaryButton :disabled="form.processing">Crear oportunidad</PrimaryButton>
+        <PrimaryButton :disabled="form.processing">Actualizar oportunidad</PrimaryButton>
       </div>
     </form>
 
@@ -383,6 +381,7 @@ export default {
       company_branch: null,
       showTagFormModal: false,
       company_branch_obj: null,
+      range: null,
       typeAccessProject: 'Private',
       // owner: this.$page.props.auth.user.name,
       mediaNames: [], // Agrega esta propiedad para almacenar los nombres de los archivos
@@ -390,7 +389,7 @@ export default {
       statuses: [
         {
           label: "Nueva",
-          color: "text-[#9A9A9A]",
+          color: "text-[#f2f2f2]",
         },
         {
           label: "Pendiente",
@@ -416,7 +415,7 @@ export default {
         },
         {
           label: "Media",
-          color: "text-[#D97705]",
+          color: "text-[#F2C940]",
         },
         {
           label: "Alta",
@@ -495,7 +494,7 @@ export default {
     },
     getColorStatus(oportunityStatus) {
       if (oportunityStatus === "Nueva") {
-        return "text-[#9A9A9A]";
+        return "text-[#f2f2f2]";
       } else if (oportunityStatus === "Pendiente") {
         return "text-[#F3FD85]";
       } else if (oportunityStatus === "Cerrada") {
@@ -512,7 +511,7 @@ export default {
       if (opportunityPriority === "Baja") {
         return "text-[#87CEEB]";
       } else if (opportunityPriority === "Media") {
-        return "text-[#D97705]";
+        return "text-[#F2C940]";
       } else if (opportunityPriority === "Alta") {
         return "text-[#D90537]";
       } else {
@@ -677,6 +676,9 @@ export default {
     });
     this.updateContacts();
     this.updateBranches();
+
+    // inicializar fechas en range
+    this.range = [this.opportunity.start_date, this.opportunity.close_date];
   },
 }
 </script>

@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\CalendarController;
 use App\Http\Controllers\ClientMonitorController;
 use App\Http\Controllers\CRMController;
 use App\Http\Controllers\CustomerController;
@@ -13,6 +14,7 @@ use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\ProjectGroupController;
 use App\Http\Controllers\RolePermissionController;
 use App\Http\Controllers\SettingController;
+use App\Http\Controllers\SurveyController;
 use App\Http\Controllers\TagController;
 use App\Http\Controllers\TaskController;
 use App\Http\Controllers\UserController;
@@ -21,12 +23,18 @@ use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
+// --------------- Calendar routes -----------------
+Route::resource('calendars', CalendarController::class)->middleware('auth');
+Route::put('calendars-{calendar}-task-done', [CalendarController::class, 'taskDone'])->name('calendars.task-done')->middleware('auth');
+Route::put('calendars/set-attendance-confirmation/{calendar}', [CalendarController::class, 'SetAttendanceConfirmation'])->name('calendars.set-attendance-confirmation');
 
 // projects routes
 Route::get('pms/dashboard', [PMSController::class, 'dashboard'])->middleware('auth')->name('pms.dashboard');
 Route::resource('projects', ProjectController::class)->middleware('auth')->names('pms.projects');
 Route::resource('tasks', TaskController::class)->middleware('auth')->names('pms.tasks');
 Route::resource('project-groups', ProjectGroupController::class)->middleware('auth')->names('pms.project-groups');
+Route::post('projects/update-with-media/{project}', [ProjectController::class, 'updateWithMedia'])->name('pms.projects.update-with-media')->middleware('auth');
+Route::get('/projects-{project_id}-get', [ProjectController::class, 'getSelectedItem'])->middleware('auth')->name('pms.projects.get-item');
 Route::resource('tags', TagController::class)->middleware('auth')->names('pms.tags');
 Route::post('tasks-{task}-comment', [TaskController::class, 'comment'])->name('pms.tasks.comment')->middleware('auth');
 Route::put('tasks-{task}-pause-play', [TaskController::class, 'pausePlayTask'])->name('pms.tasks.pause-play')->middleware('auth');
@@ -48,6 +56,10 @@ Route::post('opportunity-tasks/store/{opportunity_id}', [OpportunityTaskControll
 Route::post('opportunity-tasks/{opportunity_task}/comment', [OpportunityTaskController::class, 'comment'])->name('crm.opportunity-tasks.comment')->middleware('auth');
 Route::put('opportunity-tasks/mark-as-done/{opportunityTask}', [OpportunityTaskController::class, 'markAsDone'])->name('crm.opportunity-tasks.mark-as-done')->middleware('auth');
 
+// ------- CRM (surveys Routes)  ---------
+Route::get('/surveys/create/{opportunity_id}', [SurveyController::class, 'create'])->name('crm.surveys.create');
+Route::post('/surveys/store/{opportunity_id}', [SurveyController::class, 'store'])->name('crm.surveys.store');
+
 // ------- CRM (Client monior Routes)  ---------
 Route::resource('client-monitors', ClientMonitorController::class)->names('crm.client-monitors')->middleware('auth');
 
@@ -68,9 +80,11 @@ Route::resource('settings', SettingController::class)->middleware('auth');
 Route::resource('users', UserController::class)->middleware('auth');
 Route::get('users-get-notifications', [UserController::class, 'getNotifications'])->name('users.get-user-notifications')->middleware('auth');
 Route::get('users-get-pendent-tasks', [UserController::class, 'getPendentTasks'])->name('users.get-pendent-tasks')->middleware('auth');
+Route::get('users-get-meetings', [UserController::class, 'getMeetings'])->name('users.get-meetings')->middleware('auth');
 Route::delete('users-delete-notifications', [UserController::class, 'deleteNotifications'])->name('users.delete-user-notifications')->middleware('auth');
 Route::post('users-read-notifications', [UserController::class, 'readNotifications'])->name('users.read-user-notifications')->middleware('auth');
 Route::put('users-{user}-toggle-status', [UserController::class, 'toggleStatus'])->name('users.toggle-status')->middleware('auth');
+Route::post('users/update-with-media/{user}', [UserController::class, 'updateWithMedia'])->name('users.update-with-media')->middleware('auth');
 
 // ------- Roles and permissions Routes ---------
 Route::get('role-permission', [RolePermissionController::class, 'index'])->middleware('auth')->name('settings.role-permission.index');

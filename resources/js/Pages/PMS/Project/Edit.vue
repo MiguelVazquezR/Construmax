@@ -1,7 +1,7 @@
 <template>
   <AppLayout title="Crear proyecto">
     <div class="flex justify-between items-center text-lg mx-8 mt-8">
-      <b>Nuevo proyecto</b>
+      <b>Editar proyecto</b>
       <Link :href="route('pms.projects.index')">
       <p class="flex items-center text-sm text-primary">
         <i class="fa-solid fa-arrow-left-long mr-2"></i>
@@ -24,15 +24,11 @@
         <InputError :message="form.errors.service_type" />
       </div>
       <div>
-        <InputLabel value="Fecha de inicio *" class="ml-2" />
-        <el-date-picker v-model="form.start_date" type="date" placeholder="Inicio *" format="YYYY/MM/DD"
-          value-format="YYYY-MM-DD" />
+        <InputLabel value="Duración *" class="ml-2" />
+        <el-date-picker @change="handleDateRange" v-model="range" type="daterange" range-separator="A"
+          start-placeholder="Fecha de inicio" end-placeholder="Fecha límite" value-format="YYYY-MM-DD"
+          :disabled-date="disabledStartOrLimitDate" />
         <InputError :message="form.errors.start_date" />
-      </div>
-      <div>
-        <InputLabel value="Fecha de límite *" class="ml-2" />
-        <el-date-picker v-model="form.limit_date" type="date" placeholder="Límite *" format="YYYY/MM/DD"
-          value-format="YYYY-MM-DD" />
         <InputError :message="form.errors.limit_date" />
       </div>
       <div>
@@ -398,6 +394,7 @@ export default {
       showGroupFormModal: false,
       showTagFormModal: false,
       editAccesFlag: true,
+      range: null,
       typeAccessProject: 'Private',
       search: '',
       inputSearch: '',
@@ -455,6 +452,14 @@ export default {
 
   },
   methods: {
+    handleDateRange(range) {
+      this.form.start_date = range[0];
+      this.form.limit_date = range[1];
+    },
+    toBool(value) {
+      if (value == 1 || value == true) return true;
+      return false;
+    },
     getFileTypeIcon(fileName) {
       // Asocia extensiones de archivo a iconos
       const fileExtension = fileName.split('.').pop().toLowerCase();
@@ -641,7 +646,21 @@ export default {
         admin.permissions = defaultPermissions;
       });
       this.form.selectedUsersToPermissions = admins;
-    }
+    },
+    selectAuthUser() {
+      if (this.$page.props.auth.user.employee_properties !== null) {
+        // obtener usuario que esta creando el proyecto para dar todos los permisos
+        const user = this.users.find((item) => item.id === this.$page.props.auth.user.id);
+        const defaultPermissions = [true, true, true, true, true];
+        let authUser = {
+          id: user.id,
+          name: user.name,
+          profile_photo_url: user.profile_photo_url,
+          permissions: [...defaultPermissions],
+        };
+        this.form.selectedUsersToPermissions.push(authUser);
+      }
+    },
   },
   computed: {
     availableUsersToPermissions() {
@@ -675,6 +694,7 @@ export default {
         ];
         this.editAccesFlag = false;
       } else {
+        this.selectAuthUser();
         this.editAccesFlag = true;
       }
     },
@@ -685,17 +705,21 @@ export default {
 
     // inicializar permisos
     this.project.users.forEach(user => {
+      const permissions = JSON.parse(user.pivot.permissions).map(item => this.toBool(item));
       const participant = {
         id: user.id,
         name: user.name,
         profile_photo_url: user.profile_photo_url,
         employee_properties: user.employee_properties,
-        permissions: JSON.parse(user.pivot.permissions),
+        permissions: permissions,
       };
       this.form.selectedUsersToPermissions.push(participant);
     });
     this.updateContacts();
     this.updateBranches();
+
+    // inicializar fechas en range
+    this.range = [this.project.start_date, this.project.limit_date];
   }
 }
 </script>

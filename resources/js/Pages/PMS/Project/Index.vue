@@ -16,7 +16,7 @@
       </div>
     </div>
 
-    <div class="lg:px-16 px-4 py-7 text-sm overflow-x-auto">
+    <div class="lg:px-16 px-4 py-7 text-xs overflow-x-auto">
       <table v-if="filteredTableData.length" class="w-full mx-auto">
         <thead>
           <tr class="text-left">
@@ -41,7 +41,7 @@
             <td class="text-left py-2 pr-2 pl-4 rounded-l-full">
               {{ project.folio }}
             </td>
-            <td class="text-left py-2">
+            <td :title="project.name" class="text-left py-2 max-w-[220px] truncate pr-2">
               {{ project.name }}
             </td>
             <td class="text-left py-2">
@@ -53,35 +53,39 @@
                 class="py-1 px-2 rounded-full border border-white">{{ calculateProjectStatus(project.tasks)?.label
                 }}</span>
             </td>
-            <td class="text-left py-2 flex space-x-1 items-center">
-              <p class="text-xs">{{ project.tasks.filter(task => task.status === 'Terminada').length }}</p>
-              <div class="relative bg-gray4 rounded-full h-5 w-24">
+            <td class="text-left py-2 flex space-x-px items-center">
+              <p class="text-[10px] mt-1">{{ project.tasks.filter(task => task.status === 'Terminada').length }}</p>
+              <div class="relative bg-gray4 rounded-full h-5 w-24 mt-1 border border-white">
                 <div
                   :class="(project.tasks.filter(task => task.status === 'Terminada').length / project.tasks.length) * 100 == 100 ? 'rounded-full' : 'rounded-l-full'"
                   class="absolute top-0 left-0 bg-primary h-5"
                   :style="{ width: (project.tasks.filter(task => task.status === 'Terminada').length / project.tasks.length) * 100 + '%' }">
                 </div>
-                <p class="text-sm absolute top-0 right-8 text-black">{{ project.tasks.length != 0 ?
+                <p class="text-xs mt-px absolute top-0 right-8 text-black">{{ project.tasks.length != 0 ?
                   Math.round((project.tasks.filter(task => task.status === 'Terminada').length / project.tasks.length) *
                     100) : '0' }}%</p>
               </div>
-              <p class="text-xs">{{ project.tasks.length }}</p>
+              <p class="text-[10px] mt-1">{{ project.tasks.length }}</p>
             </td>
-            <td class="text-left py-2 px-2">
+            <td class="text-left py-2">
               {{ project.owner.name }}
             </td>
-            <td class="text-left py-2 px-2">
+            <td class="text-left py-2">
               {{ project.start_date }}
             </td>
-            <td class="text-left py-2 px-2" :class="getTextClass(project)">
+            <td class="text-left py-2" :class="getTextClass(project)">
               {{ project.limit_date }}
-              <el-tooltip v-if="project.finished_at === null && limitDateHasPassed(project)" content="La fecha limite ha pasado"
-                placement="top">
+              <el-tooltip v-if="project.finished_at === null && limitDateHasPassed(project)"
+                content="La fecha limite ha pasado" placement="top">
                 <i class="fa-solid fa-triangle-exclamation"></i>
               </el-tooltip>
             </td>
-            <td class="text-left py-2 px-2 rounded-r-full">
+            <td class="text-left py-2">
               {{ project.finished_at ?? '--' }}
+            </td>
+            <td v-if="$page.props.auth.user.permissions?.includes('Eliminar proyectos')"
+              class="text-left py-2 px-2 rounded-r-full">
+              <i @click.stop="prepareToDelete(project)" class="fa-regular fa-trash-can text-primary cursor-pointer p-2"></i>
             </td>
           </tr>
         </tbody>
@@ -92,14 +96,29 @@
         <!-- <Pagination :pagination="projects" /> -->
       </div>
     </div>
-
+    <ConfirmationModal :show="showConfirmModal" @close="showConfirmModal = false">
+      <template #title>
+        Eliminar proyecto
+      </template>
+      <template #content>
+        Al eliminar el proyecto se perderán permanentemente las tareas y los archivos relacionados. ¿Deseas continuar?
+      </template>
+      <template #footer>
+        <div class="flex space-x-1">
+          <CancelButton @click="showConfirmModal = false">Cancelar</CancelButton>
+          <PrimaryButton @click="deleteProject()">Eliminar</PrimaryButton>
+        </div>
+      </template>
+    </ConfirmationModal>
   </AppLayout>
 </template>
   
 <script>
 import AppLayout from "@/Layouts/AppLayout.vue";
 import PrimaryButton from "@/Components/PrimaryButton.vue";
+import CancelButton from "@/Components/CancelButton.vue";
 import SecondaryButton from "@/Components/SecondaryButton.vue";
+import ConfirmationModal from "@/Components/ConfirmationModal.vue";
 import moment from 'moment';
 //   import Pagination from "@/Components/MyComponents/Pagination.vue";
 
@@ -108,12 +127,16 @@ export default {
     return {
       search: '',
       inputSearch: '',
+      showConfirmModal: false,
+      projectToDelete: null,
     }
   },
   components: {
     AppLayout,
     PrimaryButton,
+    CancelButton,
     SecondaryButton,
+    ConfirmationModal,
     //   Pagination
   },
   props: {
@@ -129,6 +152,20 @@ export default {
       }
 
       return false;
+    },
+    prepareToDelete(project) {
+      this.projectToDelete = project.id;
+      this.showConfirmModal = true;
+    },
+    deleteProject() {
+      this.$inertia.delete(route('pms.projects.destroy', this.projectToDelete));
+      this.$notify({
+        title: "Éxito",
+        message: "Proyecto eliminado",
+        type: "success",
+      });
+      this.projectToDelete = null;
+      this.showConfirmModal = false;
     },
     getTextClass(project) {
       const today = moment();

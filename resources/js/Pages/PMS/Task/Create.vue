@@ -14,13 +14,12 @@
             <div class="mx-8 mt-3 grid grid-cols-2 gap-x-4 gap-y-2 mb-6">
                 <div>
                     <InputLabel value="Nombre de la tarea *" class="ml-2" />
-                    <input v-model="form.name" class="input mt-1" type="text"
-                        placeholder="Escriba un nombre para la tarea">
+                    <input v-model="form.name" class="input mt-1" type="text" placeholder="Escriba un nombre para la tarea">
                     <InputError :message="form.errors.name" />
                 </div>
                 <div>
                     <InputLabel value="Proyecto *" class="ml-2" />
-                    <el-select v-model="form.project_id" clearable placeholder="Seleccione" class="w-full mt-1"
+                    <el-select @change="getProject()" v-model="form.project_id" clearable placeholder="Seleccione" class="w-full mt-1"
                         no-data-text="No hay opciones para mostrar" no-match-text="No se encontraron coincidencias">
                         <el-option v-for="(item, index) in projects" :key="item.id" :label="item.name" :value="item.id" />
                     </el-select>
@@ -78,6 +77,7 @@
                         start-placeholder="Fecha de inicio" end-placeholder="Fecha límite" value-format="YYYY-MM-DD"
                         :disabled-date="disabledStartOrLimitDate" />
                     <InputError :message="form.errors.start_date" />
+                    <InputError :message="form.errors.limit_date" />
                 </div>
                 <div v-if="canSelectTime" class="col-span-full ml-2 text-sm mt-3 flex">
                     <label class="flex items-center cursor-pointer flex-shrink-0 flex-grow-0">
@@ -267,7 +267,9 @@ export default {
             }
             return false;
         },
-
     },
+    mounted() {
+        this.selectedProject = this.projects.find(item => item.id == this.parent_id);
+    }
 };
 </script>

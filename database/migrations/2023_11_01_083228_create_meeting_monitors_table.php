@@ -22,7 +22,7 @@ return new class extends Migration
             $table->json('participants')->nullable();
             $table->string('contact_name')->nullable();
             $table->foreignId('customer_id')->nullable()->constrained()->cascadeOnDelete();
-            $table->foreignId('branch')->nullable();
+            $table->string('branch')->nullable();
             $table->foreignId('opportunity_id')->nullable()->constrained()->cascadeOnDelete();
             $table->foreignId('seller_id')->constrained('users')->cascadeOnDelete();
             $table->foreignId('client_monitor_id')->nullable()->constrained()->cascadeOnDelete();

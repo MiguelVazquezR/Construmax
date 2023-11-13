@@ -15,8 +15,32 @@
     </div>
     <form @submit.prevent="store" class="mx-8 mt-10 grid grid-cols-4 gap-x-4 gap-y-2">
       <div>
-        <div class="rounded-full w-52 h-52 bg-gray2 mx-auto">
+        <div @click="openFileInput" v-if="!selectedImage"
+          class="rounded-full w-52 h-52 bg-gray2 mx-auto flex items-center justify-center cursor-pointer">
+          <label for="fileInput">
+            <i class="fa-solid fa-camera text-white text-3xl"></i>
+          </label>
+          <input @change="previewImage" type="file" id="fileInput" name="fileInput" style="display: none"
+            accept="image/*" />
         </div>
+        <Dropdown v-else align="right" width="48">
+          <template #trigger>
+            <div class="rounded-full w-52 h-52 bg-gray2 mx-auto flex items-center justify-center cursor-pointer">
+              <img :src="selectedImage" alt="User Profile" class="object-cover rounded-full w-52 h-52 mx-auto" />
+              <input @change="previewImage" type="file" id="fileInput" name="fileInput" style="display: none"
+                accept="image/*" />
+            </div>
+          </template>
+          <template #content>
+            <DropdownLink @click="editProfilePhoto()" as="no-submit-button">
+              Editar
+            </DropdownLink>
+            <DropdownLink @click="deleteProfilePhoto()" as="no-submit-button">
+              Eliminar
+            </DropdownLink>
+          </template>
+        </Dropdown>
+        <InputError :message="form.errors.photo" />
       </div>
       <div class="col-span-3 grid grid-cols-2 gap-x-4 gap-y-2">
         <div>
@@ -77,6 +101,8 @@ import InputError from "@/Components/InputError.vue";
 import CancelButton from "@/Components/CancelButton.vue";
 import InfoMessage from "@/Components/MyComponents/InfoMessage.vue";
 import Checkbox from "@/Components/Checkbox.vue";
+import Dropdown from "@/Components/Dropdown.vue";
+import DropdownLink from "@/Components/DropdownLink.vue";
 import { Link, useForm } from "@inertiajs/vue3";
 
 export default {
@@ -89,10 +115,12 @@ export default {
         phone: null,
       },
       email: null,
+      photo: null,
       roles: [],
     });
-
+    
     return {
+      selectedImage: null,
       form,
       departments: [
         "Construcción",
@@ -111,12 +139,35 @@ export default {
     InputError,
     Link,
     InfoMessage,
+    Dropdown,
+    DropdownLink,
     //   Pagination
   },
   props: {
     roles: Array,
   },
   methods: {
+    openFileInput() {
+      // Al hacer clic en el div, activar el input de tipo "file" invisible
+      document.getElementById('fileInput').click();
+    },
+    previewImage(event) {
+      const file = event.target.files[0];
+      if (file) {
+        // Almacena el archivo seleccionado en una propiedad 'selectedImage'
+        this.form.photo = file;
+
+        // Crea una URL temporal para mostrar la vista previa
+        this.selectedImage = URL.createObjectURL(file);
+      }
+    },
+    editProfilePhoto() {
+      this.openFileInput();
+    },
+    deleteProfilePhoto() {
+      this.form.photo = null;
+      this.selectedImage = null;
+    },
     store() {
       this.form.post(route("users.store"), {
         onSuccess: () => {

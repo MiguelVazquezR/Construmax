@@ -17,11 +17,13 @@
             <h1 class="font-bold text-center text-sm mt-2">Notificaciones</h1>
             <p v-if="!notifications.length" class="text-gray3 text-xs text-center my-3">No hay notificaciones</p>
             <main class="max-h-[220px] overflow-y-auto">
-                <DropdownLink v-for="item in notifications" :key="item.id" :href="item.data.route">
-                    <p :class="{ 'font-bold': item.read_at === null }" class="relative">
-                    <div v-if="item.read_at === null" class="w-2 h-2 bg-primary rounded-full absolute top-[6px] -left-3"></div>
-                    {{ item.data.description }}
-                    </p>
+                <DropdownLink v-for="item in notifications" :key="item.id" :href="item.data.url">
+                    <div :class="{ 'font-bold': item.read_at === null }" class="relative">
+                        <div v-if="item.read_at === null"
+                            class="w-2 h-2 bg-primary rounded-full absolute top-[6px] -left-3"></div>
+                        <p v-html="item.data.description"></p>
+                    </div>
+                    <small class="mt-1 text-gray2">{{ item.created_at_for_humans }}</small>
                 </DropdownLink>
             </main>
             <footer v-if="notifications.length" class="py-1 px-2 flex justify-end">
@@ -75,7 +77,7 @@ export default {
                 console.log(error);
                 this.$notify({
                     title: "No se pudo completar la solicitud",
-                    message: "El servidor no pudo procesar la petición, intentelo más tarde",
+                    message: "El servidor no pudo procesar la petición, inténtalo más tarde",
                     type: "error",
                 });
             }
@@ -91,7 +93,7 @@ export default {
                 console.log(error);
                 this.$notify({
                     title: "No se pudo completar la solicitud",
-                    message: "El servidor no pudo procesar la petición, intentelo más tarde",
+                    message: "El servidor no pudo procesar la petición, inténtalo más tarde",
                     type: "error",
                 });
             }

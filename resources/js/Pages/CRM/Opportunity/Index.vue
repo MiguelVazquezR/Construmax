@@ -99,9 +99,9 @@
               closedTotal?.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",") ?? "0.00"
             }}
           </p>
-          <draggable @start="handleStartDrag" @add="handleAddDrag" @end="drag = false"
-            v-model="closedOpportunitiesLocal" :animation="300" item-key="id" tag="ul" group="oportunities"
-            id="closed" :class="drag && !closedOpportunitiesLocal?.length ? 'h-40' : ''">
+          <draggable @start="handleStartDrag" @add="handleAddDrag" @end="drag = false" v-model="closedOpportunitiesLocal"
+            :animation="300" item-key="id" tag="ul" group="oportunities" id="closed"
+            :class="drag && !closedOpportunitiesLocal?.length ? 'h-40' : ''">
             <template #item="{ element: opportunity }">
               <li>
                 <OpportunityCard class="my-3" :opportunity="opportunity" />
@@ -163,9 +163,9 @@
     <!-- ------------ Kanban view ends ----------------- -->
 
     <!-- ------------ Lista view starts ----------------- -->
-    <div v-if="type_view === 'Lista'" class="w-11/12 mx-auto my-16">
+    <div v-if="type_view === 'Lista'" class="w-full mx-auto my-16 text-xs">
       <div v-if="opportunities.data.length">
-        <table class="lg:w-[90%] w-full mx-auto">
+        <table class="lg:w-[95%] w-full mx-auto">
           <thead>
             <tr class="text-left">
               <th class="font-bold pb-5">
@@ -190,35 +190,33 @@
             </tr>
           </thead>
           <tbody>
-            <tr
-              v-for="opportunity in filteredTableData"
-              :key="opportunity.id"
+            <tr v-for="opportunity in filteredTableData" :key="opportunity.id"
               class="mb-4 cursor-pointer hover:bg-primarylight"
-              @click="$inertia.get(route('crm.opportunities.show', opportunity.id))"
-            >
-              <td class="text-left py-2 px-2 rounded-l-full">
+              @click="$inertia.get(route('crm.opportunities.show', opportunity.id))">
+              <td :title="opportunity.name" class="text-left py-2 px-2 rounded-l-full max-w-[220px] truncate pr-2">
                 {{ opportunity.name }}
               </td>
-              <td class="text-left py-2 px-2">
-                <span class="py-1 px-4 rounded-full" :class="getStatusStyles(opportunity)">{{ opportunity.status }}</span>
+              <td class="text-left py-2">
+                <span class="py-1 px-4 rounded-full border border-white" :class="getStatusStyles(opportunity)">{{
+                  opportunity.status }}</span>
               </td>
-              <td class="text-left py-2 px-2">
-                <span class="py-1 px-2 rounded-full">{{
+              <td class="text-left py-2">
+                <span class="py-1 rounded-full">{{
                   opportunity.created_at.isoFormat
                 }}</span>
               </td>
-              <td class="text-left py-2 px-2">
+              <td class="text-left py-2">
                 {{ opportunity.close_date }}
               </td>
-              <td class="text-left py-2 px-2">
+              <td class="text-left py-2">
                 {{ opportunity.finished_at ?? "--" }}
               </td>
-              <td class="text-left py-2 px-2">
+              <td class="text-left py-2">
                 {{ opportunity.paid_at ?? "--" }}
               </td>
-              <td v-if="$page.props.auth.user.permissions?.includes('Eliminar oportunidades') || true
-                " class="text-left py-2 px-2 rounded-r-full">
-                <el-popconfirm confirm-button-text="Si" cancel-button-text="No" icon-color="#D90537" title="¿Eliminar?"
+              <td v-if="$page.props.auth.user.permissions?.includes('Eliminar oportunidades')" @click.stop=""
+                class="text-left py-2 rounded-r-full">
+                <el-popconfirm confirm-button-text="Si" cancel-button-text="No" icon-color="#FD8827" title="¿Eliminar?"
                   @confirm="deleteOpportunity(opportunity)">
                   <template #reference>
                     <i @click.stop="" class="fa-regular fa-trash-can text-primary cursor-pointer p-2"></i>
@@ -230,10 +228,43 @@
         </table>
       </div>
       <div v-else>
-        <p class="text-sm text-center">No hay oportunidades para mostrar</p>
+        <p class="text-sm text-center">No hay oportunidades</p>
       </div>
     </div>
     <!-- ------------ Lista view ends ----------------- -->
+
+    <!-- ------- lost modal -------- -->
+    <Modal :show="showLostOpportunityModal" @close="showLostOpportunityModal = false">
+      <div class="mx-7 my-4 space-y-4 relative">
+        <div>
+          <label>Causa oportunidad perdida
+            <el-tooltip content="Escribe la causa por la cual se PERDIÓ esta oportunidad" placement="top">
+              <i class="fa-regular fa-circle-question ml-2 text-primary text-xs"></i>
+            </el-tooltip>
+          </label>
+          <textarea v-model="lost_oportunity_razon" required class="input h-24 mt-3"></textarea>
+        </div>
+        <div class="flex justify-end space-x-3 pt-5 pb-1">
+          <PrimaryButton @click="updateOpportunityStatus('Perdida')">Actualizar estatus</PrimaryButton>
+        </div>
+      </div>
+    </Modal>
+
+    <ConfirmationModal :show="showConfirmModal" @close="showConfirmModal = false">
+      <template #title>
+        Eliminar proyecto
+      </template>
+      <template #content>
+        Al eliminar la oportunidad se perderán permanentemente las actividades y los archivos relacionados, así como el
+        proyecto relacionado si es que se creó uno. ¿Deseas continuar?
+      </template>
+      <template #footer>
+        <div class="flex space-x-1">
+          <CancelButton @click="showConfirmModal = false">Cancelar</CancelButton>
+          <PrimaryButton @click="deleteProject()">Eliminar</PrimaryButton>
+        </div>
+      </template>
+    </ConfirmationModal>
   </AppLayout>
 </template>
 <script>
@@ -241,8 +272,11 @@ import AppLayout from "@/Layouts/AppLayout.vue";
 import Dropdown from "@/Components/Dropdown.vue";
 import DropdownLink from "@/Components/DropdownLink.vue";
 import PrimaryButton from "@/Components/PrimaryButton.vue";
+import CancelButton from "@/Components/CancelButton.vue";
 import OpportunityCard from "@/Components/MyComponents/CRM/OpportunityCard.vue";
 import SecondaryButton from "@/Components/SecondaryButton.vue";
+import Modal from "@/Components/Modal.vue";
+import ConfirmationModal from "@/Components/ConfirmationModal.vue";
 import draggable from "vuedraggable";
 import { Link } from "@inertiajs/vue3";
 
@@ -252,6 +286,8 @@ export default {
       search: "",
       inputSearch: "",
       show_type_view: false,
+      showLostOpportunityModal: false,
+      lost_oportunity_razon: null,
       type_view: "Kanban",
       newTotal: null,
       pendingTotal: null,
@@ -266,6 +302,8 @@ export default {
       drag: false,
       draggingOpportunityId: null,
       opportunitiesLocal: null,
+      showConfirmModal: false,
+      projectToDelete: null,
     };
   },
   components: {
@@ -273,9 +311,12 @@ export default {
     Dropdown,
     DropdownLink,
     PrimaryButton,
+    CancelButton,
     SecondaryButton,
     OpportunityCard,
     draggable,
+    Modal,
+    ConfirmationModal,
     Link,
   },
   props: {
@@ -303,12 +344,18 @@ export default {
         status = "Perdida";
       }
 
-      this.updateOpportunityStatus(status);
+      if (evt.to.id === "lost") {
+        this.showLostOpportunityModal = true;
+      } else {
+        this.updateOpportunityStatus(status);
+      }
+
       this.drag = false;
     },
     async updateOpportunityStatus(status) {
+      this.showLostOpportunityModal = false;
       try {
-        const response = await axios.put(route('crm.opportunities.update-status', this.draggingOpportunityId), { status: status });
+        const response = await axios.put(route('crm.opportunities.update-status', this.draggingOpportunityId), { status: status, lost_oportunity_razon: this.lost_oportunity_razon });
 
         if (response.status === 200) {
           const OpportunityIndex = this.opportunitiesLocal.findIndex(item => item.id === this.draggingOpportunityId);
@@ -379,7 +426,7 @@ export default {
         message: "Oportunidad eliminada",
         type: "success",
       });
-      window.location.reload();
+      // window.location.reload();
     },
   },
   computed: {
@@ -414,7 +461,7 @@ export default {
 }
 
 .seccion {
-  flex: 0 0 25%;
+  flex: 0 0 22%;
   /* Establece el ancho de cada sección al 25% */
 }
 </style>

@@ -25,9 +25,9 @@ return new class extends Migration
             $table->time('start_time')->nullable();
             $table->time('limit_time')->nullable();
             $table->timestamp('finished_at')->nullable();
-            $table->foreignId('user_id')->constrained();
-            $table->foreignId('project_id')->nullable()->constrained();
-            $table->foreignId('opportunity_id')->nullable()->constrained();
+            $table->foreignId('user_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('project_id')->nullable()->constrained()->cascadeOnDelete();
+            // $table->foreignId('opportunity_id')->nullable()->constrained();
             $table->timestamps();
         });
     }

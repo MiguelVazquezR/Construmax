@@ -10,6 +10,8 @@ use App\Models\Project;
 use App\Models\ProjectGroup;
 use App\Models\Tag;
 use App\Models\User;
+use App\Notifications\NewProjectNotification;
+use App\Notifications\UpdatedProjectNotification;
 use Illuminate\Validation\Rule;
 use Illuminate\Http\Request;
 
@@ -24,7 +26,7 @@ class ProjectController extends Controller
 
     public function create()
     {
-        $customers = Customer::with(['opportunities', 'contacts'])->get();
+        $customers = Customer::with(['opportunities.project', 'contacts'])->get();
         $project_groups = ProjectGroupResource::collection(ProjectGroup::all());
         $tags = TagResource::collection(Tag::where('type', 'projects')->get());
         $users = User::whereNotIn('id', [1])->where('is_active', true)->get();
@@ -60,10 +62,20 @@ class ProjectController extends Controller
 
         // permisos
         foreach ($request->selectedUsersToPermissions as $user) {
+            $permissions_array = array_map(function ($item) {
+                // La función boolval() convierte un valor a booleano
+                return boolval($item);
+            }, $user['permissions']);
             $allowedUser = [
-                "permissions" => json_encode($user['permissions']), // Serializa los permisos en formato JSON
+                "permissions" => json_encode($permissions_array), // Serializa los permisos en formato JSON
             ];
             $project->users()->attach($user['id'], $allowedUser);
+
+            // notificar a usuarios que no sean el que crea el proyecto
+            $_user = User::find($user['id']);
+            if ($_user->id !== auth()->id()) {
+                $_user->notify(new NewProjectNotification($project, auth()->user()->name));
+            }
         }
 
         // etiquetas
@@ -80,12 +92,12 @@ class ProjectController extends Controller
 
     public function show(Project $project)
     {
-        $project = ProjectResource::make(Project::with(['tasks' => ['users', 'project', 'user'], 'projectGroup', 'opportunity.customer', 'tags', 'users', 'owner', 'contact'])->find($project->id));
-        $projects = ProjectResource::collection(Project::with(['tasks' => ['users', 'project', 'user', 'comments.user', 'media'], 'user', 'users', 'opportunity.customer', 'projectGroup', 'tags', 'owner', 'contact'])->latest()->get());
+        $project = ProjectResource::make(Project::with(['tasks' => ['users', 'project', 'user'], 'projectGroup', 'opportunity.customer', 'tags', 'users', 'owner', 'contact', 'user'])->find($project->id));
+        $projects = Project::latest()->get(['id', 'name']);
         $users = User::all();
         $defaultTab = request('defaultTab');
 
-        return inertia('PMS/Project/Show', compact(['project', 'projects', 'users', 'defaultTab']));
+        return inertia('PMS/Project/Show', compact(['project', 'users', 'defaultTab', 'projects']));
     }
 
     public function edit(Project $project)
@@ -135,6 +147,12 @@ class ProjectController extends Controller
                 "permissions" => json_encode($user['permissions']), // Serializa los permisos en formato JSON
             ];
             $project->users()->attach($user['id'], $allowedUser);
+
+            // notificar a usuarios que no sean el que edita el proyecto
+            $_user = User::find($user['id']);
+            if ($_user->id !== auth()->id()) {
+                $_user->notify(new UpdatedProjectNotification($project, auth()->user()->name));
+            }
         }
 
         // etiquetas
@@ -178,10 +196,20 @@ class ProjectController extends Controller
         // Eliminar todos los permisos actuales para el proyecto
         $project->users()->detach();
         foreach ($request->selectedUsersToPermissions as $user) {
+            $permissions_array = array_map(function ($item) {
+                // La función boolval() convierte un valor a booleano
+                return boolval($item);
+            }, $user['permissions']);
             $allowedUser = [
-                "permissions" => json_encode($user['permissions']), // Serializa los permisos en formato JSON
+                "permissions" => json_encode($permissions_array), // Serializa los permisos en formato JSON
             ];
             $project->users()->attach($user['id'], $allowedUser);
+
+            // notificar a usuarios que no sean el que edita el proyecto
+            $_user = User::find($user['id']);
+            if ($_user->id !== auth()->id()) {
+                $_user->notify(new UpdatedProjectNotification($project, auth()->user()->name));
+            }
         }
 
         // etiquetas
@@ -199,6 +227,23 @@ class ProjectController extends Controller
 
     public function destroy(Project $project)
     {
-        //
+        // eliminar tareas y comentarios
+        $tasks = $project->tasks;
+        foreach ($tasks as $task) {
+            $task->comments()->delete();
+            $task->delete();
+        }
+
+        // eliminar proyecto
+        $project->delete();
+
+        return to_route('pms.projects.index');
+    }
+
+    public function getSelectedItem($project_id)
+    {
+        $project = ProjectResource::make(Project::with(['tasks' => ['users', 'project', 'user'], 'projectGroup', 'opportunity.customer', 'tags', 'users', 'owner', 'contact'])->find($project_id));
+
+        return response()->json(['item' => $project]);
     }
 }

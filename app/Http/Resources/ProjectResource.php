@@ -27,7 +27,6 @@ class ProjectResource extends JsonResource
             'invoice_type' => $this->invoice_type,
             'budget' => $this->budget,
             'address' => $this->address,
-            'user' => $this->whenLoaded('user'),
             'contact' => $this->whenLoaded('contact'),
             'company' => $this->whenLoaded('company'),
             'opportunity' =>$this->whenLoaded('opportunity'),

@@ -23,7 +23,8 @@
       <div class=" w-full">
         <div class="flex justify-between items-center mx-2">
           <InputLabel value="Etiquetas" />
-          <button @click="showTagFormModal = true" type="button"
+          <button v-if="$page.props.auth.user.permissions?.includes('Crear etiquetas de clientes')"
+            @click="showTagFormModal = true" type="button"
             class="rounded-full border border-primary w-4 h-4 flex items-center justify-center">
             <i class="fa-solid fa-plus text-primary text-[9px]"></i>
           </button>
@@ -125,6 +126,7 @@
           </ul>
         </div>
       </div>
+      <InputError :message="form.errors.contacts" />
       <!----- Datos adicionales ----------------------------------------------------------------->
       <h2 class="font-bold mt-7 col-span-2">Datos adicionales</h2>
       <div>
@@ -165,7 +167,7 @@
         <Link :href="route('crm.customers.index')">
         <CancelButton type="button">Cancelar</CancelButton>
         </Link>
-        <PrimaryButton>Agregar</PrimaryButton>
+        <PrimaryButton :disabled="form.processing">Agregar</PrimaryButton>
       </div>
     </form>
 

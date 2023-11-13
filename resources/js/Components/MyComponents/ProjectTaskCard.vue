@@ -20,7 +20,7 @@
     <!-- </el-tooltip> -->
     <!-- ------------ body -------------------------- -->
     <div class="flex items-center justify-between p-3">
-      <p class="text-sm">{{ taskComponentLocal?.name }}</p>
+      <p :title="taskComponentLocal?.name" class="text-sm w-5/6 truncate">{{ taskComponentLocal?.name }}</p>
       <div>
         <el-tooltip v-if="taskComponentLocal?.media.length" content="Archivo adjunto" placement="top">
           <i @click.stop="" class="fa-solid fa-paperclip rounded-full p-2 text-primary"></i>

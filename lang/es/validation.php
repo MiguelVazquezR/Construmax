@@ -212,5 +212,12 @@ return [
         'payment_method' => 'método de pago',
         'concept' => 'concepto',
         'paid_at' => 'fecha de pago',
+        'invoicing_method' => 'método de pago',
+        'invoicing_method' => 'condiciones de pago',
+        'invoicing_use' => 'uso de factura',
+        'asigned_id' => 'asignado a',
+        'meeting_date' => 'fecha de cita',
+        'meeting_via' => 'vía de cita',
+        'photo' => 'foto',
     ],
-];
+]; 

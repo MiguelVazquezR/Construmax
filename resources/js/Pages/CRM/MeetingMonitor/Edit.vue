@@ -87,7 +87,7 @@
             <InputError :message="form.errors.participants" />
         </div>
         <div class="mt-5 col-span-full">
-          <InputLabel value="Descripción *" class="ml-2" />
+          <InputLabel value="Descripción" class="ml-2" />
           <textarea class="input h-24" v-model="form.description" rows="3"></textarea>
         </div>
         <div class="flex justify-end items-center col-span-2 mt-5">

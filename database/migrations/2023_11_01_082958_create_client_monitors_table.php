@@ -16,6 +16,7 @@ return new class extends Migration
             $table->string('type');
             $table->timestamp('date');
             $table->string('concept');
+            $table->unsignedBigInteger('monitor_id'); //No es una llave foranea
             $table->foreignId('seller_id')->constrained('users')->cascadeOnDelete(); //quien lo crea
             $table->foreignId('opportunity_id')->nullable()->constrained()->cascadeOnDelete();
             $table->foreignId('customer_id')->nullable()->constrained()->cascadeOnDelete();

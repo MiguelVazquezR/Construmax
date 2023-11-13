@@ -30,8 +30,9 @@ class CustomerController extends Controller
         $request->validate([
             'name' => 'required|string',
             'rfc' => 'required|string',
-            'contacts' => 'required|array|min:1',
+            'contacts' => 'array|min:1',
             'invoicing_method' => 'required',
+            'currency' => 'required',
             'payment_method' => 'required',
             'invoice_use' => 'required',
         ]);
@@ -63,9 +64,11 @@ class CustomerController extends Controller
 
     public function show(Customer $customer)
     {
-        $customers = CustomerResource::collection(Customer::with(['user', 'tags', 'contacts', 'opportunities', 'clientMonitors' => ['emailMonitor', 'paymentMonitor', 'meetingMonitor', 'seller']])->latest()->get());
+        $customer = CustomerResource::make($customer->fresh(['user', 'tags', 'contacts', 'opportunities', 'clientMonitors' => ['emailMonitor', 'paymentMonitor', 'meetingMonitor', 'seller']]));
+        $customers = Customer::latest()->get(['id', 'name']);
+        $defaultTab = request('defaultTab');
 
-        return inertia('CRM/Customer/Show', compact('customer', 'customers'));
+        return inertia('CRM/Customer/Show', compact('customer', 'customers', 'defaultTab'));
     }
 
     public function edit(Customer $customer)

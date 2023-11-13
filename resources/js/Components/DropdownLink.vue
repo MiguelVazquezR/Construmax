@@ -13,6 +13,10 @@ defineProps({
             <slot />
         </button>
 
+        <button v-else-if="as == 'no-submit-button'" type="button" class="block w-full px-4 py-2 text-left text-xs leading-5 text-black hover:bg-primarylight focus:outline-none focus:bg-primarylight transition duration-150 ease-in-out">
+            <slot />
+        </button>
+
         <a v-else-if="as =='a'" :href="href" class="block px-4 py-2 text-xs leading-5 text-black hover:bg-primarylight focus:outline-none focus:bg-primarylight transition duration-150 ease-in-out">
             <slot />
         </a>

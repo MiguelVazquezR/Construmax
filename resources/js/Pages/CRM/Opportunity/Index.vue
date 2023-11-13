@@ -196,26 +196,26 @@
               <td :title="opportunity.name" class="text-left py-2 px-2 rounded-l-full max-w-[220px] truncate pr-2">
                 {{ opportunity.name }}
               </td>
-              <td class="text-left py-2 px-2">
+              <td class="text-left py-2">
                 <span class="py-1 px-4 rounded-full border border-white" :class="getStatusStyles(opportunity)">{{
                   opportunity.status }}</span>
               </td>
-              <td class="text-left py-2 px-2">
-                <span class="py-1 px-2 rounded-full">{{
+              <td class="text-left py-2">
+                <span class="py-1 rounded-full">{{
                   opportunity.created_at.isoFormat
                 }}</span>
               </td>
-              <td class="text-left py-2 px-2">
+              <td class="text-left py-2">
                 {{ opportunity.close_date }}
               </td>
-              <td class="text-left py-2 px-2">
+              <td class="text-left py-2">
                 {{ opportunity.finished_at ?? "--" }}
               </td>
-              <td class="text-left py-2 px-2">
+              <td class="text-left py-2">
                 {{ opportunity.paid_at ?? "--" }}
               </td>
               <td v-if="$page.props.auth.user.permissions?.includes('Eliminar oportunidades')" @click.stop=""
-                class="text-left py-2 px-2 rounded-r-full">
+                class="text-left py-2 rounded-r-full">
                 <el-popconfirm confirm-button-text="Si" cancel-button-text="No" icon-color="#FD8827" title="¿Eliminar?"
                   @confirm="deleteOpportunity(opportunity)">
                   <template #reference>

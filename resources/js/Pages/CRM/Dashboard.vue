@@ -32,10 +32,9 @@
             <!-- performance -->
             <h2 class="text-primary lg:text-xl text-lg lg:mt-6 mt-6 font-bold">Desempeño</h2>
             <div class="lg:grid grid-cols-2 gap-x-16 gap-y-14 mt-4 space-y-4 lg:space-y-0">
-                <GroupedBarChar :options="saleGoalsChartOptions" title="Ventas totales por vendedor"
+                <GroupedBarChar :options="totalSalesBySeller" title="Ventas totales por vendedor"
                     icon='<i class="fa-solid fa-bullseye ml-2"></i>' />
             </div>
-            {{ getMonthlySum(last_year_opportunities) }}
         </div>
     </AppLayout>
 </template>
@@ -60,38 +59,27 @@ export default {
                 categories: this.getMonthSales().map(item => item.type),
                 series: [{
                     name: 'venta',
-                    data: this.getMonthSales().map(item => item.amount.toFixed(2))
+                    data: this.getMonthSales().map(item => item.amount.toFixed(2)) //to fixed para 2 decimales
                 }]
             },
             yearComparisonChartOptions: {
                 colors: ['#BEBFC1', '#FD8827'],
-                categories: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+                categories: this.getMonthlySum(this.last_year_opportunities).map(item => item.month),
                 series: [{
                     name: 'Año pasado',
-                    data: [76, 85, 101, 98, 87, 105, 91, 114, 94, 70, 90.5, 110.95]
+                    data: this.getMonthlySum(this.last_year_opportunities).map(item => item.amount.toFixed(2))
                 },
                 {
                     name: 'Año en curso',
-                    data: [44, 55, 57, 56, 61, 58, 63, 60, 66, 0, 0, 0]
+                    data: this.getMonthlySum(this.current_year_opportunities).map(item => item.amount.toFixed(2))
                 }],
             },
-            funnelSalesChartOptions: {
-                colors: ['#31CB23', '#D47914', '#888888', '#D90537'],
-                categories: ['Prospectos', 'Propuesta', 'Cotización ', 'Ventas cerradas'],
-                series: [{
-                    name: "Cantidad",
-                    data: [10, 7, 5, 3],
-                }],
-            },
-            saleGoalsChartOptions: {
+            totalSalesBySeller: {
                 colors: ['#45E142', '#FD8827'],
-                categories: ['Edgar Sherman', 'Norberto Platas', 'Santiago'],
+                categories: this.sellers_total_amount.map(item => item.seller),
                 series: [{
-                    name: 'Meta',
-                    data: [500, 500, 500]
-                }, {
                     name: 'Ventas',
-                    data: [125.9, 300, 209.57]
+                    data: this.sellers_total_amount.map(item => (item.amount / 1000).toFixed(2))
                 }],
                 labelPrefix: '$ ',
                 labelSufix: 'K',
@@ -100,8 +88,9 @@ export default {
     },
     props: {
         month_opportunities: Array,
-        year_opportunities: Array,
+        current_year_opportunities: Array,
         last_year_opportunities: Array,
+        sellers_total_amount: Array,
     },
     components: {
         AppLayout,
@@ -134,7 +123,7 @@ export default {
         },
         getMonthlySum(opportunities) {
             // Inicializa un objeto para almacenar la suma del monto por mes
-            const monthlySumMap = {};
+            const monthlySumMap = [];
 
             // Crea un array con los nombres cortos de los meses
             const monthsOrder = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
@@ -147,15 +136,16 @@ export default {
             // Itera sobre las oportunidades y agrega el monto al mes correspondiente
             opportunities.forEach(opportunity => {
                 const created_at = new Date(opportunity.created_at);
-                const month = created_at.toLocaleString('default', { month: 'short' });
+                const month = created_at.toLocaleString('default', { month: 'short' }).replace(/\b\w/g, match => match.toUpperCase());
 
                 // Verifica si la propiedad 'amount' existe en el objeto antes de sumar
-                if (monthlySumMap[month] && opportunity.amount !== null && typeof opportunity.amount === 'number') {
+                if (monthlySumMap[month] && opportunity.amount !== null && typeof opportunity.amount == 'number') {
                     // Suma el amount al monto existente
-                    monthlySumMap[month].amount += opportunity.amount;
+                    monthlySumMap[month].amount += opportunity.amount / 1000;
                 }
             });
-
+            
+            // console.log('array:',monthlySumMap);
             // Convierte el objeto a un array de objetos
             const monthlySumArray = Object.values(monthlySumMap);
 

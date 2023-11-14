@@ -106,7 +106,10 @@
           <div class="flex items-center relative">
             <div :class="getColorStatus()" class="absolute -left-10 top-5 rounded-full w-3 h-3"></div>
             <el-select @change="
-              status == 'Perdida' ? (showLostOpportunityModal = true) : updateStatus()
+              status == 'Perdida' ? (showLostOpportunityModal = true) 
+              : status == 'Cerrada' ? showCreateProjectModal = true 
+              : status == 'Pagado' ? showCreateProjectModal = true 
+              :updateStatus()
               " class="lg:w-1/2 mt-2" v-model="status" clearable filterable placeholder="Seleccionar estatus"
               no-data-text="No hay estatus registrados" no-match-text="No se encontraron coincidencias">
               <el-option v-for="item in statuses" :key="item" :label="item.label" :value="item.label">
@@ -427,21 +430,37 @@
         </template>
       </ConfirmationModal>
 
-      <Modal :show="showLostOpportunityModal" @close="showLostOpportunityModal = false">
-        <div class="mx-7 my-4 space-y-4 relative">
-          <div>
-            <label>Causa oportunidad perdida
-              <el-tooltip content="Escribe la causa por la cual se PERDIÓ esta oportunidad" placement="top">
-                <i class="fa-regular fa-circle-question ml-2 text-primary text-xs"></i>
-              </el-tooltip>
-            </label>
-            <textarea v-model="lost_oportunity_razon" required class="input h-24 mt-3"></textarea>
-          </div>
-          <div class="flex justify-end space-x-3 pt-5 pb-1">
-            <PrimaryButton @click="updateStatus">Actualizar estatus</PrimaryButton>
-          </div>
+      <!-- ----------------- status modal ----------- -->
+    <Modal :show="showLostOpportunityModal || showCreateProjectModal"
+      @close="showLostOpportunityModal = false; showCreateProjectModal = false">
+      <section v-if="showLostOpportunityModal" class="mx-7 my-4 space-y-4 relative">
+        <div>
+          <label>Causa oportunidad perdida
+            <el-tooltip content="Escribe la causa por la cual se PERDIÓ esta oportunidad" placement="top">
+              <i class="fa-regular fa-circle-question ml-2 text-primary text-xs"></i>
+            </el-tooltip>
+          </label>
+          <textarea v-model="lost_oportunity_razon" class="input h-20 mt-3"></textarea>
         </div>
-      </Modal>
+        <div class="flex justify-end space-x-3 pt-5 pb-1">
+          <CancelButton @click="cancelUpdating">Cancelar</CancelButton>
+          <PrimaryButton @click="updateStatus('Perdida')" :disabled="lost_oportunity_razon == null">Actualizar estatus</PrimaryButton>
+        </div>
+      </section>
+
+      <section v-if="showCreateProjectModal" class="mx-7 my-4 space-y-4 relative">
+        <div>
+          <h2 class="font bold text-center font-bold mb-5">Paso clave - Crear proyecto</h2>
+          <p class="px-5">Es necesario crear un proyecto al haber marcado como <span class="text-[#FD8827]">”cerrada”</span>  
+          o <span class="text-[#37951F]">”Pagada”</span> la oportunidad para llevar un correcto seguimiento y flujo de trabajo. 
+          </p>
+        </div>
+        <div class="flex justify-end space-x-3 pt-5 pb-1">
+          <CancelButton @click="cancelUpdating">Cancelar</CancelButton>  
+          <PrimaryButton @click="CreateProject">Continuar</PrimaryButton>
+        </div>
+      </section>
+    </Modal>
     </div>
   </AppLayout>
 </template>
@@ -469,6 +488,7 @@ export default {
       currentTab: 1,
       showConfirmModal: false,
       showLostOpportunityModal: false,
+      showCreateProjectModal: false,
       loading: false,
       status: null,
       lost_oportunity_razon: null,
@@ -529,6 +549,9 @@ export default {
     defaultTab: Number,
   },
   methods: {
+    cancelUpdating() {
+      window.location.reload();
+    },
     showMonitorType(monitor) {
       if (monitor.type == 'Correo') {
         this.$inertia.get(route('crm.email-monitors.show', monitor.emailMonitor?.id));
@@ -536,6 +559,27 @@ export default {
         this.$inertia.get(route('crm.payment-monitors.show', monitor.paymentMonitor?.id));
       } else if (monitor.type == 'Reunión') {
         this.$inertia.get(route('crm.meeting-monitors.show', monitor.meetingMonitor?.id));
+      }
+    },
+    async CreateProject() {
+      try {
+        const response = await axios.put(route('crm.opportunities.create-project', this.opportunity.data.id));
+        if (response.status === 200) {
+          if (response.data.message) {
+            this.$notify({
+              title: "Correcto",
+              message: response.data.message,
+              type: "success",
+            });
+            this.showCreateProjectModal = false;
+            this.updateStatus();
+          } else {
+            this.updateStatus();
+            this.$inertia.get(route('pms.projects.create'), { opportunityId: this.opportunity.data.id });
+          }
+        }
+      } catch (error) {
+        console.log(error);
       }
     },
     async deleteClientMonitor(monitor) {

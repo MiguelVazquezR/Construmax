@@ -6,6 +6,7 @@ use App\Http\Resources\ProjectGroupResource;
 use App\Http\Resources\ProjectResource;
 use App\Http\Resources\TagResource;
 use App\Models\Customer;
+use App\Models\Opportunity;
 use App\Models\Project;
 use App\Models\ProjectGroup;
 use App\Models\Tag;
@@ -30,8 +31,11 @@ class ProjectController extends Controller
         $project_groups = ProjectGroupResource::collection(ProjectGroup::all());
         $tags = TagResource::collection(Tag::where('type', 'projects')->get());
         $users = User::whereNotIn('id', [1])->where('is_active', true)->get();
+        $opportunity = Opportunity::find(request('opportunityId'));
 
-        return inertia('PMS/Project/Create', compact('customers', 'project_groups', 'tags', 'users'));
+        // return $opportunity;
+
+        return inertia('PMS/Project/Create', compact('customers', 'project_groups', 'tags', 'users', 'opportunity'));
     }
 
     public function store(Request $request)

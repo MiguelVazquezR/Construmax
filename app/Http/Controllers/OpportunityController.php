@@ -9,6 +9,7 @@ use App\Models\Activity;
 use App\Models\Customer;
 use App\Models\Opportunity;
 use App\Models\OpportunityTask;
+use App\Models\Project;
 use App\Models\Tag;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -320,5 +321,18 @@ class OpportunityController extends Controller
         $opportunity->load('activities.user'); //carga la relación de activities
 
         return response()->json(['item' => OpportunityResource::make($opportunity)]);
+    }
+
+    //-----------Revisa si la oportunidad ya tiene una orden de venta creada, si no la tiene, redirecciona al formulario para crearla
+    public function createProject(Request $request, $opportunity_id)
+    {
+        $opportunity = Opportunity::find($opportunity_id);
+
+        $project = Project::where('opportunity_id', $opportunity_id)->first(); //Busca un proyecto de esta oportunidad
+
+        if ($project != null) {
+            return response()->json(['message' => 'Ya existe un proyecto de esta oportunidad']);
+        }
+
     }
 }

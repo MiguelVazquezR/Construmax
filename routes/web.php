@@ -46,6 +46,7 @@ Route::get('/tasks-format/{task_id}', [TaskController::class, 'taskFormat'])->mi
 Route::get('crm/dashboard', [CRMController::class, 'dashboard'])->middleware('auth')->name('crm.dashboard');
 Route::resource('customers', CustomerController::class)->middleware('auth')->names('crm.customers');
 Route::resource('opportunities', OpportunityController::class)->middleware('auth')->names('crm.opportunities');
+Route::put('/opportunities/create-project/{oportunity_id}', [OpportunityController::class, 'createProject'])->name('crm.opportunities.create-project')->middleware('auth');
 Route::put('/opportunities/update-status/{opportunity_id}', [OpportunityController::class, 'updateStatus'])->name('crm.opportunities.update-status')->middleware('auth');
 Route::post('opportunities/update-with-media/{opportunity}', [OpportunityController::class, 'updateWithMedia'])->name('crm.opportunities.update-with-media')->middleware('auth');
 

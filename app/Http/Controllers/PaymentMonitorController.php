@@ -24,10 +24,9 @@ class PaymentMonitorController extends Controller
     {
         $opportunities = OpportunityResource::collection(Opportunity::with('customer')->latest()->get());
         $customers = CustomerResource::collection(Customer::with('contacts')->latest()->get());
+        $opportunity_id = request('opportunityId');
 
-        // return $oportunities;
-
-        return inertia('CRM/PaymentMonitor/Create', compact('opportunities', 'customers'));
+        return inertia('CRM/PaymentMonitor/Create', compact('opportunities', 'customers', 'opportunity_id'));
     }
 
     

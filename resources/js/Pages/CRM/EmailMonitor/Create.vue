@@ -2,7 +2,7 @@
     <AppLayout title="Correo electrónico">
         <div class="flex justify-between items-center text-lg mx-8 mt-8">
             <b>Correo electrónico</b>
-            <Link :href="route('crm.client-monitors.index')">
+            <Link :href="opportunity_id !== null ? route('crm.opportunities.show', opportunity_id) : route('crm.client-monitors.index')">
             <p class="flex items-center text-sm text-primary">
                 <i class="fa-solid fa-arrow-left-long mr-2"></i>
                 <span>Regresar</span>
@@ -12,7 +12,7 @@
         <form @submit.prevent="store" class="mx-8 mt-3 grid grid-cols-2 gap-x-4 gap-y-2">
             <div>
                 <InputLabel value="Folio de oportunidad *" class="ml-2" />
-                <el-select @change="getCustomer" class="w-full" v-model="form.opportunity_id" clearable filterable
+                <el-select @change="handleChangeOpportunity" class="w-full" v-model="form.opportunity_id" clearable filterable
                     placeholder="Seleccione" no-data-text="No hay registros"
                     no-match-text="No se encontraron coincidencias">
                     <el-option v-for="opportunity in opportunities.data" :key="opportunity"
@@ -32,7 +32,7 @@
             </div>
             <div class="w-full">
                 <InputLabel value="Contacto *" class="ml-2" />
-                <el-select @change="getContactEmail" class="w-full" v-model="form.contact_id" clearable filterable
+                <el-select @change="handleChangeContact" class="w-full" v-model="form.contact_id" clearable filterable
                     placeholder="Seleccione" no-data-text="No hay contactos registrados"
                     no-match-text="No se encontraron coincidencias">
                     <el-option v-for="contact in customers.data.find(
@@ -103,7 +103,6 @@ export default {
             customer_id: null,
             branch: null,
             contact_id: null,
-            contact_name: null,
             contact_email: null,
             subject: null,
             content: null,
@@ -127,6 +126,7 @@ export default {
         opportunities: Object,
         customers: Array,
         users: Array,
+        opportunity_id: Number,
     },
     methods: {
         store() {
@@ -140,19 +140,28 @@ export default {
                 },
             });
         },
-        getCustomer() {
-            const opportunity = this.opportunities.data.find(opportunity => opportunity.id === this.form.opportunity_id);
-            this.form.customer_id = null;
+        handleChangeOpportunity() {
+            const opportunity = this.opportunities.data.find(opportunity => opportunity.id == this.form.opportunity_id);
             this.form.branch = null;
             this.form.contact_id = null;
             this.form.contact_email = null;
             this.form.customer_id = opportunity.customer.id;
         },
-        getContactEmail() {
+        handleChangeContact() {
             this.form.branch = null;
-            this.form.contact_name = this.customers.data.find((item) => item.id == this.form.customer_id)?.contacts?.find((item) => item.id == this.form.contact_id).name;
-            this.form.contact_email = this.customers.data.find((item) => item.id == this.form.customer_id)?.contacts?.find((item) => item.id == this.form.contact_id).email;
+            this.form.contact_email = this.customers.data.find((item) => item.id == this.form.customer_id)?.contacts?.find((item) => item.id == this.form.contact_id)?.email;
         },
+    },
+    mounted() {
+        // fill form from opportunity info
+        if (this.opportunity_id) {
+            const opportunity = this.opportunities.data.find(opportunity => opportunity.id == this.opportunity_id);
+            this.form.opportunity_id = parseInt(this.opportunity_id);
+            this.form.branch = opportunity.branch;
+            this.form.contact_id = opportunity.contact_id;
+            this.form.customer_id = opportunity.customer.id;
+            this.form.contact_email = this.customers.data.find((item) => item.id == this.form.customer_id)?.contacts?.find((item) => item.id == this.form.contact_id)?.email;
+        }
     }
 }
 </script>

@@ -12,69 +12,58 @@
           </p>
           </Link>
         </div>
-        <div class="flex justify-between mt-5 mx-2 lg:mx-14">
-          <div class="md:w-full mr-2 flex items-center">
+        <div class="flex items-center justify-between mt-5 mx-2 lg:mx-8">
+          <div class="w-2/3 mr-2 flex items-center">
             <el-select v-model="selectedOpportunity" clearable filterable placeholder="Buscar proyecto" class="w-1/2 mr-4"
               no-data-text="No hay clientes registrados" no-match-text="No se encontraron coincidencias">
               <el-option v-for="item in opportunities" :key="item.id" :label="item.name" :value="item.id" />
             </el-select>
           </div>
-          <div class="flex items-center space-x-2">
-            <Dropdown align="right" width="48" v-if="$page.props.auth.user.permissions?.includes(
-              'Eliminar oportunidades'
-            ) || $page.props.auth.user.permissions?.includes('Registrar pagos en seguimiento integral')
-              || $page.props.auth.user.permissions?.includes('Agendar citas en seguimiento integral')
-              || $page.props.auth.user.permissions?.includes('Enviar correos en seguimiento integral')
-              ">
-              <template #trigger>
-                <button v-if="currentTab == 3" class="h-9 px-3 rounded-lg bg-[#D9D9D9] flex items-center text-sm">
-                  Más <i class="fa-solid fa-chevron-down text-[11px] ml-2"></i>
-                </button>
-              </template>
-              <template #content>
-                <DropdownLink :href="route('crm.payment-monitors.create')"
-                  v-if="currentTab == 3 && $page.props.auth.user.permissions?.includes('Registrar pagos en seguimiento integral')">
-                  Registrar Pago
-                </DropdownLink>
-                <DropdownLink :href="route('crm.meeting-monitors.create')"
-                  v-if="currentTab == 3 && $page.props.auth.user.permissions?.includes('Agendar citas en seguimiento integral')">
-                  Agendar Cita
-                </DropdownLink>
-                <DropdownLink :href="route('crm.email-monitors.create')"
-                  v-if="currentTab == 3 && $page.props.auth.user.permissions?.includes('Enviar correos en seguimiento integral')">
-                  Enviar correo
-                </DropdownLink>
-              </template>
-            </Dropdown>
-            <div class="flex items-center">
-              <el-tooltip v-if="$page.props.auth.user.permissions?.includes('Crear oportunidades') && currentTab == 1"
-                content="Crear oportunidad" placement="top">
-                <Link :href="route('crm.opportunities.create')">
-                <PrimaryButton class="rounded-md w-[166px]">Nueva oportunidad</PrimaryButton>
-                </Link>
-              </el-tooltip>
-              <Link v-if="currentTab == 1" :href="route('crm.opportunities.edit', selectedOpportunity)">
-              <i class="fa-solid fa-pencil ml-3 text-primary rounded-full p-2 bg-primarylight cursor-pointer"></i>
+          <div class="flex items-center">
+            <el-tooltip v-if="$page.props.auth.user.permissions?.includes('Crear oportunidades') && currentTab == 1"
+              content="Crear oportunidad" placement="top">
+              <Link :href="route('crm.opportunities.create')">
+              <PrimaryButton class="rounded-md w-[166px]">Nueva oportunidad</PrimaryButton>
               </Link>
-              <i v-if="this.$page.props.auth.user.permissions.includes('Eliminar oportunidades') && currentTab == 1"
-                @click="showConfirmModal = true"
-                class="fa-regular fa-trash-can ml-3 text-primary rounded-full p-2 bg-primarylight cursor-pointer"></i>
-            </div>
+            </el-tooltip>
+            <Link v-if="currentTab == 1" :href="route('crm.opportunities.edit', selectedOpportunity)">
+            <i class="fa-solid fa-pencil ml-3 text-primary rounded-full p-2 bg-primarylight cursor-pointer"></i>
+            </Link>
+            <i v-if="this.$page.props.auth.user.permissions.includes('Eliminar oportunidades') && currentTab == 1"
+              @click="showConfirmModal = true"
+              class="fa-regular fa-trash-can ml-3 text-primary rounded-full p-2 bg-primarylight cursor-pointer"></i>
             <el-tooltip v-if="currentTab == 2 && toBool(authUserPermissions[0])"
               content="Crear actividad en la oportunidad" placement="top">
               <Link :href="route('crm.opportunity-tasks.create', selectedOpportunity)">
               <PrimaryButton class="rounded-full w-40">Agregar actividad</PrimaryButton>
               </Link>
             </el-tooltip>
-            <el-tooltip v-if="currentTab == 3" content="Enviar un correo a prospecto" placement="top">
-              <Link :href="route('crm.email-monitors.create', selectedOpportunity)">
-              <PrimaryButton class="rounded-md w-[132px]">Enviar correo</PrimaryButton>
-              </Link>
-            </el-tooltip>
             <el-tooltip v-if="currentTab == 5 && (opportunity.data.finished_at || opportunity.data.paid_at)"
               content="Genera la url para la encuesta de satisfacción" placement="top">
               <PrimaryButton @click="generateSurveyUrl" class="rounded-md w-[120px]">Generar url</PrimaryButton>
             </el-tooltip>
+            <el-dropdown v-if="currentTab == 3 && $page.props.auth.user.permissions?.includes('Registrar pagos en seguimiento integral')
+              && $page.props.auth.user.permissions?.includes('Agendar citas en seguimiento integral')
+              && $page.props.auth.user.permissions?.includes('Enviar correos en seguimiento integral')
+              " split-button type="primary" @click="$inertia.get(route('crm.meeting-monitors.create', {opportunityId: selectedOpportunity}))">
+              Agendar cita
+              <template #dropdown>
+                <el-dropdown-menu>
+                  <el-dropdown-item
+                    v-if="$page.props.auth.user.permissions?.includes('Registrar pagos en seguimiento integral')">
+                    <Link :href="route('crm.payment-monitors.create', {opportunityId: selectedOpportunity})">
+                    Registrar Pago
+                    </Link>
+                  </el-dropdown-item>
+                  <el-dropdown-item
+                    v-if="$page.props.auth.user.permissions?.includes('Enviar correos en seguimiento integral')">
+                    <Link :href="route('crm.email-monitors.create', {opportunityId: selectedOpportunity})">
+                    Enviar correo
+                    </Link>
+                  </el-dropdown-item>
+                </el-dropdown-menu>
+              </template>
+            </el-dropdown>
           </div>
         </div>
       </div>
@@ -188,17 +177,17 @@
           <div class="flex items-center justify-end space-x-2 col-span-2 mr-4">
             <el-tooltip v-if="$page.props.auth.user.permissions?.includes('Agendar citas en seguimiento integral')"
               content="Agendar reunión" placement="top">
-              <i @click="$inertia.get(route('crm.meeting-monitors.create'))"
+              <i @click="$inertia.get(route('crm.meeting-monitors.create', {opportunityId: selectedOpportunity}))"
                 class="fa-regular fa-calendar text-primary cursor-pointer text-lg px-3 border-r border-[#9a9a9a]"></i>
             </el-tooltip>
             <el-tooltip v-if="$page.props.auth.user.permissions?.includes('Registrar pagos en seguimiento integral')"
               content="Registrar pago" placement="top">
-              <i @click="$inertia.get(route('crm.payment-monitors.create'))"
+              <i @click="$inertia.get(route('crm.payment-monitors.create', {opportunityId: selectedOpportunity}))"
                 class="fa-solid fa-money-bill text-primary cursor-pointer text-lg px-3 border-r border-[#9a9a9a]"></i>
             </el-tooltip>
             <el-tooltip v-if="$page.props.auth.user.permissions?.includes('Enviar correos en seguimiento integral')"
               content="Enviar correo" placement="top">
-              <i @click="$inertia.get(route('crm.email-monitors.create'))"
+              <i @click="$inertia.get(route('crm.email-monitors.create', {opportunityId: selectedOpportunity}))"
                 class="fa-regular fa-envelope text-primary cursor-pointer text-lg px-3"></i>
             </el-tooltip>
           </div>

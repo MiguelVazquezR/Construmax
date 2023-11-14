@@ -1,7 +1,7 @@
 <template>
     <AppLayout title="Usuarios">
         <div class="flex justify-between text-lg mx-16 mt-11">
-            <span>Usurios</span>
+            <span>Usuarios</span>
         </div>
 
         <div class="flex justify-between mt-5 mx-1 lg:mx-16">
@@ -19,35 +19,35 @@
             <table v-if="filteredTableData.length" class="w-full mx-auto">
                 <thead>
                     <tr class="text-left">
-                        <th class="font-bold pb-5 pl-4">ID <i class="fa-solid fa-arrow-down-long ml-3"></i></th>
-                        <th class="font-bold pb-5">Usuario <i class="fa-solid fa-arrow-down-long ml-3"></i></th>
-                        <th class="font-bold pb-5">Departamento <i class="fa-solid fa-arrow-down-long ml-3"></i></th>
-                        <th class="font-bold pb-5">Puesto <i class="fa-solid fa-arrow-down-long ml-3"></i></th>
+                        <th class="font-bold pb-5 pl-4">ID <i class="text-[9px] md:inline fa-solid fa-arrow-down-long md:ml-3"></i></th>
+                        <th class="font-bold pb-5">Usuario <i class="text-[9px] md:inline fa-solid fa-arrow-down-long md:ml-3"></i></th>
+                        <th class="font-bold pb-5">Departamento <i class="text-[9px] md:inline fa-solid fa-arrow-down-long md:ml-3"></i></th>
+                        <th class="font-bold pb-5">Puesto <i class="text-[9px] md:inline fa-solid fa-arrow-down-long md:ml-3"></i></th>
                         <th class="font-bold pb-5">Correo de trabajo <i
-                                class="fa-solid fa-arrow-down-long ml-3"></i></th>
-                        <th class="font-bold pb-5">Teléfono <i class="fa-solid fa-arrow-down-long ml-3"></i></th>
-                        <th class="font-bold pb-5">Status <i class="fa-solid fa-arrow-down-long ml-3"></i></th>
+                                class="text-[9px] md:inline fa-solid fa-arrow-down-long md:ml-3"></i></th>
+                        <th class="font-bold pb-5">Teléfono <i class="text-[9px] md:inline fa-solid fa-arrow-down-long md:ml-3"></i></th>
+                        <th class="font-bold pb-5">Status <i class="text-[9px] md:inline fa-solid fa-arrow-down-long md:ml-3"></i></th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr v-for="user in filteredTableData" :key="user.id" class="mb-4 cursor-pointer hover:bg-primarylight"
                         @click="$inertia.get(route('users.show', user.id))">
-                        <td class="text-left py-2 pr-2 pl-4 rounded-l-full">
+                        <td class="text-left py-2 pr-2 pl-4 rounded-l-full min-w-[50px]">
                             {{ user.id }}
                         </td>
-                        <td class="text-left py-2">
+                        <td class="text-left py-2 min-w-[120px] pr-2">
                             {{ user.name }}
                         </td>
-                        <td class="text-left py-2">
+                        <td class="text-left py-2 min-w-[110px]">
                             {{ user.employee_properties?.department ?? 'Dirección' }}
                         </td>
                         <td class="text-left py-2">
                             {{ user.employee_properties?.position ?? 'Dirección' }}
                         </td>
-                        <td class="text-left py-2">
+                        <td class="text-left py-2 max-w-[160px] truncate px-2">
                             {{ user.email }}
                         </td>
-                        <td class="text-left py-2">
+                        <td class="text-left py-2 min-w-[80px]">
                             {{ user.employee_properties?.phone ?? '--' }}
                         </td>
                         <td class="text-left py-2 px-2 rounded-r-full" :class="{ 'text-red-600': !user.is_active }">

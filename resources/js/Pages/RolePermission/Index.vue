@@ -30,15 +30,15 @@
             <table class="w-full">
               <thead>
                 <tr class="text-left">
-                  <th class="font-normal pb-5"># <i class="fa-solid fa-arrow-down-long ml-3"></i></th>
-                  <th class="font-normal pb-5">Roles <i class="fa-solid fa-arrow-down-long ml-3"></i></th>
-                  <th class="font-normal pb-5">Fecha de creación <i class="fa-solid fa-arrow-down-long ml-3"></i></th>
+                  <th class="font-normal pb-5"># <i class="text-[9px] md:inline fa-solid fa-arrow-down-long md:ml-3"></i></th>
+                  <th class="font-normal pb-5">Roles <i class="text-[9px] md:inline fa-solid fa-arrow-down-long md:ml-3"></i></th>
+                  <th class="font-normal pb-5">Fecha de creación <i class="text-[9px] md:inline fa-solid fa-arrow-down-long md:ml-3"></i></th>
                   <th></th>
                 </tr>
               </thead>
               <tbody>
                 <tr v-for="(role, index) in roles.data" :key="role.id" class="mb-4">
-                  <td class="text-left pb-3">
+                  <td class="text-left pb-3 min-w-[50px]">
                     {{ role.id }}
                   </td>
                   <td @click="editRole(role, index)" class="text-left pb-3">

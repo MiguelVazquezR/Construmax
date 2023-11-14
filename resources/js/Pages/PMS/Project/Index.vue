@@ -20,18 +20,18 @@
       <table v-if="filteredTableData.length" class="w-full mx-auto">
         <thead>
           <tr class="text-left">
-            <th class="font-bold pb-5 pl-4">Folio <i class="fa-solid fa-arrow-down-long ml-3 px-14 md:px-2"></i></th>
-            <th class="font-bold pb-5">Nombre del proyecto <i class="fa-solid fa-arrow-down-long ml-3 px-14 md:px-2"></i>
+            <th class="font-bold pb-5 pl-4 min-w-[90px]">Folio <i class="text-[9px] md:inline fa-solid fa-arrow-down-long md:ml-3"></i></th>
+            <th class="font-bold pb-5 min-w-[90px]">Nombre <i class="text-[9px] md:inline fa-solid fa-arrow-down-long md:ml-3"></i>
             </th>
-            <th class="font-bold pb-5">Tipo de servicio <i class="fa-solid fa-arrow-down-long ml-3 px-14 md:px-2"></i>
+            <th class="font-bold pb-5 min-w-[120px]">Tipo de servicio <i class="text-[9px] md:inline fa-solid fa-arrow-down-long md:ml-3"></i>
             </th>
-            <th class="font-bold pb-5">Estado <i class="fa-solid fa-arrow-down-long ml-3 px-14 md:px-2"></i></th>
-            <th class="font-bold pb-5 text-center">Tareas <i class="fa-solid fa-arrow-down-long ml-3 px-14 md:px-2"></i>
+            <th class="font-bold pb-5 min-w-[90px]">Estado <i class="text-[9px] md:inline fa-solid fa-arrow-down-long md:ml-3"></i></th>
+            <th class="font-bold pb-5 text-center">Tareas <i class="text-[9px] md:inline fa-solid fa-arrow-down-long md:ml-3"></i>
             </th>
-            <th class="font-bold pb-5">Responsable <i class="fa-solid fa-arrow-down-long ml-3 px-14 md:px-2"></i></th>
-            <th class="font-bold pb-5">Fecha de inicio <i class="fa-solid fa-arrow-down-long ml-3 px-14 md:px-2"></i></th>
-            <th class="font-bold pb-5">Fecha final <i class="fa-solid fa-arrow-down-long ml-3 px-14 md:px-2"></i></th>
-            <th class="font-bold pb-5">Completa <i class="fa-solid fa-arrow-down-long ml-3 px-14 md:px-2"></i></th>
+            <th class="font-bold pb-5 min-w-[120px]">Responsable <i class="text-[9px] md:inline fa-solid fa-arrow-down-long md:ml-3"></i></th>
+            <th class="font-bold pb-5 min-w-[120px]">Fecha de inicio <i class="text-[9px] md:inline fa-solid fa-arrow-down-long md:ml-3"></i></th>
+            <th class="font-bold pb-5 min-w-[120px]">Fecha final <i class="text-[9px] md:inline fa-solid fa-arrow-down-long md:ml-3"></i></th>
+            <th class="font-bold pb-5 min-w-[120px]">Completa <i class="text-[9px] md:inline fa-solid fa-arrow-down-long md:ml-3"></i></th>
             <th></th>
           </tr>
         </thead>
@@ -67,7 +67,7 @@
               </div>
               <p class="text-[10px] mt-1">{{ project.tasks.length }}</p>
             </td>
-            <td class="text-left py-2">
+            <td class="text-left py-2 px-2 max-w-[120px] truncate">
               {{ project.owner.name }}
             </td>
             <td class="text-left py-2">

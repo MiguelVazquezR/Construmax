@@ -39,27 +39,27 @@
 
 
     <!-- ----------- Client monitor table ----------- -->
-    <div class="w-11/12 mx-10 my-16">
+    <div class="w-11/12 mx-10 my-16 overflow-x-auto">
       <table v-if="filteredTableData.length" class="w-full mx-auto text-xs">
         <thead>
           <tr class="text-left">
-            <th class="font-bold pb-5 px-2">
-              Folio <i class="fa-solid fa-arrow-down-long ml-3"></i>
+            <th class="font-bold pb-5">
+              Folio <i class="text-[9px] md:inline fa-solid fa-arrow-down-long md:ml-3"></i>
             </th>
-            <th class="font-bold pb-5 px-2">
-              Cliente <i class="fa-solid fa-arrow-down-long ml-3"></i>
-            </th>
-            <th class="font-bold pb-5 px-2">
-              Tipo de interacción <i class="fa-solid fa-arrow-down-long ml-3"></i>
-            </th>
-            <th class="font-bold pb-5 px-2">
-              Fecha<i class="fa-solid fa-arrow-down-long ml-3"></i>
-            </th>
-            <th class="font-bold pb-5 px-2">
-              Concepto <i class="fa-solid fa-arrow-down-long ml-3"></i>
+            <th class="font-bold pb-5 min-w-[90px]">
+              Cliente <i class="text-[9px] md:inline fa-solid fa-arrow-down-long md:ml-3"></i>
             </th>
             <th class="font-bold pb-5">
-              Vededor <i class="fa-solid fa-arrow-down-long ml-3"></i>
+              Tipo <i class="text-[9px] md:inline fa-solid fa-arrow-down-long md:ml-3"></i>
+            </th>
+            <th class="font-bold pb-5">
+              Fecha<i class="text-[9px] md:inline fa-solid fa-arrow-down-long md:ml-3"></i>
+            </th>
+            <th class="font-bold pb-5">
+              Concepto <i class="text-[9px] md:inline fa-solid fa-arrow-down-long md:ml-3"></i>
+            </th>
+            <th class="font-bold pb-5">
+              Vededor <i class="text-[9px] md:inline fa-solid fa-arrow-down-long md:ml-3"></i>
             </th>
             <th></th>
           </tr>
@@ -67,28 +67,28 @@
         <tbody>
           <tr v-for="monitor in filteredTableData" :key="monitor.id" class="mb-4">
             <td @click="showMonitorType(monitor)"
-              class="py-2 px-2 rounded-l-full text-primary hover:underline cursor-pointer">
+              class="py-2 pr-3 rounded-l-full text-primary hover:underline cursor-pointer">
               {{ monitor.folio }}
             </td>
             <td @click="$inertia.get(route('crm.customers.show', monitor.customer?.id))"
-              class="py-2 px-2 text-primary hover:underline cursor-pointer">
+              class="py-2 text-primary hover:underline cursor-pointer">
               {{ monitor.customer?.name }}
             </td>
-            <td class="py-2 px-2">
+            <td class="py-2">
               {{ monitor.type }}
             </td>
-            <td class="py-2 px-2">
+            <td class="py-2">
               {{ monitor.date }}
             </td>
-            <td class="py-2 px-2 truncate">
+            <td :title="monitor.concept" class="py-2 max-w-[100px] truncate pr-3">
               {{ monitor.concept }}
             </td>
             <td @click="$inertia.get(route('users.show', monitor.seller?.id))"
-              class="py-2 px-2 text-primary hover:underline cursor-pointer">
+              class="py-2 text-primary hover:underline cursor-pointer">
               {{ monitor.seller?.name }}
             </td>
             <td v-if="$page.props.auth.user.permissions.includes('Eliminar seguimiento integral')"
-              class="py-2 px-2 rounded-r-full">
+              class="py-2 rounded-r-full">
               <el-popconfirm confirm-button-text="Si" cancel-button-text="No" icon-color="#D90537" title="¿Eliminar?"
                 @confirm="deleteClientMonitor(monitor)">
                 <template #reference>

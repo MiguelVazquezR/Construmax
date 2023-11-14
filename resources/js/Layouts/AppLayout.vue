@@ -126,7 +126,7 @@ const logout = () => {
                             </div>
 
                             <!-- Hamburger -->
-                            <div class="-mr-2 flex items-center sm:hidden">
+                            <div class="-mr-12 flex items-center sm:hidden">
                                 <button
                                     class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 focus:text-gray-500 transition duration-150 ease-in-out"
                                     @click="showingNavigationDropdown = !showingNavigationDropdown">
@@ -150,18 +150,14 @@ const logout = () => {
                         class="z-40 rounded-tl-[6px] rounded-bl-[6px] sm:hidden bg-gray1 w-4/6 absolute right-0 top-14 min-h-[50%] max-h-[90%] overflow-y-scroll overflow-x-hidden shadow-lg border pt-4">
                         <!-- Responsive Settings Options -->
                         <div class="pb-4 mb-4 border-b border-gray-200">
-                            <div class="flex items-center px-4">
-                                <div v-if="$page.props.jetstream.managesProfilePhotos" class="shrink-0 mr-3">
-                                    <img class="h-14 w-14 rounded-full object-cover mx-auto"
-                                        :src="$page.props.auth.user.profile_photo_url" :alt="$page.props.auth.user.name">
-                                    <div>
-                                        <div class="font-semibold text-base text-white">
-                                            {{ $page.props.auth.user.name }}
-                                        </div>
-                                        <div class="font-medium text-sm text-gray-50">
-                                            {{ $page.props.auth.user.email }}
-                                        </div>
-                                    </div>
+                            <div class="flex flex-col items-center justify-center mx-4">
+                                <img class="h-14 w-14 rounded-full object-cover mx-auto"
+                                    :src="$page.props.auth.user.profile_photo_url" :alt="$page.props.auth.user.name">
+                                <div class="font-semibold text-center text-base text-white w-full truncate">
+                                    {{ $page.props.auth.user.name }}
+                                </div>
+                                <div class="font-medium text-center text-sm text-gray-50 w-full truncate">
+                                    {{ $page.props.auth.user.email }}
                                 </div>
                             </div>
                         </div>

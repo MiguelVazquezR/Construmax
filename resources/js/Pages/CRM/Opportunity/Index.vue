@@ -164,27 +164,27 @@
 
     <!-- ------------ Lista view starts ----------------- -->
     <div v-if="type_view === 'Lista'" class="w-full mx-auto my-16 text-xs">
-      <div v-if="opportunities.data.length">
+      <div v-if="opportunities.data.length" class="overflow-x-auto">
         <table class="lg:w-[95%] w-full mx-auto">
           <thead>
             <tr class="text-left">
               <th class="font-bold pb-5">
-                Nombre <i class="fa-solid fa-arrow-down-long ml-3"></i>
+                Nombre <i class="text-[9px] md:inline fa-solid fa-arrow-down-long md:ml-3"></i>
               </th>
               <th class="font-bold pb-5">
-                Estatus <i class="fa-solid fa-arrow-down-long ml-3"></i>
+                Estatus <i class="text-[9px] md:inline fa-solid fa-arrow-down-long md:ml-3"></i>
               </th>
               <th class="font-bold pb-5">
-                Fecha inicio <i class="fa-solid fa-arrow-down-long ml-3"></i>
+                Fecha inicio <i class="text-[9px] md:inline fa-solid fa-arrow-down-long md:ml-3"></i>
               </th>
               <th class="font-bold pb-5">
-                Estimación de cierre <i class="fa-solid fa-arrow-down-long ml-3"></i>
+                Estimación de cierre <i class="text-[9px] md:inline fa-solid fa-arrow-down-long md:ml-3"></i>
               </th>
               <th class="font-bold pb-5">
-                Cerrada el <i class="fa-solid fa-arrow-down-long ml-3"></i>
+                Cerrada el <i class="text-[9px] md:inline fa-solid fa-arrow-down-long md:ml-3"></i>
               </th>
               <th class="font-bold pb-5">
-                Pagado el <i class="fa-solid fa-arrow-down-long ml-3"></i>
+                Pagado el <i class="text-[9px] md:inline fa-solid fa-arrow-down-long md:ml-3"></i>
               </th>
               <th></th>
             </tr>

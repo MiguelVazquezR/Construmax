@@ -11,7 +11,7 @@
     </div>
 
     <form @submit.prevent="update" class="mx-8 mt-3 grid grid-cols-2 gap-x-4 gap-y-2">
-      <div>
+      <div class="col-span-full lg:col-span-1">
         <InputLabel value="Nombre de la oportunidad *" class="ml-2" />
         <input v-model="form.name" type="text" class="input mt-1" placeholder="Asignar un nombre a la oportunidad"
           required />
@@ -106,7 +106,7 @@
         </el-select>
         <InputError :message="$page.props.errors.branch" />
       </div> <br>
-      <div>
+      <div class="col-span-full lg:col-span-1">
         <InputLabel value="Duración *" class="ml-2" />
         <el-date-picker @change="handleDateRange" v-model="range" type="daterange" range-separator="A"
           start-placeholder="Fecha de inicio" end-placeholder="Fecha de cierre" value-format="YYYY-MM-DD" />
@@ -167,13 +167,13 @@
         <input v-model="form.lost_oportunity_razon" class="input" type="text" />
         <InputError :message="form.errors.lost_oportunity_razon" />
       </div>
-      <div class="w-full">
+      <div class="w-full col-span-full lg:col-span-1">
         <label class="text-sm">Valor de oportunidad *
           <el-tooltip content="Monto esperado si se cierra la venta" placement="right">
             <i class="fa-regular fa-circle-question ml-2 text-primary text-xs"></i>
           </el-tooltip>
         </label>
-        <input v-model="form.amount" class="input" type="number" min="0" step="0.01" />
+        <input v-model="form.amount" class="input" type="number" min="0" step="0.01" placeholder="Ingresa el monto" />
         <InputError :message="form.errors.amount" />
       </div>
       <h2 class="font-bold text-sm my-2 col-span-full">Acceso al proyecto</h2>
@@ -197,15 +197,22 @@
       </div>
 
       <section class="rounded-[10px] py-12 mx-7 mt-5 max-h-[580px] col-span-full border border-gray3">
-        <div class="flex px-16 mb-8">
+        <div class="flex px-5 lg:px-16 mb-8">
           <div v-if="typeAccessProject === 'Private'" class="w-full">
             <h2 class="font-bold text-sm my-2 ml-2 col-span-full">
               Asignar participantes
             </h2>
-            <el-select @change="addToSelectedUsers" filterable clearable placeholder="Seleccionar usuario" class="w-1/2"
-              no-data-text="No hay más usuarios para añadir" no-match-text="No se encontraron coincidencias">
+            <el-select @change="addToSelectedUsers" filterable clearable placeholder="Seleccionar usuario"
+              class="w-full lg:w-1/2" no-data-text="No hay más usuarios para añadir"
+              no-match-text="No se encontraron coincidencias">
               <el-option v-for="(item, index) in availableUsersToPermissions" :key="item.id" :label="item.name"
-                :value="item.id" />
+                :value="item.id">
+                <div v-if="$page.props.jetstream.managesProfilePhotos"
+                  class="flex text-sm rounded-full items-center mt-[3px]">
+                  <img class="h-7 w-7 rounded-full object-cover mr-4" :src="item.profile_photo_url" :alt="item.name" />
+                  <p>{{ item.name }}</p>
+                </div>
+              </el-option>
             </el-select>
           </div>
           <ThirdButton v-if="typeAccessProject === 'Public'" type="button" class="ml-auto self-start"
@@ -213,7 +220,7 @@
             {{ editAccesFlag ? "Actualizar" : "Editar" }}
           </ThirdButton>
         </div>
-        <div class="flex justify-between px-16 mt-4">
+        <div class="flex justify-between px-5 lg:px-16 mt-4">
           <div class="w-full">
             <div class="flex">
               <h2 class="font-bold border-b border-gray3 w-2/3 pl-3">Usuarios</h2>
@@ -222,10 +229,11 @@
             <div class="pl-3 overflow-y-auto min-h-[100px] max-h-[380px]">
               <div class="flex mt-2 border-b border-gray3" v-for="user in form.selectedUsersToPermissions" :key="user.id">
                 <div class="w-2/3 flex space-x-2">
-                  <div v-if="$page.props.jetstream.managesProfilePhotos" class="flex text-sm rounded-full w-12">
-                    <img class="h-10 w-10 rounded-full object-cover" :src="user.profile_photo_url" :alt="user.name" />
+                  <div v-if="$page.props.jetstream.managesProfilePhotos" class="flex text-sm rounded-full w-10 lg:w-12">
+                    <img class="h-8 lg:h-10 w-8 lg:w-10 rounded-full object-cover" :src="user.profile_photo_url"
+                      :alt="user.name" />
                   </div>
-                  <div class="text-sm w-full">
+                  <div class="text-xs lg:text-sm w-full">
                     <p>{{ user.name }}</p>
                     <p v-if="user.employee_properties">
                       {{ "Depto. " + user.employee_properties?.department }}

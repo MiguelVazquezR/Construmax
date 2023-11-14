@@ -53,7 +53,7 @@
         <InputError :message="form.errors.branch" />
       </div>
       <h2 class="text-primary col-span-2 my-3">Detalles de la cita</h2>
-      <div class="w-full">
+      <div class="w-full col-span-full md:col-span-1">
         <InputLabel value="Fecha *" class="ml-2" />
         <el-date-picker class="w-full" v-model="form.meeting_date" type="date" placeholder="Fecha*" format="YYYY/MM/DD"
           value-format="YYYY-MM-DD" :disabled-date="disabledDate" />

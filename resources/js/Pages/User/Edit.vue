@@ -28,17 +28,17 @@
     <form @submit.prevent="update" class="mx-8 mt-10 grid grid-cols-4 gap-x-4 gap-y-2">
       <div>
         <div @click="openFileInput" v-if="!form.selectedImage"
-          class="rounded-full w-52 h-52 bg-gray2 mx-auto flex items-center justify-center cursor-pointer">
+          class="rounded-full w-20 lg:w-52 h-20 lg:h-52 bg-gray2 mx-auto flex items-center justify-center cursor-pointer">
           <label for="fileInput">
             <i class="fa-solid fa-camera text-white text-3xl"></i>
           </label>
           <input @change="previewImage" type="file" id="fileInput" name="fileInput" style="display: none"
             accept="image/*" />
         </div>
-        <Dropdown v-else align="right" width="48">
+        <Dropdown v-else align="right" width="24">
           <template #trigger>
-            <div class="rounded-full w-52 h-52 bg-gray2 mx-auto flex items-center justify-center cursor-pointer">
-              <img :src="form.selectedImage" alt="User Profile" class="object-cover rounded-full w-52 h-52 mx-auto" />
+            <div class="rounded-full w-20 lg:w-52 h-20 lg:h-52 bg-gray2 mx-auto flex items-center justify-center cursor-pointer">
+              <img :src="form.selectedImage" alt="User Profile" class="object-cover rounded-full w-20 lg:w-52 h-20 lg:h-52 mx-auto" />
               <input @change="previewImage" type="file" id="fileInput" name="fileInput" style="display: none"
                 accept="image/*" />
             </div>
@@ -54,7 +54,7 @@
         </Dropdown>
         <InputError :message="form.errors.photo" />
       </div>
-      <div class="col-span-3 grid grid-cols-2 gap-x-4 gap-y-2">
+      <div class="col-span-3 lg:grid grid-cols-2 gap-x-4 gap-y-2">
         <div>
           <InputLabel value="Nombre de usuario *" class="ml-2" />
           <input v-model="form.name" type="text" class="input mt-1" placeholder="Escriba el nombre" required />
@@ -89,7 +89,7 @@
       <!-- roles -->
       <br><el-divider content-position="left" class="col-span-full">Roles</el-divider>
       <br>
-      <div class="col-span-full grid grid-cols-3 gap-2">
+      <div class="col-span-full grid grid-cols-2 lg:grid-cols-3 gap-2">
         <InputLabel v-for="role in roles" :key="role.id" class="flex items-center">
           <input type="checkbox" v-model="form.roles" :value="role.id"
             class="rounded text-primary shadow-sm focus:ring-primary bg-transparent" />

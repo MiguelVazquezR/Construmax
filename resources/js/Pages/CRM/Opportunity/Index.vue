@@ -164,27 +164,27 @@
 
     <!-- ------------ Lista view starts ----------------- -->
     <div v-if="type_view === 'Lista'" class="w-full mx-auto my-16 text-xs">
-      <div v-if="opportunities.data.length">
+      <div v-if="opportunities.data.length" class="overflow-x-auto">
         <table class="lg:w-[95%] w-full mx-auto">
           <thead>
             <tr class="text-left">
               <th class="font-bold pb-5">
-                Nombre <i class="fa-solid fa-arrow-down-long ml-3"></i>
+                Nombre <i class="text-[9px] md:inline fa-solid fa-arrow-down-long md:ml-3"></i>
               </th>
               <th class="font-bold pb-5">
-                Estatus <i class="fa-solid fa-arrow-down-long ml-3"></i>
+                Estatus <i class="text-[9px] md:inline fa-solid fa-arrow-down-long md:ml-3"></i>
               </th>
               <th class="font-bold pb-5">
-                Fecha inicio <i class="fa-solid fa-arrow-down-long ml-3"></i>
+                Fecha inicio <i class="text-[9px] md:inline fa-solid fa-arrow-down-long md:ml-3"></i>
               </th>
               <th class="font-bold pb-5">
-                Estimación de cierre <i class="fa-solid fa-arrow-down-long ml-3"></i>
+                Estimación de cierre <i class="text-[9px] md:inline fa-solid fa-arrow-down-long md:ml-3"></i>
               </th>
               <th class="font-bold pb-5">
-                Cerrada el <i class="fa-solid fa-arrow-down-long ml-3"></i>
+                Cerrada el <i class="text-[9px] md:inline fa-solid fa-arrow-down-long md:ml-3"></i>
               </th>
               <th class="font-bold pb-5">
-                Pagado el <i class="fa-solid fa-arrow-down-long ml-3"></i>
+                Pagado el <i class="text-[9px] md:inline fa-solid fa-arrow-down-long md:ml-3"></i>
               </th>
               <th></th>
             </tr>
@@ -265,6 +265,38 @@
         </div>
       </template>
     </ConfirmationModal>
+    
+    <!-- ----------------- status modal ----------- -->
+    <Modal :show="showLostOpportunityModal || showCreateProjectModal"
+      @close="showLostOpportunityModal = false; showCreateProjectModal = false">
+      <section v-if="showLostOpportunityModal" class="mx-7 my-4 space-y-4 relative">
+        <div>
+          <label>Causa oportunidad perdida
+            <el-tooltip content="Escribe la causa por la cual se PERDIÓ esta oportunidad" placement="top">
+              <i class="fa-regular fa-circle-question ml-2 text-primary text-xs"></i>
+            </el-tooltip>
+          </label>
+          <textarea v-model="lost_oportunity_razon" class="input h-20 mt-3"></textarea>
+        </div>
+        <div class="flex justify-end space-x-3 pt-5 pb-1">
+          <CancelButton @click="cancelUpdating">Cancelar</CancelButton>
+          <PrimaryButton @click="updateOpportunityStatus('Perdida')" :disabled="lost_oportunity_razon == null">Actualizar estatus</PrimaryButton>
+        </div>
+      </section>
+
+      <section v-if="showCreateProjectModal" class="mx-7 my-4 space-y-4 relative">
+        <div>
+          <h2 class="font bold text-center font-bold mb-5">Paso clave - Crear proyecto</h2>
+          <p class="px-5">Es necesario crear un proyecto al haber marcado como <span class="text-[#FD8827]">”cerrada”</span>  
+          o <span class="text-[#37951F]">”Pagada”</span> la oportunidad para llevar un correcto seguimiento y flujo de trabajo. 
+          </p>
+        </div>
+        <div class="flex justify-end space-x-3 pt-5 pb-1">
+          <CancelButton @click="cancelUpdating">Cancelar</CancelButton>  
+          <PrimaryButton @click="CreateProject">Continuar</PrimaryButton>
+        </div>
+      </section>
+    </Modal>
   </AppLayout>
 </template>
 <script>
@@ -287,7 +319,9 @@ export default {
       inputSearch: "",
       show_type_view: false,
       showLostOpportunityModal: false,
+      showCreateProjectModal: false,
       lost_oportunity_razon: null,
+      localStatus: null,
       type_view: "Kanban",
       newTotal: null,
       pendingTotal: null,
@@ -323,6 +357,9 @@ export default {
     opportunities: Object,
   },
   methods: {
+    cancelUpdating() {
+      window.location.reload();
+    },
     handleSearch() {
       this.search = this.inputSearch;
     },
@@ -346,6 +383,9 @@ export default {
 
       if (evt.to.id === "lost") {
         this.showLostOpportunityModal = true;
+      }else if (evt.to.id === "closed" || evt.to.id === "paid") {
+        this.showCreateProjectModal = true;
+        this.localStatus = status;
       } else {
         this.updateOpportunityStatus(status);
       }
@@ -353,7 +393,9 @@ export default {
       this.drag = false;
     },
     async updateOpportunityStatus(status) {
-      this.showLostOpportunityModal = false;
+      //cierra los modales antes de actualizar el estado
+        this.showLostOpportunityModal = false;
+        this.showCreateProjectModal = false;
       try {
         const response = await axios.put(route('crm.opportunities.update-status', this.draggingOpportunityId), { status: status, lost_oportunity_razon: this.lost_oportunity_razon });
 
@@ -362,6 +404,27 @@ export default {
           this.opportunitiesLocal[OpportunityIndex].status = status;
           this.updateLists();
           this.calculateTotals();
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    },
+    async CreateProject() {
+      try {
+        const response = await axios.put(route('crm.opportunities.create-project', this.draggingOpportunityId));
+        if (response.status === 200) {
+          if (response.data.message) {
+            this.$notify({
+              title: "Correcto",
+              message: response.data.message,
+              type: "success",
+            });
+            this.showCreateProjectModal = false;
+            this.updateOpportunityStatus(this.localStatus);
+          } else {
+            this.updateOpportunityStatus(this.localStatus);
+            this.$inertia.get(route('pms.projects.create'), { opportunityId: this.draggingOpportunityId });
+          }
         }
       } catch (error) {
         console.log(error);

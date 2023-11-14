@@ -7,8 +7,8 @@ import Dropdown from '@/Components/Dropdown.vue';
 import DropdownLink from '@/Components/DropdownLink.vue';
 import SideNav from '@/Components/MyComponents/SideNav.vue';
 import NotificationsCenter from '@/Components/MyComponents/NotificationsCenter.vue';
+import SideNavMobile from '@/Components/MyComponents/SideNavMobile.vue';
 import ResponsiveNavLink from '@/Components/ResponsiveNavLink.vue';
-import axios from 'axios';
 
 defineProps({
     title: String,
@@ -126,9 +126,34 @@ const logout = () => {
                             </div>
 
                             <!-- Hamburger -->
-                            <div class="-mr-2 flex items-center sm:hidden">
+                            <div class="-mr-12 flex items-center sm:hidden">
+                                <!-- calendar -->
+                                <div class="relative mt-2">
+                                    <el-tooltip content="Calendario">
+                                        <Link :href="route('calendars.index')">
+                                        <button :class="route().current('calendars.*') ? 'text-primary' : 'text-[#97989A]'">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17"
+                                                fill="currentColor" class="bi bi-calendar4-event" viewBox="0 0 16 16">
+                                                <path
+                                                    d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5zM2 2a1 1 0 0 0-1 1v1h14V3a1 1 0 0 0-1-1H2zm13 3H1v9a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V5z" />
+                                                <path
+                                                    d="M11 7.5a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1z" />
+                                            </svg>
+                                        </button>
+                                        </Link>
+                                    </el-tooltip>
+                                    <div v-if="$page.props.auth.user?.notifications?.some(notification => {
+                                        return notification.data.module === 'calendar';
+                                    })"
+                                        class="bg-primary w-[10px] h-[10px] border border-white rounded-full absolute -top-1 -right-2">
+                                    </div>
+                                </div>
+
+                                <!-- notifications -->
+                                <NotificationsCenter />
+                                
                                 <button
-                                    class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 focus:text-gray-500 transition duration-150 ease-in-out"
+                                    class="inline-flex items-center justify-center ml-1 p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 focus:text-gray-500 transition duration-150 ease-in-out"
                                     @click="showingNavigationDropdown = !showingNavigationDropdown">
                                     <svg class="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
                                         <path
@@ -147,48 +172,28 @@ const logout = () => {
 
                     <!-- Responsive Navigation Menu -->
                     <div :class="{ 'block': showingNavigationDropdown, 'hidden': !showingNavigationDropdown }"
-                        class="sm:hidden">
-                        <div class="pt-2 pb-3 space-y-1">
-                            <ResponsiveNavLink :href="route('dashboard')" :active="route().current('dashboard')">
-                                Dashboard
-                            </ResponsiveNavLink>
-                        </div>
-
+                        class="z-40 rounded-tl-[6px] rounded-bl-[6px] sm:hidden bg-gray1 w-4/6 absolute right-0 top-14 min-h-[50%] max-h-[90%] overflow-y-scroll overflow-x-hidden shadow-lg border pt-4">
                         <!-- Responsive Settings Options -->
-                        <div class="pt-4 pb-1 border-t border-gray-200">
-                            <div class="flex items-center px-4">
-                                <div v-if="$page.props.jetstream.managesProfilePhotos" class="shrink-0 mr-3">
-                                    <img class="h-10 w-10 rounded-full object-cover"
-                                        :src="$page.props.auth.user.profile_photo_url" :alt="$page.props.auth.user.name">
+                        <div class="pb-4 mb-4 border-b border-gray-200">
+                            <div class="flex flex-col items-center justify-center mx-4">
+                                <img class="h-14 w-14 rounded-full object-cover mx-auto"
+                                    :src="$page.props.auth.user.profile_photo_url" :alt="$page.props.auth.user.name">
+                                <div class="font-semibold text-center text-base text-white w-full truncate">
+                                    {{ $page.props.auth.user.name }}
                                 </div>
-
-                                <div>
-                                    <div class="font-medium text-base text-gray-800">
-                                        {{ $page.props.auth.user.name }}
-                                    </div>
-                                    <div class="font-medium text-sm text-gray-500">
-                                        {{ $page.props.auth.user.email }}
-                                    </div>
+                                <div class="font-medium text-center text-sm text-gray-50 w-full truncate">
+                                    {{ $page.props.auth.user.email }}
                                 </div>
                             </div>
-
-                            <div class="mt-3 space-y-1">
-                                <ResponsiveNavLink :href="route('profile.show')" :active="route().current('profile.show')">
-                                    Perfil
-                                </ResponsiveNavLink>
-
-                                <ResponsiveNavLink v-if="$page.props.jetstream.hasApiFeatures"
-                                    :href="route('api-tokens.index')" :active="route().current('api-tokens.index')">
-                                    API Tokens
-                                </ResponsiveNavLink>
-
-                                <!-- Authentication -->
-                                <form method="POST" @submit.prevent="logout">
-                                    <ResponsiveNavLink as="button">
-                                        Cerrar sesión
-                                    </ResponsiveNavLink>
-                                </form>
-                            </div>
+                        </div>
+                        <div class="flex flex-col justify-between">
+                            <SideNavMobile />
+                            <!-- Authentication -->
+                            <form method="POST" @submit.prevent="logout" class="text-red-500 absolute bottom-3 right-3">
+                                <button>
+                                    <i class="fa-solid fa-arrow-right-from-bracket mr-[7px]"></i> Cerrar sesión
+                                </button>
+                            </form>
                         </div>
                     </div>
                 </nav>

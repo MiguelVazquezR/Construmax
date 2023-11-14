@@ -11,10 +11,10 @@
                 </p>
                 </Link>
             </div>
-            <div class="flex justify-between mt-5 mx-2 lg:mx-14">
+            <div class="lg:flex justify-between mt-5 mx-2 lg:mx-14">
                 <div class="md:w-full mr-2 flex items-center">
                     <el-select v-model="selectedProject" clearable filterable placeholder="Buscar proyecto"
-                        class="w-1/2 mr-4" no-data-text="No hay proyectos registrados"
+                        class="w-2/3 lg:w-1/2 mr-2" no-data-text="No hay proyectos registrados"
                         no-match-text="No se encontraron coincidencias">
                         <el-option v-for="item in projects" :key="item.id" :label="item.name" :value="item.id" />
                     </el-select>
@@ -40,17 +40,19 @@
                         </el-tooltip>
                     </div>
                 </div>
-                <div v-if="currentTab == 1" class="flex space-x-2 w-full justify-end">
-                    <PrimaryButton v-if="this.$page.props.auth.user.permissions.includes('Crear proyectos')"
-                        @click="$inertia.get(route('pms.projects.create'))">Nuevo proyecto</PrimaryButton>
-                    <SecondaryButton v-if="this.$page.props.auth.user.permissions.includes('Editar proyectos')"
-                        @click="$inertia.get(route('pms.projects.edit', project.data.id ?? 1))"><i
-                            class="fa-solid fa-pen"></i></SecondaryButton>
-                </div>
-                <div v-if="currentTab == 2 || currentTab == 3" class="flex space-x-2 w-full justify-end">
-                    <PrimaryButton @click="$inertia.get(route('pms.tasks.create', { projectId: project.data.id ?? 1 }))">
-                        Nueva
-                        tarea</PrimaryButton>
+                <div class="flex items-center justify-end w-full lg:w-1/2 mt-3 lg:mt-0">
+                    <div v-if="currentTab == 1" class="flex space-x-2 w-full justify-end">
+                        <PrimaryButton v-if="this.$page.props.auth.user.permissions.includes('Crear proyectos')"
+                            @click="$inertia.get(route('pms.projects.create'))">Nuevo proyecto</PrimaryButton>
+                        <SecondaryButton v-if="this.$page.props.auth.user.permissions.includes('Editar proyectos')"
+                            @click="$inertia.get(route('pms.projects.edit', project.data.id ?? 1))"><i
+                                class="fa-solid fa-pen"></i></SecondaryButton>
+                    </div>
+                    <div v-if="currentTab == 2 || currentTab == 3" class="flex space-x-2 w-full justify-end">
+                        <PrimaryButton @click="$inertia.get(route('pms.tasks.create', { projectId: project.data.id ?? 1 }))">
+                            Nueva
+                            tarea</PrimaryButton>
+                    </div>
                 </div>
             </div>
             <!-- --------------project title--------------------------- -->
@@ -228,7 +230,7 @@
             </div>
             <!-- ------------- Tasks ends 2 ------------- -->
             <!-- ------------- Cronograma Starts 3 ------------- -->
-            <div v-if="currentTab == 3" class="text-left text-sm items-center">
+            <div v-if="currentTab == 3" class="text-left text-sm items-center overflow-x-auto">
                 <GanttDiagramMonth v-if="period === 'Mes'" :currentProject="project.data" :currentDate="currentDate" />
 
                 <GanttDiagramBimester v-if="period === 'Bimestre'" :currentProject="project.data"

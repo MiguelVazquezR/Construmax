@@ -91,7 +91,7 @@
       </div>
 
       <!-- lista de contactos -->
-      <div v-for="(item, index) in form.contacts" :key="index" class="bg-[#f2f2f2] p-5 mt-2 rounded-[3px]">
+      <div v-for="(item, index) in form.contacts" :key="index" class="bg-[#f2f2f2] p-5 mt-2 rounded-[3px] col-span-full lg:col-span-1">
         <header class="flex justify-between items-center">
           <h2 class="font-bold text-sm mb-2">Contacto {{ (index + 1) }}</h2>
           <div class="flex space-x-1 items-center">

@@ -1,7 +1,7 @@
 <template>
   <AppLayout title="Oportunidades">
     <SkeletonLoading v-if="loading" />
-    <div v-else>
+    <div v-else class="mb-5">
       <div class="flex flex-col md:mx-9 md:my-7 space-y-3 m-1">
         <div class="flex justify-between text-lg mx-2 lg:mx-14 mt-11">
           <span>Oportunidades</span>
@@ -12,14 +12,15 @@
           </p>
           </Link>
         </div>
-        <div class="flex items-center justify-between mt-5 mx-2 lg:mx-8">
-          <div class="w-2/3 mr-2 flex items-center">
-            <el-select v-model="selectedOpportunity" clearable filterable placeholder="Buscar proyecto" class="w-1/2 mr-4"
-              no-data-text="No hay clientes registrados" no-match-text="No se encontraron coincidencias">
-              <el-option v-for="item in opportunities" :key="item.id" :label="item.name" :value="item.id" />
-            </el-select>
-          </div>
-          <div class="flex items-center">
+        <div class="lg:flex items-center justify-between mt-5 mx-2 lg:mx-8">
+          <!-- <div class="w-2/3 mr-2 flex items-center"> -->
+          <el-select v-model="selectedOpportunity" clearable filterable placeholder="Buscar proyecto"
+            class="w-full lg:w-1/2" no-data-text="No hay clientes registrados"
+            no-match-text="No se encontraron coincidencias">
+            <el-option v-for="item in opportunities" :key="item.id" :label="item.name" :value="item.id" />
+          </el-select>
+          <!-- </div> -->
+          <div class="flex items-center justify-end w-full lg:w-1/2 mt-3 lg:mt-0">
             <el-tooltip v-if="$page.props.auth.user.permissions?.includes('Crear oportunidades') && currentTab == 1"
               content="Crear oportunidad" placement="top">
               <Link :href="route('crm.opportunities.create')">
@@ -45,19 +46,20 @@
             <el-dropdown v-if="currentTab == 3 && $page.props.auth.user.permissions?.includes('Registrar pagos en seguimiento integral')
               && $page.props.auth.user.permissions?.includes('Agendar citas en seguimiento integral')
               && $page.props.auth.user.permissions?.includes('Enviar correos en seguimiento integral')
-              " split-button type="primary" @click="$inertia.get(route('crm.meeting-monitors.create', {opportunityId: selectedOpportunity}))">
+              " split-button type="primary"
+              @click="$inertia.get(route('crm.meeting-monitors.create', { opportunityId: selectedOpportunity }))">
               Agendar cita
               <template #dropdown>
                 <el-dropdown-menu>
                   <el-dropdown-item
                     v-if="$page.props.auth.user.permissions?.includes('Registrar pagos en seguimiento integral')">
-                    <Link :href="route('crm.payment-monitors.create', {opportunityId: selectedOpportunity})">
+                    <Link :href="route('crm.payment-monitors.create', { opportunityId: selectedOpportunity })">
                     Registrar Pago
                     </Link>
                   </el-dropdown-item>
                   <el-dropdown-item
                     v-if="$page.props.auth.user.permissions?.includes('Enviar correos en seguimiento integral')">
-                    <Link :href="route('crm.email-monitors.create', {opportunityId: selectedOpportunity})">
+                    <Link :href="route('crm.email-monitors.create', { opportunityId: selectedOpportunity })">
                     Enviar correo
                     </Link>
                   </el-dropdown-item>
@@ -67,7 +69,7 @@
           </div>
         </div>
       </div>
-      <div class="flex items-center justify-center space-x-5 mb-4">
+      <div class="flex items-center justify-center space-x-5 mt-5 mb-4">
         <p class="font-bold text-lg">
           {{ opportunity.data.folio }} ({{ opportunity.data.name }})
         </p>
@@ -77,7 +79,7 @@
       </div>
 
       <!-- ------------- tabs section starts ------------- -->
-      <div class="border-y-2 border-[#cccccc] flex justify-between items-center py-2">
+      <div class="border-y-2 border-[#cccccc] flex justify-between items-center py-2 w-full overflow-x-auto">
         <div class="flex">
           <Tab @click="currentTab = index + 1" :label="tab" :active="currentTab == index + 1" v-for="(tab, index) in tabs"
             :key="index" />
@@ -106,10 +108,10 @@
           <div class="flex items-center relative">
             <div :class="getColorStatus()" class="absolute -left-10 top-5 rounded-full w-3 h-3"></div>
             <el-select @change="
-              status == 'Perdida' ? (showLostOpportunityModal = true) 
-              : status == 'Cerrada' ? showCreateProjectModal = true 
-              : status == 'Pagado' ? showCreateProjectModal = true 
-              :updateStatus()
+              status == 'Perdida' ? (showLostOpportunityModal = true)
+                : status == 'Cerrada' ? showCreateProjectModal = true
+                  : status == 'Pagado' ? showCreateProjectModal = true
+                    : updateStatus()
               " class="lg:w-1/2 mt-2" v-model="status" clearable filterable placeholder="Seleccionar estatus"
               no-data-text="No hay estatus registrados" no-match-text="No se encontraron coincidencias">
               <el-option v-for="item in statuses" :key="item" :label="item.label" :value="item.label">
@@ -180,17 +182,17 @@
           <div class="flex items-center justify-end space-x-2 col-span-2 mr-4">
             <el-tooltip v-if="$page.props.auth.user.permissions?.includes('Agendar citas en seguimiento integral')"
               content="Agendar reunión" placement="top">
-              <i @click="$inertia.get(route('crm.meeting-monitors.create', {opportunityId: selectedOpportunity}))"
+              <i @click="$inertia.get(route('crm.meeting-monitors.create', { opportunityId: selectedOpportunity }))"
                 class="fa-regular fa-calendar text-primary cursor-pointer text-lg px-3 border-r border-[#9a9a9a]"></i>
             </el-tooltip>
             <el-tooltip v-if="$page.props.auth.user.permissions?.includes('Registrar pagos en seguimiento integral')"
               content="Registrar pago" placement="top">
-              <i @click="$inertia.get(route('crm.payment-monitors.create', {opportunityId: selectedOpportunity}))"
+              <i @click="$inertia.get(route('crm.payment-monitors.create', { opportunityId: selectedOpportunity }))"
                 class="fa-solid fa-money-bill text-primary cursor-pointer text-lg px-3 border-r border-[#9a9a9a]"></i>
             </el-tooltip>
             <el-tooltip v-if="$page.props.auth.user.permissions?.includes('Enviar correos en seguimiento integral')"
               content="Enviar correo" placement="top">
-              <i @click="$inertia.get(route('crm.email-monitors.create', {opportunityId: selectedOpportunity}))"
+              <i @click="$inertia.get(route('crm.email-monitors.create', { opportunityId: selectedOpportunity }))"
                 class="fa-regular fa-envelope text-primary cursor-pointer text-lg px-3"></i>
             </el-tooltip>
           </div>
@@ -281,21 +283,21 @@
         <div v-if="opportunity.data.clientMonitors?.length" class="overflow-x-auto">
           <table class="lg:w-[80%] w-full mx-auto text-sm">
             <thead>
-              <tr class="text-center">
+              <tr class="text-left">
                 <th class="font-bold pb-5">
-                  Folio <i class="fa-solid fa-arrow-down-long ml-3"></i>
+                  Folio <i class="text-[9px] md:inline fa-solid fa-arrow-down-long md:ml-3"></i>
                 </th>
                 <th class="font-bold pb-5">
-                  Tipo que interacción <i class="fa-solid fa-arrow-down-long ml-3"></i>
+                  Tipo <i class="text-[9px] md:inline fa-solid fa-arrow-down-long md:ml-3"></i>
                 </th>
                 <th class="font-bold pb-5">
-                  Fecha <i class="fa-solid fa-arrow-down-long ml-3"></i>
+                  Fecha <i class="text-[9px] md:inline fa-solid fa-arrow-down-long md:ml-3"></i>
                 </th>
                 <th class="font-bold pb-5">
-                  Concepto <i class="fa-solid fa-arrow-down-long ml-3"></i>
+                  Concepto <i class="text-[9px] md:inline fa-solid fa-arrow-down-long md:ml-3"></i>
                 </th>
                 <th class="font-bold pb-5">
-                  Vededor <i class="fa-solid fa-arrow-down-long ml-3"></i>
+                  Vededor <i class="text-[9px] md:inline fa-solid fa-arrow-down-long md:ml-3"></i>
                 </th>
                 <th></th>
               </tr>
@@ -303,24 +305,24 @@
             <tbody>
               <tr v-for="monitor in opportunity.data.clientMonitors" :key="monitor" class="mb-4">
                 <td @click="showMonitorType(monitor)"
-                  class="text-center py-2 px-2 rounded-l-full text-primary hover:underline cursor-pointer">
+                  class="text-left py-2 rounded-l-full text-primary hover:underline cursor-pointer min-w-[100px]">
                   {{ monitor.folio }}
                 </td>
-                <td class="text-center py-2 px-2">
-                  <span class="py-1 px-4 rounded-full">{{ monitor.type }}</span>
+                <td class="text-left py-2 px-2 min-w-[120px]">
+                  <span class="py-1 rounded-full">{{ monitor.type }}</span>
                 </td>
-                <td class="text-center py-2 px-2">
-                  <span class="py-1 px-2">{{ monitor.date }}</span>
+                <td class="text-left py-2">
+                  <span class="py-1">{{ monitor.date }}</span>
                 </td>
-                <td class="text-center py-2 px-2">
+                <td class="text-left py-2 max-w-[120px] truncate px-2">
                   {{ monitor.concept }}
                 </td>
                 <td @click="$inertia.get(route('users.show', monitor.seller?.id))"
-                  class="text-center py-2 px-2 text-primary hover:underline cursor-pointer">
+                  class="text-left py-2 text-primary hover:underline cursor-pointer min-w-[100px]">
                   {{ monitor.seller?.name }}
                 </td>
                 <td v-if="$page.props.auth.user.permissions.includes('Eliminar seguimiento integral')"
-                  class="text-center py-2 px-2 rounded-r-full">
+                  class="text-left py-2 rounded-r-full">
                   <el-popconfirm confirm-button-text="Si" cancel-button-text="No" icon-color="#D90537" title="¿Eliminar?"
                     @confirm="deleteClientMonitor(monitor)">
                     <template #reference>
@@ -340,7 +342,7 @@
       <!-- ------------ tab 3 seguimiento integral ends ------------- -->
 
       <!-- ------------ tab 4 Historial starts ------------- -->
-      <div class="lg:mx-16 mx-2 my-4" v-if="currentTab == 4">
+      <div class="lg:mx-16 mx-2 my-4 text-sm" v-if="currentTab == 4">
         <div v-if="opportunity.data.activities?.length">
           <ul>
             <li class="mb-1" v-for="(activity, index) in opportunity.data.activities" :key="index">
@@ -431,36 +433,39 @@
       </ConfirmationModal>
 
       <!-- ----------------- status modal ----------- -->
-    <Modal :show="showLostOpportunityModal || showCreateProjectModal"
-      @close="showLostOpportunityModal = false; showCreateProjectModal = false">
-      <section v-if="showLostOpportunityModal" class="mx-7 my-4 space-y-4 relative">
-        <div>
-          <label>Causa oportunidad perdida
-            <el-tooltip content="Escribe la causa por la cual se PERDIÓ esta oportunidad" placement="top">
-              <i class="fa-regular fa-circle-question ml-2 text-primary text-xs"></i>
-            </el-tooltip>
-          </label>
-          <textarea v-model="lost_oportunity_razon" class="input h-20 mt-3"></textarea>
-        </div>
-        <div class="flex justify-end space-x-3 pt-5 pb-1">
-          <CancelButton @click="cancelUpdating">Cancelar</CancelButton>
-          <PrimaryButton @click="updateStatus('Perdida')" :disabled="lost_oportunity_razon == null">Actualizar estatus</PrimaryButton>
-        </div>
-      </section>
+      <Modal :show="showLostOpportunityModal || showCreateProjectModal"
+        @close="showLostOpportunityModal = false; showCreateProjectModal = false">
+        <section v-if="showLostOpportunityModal" class="mx-7 my-4 space-y-4 relative">
+          <div>
+            <label>Causa oportunidad perdida
+              <el-tooltip content="Escribe la causa por la cual se PERDIÓ esta oportunidad" placement="top">
+                <i class="fa-regular fa-circle-question ml-2 text-primary text-xs"></i>
+              </el-tooltip>
+            </label>
+            <textarea v-model="lost_oportunity_razon" class="input h-20 mt-3"></textarea>
+          </div>
+          <div class="flex justify-end space-x-3 pt-5 pb-1">
+            <CancelButton @click="cancelUpdating">Cancelar</CancelButton>
+            <PrimaryButton @click="updateStatus('Perdida')" :disabled="lost_oportunity_razon == null">Actualizar estatus
+            </PrimaryButton>
+          </div>
+        </section>
 
-      <section v-if="showCreateProjectModal" class="mx-7 my-4 space-y-4 relative">
-        <div>
-          <h2 class="font bold text-center font-bold mb-5">Paso clave - Crear proyecto</h2>
-          <p class="px-5">Es necesario crear un proyecto al haber marcado como <span class="text-[#FD8827]">”cerrada”</span>  
-          o <span class="text-[#37951F]">”Pagada”</span> la oportunidad para llevar un correcto seguimiento y flujo de trabajo. 
-          </p>
-        </div>
-        <div class="flex justify-end space-x-3 pt-5 pb-1">
-          <CancelButton @click="cancelUpdating">Cancelar</CancelButton>  
-          <PrimaryButton @click="CreateProject">Continuar</PrimaryButton>
-        </div>
-      </section>
-    </Modal>
+        <section v-if="showCreateProjectModal" class="mx-7 my-4 space-y-4 relative">
+          <div>
+            <h2 class="font bold text-center font-bold mb-5">Paso clave - Crear proyecto</h2>
+            <p class="px-5">Es necesario crear un proyecto al haber marcado como <span
+                class="text-[#FD8827]">”cerrada”</span>
+              o <span class="text-[#37951F]">”Pagada”</span> la oportunidad para llevar un correcto seguimiento y flujo de
+              trabajo.
+            </p>
+          </div>
+          <div class="flex justify-end space-x-3 pt-5 pb-1">
+            <CancelButton @click="cancelUpdating">Cancelar</CancelButton>
+            <PrimaryButton @click="CreateProject">Continuar</PrimaryButton>
+          </div>
+        </section>
+      </Modal>
     </div>
   </AppLayout>
 </template>
@@ -842,5 +847,4 @@ export default {
   /* Color de la barra de desplazamiento */
   border-radius: 5px;
   /* Radio de los bordes de la barra de desplazamiento */
-}
-</style>
+}</style>

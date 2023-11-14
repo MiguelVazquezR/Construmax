@@ -76,7 +76,7 @@
                 <input v-model="form.concept" class="input" type="text">
                 <InputError :message="form.errors.concept" />
             </div>
-            <div class="w-full">
+            <div class="w-full col-span-full md:col-span-1">
                 <InputLabel value="Fecha del pago *" class="ml-2" />
                 <el-date-picker class="w-full" v-model="form.paid_at" type="date" placeholder="Fecha*" format="YYYY/MM/DD"
                     :disabled-date="disabledDate" />

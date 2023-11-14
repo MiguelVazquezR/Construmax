@@ -64,18 +64,18 @@
           </el-select>
           <InputError :message="form.errors.participants" />
         </div>
-        <div class="flex items-center">
-          <div class="mt-2 lg:mt-0">
+        <div class="lg:flex items-center">
+          <div class="mt-2 lg:mt-0 ">
             <InputLabel value="Fecha *" class="ml-2" />
             <el-date-picker v-model="form.start_date" type="date" placeholder="Fecha *" :disabled-date="disabledDate" />
             <InputError :message="form.errors.start_date" />
           </div>
-          <label class="flex items-center mt-5 ml-4">
+          <label class="flex items-center mt-1 lg:mt-5 lg:ml-4 text-xs">
             <Checkbox v-model:checked="form.is_full_day" class="bg-transparent disabled:border-gray-400" />
             <span class="ml-2 text-xs">Todo el día</span>
           </label>
         </div>
-        <div v-if="!form.is_full_day">
+        <div v-if="!form.is_full_day" class="col-span-full lg:col-span-1">
           <InputLabel value="Horario *" class="ml-2" />
           <el-time-select class="mr-5 mb-3 lg:mb-0" v-model="form.start_time" start="08:00" step="00:30" end="20:30"
             placeholder="Hora de inicio" :max-time="form.end_time" format="hh:mm A" />
@@ -102,7 +102,7 @@
             </el-select>
             <InputError :message="form.errors.repeater" />
           </div> -->
-        <div>
+        <div class="col-span-full lg:col-span-1">
           <InputLabel value="Ubicación *" class="ml-2" />
           <input v-model="form.location" class="input" type="text" placeholder="Agregar ubicación" />
           <InputError :message="form.errors.location" />

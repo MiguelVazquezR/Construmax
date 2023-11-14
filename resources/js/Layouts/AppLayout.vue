@@ -127,8 +127,33 @@ const logout = () => {
 
                             <!-- Hamburger -->
                             <div class="-mr-12 flex items-center sm:hidden">
+                                <!-- calendar -->
+                                <div class="relative mt-2">
+                                    <el-tooltip content="Calendario">
+                                        <Link :href="route('calendars.index')">
+                                        <button :class="route().current('calendars.*') ? 'text-primary' : 'text-[#97989A]'">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17"
+                                                fill="currentColor" class="bi bi-calendar4-event" viewBox="0 0 16 16">
+                                                <path
+                                                    d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5zM2 2a1 1 0 0 0-1 1v1h14V3a1 1 0 0 0-1-1H2zm13 3H1v9a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V5z" />
+                                                <path
+                                                    d="M11 7.5a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1z" />
+                                            </svg>
+                                        </button>
+                                        </Link>
+                                    </el-tooltip>
+                                    <div v-if="$page.props.auth.user?.notifications?.some(notification => {
+                                        return notification.data.module === 'calendar';
+                                    })"
+                                        class="bg-primary w-[10px] h-[10px] border border-white rounded-full absolute -top-1 -right-2">
+                                    </div>
+                                </div>
+
+                                <!-- notifications -->
+                                <NotificationsCenter />
+                                
                                 <button
-                                    class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 focus:text-gray-500 transition duration-150 ease-in-out"
+                                    class="inline-flex items-center justify-center ml-1 p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 focus:text-gray-500 transition duration-150 ease-in-out"
                                     @click="showingNavigationDropdown = !showingNavigationDropdown">
                                     <svg class="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
                                         <path

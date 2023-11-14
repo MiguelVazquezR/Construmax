@@ -23,7 +23,7 @@
         </el-select>
         <InputError :message="form.errors.service_type" />
       </div>
-      <div>
+      <div class="col-span-full lg:col-span-1">
         <InputLabel value="Duración *" class="ml-2" />
         <el-date-picker @change="handleDateRange" v-model="range" type="daterange" range-separator="A"
           start-placeholder="Fecha de inicio" end-placeholder="Fecha límite" value-format="YYYY-MM-DD"
@@ -31,7 +31,7 @@
         <InputError :message="form.errors.start_date" />
         <InputError :message="form.errors.limit_date" />
       </div>
-      <div>
+      <div class="col-span-full lg:col-span-1">
         <InputLabel value="Responsable *" class="ml-2" />
         <el-select v-model="form.owner_id" clearable placeholder="Seleccione" class="w-full mt-1"
           no-data-text="No hay opciones para mostrar" no-match-text="No se encontraron coincidencias">
@@ -73,7 +73,7 @@
           </a>
         </li>
       </div>
-      <div class="mt-5 col-span-full w-[calc(50%-16px)]">
+      <div class="mt-5 col-span-full lg:col-span-1">
         <div class="flex justify-between items-center mx-2">
           <InputLabel value="Etiquetas" />
           <button @click="showTagFormModal = true" type="button"
@@ -101,7 +101,7 @@
           </el-tooltip>
         </label>
       </div>
-      <div class="mt-5 col-span-full w-[calc(50%-16px)]">
+      <div class="mt-5 col-span-full lg:col-span-1">
         <div class="flex justify-between items-center mx-2">
           <div class="flex items-center space-x-2">
             <InputLabel value="Grupo" />
@@ -188,10 +188,10 @@
         </div>
       </div>
       <section class="rounded-[10px] py-12 mx-7 mt-5 max-h-[580px] col-span-full border border-gray3">
-        <div class="flex px-16 mb-8">
+        <div class="flex px-5 lg:px-16 mb-8">
           <div v-if="typeAccessProject === 'Private'" class="w-full">
             <h2 class="font-bold text-sm my-2 ml-2 col-span-full">Asignar participantes </h2>
-            <el-select @change="addToSelectedUsers" filterable clearable placeholder="Seleccionar usuario" class="w-1/2"
+            <el-select @change="addToSelectedUsers" filterable clearable placeholder="Seleccionar usuario" class="w-full lg:w-1/2"
               no-data-text="No hay más usuarios para añadir" no-match-text="No se encontraron coincidencias">
               <el-option v-for="(item, index) in availableUsersToPermissions" :key="item.id" :label="item.name"
                 :value="item.id">
@@ -208,7 +208,7 @@
             {{ editAccesFlag ? 'Actualizar' : 'Editar' }}
           </ThirdButton>
         </div>
-        <div class="flex justify-between px-16 mt-4">
+        <div class="flex justify-between px-5 lg:px-16 mt-4">
           <div class="w-full">
             <div class="flex">
               <h2 class="font-bold border-b border-gray3 w-2/3 pl-3">Usuarios</h2>
@@ -217,10 +217,10 @@
             <div class="pl-3 overflow-y-auto min-h-[100px] max-h-[380px]">
               <div class="flex mt-2 border-b border-gray3" v-for="user in form.selectedUsersToPermissions" :key="user.id">
                 <div class="w-2/3 flex space-x-2">
-                  <div v-if="$page.props.jetstream.managesProfilePhotos" class="flex text-sm rounded-full w-12">
-                    <img class="h-10 w-10 rounded-full object-cover" :src="user.profile_photo_url" :alt="user.name" />
+                  <div v-if="$page.props.jetstream.managesProfilePhotos" class="flex text-sm rounded-full w-10 lg:w-12">
+                    <img class="h-8 lg:h-10 w-8 lg:w-10 rounded-full object-cover" :src="user.profile_photo_url" :alt="user.name" />
                   </div>
-                  <div class="text-sm w-full">
+                  <div class="text-xs lg:text-sm w-full">
                     <p>{{ user.name }}</p>
                     <p v-if="user.employee_properties">{{ 'Depto. ' + user.employee_properties?.department }}</p>
                     <p v-else>Super admin</p>

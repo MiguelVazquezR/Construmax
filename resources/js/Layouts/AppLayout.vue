@@ -7,8 +7,8 @@ import Dropdown from '@/Components/Dropdown.vue';
 import DropdownLink from '@/Components/DropdownLink.vue';
 import SideNav from '@/Components/MyComponents/SideNav.vue';
 import NotificationsCenter from '@/Components/MyComponents/NotificationsCenter.vue';
+import SideNavMobile from '@/Components/MyComponents/SideNavMobile.vue';
 import ResponsiveNavLink from '@/Components/ResponsiveNavLink.vue';
-import axios from 'axios';
 
 defineProps({
     title: String,
@@ -147,48 +147,32 @@ const logout = () => {
 
                     <!-- Responsive Navigation Menu -->
                     <div :class="{ 'block': showingNavigationDropdown, 'hidden': !showingNavigationDropdown }"
-                        class="sm:hidden">
-                        <div class="pt-2 pb-3 space-y-1">
-                            <ResponsiveNavLink :href="route('dashboard')" :active="route().current('dashboard')">
-                                Dashboard
-                            </ResponsiveNavLink>
-                        </div>
-
+                        class="z-40 rounded-tl-[6px] rounded-bl-[6px] sm:hidden bg-gray1 w-4/6 absolute right-0 top-14 min-h-[50%] max-h-[90%] overflow-y-scroll overflow-x-hidden shadow-lg border pt-4">
                         <!-- Responsive Settings Options -->
-                        <div class="pt-4 pb-1 border-t border-gray-200">
+                        <div class="pb-4 mb-4 border-b border-gray-200">
                             <div class="flex items-center px-4">
                                 <div v-if="$page.props.jetstream.managesProfilePhotos" class="shrink-0 mr-3">
-                                    <img class="h-10 w-10 rounded-full object-cover"
+                                    <img class="h-14 w-14 rounded-full object-cover mx-auto"
                                         :src="$page.props.auth.user.profile_photo_url" :alt="$page.props.auth.user.name">
-                                </div>
-
-                                <div>
-                                    <div class="font-medium text-base text-gray-800">
-                                        {{ $page.props.auth.user.name }}
-                                    </div>
-                                    <div class="font-medium text-sm text-gray-500">
-                                        {{ $page.props.auth.user.email }}
+                                    <div>
+                                        <div class="font-semibold text-base text-white">
+                                            {{ $page.props.auth.user.name }}
+                                        </div>
+                                        <div class="font-medium text-sm text-gray-50">
+                                            {{ $page.props.auth.user.email }}
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-
-                            <div class="mt-3 space-y-1">
-                                <ResponsiveNavLink :href="route('profile.show')" :active="route().current('profile.show')">
-                                    Perfil
-                                </ResponsiveNavLink>
-
-                                <ResponsiveNavLink v-if="$page.props.jetstream.hasApiFeatures"
-                                    :href="route('api-tokens.index')" :active="route().current('api-tokens.index')">
-                                    API Tokens
-                                </ResponsiveNavLink>
-
-                                <!-- Authentication -->
-                                <form method="POST" @submit.prevent="logout">
-                                    <ResponsiveNavLink as="button">
-                                        Cerrar sesión
-                                    </ResponsiveNavLink>
-                                </form>
-                            </div>
+                        </div>
+                        <div class="flex flex-col justify-between">
+                            <SideNavMobile />
+                            <!-- Authentication -->
+                            <form method="POST" @submit.prevent="logout" class="text-red-500 absolute bottom-3 right-3">
+                                <button>
+                                    <i class="fa-solid fa-arrow-right-from-bracket mr-[7px]"></i> Cerrar sesión
+                                </button>
+                            </form>
                         </div>
                     </div>
                 </nav>

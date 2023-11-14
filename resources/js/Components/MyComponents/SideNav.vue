@@ -64,7 +64,7 @@ export default {
                             label: 'Seguimiento integral',
                             route: route('crm.client-monitors.index'),
                             show: this.$page.props.auth.user.permissions.includes('Ver seguimiento integral'),
-                            active: route().current('crm.client-monitors.*'),
+                            active: route().current('crm.client-monitors.*') || route().current('crm.email-monitors.*') || route().current('crm.payment-monitors.*') || route().current('crm.meeting-monitors.*'),
                         },
                     ],
                     show: ['Ver clientes', 'Ver oportunidades', 'Ver seguimiento integral'].some(permission => this.$page.props.auth.user.permissions.includes(permission)),

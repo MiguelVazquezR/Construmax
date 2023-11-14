@@ -28,8 +28,9 @@ class EmailMonitorController extends Controller
         $customers = CustomerResource::collection(Customer::with('contacts')->latest()->get());
         $opportunities = OpportunityResource::collection(Opportunity::with('customer.contacts')->latest()->get());
         $users = User::whereNotIn('id', [1])->where('is_active', true)->get();
+        $opportunity_id = request('opportunityId');
 
-        return inertia('CRM/EmailMonitor/Create', compact('customers', 'opportunities', 'users'));
+        return inertia('CRM/EmailMonitor/Create', compact('customers', 'opportunities', 'users', 'opportunity_id'));
     }
 
     

@@ -448,6 +448,7 @@ export default {
     project_groups: Object,
     tags: Object,
     users: Array,
+    opportunity: Object,
   },
   computed: {},
   methods: {
@@ -456,6 +457,9 @@ export default {
       this.form.limit_date = range[1];
     },
     updateContacts() {
+      this.form.contact_id = null;
+      this.form.address = null;
+      this.form.opportunity_id = null;
       const selectedCustomer = this.customers.find(
         (item) => item.id === this.form.customer_id
       );
@@ -640,6 +644,15 @@ export default {
   mounted() {
     this.selectAdmins();
     this.selectAuthUser();
+    if (this.opportunity) {
+      console.log('Viene de oportunidad');
+          this.form.customer_id = parseInt(this.opportunity.customer_id);
+          this.updateContacts();
+          this.form.contact_id = parseInt(this.opportunity.contact_id);
+          this.updateBranches();
+          this.form.address = this.opportunity.branch;
+          this.form.opportunity_id = parseInt(this.opportunity.id);
+      }
   },
 };
 </script>

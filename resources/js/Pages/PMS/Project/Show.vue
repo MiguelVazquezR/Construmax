@@ -49,7 +49,8 @@
                                 class="fa-solid fa-pen"></i></SecondaryButton>
                     </div>
                     <div v-if="currentTab == 2 || currentTab == 3" class="flex space-x-2 w-full justify-end">
-                        <PrimaryButton @click="$inertia.get(route('pms.tasks.create', { projectId: project.data.id ?? 1 }))">
+                        <PrimaryButton
+                            @click="$inertia.get(route('pms.tasks.create', { projectId: project.data.id ?? 1 }))">
                             Nueva
                             tarea</PrimaryButton>
                     </div>
@@ -356,6 +357,8 @@ export default {
                 if (response.status === 200) {
                     const taskIndex = this.project.data.tasks.findIndex(item => item.id === this.draggingTaskId);
                     this.project.data.tasks[taskIndex].status = status;
+                    this.project.data.tasks[taskIndex].is_paused = 0;
+                    this.project.data.tasks[taskIndex].pausa_reazon = null;
                 }
             } catch (error) {
                 console.log(error);

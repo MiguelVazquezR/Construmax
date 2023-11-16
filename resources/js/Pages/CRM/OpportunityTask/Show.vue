@@ -13,9 +13,15 @@
     <form @submit.prevent="update" class="mx-7 my-4 space-y-4 relative">
       <div class="flex justify-between items-center">
         <h2 class="font-bold text-sm">Información de la actividad</h2>
-        <ThirdButton type="button" v-if="toBool(authUserPermissions[2])" @click="canEdit = !canEdit">
-          {{ canEdit ? 'Cancelar edición' : 'Editar' }}
-        </ThirdButton>
+        <div class="flex items-center">
+          <ThirdButton type="button" v-if="toBool(authUserPermissions[2])" @click="canEdit = !canEdit">
+            {{ canEdit ? 'Cancelar edición' : 'Editar' }}
+          </ThirdButton>
+          <SecondaryButton v-if="!authUserIsParticipant && toBool(authUserPermissions[2]) && !canEdit" type="button"
+            @click="showConfirmModal = true" class="!rounded-full ml-2">
+            <i class="fa-regular fa-trash-can text-primary text-sm cursor-pointer"></i>
+          </SecondaryButton>
+        </div>
       </div>
 
       <div class="grid grid-cols-2 gap-x-4 gap-y-2">
@@ -120,7 +126,8 @@
                 :alt="$page.props.auth.user.name" />
             </div>
             <RichText @submitComment="storeComment(taskComponentLocal)" @content="updateComment($event)"
-              ref="commentEditor" class="flex-1" withFooter :userList="opportunityTask.opportunity.users" :disabled="sendingComments" />
+              ref="commentEditor" class="flex-1" withFooter :userList="opportunityTask.opportunity.users"
+              :disabled="sendingComments" />
           </div>
         </div>
 
@@ -137,13 +144,12 @@
             </el-dropdown>
             <PrimaryButton v-else type="button" @click="handleClick">Marcar actividad como hecha</PrimaryButton>
           </template>
-          <template v-else-if="!authUserIsParticipant && toBool(authUserPermissions[2]) && !canEdit">
-            <PrimaryButton type="button" @click="showConfirmModal = true">Eliminar</PrimaryButton>
-          </template>
-          <PrimaryButton v-if="canEdit" type="button" @click="update()">Guardar cambios</PrimaryButton>
-          <CancelButton v-if="canEdit" @click="canEdit = false">
-            Cancelar edición
-          </CancelButton>
+          <div v-if="canEdit" class="mt-20 flex space-x-2">
+            <PrimaryButton type="button" @click="update()">Guardar cambios</PrimaryButton>
+            <CancelButton @click="canEdit = false">
+              Cancelar edición
+            </CancelButton>
+          </div>
         </div>
       </div>
     </form>
@@ -164,6 +170,7 @@
 <script>
 import AppLayout from "@/Layouts/AppLayout.vue";
 import PrimaryButton from "@/Components/PrimaryButton.vue";
+import SecondaryButton from "@/Components/SecondaryButton.vue";
 import CancelButton from "@/Components/CancelButton.vue";
 import ThirdButton from "@/Components/ThirdButton.vue";
 import InputError from "@/Components/InputError.vue";
@@ -212,6 +219,7 @@ export default {
   },
   components: {
     PrimaryButton,
+    SecondaryButton,
     CancelButton,
     ThirdButton,
     InputError,

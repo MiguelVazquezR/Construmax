@@ -108,7 +108,7 @@ data(){
         opportunity_id: this.payment_monitor.data.opportunity?.id,
         customer_id: this.payment_monitor.data.customer?.id,
         branch: this.payment_monitor.data.branch,
-        contact_id: this.payment_monitor.data.contact?.id,
+        contact_id: this.payment_monitor.data.contact.id,
         contact_name: this.payment_monitor.data.contact_name,
         contact_phone: this.payment_monitor.data.contact_phone,
         paid_at: this.payment_monitor.data.paid_at_raw,

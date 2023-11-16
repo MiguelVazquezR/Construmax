@@ -52,7 +52,7 @@ export default {
                             label: 'Oportunidades',
                             route: route('crm.opportunities.index'),
                             show: this.$page.props.auth.user.permissions.includes('Ver oportunidades'),
-                            active: route().current('crm.opportunities.*'),
+                            active: route().current('crm.opportunities.*') || route().current('crm.opportunity-tasks.*'),
                         },
                         {
                             label: 'Seguimiento integral',

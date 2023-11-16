@@ -61,17 +61,15 @@
             <th class="font-bold pb-5">
               Vededor <i class="text-[9px] md:inline fa-solid fa-arrow-down-long md:ml-3"></i>
             </th>
-            <th></th>
           </tr>
         </thead>
         <tbody>
-          <tr v-for="monitor in filteredTableData" :key="monitor.id" class="mb-4">
-            <td @click="showMonitorType(monitor)"
-              class="py-2 pr-3 rounded-l-full text-primary hover:underline cursor-pointer">
+          <tr @click="showMonitorType(monitor)" v-for="monitor in filteredTableData" :key="monitor.id"
+            class="mb-4 cursor-pointer hover:bg-primarylight">
+            <td class="py-2 px-1 rounded-l-full">
               {{ monitor.folio }}
             </td>
-            <td @click="$inertia.get(route('crm.customers.show', monitor.customer?.id))"
-              class="py-2 text-primary hover:underline cursor-pointer">
+            <td class="py-2">
               {{ monitor.customer?.name }}
             </td>
             <td class="py-2">
@@ -83,12 +81,11 @@
             <td :title="monitor.concept" class="py-2 max-w-[100px] truncate pr-3">
               {{ monitor.concept }}
             </td>
-            <td @click="$inertia.get(route('users.show', monitor.seller?.id))"
-              class="py-2 text-primary hover:underline cursor-pointer">
+            <td class="py-2" :class="!$page.props.auth.user.permissions.includes('Eliminar seguimiento integral') ? 'rounded-r-full px-2' : null">
               {{ monitor.seller?.name }}
             </td>
             <td v-if="$page.props.auth.user.permissions.includes('Eliminar seguimiento integral')"
-              class="py-2 rounded-r-full">
+              class="py-2 rounded-r-full px-2">
               <el-popconfirm confirm-button-text="Si" cancel-button-text="No" icon-color="#D90537" title="¿Eliminar?"
                 @confirm="deleteClientMonitor(monitor)">
                 <template #reference>

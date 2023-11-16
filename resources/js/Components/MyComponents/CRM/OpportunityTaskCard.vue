@@ -30,7 +30,7 @@
         </div>
       </div>
     </div>
-    <button @click.stop="$emit('task-done', opportunityTask?.id)" v-if="!opportunityTask?.finished_at"
+    <button @click.stop="$emit('task-done', opportunityTask?.id)" v-if="!opportunityTask?.finished_at && opportunityTask.asigned.id == $page.props.auth.user.id"
       class="text-sm text-white bg-red-600 w-full py-1 rounded-b-md opacity-0 group-hover:opacity-100 transition-opacity duration-300 ease-in-out">
       Hecho
     </button>

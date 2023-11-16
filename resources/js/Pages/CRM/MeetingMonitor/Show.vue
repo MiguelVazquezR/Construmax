@@ -47,11 +47,12 @@
           :href="route('crm.opportunities.show', meeting_monitor.data.opportunity?.id)">
           <span>{{ meeting_monitor.data.opportunity?.folio }} ({{ meeting_monitor.data.opportunity?.name }})</span></a>
         <span class="text-gray-500 my-2">Vendedor</span>
-        <span>{{ meeting_monitor.data.seller?.name }}</span>
+        <a class="hover:underline text-primary"
+          :href="route('users.show', meeting_monitor.data.seller?.id)">
+          <span>{{ meeting_monitor.data.seller?.name }}</span>
+        </a>
 
         <p class="font-bold col-span-2 my-2">Información de la cita</p>
-        <span class="text-gray-500">Creado por</span>
-        <span>{{ meeting_monitor.data.seller.name }}</span>
         <span class="text-gray-500 my-2">Fecha</span>
         <span>{{ meeting_monitor.data.meeting_date }}</span>
         <span class="text-gray-500 my-2">Hora</span>
@@ -68,13 +69,16 @@
         <p class="font-bold col-span-2 mb-2">Información del cliente</p>
 
         <span class="text-gray-500 my-2">Cliente</span>
-        <span>{{ meeting_monitor.data.customer?.name ?? '--' }}</span>
+        <a class="hover:underline text-primary"
+          :href="route('crm.customers.show', meeting_monitor.data.customer?.id)">
+          <span>{{ meeting_monitor.data.customer?.name ?? '--' }}</span>
+        </a>
         <span class="text-gray-500 my-2">Sucursal</span>
         <span>{{ meeting_monitor.data.branch ?? '--' }}</span>
         <span class="text-gray-500 my-2">Contacto</span>
-        <span>{{ meeting_monitor.data.contact_name }}</span>
+        <span>{{ meeting_monitor.data.contact?.name }}</span>
         <span class="text-gray-500 my-2">Teléfono del contacto</span>
-        <span>{{ meeting_monitor.data.contact_phone }}</span>
+        <span>{{ meeting_monitor.data.contact?.phone }}</span>
       </div>
     </div>
     <!-- ------------- Cita ends 1 ------------- -->

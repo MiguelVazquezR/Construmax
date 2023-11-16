@@ -73,7 +73,7 @@ class EmailMonitorController extends Controller
     
     public function show($email_monitor_id)
     {
-        $email_monitor = EmailMonitorResource::make(EmailMonitor::with('seller', 'opportunity', 'customer')->find($email_monitor_id));
+        $email_monitor = EmailMonitorResource::make(EmailMonitor::with('seller', 'opportunity', 'customer', 'contact')->find($email_monitor_id));
 
         return inertia('CRM/EmailMonitor/Show', compact('email_monitor'));
     }

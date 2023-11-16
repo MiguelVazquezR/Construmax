@@ -72,8 +72,6 @@ class PaymentMonitorController extends Controller
     {
         $payment_monitor = PaymentMonitorResource::make(PaymentMonitor::with('seller', 'opportunity', 'customer', 'contact', 'media')->find($payment_monitor_id));
 
-        // return $payment_monitor;
-
         return inertia('CRM/PaymentMonitor/Show', compact('payment_monitor'));
     }
 
@@ -83,8 +81,6 @@ class PaymentMonitorController extends Controller
         $payment_monitor = PaymentMonitorResource::make(PaymentMonitor::with('opportunity', 'customer', 'contact')->find($payment_monitor_id));
         $opportunities = OpportunityResource::collection(Opportunity::with('customer')->latest()->get());
         $customers = CustomerResource::collection(Customer::with('contacts')->latest()->get());
-
-        // return $payment_monitor;
 
         return inertia('CRM/PaymentMonitor/Edit', compact('payment_monitor', 'opportunities', 'customers'));
     }

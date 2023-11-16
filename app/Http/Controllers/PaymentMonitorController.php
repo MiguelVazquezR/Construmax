@@ -35,14 +35,14 @@ class PaymentMonitorController extends Controller
         $request->validate([
             'opportunity_id' => 'required',
             'customer_id' => 'required',
-            'branch' => 'required|string',
+            'branch' => 'required|string|max:255',
             'contact_id' => 'required',
-            'contact_name' => 'required|string',
-            'contact_phone' => 'required|string',
+            // 'contact_name' => 'required|string',
+            // 'contact_phone' => 'required|string',
             'paid_at' => 'required',
             'amount' => 'required',
-            'payment_method' => 'required|string',
-            'concept' => 'required|string',
+            'payment_method' => 'required|string|max:255',
+            'concept' => 'required|string|max:255',
             'notes' => 'nullable|string',
         ]);
 
@@ -95,14 +95,14 @@ class PaymentMonitorController extends Controller
         $request->validate([
             'opportunity_id' => 'required',
             'customer_id' => 'required',
-            'branch' => 'required|string',
+            'branch' => 'required|string|max:255',
             'contact_id' => 'required',
-            'contact_name' => 'required|string',
-            'contact_phone' => 'required|string',
+            // 'contact_name' => 'required|string',
+            // 'contact_phone' => 'required|string',
             'paid_at' => 'required',
             'amount' => 'required',
-            'payment_method' => 'required|string',
-            'concept' => 'required|string',
+            'payment_method' => 'required|string|max:255',
+            'concept' => 'required|string|max:255',
             'notes' => 'nullable|string',
         ]);
 
@@ -126,14 +126,14 @@ class PaymentMonitorController extends Controller
         $request->validate([
             'opportunity_id' => 'required',
             'customer_id' => 'required',
-            'branch' => 'required|string',
+            'branch' => 'required|string|max:255',
             'contact_id' => 'required',
-            'contact_name' => 'required|string',
-            'contact_phone' => 'required|string',
+            // 'contact_name' => 'required|string',
+            // 'contact_phone' => 'required|string',
             'paid_at' => 'required',
             'amount' => 'required',
-            'payment_method' => 'required|string',
-            'concept' => 'required|string',
+            'payment_method' => 'required|string|max:255',
+            'concept' => 'required|string|max:255',
             'notes' => 'nullable|string',
         ]);
 

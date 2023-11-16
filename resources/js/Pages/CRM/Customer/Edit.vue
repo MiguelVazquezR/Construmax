@@ -54,6 +54,7 @@
         <div>
           <InputLabel value="Puesto *" class="ml-2" />
           <input v-model="contact.position" type="text" class="input mt-1" placeholder="Escriba un puesto">
+          <InputError :message="phoneErrorMessage" />
         </div>
         <div>
           <InputLabel value="Sucursal *" class="ml-2" />
@@ -91,7 +92,8 @@
       </div>
 
       <!-- lista de contactos -->
-      <div v-for="(item, index) in form.contacts" :key="index" class="bg-[#f2f2f2] p-5 mt-2 rounded-[3px] col-span-full lg:col-span-1">
+      <div v-for="(item, index) in form.contacts" :key="index"
+        class="bg-[#f2f2f2] p-5 mt-2 rounded-[3px] col-span-full lg:col-span-1">
         <header class="flex justify-between items-center">
           <h2 class="font-bold text-sm mb-2">Contacto {{ (index + 1) }}</h2>
           <div class="flex space-x-1 items-center">
@@ -258,6 +260,8 @@ export default {
         position: null,
         branches: [],
       },
+      // error messages
+      phoneErrorMessage: null,
     }
   },
   components: {
@@ -337,9 +341,13 @@ export default {
       this.contact.branches = [];
     },
     addContact() {
-      this.form.contacts.push({ ...this.contact });
-
-      this.resetContact();
+      if (this.contact.phone.length > 14) {
+        this.phoneErrorMessage = "No debe exceder 14 caracteres";
+      } else {
+        this.phoneErrorMessage = null;
+        this.form.contacts.push({ ...this.contact });
+        this.resetContact();
+      }
     },
     addBranch() {
       if (this.branch == null) {

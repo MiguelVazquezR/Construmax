@@ -95,7 +95,7 @@ class OpportunityController extends Controller
             'reminder' => null,
             'user_id' => auth()->id(),
             'opportunity_id' => $opportunity->id,
-            'asigned_id' => auth()->id(),
+            'asigned_id' => $request->seller_id,
         ]);
         //Tarea 2. Cotizar
         OpportunityTask::create([
@@ -108,7 +108,7 @@ class OpportunityController extends Controller
             'reminder' => null,
             'user_id' => auth()->id(),
             'opportunity_id' => $opportunity->id,
-            'asigned_id' => auth()->id(),
+            'asigned_id' => $request->seller_id,
         ]);
         //Tarea 3. Enviar cotización
         OpportunityTask::create([
@@ -121,7 +121,7 @@ class OpportunityController extends Controller
             'reminder' => null,
             'user_id' => auth()->id(),
             'opportunity_id' => $opportunity->id,
-            'asigned_id' => auth()->id(),
+            'asigned_id' => $request->seller_id,
         ]);
 
         //Crea el registro de una actividad para el historial de esa oportunidad --------------------------
@@ -259,7 +259,7 @@ class OpportunityController extends Controller
     public function destroy(Opportunity $opportunity)
     {
         // eliminar tareas y comentarios de proyectos
-        $tasks = $opportunity->project->tasks;
+        $tasks = $opportunity->project?->tasks ?? [];
         foreach ($tasks as $task) {
             $task->comments()->delete();
             $task->delete();

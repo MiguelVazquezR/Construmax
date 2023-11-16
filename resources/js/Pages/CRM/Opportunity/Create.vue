@@ -19,7 +19,7 @@
       </div>
       <div>
         <InputLabel value="Tipo de servicio *" class="ml-2" />
-        <el-select v-model="form.service_type" clearable placeholder="Seleccione" class="w-full mt-1"
+        <el-select v-model="form.service_type" placeholder="Seleccione" class="w-full mt-1"
           no-data-text="No hay opciones para mostrar" no-match-text="No se encontraron coincidencias">
           <el-option v-for="(item, index) in serviceTypes" :key="item.id" :label="item" :value="item" />
         </el-select>
@@ -29,7 +29,7 @@
         <i :class="getColorStatus(form.status)" class="fa-solid fa-circle text-xs top-[2px] left-20 absolute z-30"></i>
         <InputLabel value="Estatus *" class="ml-2" />
         <div class="flex items-center space-x-4">
-          <el-select class="w-full" v-model="form.status" clearable filterable placeholder="Seleccionar estatus"
+          <el-select class="w-full" v-model="form.status" filterable placeholder="Seleccionar estatus"
             no-data-text="No hay estatus registrados" no-match-text="No se encontraron coincidencias">
             <el-option v-for="item in statuses" :key="item" :label="item.label" :value="item.label">
               <span style="float: left"><i :class="item.color" class="fa-solid fa-circle"></i></span>
@@ -43,7 +43,7 @@
       </div>
       <div>
         <InputLabel value="Responsable *" class="ml-2" />
-        <el-select class="w-full" v-model="form.seller_id" clearable filterable placeholder="Seleccione"
+        <el-select @change="handleChangeSeller" class="w-full" v-model="form.seller_id" filterable placeholder="Seleccione"
           no-data-text="No hay vendedores registrados" no-match-text="No se encontraron coincidencias">
           <el-option v-for="seller in users.filter(
             (user) => user.employee_properties?.department == 'Ventas'
@@ -79,7 +79,7 @@
       </div>
       <div v-if="!form.is_new_company">
         <InputLabel value="Cliente *" class="ml-2" />
-        <el-select class="w-full" v-model="form.customer_id" clearable filterable placeholder="Seleccione"
+        <el-select class="w-full" v-model="form.customer_id" filterable placeholder="Seleccione"
           no-data-text="No hay clientes registrados" no-match-text="No se encontraron coincidencias">
           <el-option v-for="customer in customers.data" :key="customer.id" :label="customer.name" :value="customer.id" />
         </el-select>
@@ -87,7 +87,7 @@
       </div>
       <div v-if="!form.is_new_company">
         <InputLabel value="Contacto *" class="ml-2" />
-        <el-select class="w-full" v-model="form.contact_id" clearable filterable placeholder="Seleccione"
+        <el-select class="w-full" v-model="form.contact_id" filterable placeholder="Seleccione"
           no-data-text="No hay contactos registrados" no-match-text="No se encontraron coincidencias">
           <el-option v-for="contact in customers.data.find(
             (item) => item.id == form.customer_id
@@ -97,7 +97,7 @@
       </div>
       <div v-if="!form.is_new_company">
         <InputLabel value="Sucursal *" class="ml-2" />
-        <el-select class="w-full" v-model="form.branch" clearable filterable placeholder="Seleccione"
+        <el-select class="w-full" v-model="form.branch" filterable placeholder="Seleccione"
           no-data-text="No hay sucursales registradas" no-match-text="No se encontraron coincidencias">
           <el-option v-for="branch in customers.data.find(
             (item) => item.id == form.customer_id
@@ -129,7 +129,7 @@
             <i class="fa-solid fa-plus text-primary text-[9px]"></i>
           </button>
         </div>
-        <el-select v-model="form.tags" clearable placeholder="Seleccione" multiple class="w-full mt-1"
+        <el-select v-model="form.tags" placeholder="Seleccione" multiple class="w-full mt-1"
           no-data-text="No hay opciones para mostrar" no-match-text="No se encontraron coincidencias">
           <el-option v-for="(item, index) in tags.data" :key="item.id" :label="item.name" :value="item.id">
             <Tag :name="item.name" :color="item.color" />
@@ -146,7 +146,7 @@
           <i :class="getColorPriority(form.priority)" class="fa-solid fa-circle text-xs top-1 left-20 absolute z-30"></i>
           <InputLabel value="Prioridad *" />
           <div class="flex items-center space-x-4">
-            <el-select class="w-full" v-model="form.priority" clearable filterable placeholder="Seleccione"
+            <el-select class="w-full" v-model="form.priority" filterable placeholder="Seleccione"
               no-data-text="No hay opciones registradas" no-match-text="No se encontraron coincidencias">
               <el-option v-for="item in priorities" :key="item" :label="item.label" :value="item.label">
                 <span style="float: left"><i :class="item.color" class="fa-solid fa-circle"></i></span>
@@ -225,7 +225,7 @@
             <h2 class="font-bold text-sm my-2 ml-2 col-span-full">
               Asignar participantes
             </h2>
-            <el-select @change="addToSelectedUsers" filterable clearable placeholder="Seleccionar usuario"
+            <el-select @change="addToSelectedUsers" filterable placeholder="Seleccionar usuario"
               class="w-full lg:w-1/2" no-data-text="No hay más usuarios para añadir"
               no-match-text="No se encontraron coincidencias">
               <el-option v-for="(item, index) in availableUsersToPermissions" :key="item.id" :label="item.name"
@@ -330,7 +330,7 @@
         <Link :href="route('crm.opportunities.index')">
         <CancelButton type="button">Cancelar</CancelButton>
         </Link>
-        <PrimaryButton :disabled="form.processing">Crear oportunidad</PrimaryButton>
+        <PrimaryButton :disabled="form.processing || (editAccesFlag && typeAccessProject == 'Public')">Crear oportunidad</PrimaryButton>
       </div>
     </form>
 
@@ -494,6 +494,11 @@ export default {
     customers: Object,
   },
   methods: {
+    handleChangeSeller() {
+      if (!this.form.selectedUsersToPermissions.some(item => item.id == this.form.seller_id)) {
+        this.addToSelectedUsers(this.form.seller_id, true);
+      }
+    },
     handleDateRange(range) {
       this.form.start_date = range[0];
       this.form.close_date = range[1];
@@ -611,9 +616,12 @@ export default {
 
       this.form.selectedUsersToPermissions.splice(index, 1);
     },
-    addToSelectedUsers(userId) {
+    addToSelectedUsers(userId, allPermissions = false) {
       const user = this.users.find((item) => item.id === userId);
-      const defaultPermissions = [false, true, false, false, true];
+      let defaultPermissions = [false, true, false, false, true];
+      if (allPermissions) {
+        defaultPermissions = [true, true, true, true, true];
+      }
       let foundUser = {
         id: user.id,
         name: user.name,
@@ -658,7 +666,9 @@ export default {
         ];
         this.editAccesFlag = false;
       } else {
+        this.selectAuthUser();
         this.editAccesFlag = true;
+        this.handleChangeSeller();
       }
     },
   },

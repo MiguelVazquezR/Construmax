@@ -14,7 +14,7 @@
         </div>
         <div class="lg:flex items-center justify-between mt-5 mx-2 lg:mx-8">
           <!-- <div class="w-2/3 mr-2 flex items-center"> -->
-          <el-select v-model="selectedOpportunity" clearable filterable placeholder="Buscar proyecto"
+          <el-select v-model="selectedOpportunity" filterable placeholder="Buscar proyecto"
             class="w-full lg:w-1/2" no-data-text="No hay clientes registrados"
             no-match-text="No se encontraron coincidencias">
             <el-option v-for="item in opportunities" :key="item.id" :label="item.name" :value="item.id" />
@@ -112,7 +112,7 @@
                 : status == 'Cerrada' ? showCreateProjectModal = true
                   : status == 'Pagado' ? showCreateProjectModal = true
                     : updateStatus()
-              " class="lg:w-1/2 mt-2" v-model="status" clearable filterable placeholder="Seleccionar estatus"
+              " class="lg:w-1/2 mt-2" v-model="status" filterable placeholder="Seleccionar estatus"
               no-data-text="No hay estatus registrados" no-match-text="No se encontraron coincidencias">
               <el-option v-for="item in statuses" :key="item" :label="item.label" :value="item.label">
                 <span style="float: left"><i :class="item.color" class="fa-solid fa-circle"></i></span>

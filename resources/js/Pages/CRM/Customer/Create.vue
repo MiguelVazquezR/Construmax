@@ -51,6 +51,7 @@
         <div>
           <InputLabel value="Teléfono *" class="ml-2" />
           <input v-model="contact.phone" type="text" class="input mt-1" placeholder="Escriba un teléfono">
+          <InputError :message="phoneErrorMessage" />
         </div>
         <div>
           <InputLabel value="Puesto *" class="ml-2" />
@@ -219,7 +220,7 @@ export default {
       invoicing_method: null,
       payment_method: null,
       invoice_use: null,
-      currency: null,
+      currency: 'Peso $MXN',
     });
 
     const tagForm = useForm({
@@ -258,6 +259,8 @@ export default {
         position: null,
         branches: [],
       },
+      // error messages
+      phoneErrorMessage: null,
     }
   },
   components: {
@@ -335,9 +338,13 @@ export default {
       this.contact.branches = [];
     },
     addContact() {
-      this.form.contacts.push({ ...this.contact });
-
-      this.resetContact();
+      if (this.contact.phone.length > 14) {
+        this.phoneErrorMessage = "No debe exceder 14 caracteres";
+      } else {
+        this.phoneErrorMessage = null;
+        this.form.contacts.push({ ...this.contact });
+        this.resetContact();
+      }
     },
     addBranch() {
       if (this.branch == null) {

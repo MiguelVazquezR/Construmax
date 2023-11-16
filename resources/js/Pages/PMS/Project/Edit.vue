@@ -191,8 +191,9 @@
         <div class="flex px-5 lg:px-16 mb-8">
           <div v-if="typeAccessProject === 'Private'" class="w-full">
             <h2 class="font-bold text-sm my-2 ml-2 col-span-full">Asignar participantes </h2>
-            <el-select @change="addToSelectedUsers" filterable clearable placeholder="Seleccionar usuario" class="w-full lg:w-1/2"
-              no-data-text="No hay más usuarios para añadir" no-match-text="No se encontraron coincidencias">
+            <el-select @change="addToSelectedUsers" filterable clearable placeholder="Seleccionar usuario"
+              class="w-full lg:w-1/2" no-data-text="No hay más usuarios para añadir"
+              no-match-text="No se encontraron coincidencias">
               <el-option v-for="(item, index) in availableUsersToPermissions" :key="item.id" :label="item.name"
                 :value="item.id">
                 <div v-if="$page.props.jetstream.managesProfilePhotos"
@@ -218,7 +219,8 @@
               <div class="flex mt-2 border-b border-gray3" v-for="user in form.selectedUsersToPermissions" :key="user.id">
                 <div class="w-2/3 flex space-x-2">
                   <div v-if="$page.props.jetstream.managesProfilePhotos" class="flex text-sm rounded-full w-10 lg:w-12">
-                    <img class="h-8 lg:h-10 w-8 lg:w-10 rounded-full object-cover" :src="user.profile_photo_url" :alt="user.name" />
+                    <img class="h-8 lg:h-10 w-8 lg:w-10 rounded-full object-cover" :src="user.profile_photo_url"
+                      :alt="user.name" />
                   </div>
                   <div class="text-xs lg:text-sm w-full">
                     <p>{{ user.name }}</p>
@@ -452,6 +454,11 @@ export default {
 
   },
   methods: {
+    handleChangeSeller() {
+      if (!this.form.selectedUsersToPermissions.some(item => item.id == this.form.seller_id)) {
+        this.addToSelectedUsers(this.form.seller_id, true);
+      }
+    },
     handleDateRange(range) {
       this.form.start_date = range[0];
       this.form.limit_date = range[1];
@@ -584,9 +591,12 @@ export default {
 
       this.form.selectedUsersToPermissions.splice(index, 1);
     },
-    addToSelectedUsers(userId) {
+    addToSelectedUsers(userId, allPermissions = false) {
       const user = this.users.find((item) => item.id === userId);
-      const defaultPermissions = [false, true, false, false, true];
+      let defaultPermissions = [false, true, false, false, true];
+      if (allPermissions) {
+        defaultPermissions = [true, true, true, true, true];
+      }
       let foundUser = {
         id: user.id,
         name: user.name,
@@ -696,6 +706,7 @@ export default {
       } else {
         this.selectAuthUser();
         this.editAccesFlag = true;
+        this.handleChangeSeller();
       }
     },
   },

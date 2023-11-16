@@ -96,7 +96,13 @@
         <el-select class="w-full" v-model="form.participants" clearable filterable multiple :disabled="!canEdit"
           placeholder="Seleccionar participantes" no-data-text="No hay usuarios registrados"
           no-match-text="No se encontraron coincidencias">
-          <el-option v-for="user in task.data.project.users" :key="user?.id" :label="user.name" :value="user?.id" />
+          <el-option v-for="user in task.data.project.users" :key="user?.id" :label="user.name" :value="user?.id">
+            <div v-if="$page.props.jetstream.managesProfilePhotos"
+              class="flex text-sm rounded-full items-center mt-[3px]">
+              <img class="h-7 w-7 rounded-full object-cover mr-4" :src="user.profile_photo_url" :alt="user.name" />
+              <p>{{ user.name }}</p>
+            </div>
+          </el-option>
         </el-select>
         <InputError :message="form.errors.participants" />
       </div>

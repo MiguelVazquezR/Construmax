@@ -1,9 +1,5 @@
 <template>
-  <div
-    v-if="showUsersList"
-    @click="showUsersList = false"
-    class="inset-0 absolute top-0 left-0 z-10"
-  ></div>
+  <div v-if="showUsersList" @click="showUsersList = false" class="inset-0 absolute top-0 left-0 z-10"></div>
   <div class="relative w-full">
     <!-- <header
       class="border border-b-0 border-gray3 bg-[#CCCCCC] rounded-tl-[3px] rounded-tr-[3px] h-7 flex items-center"
@@ -21,49 +17,27 @@
                 <i class="fa-solid fa-underline"></i>
             </button>
     </header> -->
-    <div
-      contenteditable="true"
-      @input="onInput"
-      ref="editor"
-      id="editor"
-      @keypress="checkForAtSign"
+    <div contenteditable="true" @input="onInput" ref="editor" id="editor" @keypress="checkForAtSign"
       class="bg-transparent border border-gray3 placeholder:text-gray-400 text-gray-700 text-sm rounded-[5px] focus:border-primary block w-full p-2.5 rounded-tr-none rounded-tl-none min-h-[85px] focus:outline-none"
-      :class="{ 'rounded-none': withFooter }"
-    ></div>
-    <footer
-      v-if="withFooter"
-      class="border border-t-0 border-gray3 bg-transparent rounded-br-[5px] rounded-bl-[5px] p-2 flex justify-between"
-    >
-      <button
-        @click="showUsersList = !showUsersList"
-        type="button"
-        class="text-primary text-sm cursor-pointer"
-      >
+      :class="{ 'rounded-none': withFooter }"></div>
+    <footer v-if="withFooter"
+      class="border border-t-0 border-gray3 bg-transparent rounded-br-[5px] rounded-bl-[5px] p-2 flex justify-between">
+      <button @click="showUsersList = !showUsersList" type="button" class="text-primary text-sm cursor-pointer">
         @Mención
       </button>
-      <PrimaryButton type="button" @click="$emit('submitComment')" :disabled="disabled"
-        >Agregar comentarios
+      <PrimaryButton type="button" @click="$emit('submitComment')" :disabled="disabled">Agregar comentarios
       </PrimaryButton>
       <transition name="fade">
-        <ul
-          v-if="showUsersList"
-          class="z-20 border border-[#a9a9a9] absolute -top-40 left-0 rounded-[3px] bg-white w-60 h-40 overflow-y-auto"
-        >
+        <ul v-if="showUsersList"
+          class="z-20 border border-[#a9a9a9] absolute -top-40 left-0 rounded-[3px] bg-white w-60 h-40 overflow-y-auto">
           <template v-for="item in userList" :key="item.id">
-            <li
-              v-if="item.id !== $page.props.auth.user.id"
-              type="button"
-              @click="mentionUser(item)"
-              class="flex items-center px-2 py-1 space-x-2 text-xs mb-1 hover:bg-primarylight cursor-pointer"
-            >
-              <img
-                class="h-7 w-7 rounded-full object-cover"
-                :src="item.profile_photo_url"
-                :alt="item.name"
-              />
+            <li v-if="item.id !== $page.props.auth.user.id" type="button" @click="mentionUser(item)"
+              class="flex items-center px-2 py-1 space-x-2 text-xs mb-1 hover:bg-primarylight cursor-pointer">
+              <img class="h-7 w-7 rounded-full object-cover" :src="item.profile_photo_url" :alt="item.name" />
               <p>{{ item.name }}</p>
             </li>
           </template>
+          <p v-if="!userList.length" class="text-center text-gray3 text-sm py-6">No hay usuarios para mostrar</p>
         </ul>
       </transition>
     </footer>

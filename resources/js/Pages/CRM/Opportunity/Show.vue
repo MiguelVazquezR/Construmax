@@ -210,7 +210,7 @@
           </h2>
           <OpportunityTaskCard @updated-opportunityTask="updateOpportunityTask" @delete-task="deleteTask"
             @task-done="markAsDone" class="mb-3" v-for="todayTask in todayTasksList" :key="todayTask"
-            :opportunityTask="todayTask" :users="opportunity.data.users" />
+            :opportunityTask="todayTask"/>
           <div class="text-center" v-if="!todayTasksList.length">
             <p class="text-xs text-gray-500">No hay tareas para mostrar</p>
             <i class="fa-regular fa-folder-open text-9xl text-gray-300/50 mt-16"></i>
@@ -225,7 +225,7 @@
           </h2>
           <OpportunityTaskCard @updated-opportunityTask="updateOpportunityTask" @delete-task="deleteTask"
             @task-done="markAsDone" class="mb-3" v-for="thisWeekTask in thisWeekTasksList" :key="thisWeekTask"
-            :opportunityTask="thisWeekTask" :users="opportunity.data.users" />
+            :opportunityTask="thisWeekTask"/>
           <div class="text-center" v-if="!thisWeekTasksList.length">
             <p class="text-xs text-gray-500">No hay tareas para mostrar</p>
             <i class="fa-regular fa-folder-open text-9xl text-gray-300/50 mt-16"></i>
@@ -240,7 +240,7 @@
           </h2>
           <OpportunityTaskCard @updated-opportunityTask="updateOpportunityTask" @delete-task="deleteTask"
             @task-done="markAsDone" class="mb-3" v-for="nextTask in nextTasksList" :key="nextTask"
-            :opportunityTask="nextTask" :users="opportunity.data.users" />
+            :opportunityTask="nextTask"/>
           <div class="text-center" v-if="!nextTasksList?.length">
             <p class="text-xs text-gray-500">No hay tareas para mostrar</p>
             <i class="fa-regular fa-folder-open text-9xl text-gray-300/50 mt-16"></i>
@@ -254,7 +254,7 @@
           </h2>
           <OpportunityTaskCard @updated-opportunityTask="updateOpportunityTask" @delete-task="deleteTask"
             @task-done="markAsDone" class="mb-3" v-for="lateTask in lateTasksList" :key="lateTask"
-            :opportunityTask="lateTask" :users="opportunity.data.users" />
+            :opportunityTask="lateTask"/>
           <div class="text-center" v-if="!lateTasksList.length">
             <p class="text-xs text-gray-500">No hay tareas para mostrar</p>
             <i class="fa-regular fa-folder-open text-9xl text-gray-300/50 mt-16"></i>
@@ -268,7 +268,7 @@
           </h2>
           <OpportunityTaskCard @updated-opportunityTask="updateOpportunityTask" @delete-task="deleteTask"
             @task-done="markAsDone" class="mb-3" v-for="finishedTask in finishedTasksList" :key="finishedTask"
-            :opportunityTask="finishedTask" :users="opportunity.data.users" />
+            :opportunityTask="finishedTask"/>
           <div class="text-center" v-if="!finishedTasksList.length">
             <p class="text-xs text-gray-500">No hay tareas para mostrar</p>
             <i class="fa-regular fa-folder-open text-9xl text-gray-300/50 mt-16"></i>
@@ -612,8 +612,8 @@ export default {
       return false;
     },
     generateSurveyUrl() {
-      alert('http://127.0.0.1:8000/surveys/create/' + this.opportunity.data.id);
-
+      const textToCopy = window.location.origin + '/surveys/create/' + this.opportunity.data.id;
+      alert(textToCopy);
     },
     deleteItem() {
       this.$inertia.delete(route("crm.opportunities.destroy", this.selectedOpportunity));

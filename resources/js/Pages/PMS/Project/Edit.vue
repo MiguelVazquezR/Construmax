@@ -455,8 +455,8 @@ export default {
   },
   methods: {
     handleChangeSeller() {
-      if (!this.form.selectedUsersToPermissions.some(item => item.id == this.form.seller_id)) {
-        this.addToSelectedUsers(this.form.seller_id, true);
+      if (!this.form.selectedUsersToPermissions.some(item => item.id == this.form.owner_id)) {
+        this.addToSelectedUsers(this.form.owner_id, true);
       }
     },
     handleDateRange(range) {

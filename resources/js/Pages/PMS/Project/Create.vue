@@ -162,7 +162,7 @@
       </div>
       <div>
         <InputLabel value="Monto" class="ml-2" />
-        <input v-model="form.budget" type="number" step="0.01" class="input mt-1" />
+        <input v-model="form.budget" type="number" step="0.01" class="input mt-1" placeholder="Ingresa el monto" required />
         <InputError :message="form.errors.budget" />
       </div>
       <h2 class="font-bold text-sm my-2 col-span-full">Acceso al proyecto</h2>
@@ -457,8 +457,8 @@ export default {
   computed: {},
   methods: {
     handleChangeSeller() {
-      if (!this.form.selectedUsersToPermissions.some(item => item.id == this.form.seller_id)) {
-        this.addToSelectedUsers(this.form.seller_id, true);
+      if (!this.form.selectedUsersToPermissions.some(item => item.id == this.form.owner_id)) {
+        this.addToSelectedUsers(this.form.owner_id, true);
       }
     },
     handleDateRange(range) {
@@ -657,14 +657,16 @@ export default {
   mounted() {
     this.selectAdmins();
     this.selectAuthUser();
+
+    // prellenar formulario
     if (this.opportunity) {
-      console.log('Viene de oportunidad');
       this.form.customer_id = parseInt(this.opportunity.customer_id);
       this.updateContacts();
       this.form.contact_id = parseInt(this.opportunity.contact_id);
       this.updateBranches();
       this.form.address = this.opportunity.branch;
       this.form.opportunity_id = parseInt(this.opportunity.id);
+      this.form.service_type = this.opportunity.service_type;
     }
   },
 };

@@ -9,6 +9,7 @@ use App\Models\Comment;
 use App\Models\Opportunity;
 use App\Models\OpportunityTask;
 use App\Models\User;
+use App\Notifications\AssignedActivityNotification;
 use App\Notifications\MentionInCommentNotification;
 use App\Notifications\NewCommentNotification;
 use Illuminate\Http\Request;
@@ -33,7 +34,7 @@ class OpportunityTaskController extends Controller
     public function store(Request $request, $opportunity_id)
     {
         $request->validate([
-            'name' => 'required|string',
+            'name' => 'required|string|max:255',
             'asigned_id' => 'required',
             'limit_date' => 'required|date',
             'time' => 'required',
@@ -57,14 +58,18 @@ class OpportunityTaskController extends Controller
             'opportunity_id' => $opportunity_id,
         ]);
 
+        // notificar a usuario asignado
+        $asigned->notify(new AssignedActivityNotification($opportunity_task, auth()->user()->name));
+
         return to_route('crm.opportunities.show', ['opportunity' => $opportunity_task->opportunity_id, 'defaultTab' => 2]);
     }
 
     public function show(OpportunityTask $opportunityTask)
     {
         $opportunityTask = $opportunityTask->fresh(['user', 'asigned', 'opportunity.users', 'comments.user']);
+        $media = $opportunityTask->getMedia()->all();
 
-        return inertia('CRM/OpportunityTask/Show', compact('opportunityTask'));
+        return inertia('CRM/OpportunityTask/Show', compact('opportunityTask', 'media'));
     }
 
 
@@ -101,6 +106,40 @@ class OpportunityTaskController extends Controller
             'user_id' => auth()->id(),
             'opportunity_id' => $opportunity_task->opportunity_id,
         ]);
+
+        return to_route('crm.opportunities.show', ['opportunity' => $opportunity_task->opportunity, 'defaultTab' => 2]);
+    }
+
+    public function updateWithMedia(Request $request, OpportunityTask $opportunity_task)
+    {
+        $validated = $request->validate([
+            'asigned_id' => 'required',
+            'limit_date' => 'required|date',
+            'time' => 'required',
+            'priority' => 'required|string',
+            'description' => 'required',
+        ]);
+
+        $opportunity_task->update($validated);
+
+        if ($request->comment) {
+            $comment = new Comment([
+                'content' => $request->comment,
+                'user_id' => auth()->id(),
+            ]);
+            $opportunity_task->comments()->save($comment);
+        }
+
+        //Crea el registro de una actividad para el historial de esa oportunidad --------------------------
+        $asigned = User::find($request->asigned_id); //recupero el objeto del asignado a la actividad para la descripción.
+        Activity::create([
+            'description' => 'editó la actividad "' . $opportunity_task->name . '" y la asignó a ' . $asigned->name,
+            'user_id' => auth()->id(),
+            'opportunity_id' => $opportunity_task->opportunity_id,
+        ]);
+
+         // archivos adjuntos
+         $opportunity_task->addAllMediaFromRequest()->each(fn ($file) => $file->toMediaCollection());
 
         return to_route('crm.opportunities.show', ['opportunity' => $opportunity_task->opportunity, 'defaultTab' => 2]);
     }

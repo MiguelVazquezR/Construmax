@@ -19,7 +19,7 @@
             <table v-if="filteredTableData.length" class="w-full mx-auto">
                 <thead>
                     <tr class="text-left">
-                        <th class="font-bold pb-5 pl-4">ID <i class="text-[9px] md:inline fa-solid fa-arrow-down-long md:ml-3"></i></th>
+                        <th class="font-bold pb-5 pl-4">ID <button><i class="text-[9px] md:inline fa-solid fa-arrow-down-long md:ml-3"></i></button></th>
                         <th class="font-bold pb-5">Usuario <i class="text-[9px] md:inline fa-solid fa-arrow-down-long md:ml-3"></i></th>
                         <th class="font-bold pb-5">Departamento <i class="text-[9px] md:inline fa-solid fa-arrow-down-long md:ml-3"></i></th>
                         <th class="font-bold pb-5">Puesto <i class="text-[9px] md:inline fa-solid fa-arrow-down-long md:ml-3"></i></th>

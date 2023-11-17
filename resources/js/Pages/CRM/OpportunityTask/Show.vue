@@ -88,7 +88,9 @@
             {{ form.description }}</div>
           <InputError :message="form.errors.description" />
         </div>
-
+        <div v-if="canEdit" class="ml-2 mt-2 col-span-full flex">
+          <FileUploader @files-selected="this.form.media = $event" />
+        </div>
         <div v-if="opportunityTask?.media?.length" class="text-sm">
           <h2 class="font-bold py-5">Archivos adjuntos</h2>
           <a :href="file?.original_url" target="_blank" v-for="file in opportunityTask?.media" :key="file"
@@ -178,6 +180,7 @@ import InputLabel from "@/Components/InputLabel.vue";
 import { Link, useForm } from "@inertiajs/vue3";
 import ConfirmationModal from "@/Components/ConfirmationModal.vue";
 import RichText from "@/Components/MyComponents/RichText.vue";
+import FileUploader from "@/Components/MyComponents/FileUploader.vue";
 import axios from "axios";
 
 export default {
@@ -190,6 +193,7 @@ export default {
       reminder: this.opportunityTask.reminder,
       description: this.opportunityTask.description,
       comment: null,
+      media: [],
     });
 
     return {
@@ -228,9 +232,11 @@ export default {
     RichText,
     InputLabel,
     AppLayout,
+    FileUploader,
   },
   props: {
     opportunityTask: Object,
+    media: Array,
   },
   methods: {
     updateComment(content) {
@@ -264,16 +270,31 @@ export default {
     updateDescription(content) {
       this.form.description = content;
     },
-    async update() {
-      this.form.put(route("crm.opportunity-tasks.update", this.opportunityTask), {
-        onSuccess: () => {
-          this.$notify({
-            title: "Éxito",
-            message: "Se ha actualizado la actividad",
-            type: "success",
-          });
-        },
-      });
+    update() {
+      if (this.form.media.length) {
+        this.form.post(route("crm.opportunity-tasks.update-with-media", this.opportunityTask), {
+          method: '_put',
+          onSuccess: () => {
+            this.$notify({
+              title: "Correcto",
+              message: "Se ha actualizado la actividad",
+              type: "success",
+            });
+
+          },
+        });
+      } else {
+        this.form.put(route("crm.opportunity-tasks.update", this.opportunityTask), {
+          onSuccess: () => {
+            this.$notify({
+              title: "Correcto",
+              message: "Se ha actualizado la actividad",
+              type: "success",
+            });
+
+          },
+        });
+      }
     },
     getPriorityStyles() {
       if (this.opportunityTask?.priority === 'Baja') {

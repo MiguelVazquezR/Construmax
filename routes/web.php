@@ -56,6 +56,7 @@ Route::get('opportunity-tasks/create/{opportunity_id}', [OpportunityTaskControll
 Route::post('opportunity-tasks/store/{opportunity_id}', [OpportunityTaskController::class, 'store'])->name('crm.opportunity-tasks.store')->middleware('auth');
 Route::post('opportunity-tasks/{opportunity_task}/comment', [OpportunityTaskController::class, 'comment'])->name('crm.opportunity-tasks.comment')->middleware('auth');
 Route::put('opportunity-tasks/mark-as-done/{opportunityTask}', [OpportunityTaskController::class, 'markAsDone'])->name('crm.opportunity-tasks.mark-as-done')->middleware('auth');
+Route::post('opportunity-tasks/update-with-media/{opportunity_task}', [OpportunityTaskController::class, 'updateWithMedia'])->name('crm.opportunity-tasks.update-with-media')->middleware('auth');
 
 // ------- CRM (surveys Routes)  ---------
 Route::get('/surveys/create/{opportunity_id}', [SurveyController::class, 'create'])->name('crm.surveys.create');

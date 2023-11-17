@@ -62,7 +62,7 @@
       <div class="w-full">
         <InputLabel value="Hora *" class="ml-2" />
         <el-time-select class="w-full" v-model="form.time" start="07:00" step="00:15" end="23:30"
-          placeholder="Seleccione una hora" />
+          placeholder="Seleccione una hora" format="hh:mm A" />
         <InputError :message="form.errors.time" />
       </div>
       <div class="w-full">
@@ -75,7 +75,7 @@
       </div>
       <div class="w-full">
         <InputLabel value="Ubicación" class="ml-2" />
-        <input v-model="form.location" class="input" type="text">
+        <input v-model="form.location" class="input" type="text" required placeholder="Escribe el lugar de la cita">
         <InputError :message="form.errors.location" />
       </div>
       <div class="col-span-2">

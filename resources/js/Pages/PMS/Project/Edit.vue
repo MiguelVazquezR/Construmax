@@ -241,8 +241,7 @@
                       </span>
                     </label>
                     <label class="flex items-center">
-                      <Checkbox :disabled="!editAccesFlag || user.employee_properties === null"
-                        v-model:checked="user.permissions[1]" :checked="user.permissions[1]" />
+                      <Checkbox disabled v-model:checked="user.permissions[1]" :checked="user.permissions[1]" />
                       <span
                         :class="!editAccesFlag || user.employee_properties === null ? 'text-gray-500/80 cursor-not-allowed' : ''"
                         class="ml-2 text-xs">Ver</span>

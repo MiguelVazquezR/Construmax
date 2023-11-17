@@ -55,7 +55,7 @@
 
         <div class="w-full">
             <InputLabel value="Monto pagado *" class="ml-2" />
-            <input v-model="form.amount" class="input" type="number" min="0">
+            <input v-model="form.amount" class="input" type="number" min="0" step="0.01" required>
             <InputError :message="form.errors.amount" />
         </div>
         <div class="w-full">

@@ -162,7 +162,8 @@
       </div>
       <div>
         <InputLabel value="Monto" class="ml-2" />
-        <input v-model="form.budget" type="number" step="0.01" class="input mt-1" placeholder="Ingresa el monto" required />
+        <input v-model="form.budget" type="number" step="0.01" class="input mt-1" placeholder="Ingresa el monto"
+          required />
         <InputError :message="form.errors.budget" />
       </div>
       <h2 class="font-bold text-sm my-2 col-span-full">Acceso al proyecto</h2>
@@ -246,8 +247,7 @@
                       </span>
                     </label>
                     <label class="flex items-center">
-                      <Checkbox :disabled="!editAccesFlag || user.employee_properties === null"
-                        v-model:checked="user.permissions[1]" :checked="user.permissions[1]" />
+                      <Checkbox disabled v-model:checked="user.permissions[1]" :checked="user.permissions[1]" />
                       <span :class="!editAccesFlag || user.employee_properties === null
                         ? 'text-gray-500/80 cursor-not-allowed'
                         : ''

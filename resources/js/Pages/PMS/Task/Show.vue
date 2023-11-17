@@ -133,7 +133,7 @@
         <InputLabel value="Duración *" class="ml-2" />
         <el-date-picker @change="handleDateRange" v-model="range" type="daterange" range-separator="A"
           start-placeholder="Fecha de inicio" end-placeholder="Fecha límite" value-format="YYYY-MM-DD"
-          :disabled-date="disabledStartOrLimitDate" />
+          :disabled-date="disabledStartOrLimitDate" :disabled="!canEdit" />
         <InputError :message="form.errors.start_date" />
         <InputError :message="form.errors.limit_date" />
       </div>

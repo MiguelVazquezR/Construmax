@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('meeting_monitors', function (Blueprint $table) {
             $table->id();
             $table->date('meeting_date');
-            $table->time('time');
+            $table->string('time', 10);
             $table->string('meeting_via');
             $table->string('location')->nullable();
             $table->string('contact_phone')->nullable();

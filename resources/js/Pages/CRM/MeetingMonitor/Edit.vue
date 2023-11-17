@@ -60,7 +60,7 @@
         <div class="w-full">
             <InputLabel value="Hora *" class="ml-2" />
             <el-time-select class="w-full" v-model="form.time" start="07:00" step="00:15" end="23:30"
-                placeholder="Seleccione una hora" />
+                placeholder="Seleccione una hora" format="hh:mm A" />
             <InputError :message="form.errors.time" />
         </div>
         <div class="w-full">

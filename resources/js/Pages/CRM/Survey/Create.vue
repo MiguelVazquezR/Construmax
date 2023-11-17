@@ -21,7 +21,8 @@
             <div class="w-1/12 text-gray-500 text-xs text-right">10</div>
           </div>
           <el-tooltip :content="`${form.p1}`" placement="top">
-            <input type="range" min="0" max="10" v-model="form.p1" class="w-full" @input="updatePercentage" />
+            <!-- <input type="range" min="0" max="10" v-model="form.p1" class="w-full" @input="updatePercentage" /> -->
+            <el-slider @input="updatePercentage" v-model="form.p1" :step="1" :max="10" show-stops class="w-full" />
           </el-tooltip>
         </div>
         <InputError :message="form.errors.p1" />

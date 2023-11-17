@@ -43,8 +43,9 @@
       </div>
       <div>
         <InputLabel value="Responsable *" class="ml-2" />
-        <el-select @change="handleChangeSeller" class="w-full" v-model="form.seller_id" filterable placeholder="Seleccione"
-          no-data-text="No hay vendedores registrados" no-match-text="No se encontraron coincidencias">
+        <el-select @change="handleChangeSeller" class="w-full" v-model="form.seller_id" filterable
+          placeholder="Seleccione" no-data-text="No hay vendedores registrados"
+          no-match-text="No se encontraron coincidencias">
           <el-option v-for="seller in users.filter(
             (user) => user.employee_properties?.department == 'Ventas'
           )" :key="seller" :label="seller.name" :value="seller.id">
@@ -202,9 +203,8 @@
             <h2 class="font-bold text-sm my-2 ml-2 col-span-full">
               Asignar participantes
             </h2>
-            <el-select @change="addToSelectedUsers" filterable placeholder="Seleccionar usuario"
-              class="w-full lg:w-1/2" no-data-text="No hay más usuarios para añadir"
-              no-match-text="No se encontraron coincidencias">
+            <el-select @change="addToSelectedUsers" filterable placeholder="Seleccionar usuario" class="w-full lg:w-1/2"
+              no-data-text="No hay más usuarios para añadir" no-match-text="No se encontraron coincidencias">
               <el-option v-for="(item, index) in availableUsersToPermissions" :key="item.id" :label="item.name"
                 :value="item.id">
                 <div v-if="$page.props.jetstream.managesProfilePhotos"
@@ -255,8 +255,7 @@
                       </span>
                     </label>
                     <label class="flex items-center">
-                      <Checkbox :disabled="!editAccesFlag || user.employee_properties === null"
-                        v-model:checked="user.permissions[1]" :checked="user.permissions[1]" />
+                      <Checkbox disabled v-model:checked="user.permissions[1]" :checked="user.permissions[1]" />
                       <span :class="!editAccesFlag || user.employee_properties === null
                         ? 'text-gray-500/80 cursor-not-allowed'
                         : ''
@@ -307,7 +306,8 @@
         <Link :href="route('crm.opportunities.index')">
         <CancelButton type="button">Cancelar</CancelButton>
         </Link>
-        <PrimaryButton :disabled="form.processing || (editAccesFlag && typeAccessProject == 'Public')">Actualizar oportunidad</PrimaryButton>
+        <PrimaryButton :disabled="form.processing || (editAccesFlag && typeAccessProject == 'Public')">Actualizar
+          oportunidad</PrimaryButton>
       </div>
     </form>
 

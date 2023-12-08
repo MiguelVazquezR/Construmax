@@ -32,23 +32,23 @@
         <strong class="text-base uppercase font-bold tex">{{ monthName }}</strong
         ><br />
         <div class="flex space-x-3 justify-center w-[95%] mx-auto">
-          <p v-for="day in daysInMonth" :key="day" class="text-secondary relative">
+          <!-- <p v-for="day in daysInMonth" :key="day" class="text-secondary relative">
             {{ daysOfWeek[(day + startDayOfWeek - 2) % 7] }}
             <span class="absolute -bottom-3 -left-0 text-[11px] text-black">{{
               day
             }}</span>
-          </p>
+          </p> -->
         </div>
       </th>
       <th class="border border-[#9A9A9A] text-center font-thin">
         <strong class="text-base uppercase font-bold">{{ nextMonthName }}</strong>
         <div class="flex space-x-3 justify-center w-[95%] mx-auto">
-          <p v-for="day in daysInNextMonth" :key="day" class="text-secondary relative">
+          <!-- <p v-for="day in daysInNextMonth" :key="day" class="text-secondary relative">
             {{ daysOfWeek[(day + startDayOfWeekNextMonth - 2) % 7] }}
             <span class="absolute -bottom-3 -left-0 text-[11px] text-black">{{
               day
             }}</span>
-          </p>
+          </p> -->
         </div>
       </th>
     </tr>

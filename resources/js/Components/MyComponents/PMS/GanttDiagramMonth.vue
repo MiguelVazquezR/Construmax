@@ -32,12 +32,13 @@
         <strong class="text-base uppercase font-bold tex">{{ monthName }}</strong
         ><br />
         <div class="flex space-x-8 justify-center w-[95%] mx-auto">
-          <p v-for="day in daysInMonth" :key="day" class="text-secondary relative">
+          <!-- <p v-for="day in daysInMonth" :key="day" class="text-secondary relative">
             {{ daysOfWeek[(day + startDayOfWeek - 2) % 7] }}
             <span class="absolute -bottom-3 -left-0 text-[11px] text-black">{{
               day
             }}</span>
-          </p>
+          </p> -->
+          <!-- {{ currentDate }} -->
         </div>
       </th>
     </tr>
@@ -111,7 +112,7 @@ export default {
       const startDay = startDate.getDate();
       const currentMonthFirstDay = new Date(
         this.currentDate.getFullYear(),
-        this.currentDate.getMonth(),
+        this.currentDate?.getMonth(),
         1
       );
       const dayDifference =
@@ -168,22 +169,22 @@ export default {
         "Noviembre",
         "Diciembre",
       ];
-      return months[this.currentDate.getMonth()];
+      return months[this.currentDate?.getMonth()];
     },
     daysInMonth() {
-      const year = this.currentDate.getFullYear();
-      const month = this.currentDate.getMonth() + 1;
+      const year = this.currentDate?.getFullYear();
+      const month = this.currentDate?.getMonth() + 1;
       return new Date(year, month, 0).getDate();
     },
     startDayOfWeek() {
       const year = this.currentDate.getFullYear();
-      const month = this.currentDate.getMonth();
+      const month = this.currentDate?.getMonth();
       return new Date(year, month, 1).getDay(); // 0 para domingo, 1 para lunes, etc.
     },
   },
   mounted() {
     // Verificar si hay tareas en el proyecto y si la primera tarea tiene una fecha de inicio
-    if (this.currentProject && this.currentProject.tasks.length > 0) {
+    if (this.currentProject && this.currentProject?.tasks?.length > 0) {
       const firstTask = this.currentProject.tasks[0];
       if (firstTask && firstTask.start_date) {
         this.currentDate = new Date(firstTask.start_date);

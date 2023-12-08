@@ -177,7 +177,7 @@
         <input v-model="form.amount" class="input" type="number" min="0" step="0.01" placeholder="Ingresa el monto" />
         <InputError :message="form.errors.amount" />
       </div>
-      <h2 class="font-bold text-sm my-2 col-span-full">Acceso al proyecto</h2>
+      <h2 class="font-bold text-sm my-2 col-span-full">Acceso a la oportunidad</h2>
       <div class="col-span-full text-sm">
         <div class="my-1">
           <input v-model="typeAccessProject" value="Public"

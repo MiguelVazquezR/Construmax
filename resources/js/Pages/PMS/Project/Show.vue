@@ -391,8 +391,10 @@ export default {
 
             // Verificar si hay tareas en el proyecto y si la primera tarea tiene una fecha de inicio
             if (this.project.data && this.project.data.tasks.length > 0) {
+                console.log('hay tareas');
                 const firstTask = this.project.data.tasks[0];
                 if (firstTask && firstTask.start_date) {
+                    console.log(firstTask);
                     this.currentDate = new Date(firstTask.start_date);
                 }
             }

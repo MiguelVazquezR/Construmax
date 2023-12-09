@@ -18,7 +18,7 @@
       </div>
       <div>
         <label>Asignado a *</label>
-        <el-select class="w-full" v-model="form.asigned_id" clearable filterable placeholder="Seleccionar usuario"
+        <el-select class="w-full" v-model="form.asigned_id"  filterable placeholder="Seleccionar usuario"
           no-data-text="No hay usuarios registrados" no-match-text="No se encontraron coincidencias">
           <el-option v-for="user in users" :key="user" :label="user.name" :value="user.id">
             <div v-if="$page.props.jetstream.managesProfilePhotos"
@@ -46,7 +46,7 @@
         <i :class="getColorPriority(form.priority)" class="fa-solid fa-circle text-xs top-1 left-20 absolute z-30"></i>
         <InputLabel value="Prioridad *" class="ml-2" />
         <div class="flex items-center space-x-4">
-          <el-select v-model="form.priority" clearable filterable placeholder="Seleccione" class="w-full"
+          <el-select v-model="form.priority"  filterable placeholder="Seleccione" class="w-full"
             no-data-text="No hay opciones registradas" no-match-text="No se encontraron coincidencias">
             <el-option v-for="item in priorities" :key="item" :label="item.label" :value="item.label">
               <span style="float: left"><i :class="item.color" class="fa-solid fa-circle"></i></span>
@@ -60,7 +60,8 @@
       </div>
       <div class="mt-5 col-span-full">
         <label>Descripción</label>
-        <RichText @content="updateDescription($event)" />
+        <textarea v-model="form.description" rows="3" class="textarea"></textarea>
+        <!-- <RichText @content="updateDescription($event)" /> -->
       </div>
       <div class="ml-2 mt-2 col-span-full flex">
         <FileUploader @files-selected="this.form.media = $event" />

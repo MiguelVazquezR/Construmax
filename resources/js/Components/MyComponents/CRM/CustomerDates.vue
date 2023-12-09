@@ -33,9 +33,9 @@
                         <tbody>
                             <tr @click="$inertia.get(route('crm.meeting-monitors.show', meeting))" v-for="meeting in meetings" :key="meeting.id"
                                 class="text-xs w-full cursor-pointer hover:bg-primarylight">
-                                <td :title="meeting.contact_name" class="w-1/5 truncate py-1 pr-3 rounded-tl-lg rounded-bl-lg">
+                                <td :title="meeting.contact" class="w-1/5 truncate py-1 pr-3 rounded-tl-lg rounded-bl-lg">
                                     <i class="fa-regular fa-user mr-2"></i>
-                                    {{ meeting.contact_name }}
+                                    {{ meeting.contact.name }}
                                 </td>
                                 <td class="w-1/5">{{ formatDate(meeting.meeting_date) }}</td>
                                 <td class="w-1/5">{{ formatTime(meeting.time) }}</td>

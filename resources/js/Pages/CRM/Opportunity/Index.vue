@@ -168,23 +168,23 @@
         <table class="lg:w-[95%] w-full mx-auto">
           <thead>
             <tr class="text-left">
-              <th class="font-bold pb-5">
-                Nombre <i class="text-[9px] md:inline fa-solid fa-arrow-down-long md:ml-3"></i>
+              <th class="font-bold pb-5 min-w-[90px]">Nombre <i
+                  class="text-[9px] md:inline fa-solid fa-arrow-down-long md:ml-3"></i>
               </th>
-              <th class="font-bold pb-5">
-                Estatus <i class="text-[9px] md:inline fa-solid fa-arrow-down-long md:ml-3"></i>
+              <th class="font-bold pb-5 min-w-[90px]">Estatus <i
+                  class="text-[9px] md:inline fa-solid fa-arrow-down-long md:ml-3"></i>
               </th>
-              <th class="font-bold pb-5">
-                Fecha inicio <i class="text-[9px] md:inline fa-solid fa-arrow-down-long md:ml-3"></i>
+              <th class="font-bold pb-5 min-w-[130px]">Fecha inicio <i
+                  class="text-[9px] md:inline fa-solid fa-arrow-down-long md:ml-3"></i>
               </th>
-              <th class="font-bold pb-5">
-                Estimación de cierre <i class="text-[9px] md:inline fa-solid fa-arrow-down-long md:ml-3"></i>
+              <th class="font-bold pb-5 min-w-[140px]">Estimación de cierre <i
+                  class="text-[9px] md:inline fa-solid fa-arrow-down-long md:ml-3"></i>
               </th>
-              <th class="font-bold pb-5">
-                Cerrada el <i class="text-[9px] md:inline fa-solid fa-arrow-down-long md:ml-3"></i>
+              <th class="font-bold pb-5 min-w-[90px]">Cerrada el <i
+                  class="text-[9px] md:inline fa-solid fa-arrow-down-long md:ml-3"></i>
               </th>
-              <th class="font-bold pb-5">
-                Pagado el <i class="text-[9px] md:inline fa-solid fa-arrow-down-long md:ml-3"></i>
+              <th class="font-bold pb-5 min-w-[90px]">Pagado el <i
+                  class="text-[9px] md:inline fa-solid fa-arrow-down-long md:ml-3"></i>
               </th>
               <th></th>
             </tr>
@@ -265,7 +265,7 @@
         </div>
       </template>
     </ConfirmationModal>
-    
+
     <!-- ----------------- status modal ----------- -->
     <Modal :show="showLostOpportunityModal || showCreateProjectModal"
       @close="showLostOpportunityModal = false; showCreateProjectModal = false">
@@ -280,19 +280,22 @@
         </div>
         <div class="flex justify-end space-x-3 pt-5 pb-1">
           <CancelButton @click="cancelUpdating">Cancelar</CancelButton>
-          <PrimaryButton @click="updateOpportunityStatus('Perdida')" :disabled="lost_oportunity_razon == null">Actualizar estatus</PrimaryButton>
+          <PrimaryButton @click="updateOpportunityStatus('Perdida')" :disabled="lost_oportunity_razon == null">Actualizar
+            estatus</PrimaryButton>
         </div>
       </section>
 
       <section v-if="showCreateProjectModal" class="mx-7 my-4 space-y-4 relative">
         <div>
           <h2 class="font bold text-center font-bold mb-5">Paso clave - Crear proyecto</h2>
-          <p class="px-5">Es necesario crear un proyecto al haber marcado como <span class="text-[#FD8827]">”cerrada”</span>  
-          o <span class="text-[#37951F]">”Pagada”</span> la oportunidad para llevar un correcto seguimiento y flujo de trabajo. 
+          <p class="px-5">Es necesario crear un proyecto al haber marcado como <span
+              class="text-[#FD8827]">”cerrada”</span>
+            o <span class="text-[#37951F]">”Pagada”</span> la oportunidad para llevar un correcto seguimiento y flujo de
+            trabajo.
           </p>
         </div>
         <div class="flex justify-end space-x-3 pt-5 pb-1">
-          <CancelButton @click="cancelUpdating">Cancelar</CancelButton>  
+          <CancelButton @click="cancelUpdating">Cancelar</CancelButton>
           <PrimaryButton @click="CreateProject">Continuar</PrimaryButton>
         </div>
       </section>
@@ -383,7 +386,7 @@ export default {
 
       if (evt.to.id === "lost") {
         this.showLostOpportunityModal = true;
-      }else if (evt.to.id === "closed" || evt.to.id === "paid") {
+      } else if (evt.to.id === "closed" || evt.to.id === "paid") {
         this.showCreateProjectModal = true;
         this.localStatus = status;
       } else {
@@ -394,8 +397,8 @@ export default {
     },
     async updateOpportunityStatus(status) {
       //cierra los modales antes de actualizar el estado
-        this.showLostOpportunityModal = false;
-        this.showCreateProjectModal = false;
+      this.showLostOpportunityModal = false;
+      this.showCreateProjectModal = false;
       try {
         const response = await axios.put(route('crm.opportunities.update-status', this.draggingOpportunityId), { status: status, lost_oportunity_razon: this.lost_oportunity_razon });
 

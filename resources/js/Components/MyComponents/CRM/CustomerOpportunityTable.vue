@@ -3,26 +3,19 @@
   <table class="w-full mx-auto">
         <thead>
           <tr class="text-left">
-            <th class="font-bold pb-5 px-14 lg:px-2">
-              Folio <i class="fa-solid fa-arrow-down-long ml-3"></i>
+            <th class="font-bold pb-5 min-w-[90px]">Folio <i class="text-[9px] md:inline fa-solid fa-arrow-down-long md:ml-3"></i>
             </th>
-            <th class="font-bold pb-5 px-14 lg:px-2">
-              Oportunidad <i class="fa-solid fa-arrow-down-long ml-3"></i>
+            <th class="font-bold pb-5 min-w-[120px]">Opotunidad <i class="text-[9px] md:inline fa-solid fa-arrow-down-long md:ml-3"></i>
             </th>
-            <th class="font-bold pb-5 px-14 lg:px-2">
-              Estatus <i class="fa-solid fa-arrow-down-long ml-3"></i>
+            <th class="font-bold pb-5 min-w-[120px]">Estatus <i class="text-[9px] md:inline fa-solid fa-arrow-down-long md:ml-3"></i>
             </th>
-            <th class="font-bold pb-5 px-14 lg:px-2">
-              Fecha inicio <i class="fa-solid fa-arrow-down-long ml-3"></i>
+            <th class="font-bold pb-5 min-w-[130px]">Fecha de inicio <i class="text-[9px] md:inline fa-solid fa-arrow-down-long md:ml-3"></i>
             </th>
-            <th class="font-bold pb-5 px-14 lg:px-2">
-              Estimación de cierre <i class="fa-solid fa-arrow-down-long ml-3"></i>
+            <th class="font-bold pb-5 min-w-[170px]">Estimación de cierre <i class="text-[9px] md:inline fa-solid fa-arrow-down-long md:ml-3"></i>
             </th>
-            <th class="font-bold pb-5 px-14 lg:px-2">
-              Cerrada el <i class="fa-solid fa-arrow-down-long ml-3"></i>
+            <th class="font-bold pb-5 min-w-[90px]">Cerrado el <i class="text-[9px] md:inline fa-solid fa-arrow-down-long md:ml-3"></i>
             </th>
-            <th class="font-bold pb-5 px-14 lg:px-2">
-              Pagado el <i class="fa-solid fa-arrow-down-long ml-3"></i>
+            <th class="font-bold pb-5 min-w-[90px]">Pagado el <i class="text-[9px] md:inline fa-solid fa-arrow-down-long md:ml-3"></i>
             </th>
           </tr>
         </thead>

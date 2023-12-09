@@ -19,7 +19,7 @@
                 </div>
                 <div>
                     <InputLabel value="Proyecto *" class="ml-2" />
-                    <el-select @change="getProject()" v-model="form.project_id" clearable placeholder="Seleccione" class="w-full mt-1"
+                    <el-select @change="getProject()" v-model="form.project_id" placeholder="Seleccione" class="w-full mt-1"
                         no-data-text="No hay opciones para mostrar" no-match-text="No se encontraron coincidencias">
                         <el-option v-for="(item, index) in projects" :key="item.id" :label="item.name" :value="item.id" />
                     </el-select>
@@ -27,14 +27,15 @@
                 </div>
                 <div class="mt-5 col-span-full">
                     <InputLabel value="Descripción" class="ml-2" />
-                    <RichText @content="updateDescription($event)" />
+                    <textarea v-model="form.description" rows="3" class="textarea"></textarea>
+                    <!-- <RichText @content="updateDescription($event)" /> -->
                 </div>
                 <div class="ml-2 mt-2 col-span-full flex">
                     <FileUploader @files-selected="this.form.media = $event" />
                 </div>
                 <div>
                     <InputLabel value="Departamento *" class="ml-2" />
-                    <el-select v-model="form.department" clearable placeholder="Seleccione" class="w-full mt-1"
+                    <el-select v-model="form.department" placeholder="Seleccione" class="w-full mt-1"
                         no-data-text="No hay opciones para mostrar" no-match-text="No se encontraron coincidencias">
                         <el-option v-for="(item, index) in departments" :key="item.id" :label="item" :value="item" />
                     </el-select>
@@ -42,7 +43,7 @@
                 </div>
                 <div>
                     <InputLabel value="Participantes *" class="ml-2" />
-                    <el-select v-model="form.participants" clearable multiple placeholder="Seleccione" class="w-full mt-1"
+                    <el-select v-model="form.participants" multiple placeholder="Seleccione" class="w-full mt-1"
                         no-data-text="No hay opciones para mostrar" no-match-text="No se encontraron coincidencias">
                         <el-option v-for="(item, index) in projects.find(item => item.id === form.project_id).users"
                             :key="item.id" :label="item.name" :value="item.id">
@@ -65,9 +66,14 @@
                             'text-[#FB2A2A]': form.priority == 'Alta'
                         }"></i>
                     </InputLabel>
-                    <el-select v-model="form.priority" clearable placeholder="Seleccione" class="w-1/2 mt-1"
+                    <el-select v-model="form.priority" placeholder="Seleccione" class="w-1/2 mt-1"
                         no-data-text="No hay opciones para mostrar" no-match-text="No se encontraron coincidencias">
-                        <el-option v-for="(item, index) in priorities" :key="item.id" :label="item" :value="item" />
+                        <el-option v-for="item in priorities" :key="item" :label="item.label" :value="item.label">
+                            <span style="float: left"><i :class="item.color" class="fa-solid fa-circle"></i></span>
+                            <span style="float: center; margin-left: 5px; font-size: 13px">{{
+                                item.label
+                            }}</span>
+                        </el-option>
                     </el-select>
                     <InputError :message="form.errors.priority" />
                 </div>
@@ -172,9 +178,18 @@ export default {
             enabledTime: false,
             mediaNames: [], // Agrega esta propiedad para almacenar los nombres de los archivos
             priorities: [
-                'Baja',
-                'Media',
-                'Alta',
+                {
+                    label: "Baja",
+                    color: "text-[#87CEEB]",
+                },
+                {
+                    label: "Media",
+                    color: "text-[#F2C940]",
+                },
+                {
+                    label: "Alta",
+                    color: "text-[#FB2A2A]",
+                },
             ],
             departments: [
                 'Contrucción',

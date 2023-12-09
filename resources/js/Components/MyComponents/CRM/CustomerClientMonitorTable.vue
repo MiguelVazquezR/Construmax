@@ -3,20 +3,15 @@
     <table class="w-full mx-auto">
         <thead>
           <tr class="text-left">
-            <th class="font-bold pb-5">
-              Folio <i class="fa-solid fa-arrow-down-long ml-3 px-14 lg:px-2"></i>
+            <th class="font-bold pb-5 min-w-[90px]">Folio <i class="text-[9px] md:inline fa-solid fa-arrow-down-long md:ml-3"></i>
             </th>
-            <th class="font-bold pb-5">
-              Tipo de interacción <i class="fa-solid fa-arrow-down-long ml-3 px-14 lg:px-2"></i>
+            <th class="font-bold pb-5 min-w-[170px]">Tipo de interacción <i class="text-[9px] md:inline fa-solid fa-arrow-down-long md:ml-3"></i>
             </th>
-            <th class="font-bold pb-5">
-              Fecha <i class="fa-solid fa-arrow-down-long ml-3 px-14 lg:px-2"></i>
+            <th class="font-bold pb-5 min-w-[90px]">Fecha <i class="text-[9px] md:inline fa-solid fa-arrow-down-long md:ml-3"></i>
             </th>
-            <th class="font-bold pb-5">
-              Concepto <i class="fa-solid fa-arrow-down-long ml-3 px-14 lg:px-2"></i>
+            <th class="font-bold pb-5 min-w-[90px]">Concepto <i class="text-[9px] md:inline fa-solid fa-arrow-down-long md:ml-3"></i>
             </th>
-            <th class="font-bold pb-5">
-              Vendedor <i class="fa-solid fa-arrow-down-long ml-3 px-14 lg:px-2"></i>
+            <th class="font-bold pb-5 min-w-[90px]">Vendedor <i class="text-[9px] md:inline fa-solid fa-arrow-down-long md:ml-3"></i>
             </th>
           </tr>
         </thead>
@@ -72,7 +67,7 @@ showMonitorType(monitor) {
       } else if (monitor.type == 'Pago') {
         this.$inertia.get(route('crm.payment-monitors.show', monitor.paymentMonitor?.id));
       } else if (monitor.type == 'Reunión') {
-        this.$inertia.get(route('crm.meeting-monitors.show', monitor.mettingMonitor?.id));
+        this.$inertia.get(route('crm.meeting-monitors.show', monitor.meetingMonitor?.id));
       }
     },
 }

@@ -7,6 +7,7 @@ use App\Http\Resources\MeetingMonitorResource;
 use App\Http\Resources\OpportunityResource;
 use App\Models\Calendar;
 use App\Models\ClientMonitor;
+use App\Models\Contact;
 use App\Models\Customer;
 use App\Models\MeetingMonitor;
 use App\Models\Opportunity;
@@ -71,10 +72,13 @@ class MeetingMonitorController extends Controller
                 "status" => "Pendiente",
             ];
         }
+
+        $contact = Contact::find($request->contact_id);
+
         // crear registro de calendario
         Calendar::create([
             'type' => 'Evento',
-            'title' => "Cita con $request->contact_name",
+            'title' => "Cita con $contact->name",
             'location' => $request->location,
             'description' => "$request->description. Hora de cita: $request->time",
             'is_full_day' => 1,

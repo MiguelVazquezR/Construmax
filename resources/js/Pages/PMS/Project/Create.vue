@@ -17,7 +17,7 @@
       </div>
       <div>
         <InputLabel value="Tipo de servicio *" class="ml-2" />
-        <el-select v-model="form.service_type" clearable placeholder="Seleccione" class="w-full mt-1"
+        <el-select v-model="form.service_type"  placeholder="Seleccione" class="w-full mt-1"
           no-data-text="No hay opciones para mostrar" no-match-text="No se encontraron coincidencias">
           <el-option v-for="(item, index) in serviceTypes" :key="item.id" :label="item" :value="item" />
         </el-select>
@@ -32,7 +32,7 @@
       </div>
       <div class="col-span-full lg:col-span-1">
         <InputLabel value="Responsable *" class="ml-2" />
-        <el-select @change="handleChangeSeller" v-model="form.owner_id" clearable placeholder="Seleccione"
+        <el-select @change="handleChangeSeller" v-model="form.owner_id"  placeholder="Seleccione"
           class="w-full mt-1" no-data-text="No hay opciones para mostrar" no-match-text="No se encontraron coincidencias">
           <el-option v-for="(item, index) in users" :key="item.id" :label="item.name" :value="item.id">
             <div v-if="$page.props.jetstream.managesProfilePhotos"
@@ -58,7 +58,8 @@
       </div>
       <div class="mt-5 col-span-full">
         <InputLabel value="Descripción" class="ml-2" />
-        <RichText @content="updateDescription($event)" :defaultValue="form.description" />
+        <textarea v-model="form.description" rows="3" class="textarea"></textarea>
+        <!-- <RichText @content="updateDescription($event)" :defaultValue="form.description" /> -->
       </div>
       <div class="ml-2 mt-2 col-span-full flex">
         <FileUploader @files-selected="this.form.media = $event" />
@@ -72,7 +73,7 @@
             <i class="fa-solid fa-plus text-primary text-[9px]"></i>
           </button>
         </div>
-        <el-select v-model="form.tags" clearable placeholder="Seleccione" multiple class="w-full mt-1"
+        <el-select v-model="form.tags"  placeholder="Seleccione" multiple class="w-full mt-1"
           no-data-text="No hay opciones para mostrar" no-match-text="No se encontraron coincidencias">
           <el-option v-for="(item, index) in tags.data" :key="item.id" :label="item.name" :value="item.id">
             <Tag :name="item.name" :color="item.color" />
@@ -109,7 +110,7 @@
             Agregar grupo nuevo
           </button>
         </div>
-        <el-select v-model="form.project_group_id" clearable placeholder="Seleccione" class="w-full mt-1"
+        <el-select v-model="form.project_group_id"  placeholder="Seleccione" class="w-full mt-1"
           no-data-text="No hay opciones para mostrar" no-match-text="No se encontraron coincidencias">
           <el-option v-for="(item, index) in project_groups.data" :key="item.id" :label="item.name" :value="item.id" />
         </el-select>
@@ -120,7 +121,7 @@
       </h2>
       <div v-if="!form.is_internal">
         <InputLabel value="Cliente *" class="ml-2" />
-        <el-select v-model="form.customer_id" @change="updateContacts()" clearable placeholder="Seleccione"
+        <el-select v-model="form.customer_id" @change="updateContacts()"  placeholder="Seleccione"
           class="w-full mt-1" no-data-text="No hay opciones para mostrar" no-match-text="No se encontraron coincidencias">
           <el-option v-for="(item, index) in customers" :key="item.id" :label="item.name" :value="item.id" />
         </el-select>
@@ -128,7 +129,7 @@
       </div>
       <div v-if="!form.is_internal">
         <InputLabel value="Contacto *" class="ml-2" />
-        <el-select v-model="form.contact_id" @change="updateBranches()" clearable placeholder="Seleccione"
+        <el-select v-model="form.contact_id" @change="updateBranches()"  placeholder="Seleccione"
           class="w-full mt-1" no-data-text="No hay opciones para mostrar" no-match-text="No se encontraron coincidencias">
           <el-option v-for="(item, index) in contacts" :key="item.id" :label="item.name" :value="item.id" />
         </el-select>
@@ -136,7 +137,7 @@
       </div>
       <div v-if="!form.is_internal">
         <InputLabel value="Sucursal *" class="ml-2" />
-        <el-select v-model="form.address" clearable placeholder="Seleccione" class="w-full mt-1"
+        <el-select v-model="form.address"  placeholder="Seleccione" class="w-full mt-1"
           no-data-text="No hay opciones para mostrar" no-match-text="No se encontraron coincidencias">
           <el-option v-for="(item, index) in branches" :key="index" :label="item" :value="item" />
         </el-select>
@@ -144,7 +145,7 @@
       </div>
       <div v-if="!form.is_internal">
         <InputLabel value="OP *" class="ml-2" />
-        <el-select v-model="form.opportunity_id" clearable placeholder="Seleccione" class="w-full mt-1"
+        <el-select v-model="form.opportunity_id"  placeholder="Seleccione" class="w-full mt-1"
           no-data-text="El cliente no tiene oportunidades disponibles o las que existen ya han sido asignadas a un proyecto"
           no-match-text="No se encontraron coincidencias">
           <el-option v-for="(item, index) in opportunities" :key="item.id" :label="item.name" :value="item.id" />
@@ -154,7 +155,7 @@
       <h2 class="font-bold text-sm my-2 col-span-full">Presupuesto</h2>
       <div>
         <InputLabel value="Moneda" class="ml-2" />
-        <el-select v-model="form.currency" clearable placeholder="Seleccione" class="w-full mt-1"
+        <el-select v-model="form.currency"  placeholder="Seleccione" class="w-full mt-1"
           no-data-text="No hay opciones para mostrar" no-match-text="No se encontraron coincidencias">
           <el-option v-for="(item, index) in currencies" :key="index" :label="item.label" :value="item.value" />
         </el-select>
@@ -194,7 +195,7 @@
             <h2 class="font-bold text-sm my-2 ml-2 col-span-full">
               Asignar participantes
             </h2>
-            <el-select @change="addToSelectedUsers" filterable clearable placeholder="Seleccionar usuario"
+            <el-select @change="addToSelectedUsers" filterable  placeholder="Seleccionar usuario"
               class="w-full lg:w-1/2" no-data-text="No hay más usuarios para añadir"
               no-match-text="No se encontraron coincidencias">
               <el-option v-for="(item, index) in availableUsersToPermissions" :key="item.id" :label="item.name"

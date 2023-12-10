@@ -36,7 +36,7 @@
           value-format="YYYY-MM-DD" :disabled-date="disabledDate" />
         <InputError :message="form.errors.limit_date" />
       </div>
-      <div>
+      <div class="col-span-full lg:col-span-1">
         <InputLabel value="Hora" class="ml-2" />
         <el-time-select class="mr-5 mb-3 lg:mb-0" v-model="form.time" start="08:00" step="00:15" end="18:00"
           placeholder="Selecciona una hora" format="hh:mm A"/>

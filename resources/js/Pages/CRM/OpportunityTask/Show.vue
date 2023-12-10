@@ -14,7 +14,7 @@
       <div class="flex justify-between items-center">
         <h2 class="font-bold text-sm">Información de la actividad</h2>
         <div class="flex items-center">
-          <ThirdButton type="button" v-if="toBool(authUserPermissions[2])" @click="canEdit = !canEdit">
+          <ThirdButton type="button" v-if="toBool(authUserPermissions[2])" @click="cancelEdition()">
             {{ canEdit ? 'Cancelar edición' : 'Editar' }}
           </ThirdButton>
           <SecondaryButton v-if="!authUserIsParticipant && toBool(authUserPermissions[2]) && !canEdit" type="button"
@@ -58,7 +58,7 @@
             :disabled="!canEdit" format="YYYY-MM-DD" />
           <InputError :message="form.errors.limit_date" />
         </div>
-        <div>
+        <div class="col-span-full lg:col-span-1">
           <InputLabel value="Hora *" class="ml-2" />
           <el-time-select class="mr-5 mb-3 lg:mb-0" v-model="form.time" start="08:00" step="00:15" end="18:00"
             placeholder="Selecciona una hora" format="hh:mm A" :disabled="!canEdit" />
@@ -77,12 +77,13 @@
             </el-option>
           </el-select>
           <i :class="getColorPriority(form.priority)"
-            class="fa-solid fa-circle text-[10px] top-1 left-16 lg:left-20 absolute z-30"></i>
+            class="fa-solid fa-circle text-[10px] top-1 left-20 absolute z-30"></i>
           <InputError :message="form.errors.priority" />
         </div>
         <div class="col-span-2">
           <InputLabel value="Descrpción" class="ml-2" />
-          <RichText v-if="canEdit" @content="updateDescription($event)" :defaultValue="form.description" />
+          <textarea v-if="canEdit" rows="3" v-model="form.description" class="textarea"></textarea>
+          <!-- <RichText v-if="canEdit" @content="updateDescription($event)" :defaultValue="form.description" /> -->
           <div v-else
             class="rounded-[10px] bg-transparent border border-[#BEBFC1] px-3 py-2 min-h-[100px] text-sm w-full">
             {{ form.description }}</div>
@@ -102,8 +103,6 @@
             <i class="fa-solid fa-download text-right text-sm text-[#9a9a9a]"></i>
           </a>
         </div>
-
-
         <h2 class="font-bold py-4 col-span-2">Comentarios</h2>
 
         <!-- ------- Comments ------- -->
@@ -239,6 +238,10 @@ export default {
     media: Array,
   },
   methods: {
+    cancelEdition() {
+      this.form.reset();
+      this.canEdit = !this.canEdit;
+    },
     updateComment(content) {
       this.form.comment = content;
     },

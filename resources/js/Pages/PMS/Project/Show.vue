@@ -233,10 +233,8 @@
             <!-- ------------- Cronograma Starts 3 ------------- -->
             <div v-if="currentTab == 3" class="text-left text-sm items-center overflow-x-auto">
                 <GanttDiagramMonth v-if="period === 'Mes'" :currentProject="project.data" :currentDate="currentDate" />
-
                 <GanttDiagramBimester v-if="period === 'Bimestre'" :currentProject="project.data"
                     :currentDate="currentDate" />
-
                 <div class="text-right mr-9">
                     <div class="border border-[#9A9A9A] rounded-md inline-flex justify-end mt-4">
                         <p :class="period == 'Mes' ? 'bg-primary text-white rounded-sm' : 'border-[#9A9A9A]'
@@ -391,11 +389,9 @@ export default {
 
             // Verificar si hay tareas en el proyecto y si la primera tarea tiene una fecha de inicio
             if (this.project.data && this.project.data.tasks.length > 0) {
-                console.log('hay tareas');
                 const firstTask = this.project.data.tasks[0];
                 if (firstTask && firstTask.start_date) {
-                    console.log(firstTask);
-                    this.currentDate = new Date(firstTask.start_date);
+                    this.currentDate = new Date(firstTask.start_date_raw);
                 }
             }
         },

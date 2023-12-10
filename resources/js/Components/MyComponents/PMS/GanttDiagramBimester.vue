@@ -32,23 +32,23 @@
         <strong class="text-base uppercase font-bold tex">{{ monthName }}</strong
         ><br />
         <div class="flex space-x-3 justify-center w-[95%] mx-auto">
-          <!-- <p v-for="day in daysInMonth" :key="day" class="text-secondary relative">
+          <p v-for="day in daysInMonth" :key="day" class="text-secondary relative">
             {{ daysOfWeek[(day + startDayOfWeek - 2) % 7] }}
             <span class="absolute -bottom-3 -left-0 text-[11px] text-black">{{
               day
             }}</span>
-          </p> -->
+          </p>
         </div>
       </th>
       <th class="border border-[#9A9A9A] text-center font-thin">
         <strong class="text-base uppercase font-bold">{{ nextMonthName }}</strong>
         <div class="flex space-x-3 justify-center w-[95%] mx-auto">
-          <!-- <p v-for="day in daysInNextMonth" :key="day" class="text-secondary relative">
+          <p v-for="day in daysInNextMonth" :key="day" class="text-secondary relative">
             {{ daysOfWeek[(day + startDayOfWeekNextMonth - 2) % 7] }}
             <span class="absolute -bottom-3 -left-0 text-[11px] text-black">{{
               day
             }}</span>
-          </p> -->
+          </p>
         </div>
       </th>
     </tr>
@@ -119,7 +119,7 @@ export default {
       }
     },
     taskStartDay(task) {
-      const startDate = new Date(task.start_date);
+      const startDate = new Date(task.start_date_raw);
       const startDay = startDate.getDate();
       const currentMonthFirstDay = new Date(
         this.currentDate.getFullYear(),
@@ -131,8 +131,8 @@ export default {
       return dayDifference; // Sumar 1 para que el primer día sea 1 en lugar de 0
     },
     taskDuration(task) {
-      const startDate = new Date(task.start_date);
-      const endDate = new Date(task.limit_date);
+      const startDate = new Date(task.start_date_raw);
+      const endDate = new Date(task.limit_date_raw);
       const duration = (endDate - startDate) / (24 * 60 * 60 * 1000); // Convertir a días
       // const offsetNextMonth = 0 //offset que agrega 2.5 dias cuando la tarea termina el siguiente mes y se muestre en el dia correcto.
 
@@ -251,8 +251,8 @@ export default {
     // Verificar si hay tareas en el proyecto y si la primera tarea tiene una fecha de inicio
     if (this.currentProject && this.currentProject.tasks.length > 0) {
       const firstTask = this.currentProject.tasks[0];
-      if (firstTask && firstTask.start_date) {
-        this.currentDate = new Date(firstTask.start_date);
+      if (firstTask && firstTask.start_date_raw) {
+        this.currentDate = new Date(firstTask.start_date_raw);
       }
     }
   },

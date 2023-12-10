@@ -36,10 +36,10 @@
           <tr class="text-left">
             <th class="font-bold pb-5 pl-4">ID <i class="text-[9px] md:inline fa-solid fa-arrow-down-long md:ml-3"></i>
             </th>
-            <th class="font-bold pb-5">Nombre <i class="text-[9px] md:inline fa-solid fa-arrow-down-long md:ml-3"></i>
+            <th class="font-bold pb-5 px-2 ">Nombre <i class="text-[9px] md:inline fa-solid fa-arrow-down-long md:ml-3"></i>
             </th>
             <th class="font-bold pb-5">RFC <i class="text-[9px] md:inline fa-solid fa-arrow-down-long md:ml-3"></i></th>
-            <th class="font-bold pb-5">Fecha de registro <i
+            <th class="font-bold pb-5 px-2 ">Fecha de registro <i
                 class="text-[9px] md:inline fa-solid fa-arrow-down-long md:ml-3"></i></th>
             <th class="font-bold pb-5">Contactos <i class="text-[9px] md:inline fa-solid fa-arrow-down-long md:ml-3"></i>
             </th>
@@ -51,13 +51,13 @@
             <td class="text-left py-2 pr-2 pl-4 rounded-l-full">
               {{ customer.id }}
             </td>
-            <td class="text-left py-2">
+            <td class="text-left py-2 px-2">
               {{ customer.name }}
             </td>
             <td class="text-left py-2">
               {{ customer.rfc }}
             </td>
-            <td class="text-left py-2">
+            <td class="text-left py-2 px-2 w-[200px] truncate">
               {{ customer.created_at }}
             </td>
             <td :title="customer.contacts.map(item => item.name).join(', ')" class="text-left py-2 rounded-r-full">

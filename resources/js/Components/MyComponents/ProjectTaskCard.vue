@@ -33,7 +33,7 @@
       <div class="flex justify-between items-center px-3">
         <div class="flex items-center text-[#9A9A9A]">
           <i class="fa-regular fa-comments text-sm rounded-full py-1 px-2"></i>
-          <p class="text-xs">{{ taskComponentLocal?.comments?.length }}</p>
+          <p class="text-xs">{{ taskComponentLocal?.comments.length }}</p>
           <p class="text-xs ml-1">| {{ "Dpto. " + taskComponentLocal?.department }}</p>
         </div>
         <div class="flex items-center absolute bottom-3 right-0 cursor-default">
@@ -107,7 +107,7 @@
           </div>
           <div class="flex space-x-2 justify-end items-center mt-3">
             <label>Departamento</label>
-            <el-select class="w-full mt-2" v-model="form.department" clearable filterable
+            <el-select class="w-full mt-2" v-model="form.department"  filterable
               placeholder="Seleccionar departamento" no-data-text="No hay departamentos registrados"
               no-match-text="No se encontraron coincidencias">
               <el-option v-for="item in departments" :key="item" :label="item" :value="item" />
@@ -116,7 +116,7 @@
           </div>
           <div class="flex space-x-2 justify-end items-center mt-3">
             <label>Más participantes</label> <br>
-            <el-select class="w-full mt-2" v-model="form.users" clearable filterable multiple
+            <el-select class="w-full mt-2" v-model="form.users"  filterable multiple
               placeholder="Seleccionar participantes" no-data-text="No hay usuarios registrados"
               no-match-text="No se encontraron coincidencias">
               <el-option v-for="user in users" :key="user.id" :label="user.name" :value="user.id" />
@@ -132,7 +132,7 @@
             <i :class="getColorPriority(form.priority)"
               class="fa-solid fa-circle text-xs top-10 -left-4 absolute z-30"></i>
             <label>Prioridad</label>
-            <el-select class="w-full mt-2" v-model="form.priority" clearable filterable
+            <el-select class="w-full mt-2" v-model="form.priority"  filterable
               placeholder="Seleccionar prioridad" no-data-text="No hay registros"
               no-match-text="No se encontraron coincidencias">
               <el-option v-for="item in priorities" :key="item" :label="item.label" :value="item.label">

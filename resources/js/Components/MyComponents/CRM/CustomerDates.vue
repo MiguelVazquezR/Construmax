@@ -14,28 +14,27 @@
                 <div class="h-4 bg-gray-200 rounded"></div>
                 <div class="h-4 bg-gray-200 rounded"></div>
                 <div class="h-4 bg-gray-200 rounded"></div>
-                <div class="h-4 bg-gray-200 rounded"></div>
             </div>
         </div>
-        <div v-else class="h-2/3 overflow-y-scroll">
+        <div v-else class="h-2/3 overflow-y-scroll mb-6">
             <div v-if="meetings.length" class="h-full">
                 <div>
-                    <table class="w-full table-fixed">
+                    <table class="w-full">
                         <thead>
                             <tr class="text-xs">
                                 <th>Contacto</th>
-                                <th class="text-start">Fecha</th>
-                                <th class="text-start">Hora</th>
-                                <th class="text-start">Cita</th>
-                                <th class="text-start">Motivo</th>
+                                <th class="text-start min-w-[90px]">Fecha</th>
+                                <th class="text-start min-w-[90px]">Hora</th>
+                                <th class="text-start min-w-[90px]">Cita</th>
+                                <th class="text-start min-w-[90px]">Motivo</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr @click="$inertia.get(route('crm.meeting-monitors.show', meeting))" v-for="meeting in meetings" :key="meeting.id"
                                 class="text-xs w-full cursor-pointer hover:bg-primarylight">
-                                <td :title="meeting.contact_name" class="w-1/5 truncate py-1 pr-3 rounded-tl-lg rounded-bl-lg">
+                                <td :title="meeting.contact" class="w-1/5 truncate py-1 pr-3 rounded-tl-lg rounded-bl-lg">
                                     <i class="fa-regular fa-user mr-2"></i>
-                                    {{ meeting.contact_name }}
+                                    {{ meeting.contact.name }}
                                 </td>
                                 <td class="w-1/5">{{ formatDate(meeting.meeting_date) }}</td>
                                 <td class="w-1/5">{{ formatTime(meeting.time) }}</td>

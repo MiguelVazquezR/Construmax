@@ -62,7 +62,7 @@
         </div>
         <div>
           <InputLabel value="Departamento *" class="ml-2" />
-          <el-select v-model="form.employee_properties.department" clearable placeholder="Seleccione" class="w-full mt-1"
+          <el-select v-model="form.employee_properties.department"  placeholder="Seleccione" class="w-full mt-1"
             no-data-text="No hay opciones para mostrar" no-match-text="No se encontraron coincidencias">
             <el-option v-for="(item, index) in departments" :key="index" :label="item" :value="item" />
           </el-select>

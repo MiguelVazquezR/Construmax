@@ -116,7 +116,8 @@
       </div>
       <div class="mt-5 col-span-full">
         <InputLabel value="Descripción" class="ml-2" />
-        <RichText @content="updateDescription($event)" />
+        <textarea v-model="form.description" rows="3" class="textarea"></textarea>
+        <!-- <RichText @content="updateDescription($event)" /> -->
       </div>
       <div class="ml-4 mt-2 col-span-full flex">
         <FileUploader @files-selected="this.form.media = $event" />

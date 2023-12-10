@@ -13,7 +13,7 @@
         <form @submit.prevent="store" class="mx-8 mt-3 grid grid-cols-2 gap-x-4 gap-y-2">
             <div>
                 <InputLabel value="Folio de oportunidad *" class="ml-2" />
-                <el-select @change="handleChangeOpportunity" class="w-full" v-model="form.opportunity_id" clearable filterable
+                <el-select @change="handleChangeOpportunity" class="w-full" v-model="form.opportunity_id"  filterable
                     placeholder="Seleccione" no-data-text="No hay registros"
                     no-match-text="No se encontraron coincidencias">
                     <el-option v-for="opportunity in opportunities.data" :key="opportunity"
@@ -34,7 +34,7 @@
             </div>
             <div class="w-full">
                 <InputLabel value="Contacto *" class="ml-2" />
-                <el-select @change="handleChangeContact" class="w-full" v-model="form.contact_id" clearable filterable
+                <el-select @change="handleChangeContact" class="w-full" v-model="form.contact_id"  filterable
                     placeholder="Seleccione" no-data-text="No hay contactos registrados"
                     no-match-text="No se encontraron coincidencias">
                     <el-option v-for="contact in customers.data.find(
@@ -45,7 +45,7 @@
             </div>
             <div class="w-full">
                 <InputLabel value="Sucursal *" class="ml-2" />
-                <el-select class="w-full" v-model="form.branch" clearable filterable placeholder="Seleccione"
+                <el-select class="w-full" v-model="form.branch"  filterable placeholder="Seleccione"
                     no-data-text="No hay sucursales registradas" no-match-text="No se encontraron coincidencias">
                     <el-option v-for="branch in customers.data.find(
                         (item) => item.id == form.customer_id
@@ -64,7 +64,7 @@
             </div>
             <div class="w-full">
                 <InputLabel value="Método de pago *" class="ml-2" />
-                <el-select class="w-full" v-model="form.payment_method" clearable filterable placeholder="Seleccione"
+                <el-select class="w-full" v-model="form.payment_method"  filterable placeholder="Seleccione"
                     no-data-text="No hay registros" no-match-text="No se encontraron coincidencias">
                     <el-option v-for="payment_method in payment_methods" :key="payment_method" :label="payment_method"
                         :value="payment_method" />
@@ -84,7 +84,8 @@
             </div>
             <div class="mt-5 col-span-full">
                 <InputLabel value="Notas " class="ml-2" />
-                <RichText @content="updateNotes($event)" />
+                <textarea v-model="form.notes" rows="3" class="textarea"></textarea>
+                <!-- <RichText @content="updateNotes($event)" /> -->
             </div>
             <div class="ml-2 mt-2 col-span-full">
                 <FileUploader @files-selected="this.form.media = $event" />

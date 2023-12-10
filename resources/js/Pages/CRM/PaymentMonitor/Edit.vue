@@ -12,7 +12,7 @@
     <form @submit.prevent="update" class="mx-8 mt-3 grid grid-cols-2 gap-x-4 gap-y-2">
         <div>
             <InputLabel value="Folio de oportunidad *" class="ml-2" />
-            <el-select @change="getCustomer" class="w-full" v-model="form.opportunity_id" clearable filterable placeholder="Seleccione"
+            <el-select @change="getCustomer" class="w-full" v-model="form.opportunity_id"  filterable placeholder="Seleccione"
                 no-data-text="No hay registros" no-match-text="No se encontraron coincidencias">
                 <el-option v-for="opportunity in opportunities.data" :key="opportunity" :label="opportunity.folio + ' - ' + opportunity.name" :value="opportunity.id" />
             </el-select>
@@ -21,7 +21,7 @@
         <h2 class="text-primary col-span-2 my-3">Datos del cliente</h2>
         <div class="w-full">
             <InputLabel value="Cliente *" class="ml-2" />
-            <el-select disabled @change="cleanCustomerInfo" class="w-full" v-model="form.customer_id" clearable filterable
+            <el-select disabled @change="cleanCustomerInfo" class="w-full" v-model="form.customer_id"  filterable
                 placeholder="Seleccione" no-data-text="No hay clientes registrados"
                 no-match-text="No se encontraron coincidencias">
                 <el-option v-for="customer in customers.data" :key="customer" :label="customer.name" :value="customer.id" />
@@ -30,7 +30,7 @@
         </div>
         <div class="w-full">
             <InputLabel value="Contacto *" class="ml-2" />
-            <el-select @change="getContactPhone" class="w-full" v-model="form.contact_id" clearable filterable placeholder="Seleccione"
+            <el-select @change="getContactPhone" class="w-full" v-model="form.contact_id"  filterable placeholder="Seleccione"
             no-data-text="No hay contactos registrados" no-match-text="No se encontraron coincidencias">
             <el-option v-for="contact in customers.data.find(
                 (item) => item.id == form.customer_id
@@ -41,7 +41,7 @@
         </div>
         <div class="w-full">
             <InputLabel value="Sucursal *" class="ml-2" />
-            <el-select class="w-full" v-model="form.branch" clearable filterable
+            <el-select class="w-full" v-model="form.branch"  filterable
             placeholder="Seleccione" no-data-text="No hay sucursales registradas"
             no-match-text="No se encontraron coincidencias">
             <el-option v-for="branch in customers.data.find(
@@ -60,7 +60,7 @@
         </div>
         <div class="w-full">
             <InputLabel value="Método de pago *" class="ml-2" />
-            <el-select class="w-full" v-model="form.payment_method" clearable filterable placeholder="Seleccione"
+            <el-select class="w-full" v-model="form.payment_method"  filterable placeholder="Seleccione"
                 no-data-text="No hay registros" no-match-text="No se encontraron coincidencias">
                 <el-option v-for="payment_method in payment_methods" :key="payment_method" :label="payment_method" :value="payment_method" />
             </el-select>
@@ -71,7 +71,7 @@
             <input v-model="form.concept" class="input" type="text">
             <InputError :message="form.errors.concept" />
         </div>
-        <div class="w-full">
+        <div class="w-full col-span-full">
             <InputLabel value="Fecha del pago *" class="ml-2" />
             <el-date-picker class="w-full" v-model="form.paid_at" type="date" placeholder="Fecha*" format="YYYY/MM/DD"
                  :disabled-date="disabledDate" />

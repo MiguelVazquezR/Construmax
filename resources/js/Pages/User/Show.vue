@@ -12,7 +12,7 @@
         </Link>
       </div>
       <div class="lg:flex justify-between items-center mx-8 mt-8">
-        <el-select v-model="selectedUserId" clearable filterable placeholder="Buscar usuario" class="w-full lg:w-1/2"
+        <el-select v-model="selectedUserId"  filterable placeholder="Buscar usuario" class="w-full lg:w-1/2"
           no-data-text="No hay proyectos registrados" no-match-text="No se encontraron coincidencias">
           <el-option v-for="item in users" :key="item.id" :label="item.name" :value="item.id" />
         </el-select>
@@ -26,12 +26,12 @@
         </div>
       </div>
       <div class="mx-8 mt-10 grid grid-cols-4 gap-x-4 gap-y-2">
-        <div>
-          <figure class="rounded-full w-20 lg:w-52 h-20 lg:h-52 mx-auto">
-            <img :src="user.profile_photo_url" class="object-cover rounded-full w-20 lg:w-52 h-20 lg:h-52">
+        <div class="col-span-full lg:col-span-1 mb-4 lg:mt-0">
+          <figure class="rounded-full w-52 h-52 mx-auto">
+            <img :src="user.profile_photo_url" class="object-cover rounded-full w-52 h-52">
           </figure>
         </div>
-        <div class="col-span-3 grid grid-cols-2 gap-x-4 gap-y-2">
+        <div class="lg:col-span-3 col-span-full grid grid-cols-2 gap-x-4 gap-y-2">
           <span class="text-gray-500">Nombre</span>
           <span>{{ user.name }}</span>
           <span class="text-gray-500">Departamento</span>

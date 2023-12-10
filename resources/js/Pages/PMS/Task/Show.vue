@@ -15,14 +15,14 @@
       </Link>
     </div>
     <div class="mx-8 mt-3 grid grid-cols-2 gap-x-4 gap-y-2">
-      <div class="relative">
+      <div class="relative col-span-full lg:col-span-1">
         <InputLabel class="ml-2">
           Estado actual
           <i :class="getColorStatus(form.status)" class="fa-solid fa-circle text-xs ml-1"></i>
         </InputLabel>
         <div class="flex items-center space-x-4">
-          <el-select :disabled="task.data.is_paused || !authUserIsParticipant" class="lg:w-full" v-model="form.status"
-            @change="updateStatus()" clearable filterable placeholder="Seleccionar estatus"
+          <el-select :disabled="task.data.is_paused || !authUserIsParticipant" class="w-full" v-model="form.status"
+            @change="updateStatus()" filterable placeholder="Seleccionar estatus"
             no-data-text="No hay estatus registrados" no-match-text="No se encontraron coincidencias">
             <el-option v-for="item in statuses" :key="item" :label="item.label" :value="item.label">
               <span style="float: left"><i :class="item.color" class="fa-solid fa-circle"></i></span>
@@ -41,33 +41,35 @@
         </div>
         <InputError :message="form.errors.status" />
       </div>
-      <el-dropdown v-if="toBool(authUserPermissions[2]) && !canEdit" split-button type="primary" @click="canEdit = true"
-        class="custom-dropdown mt-5 ml-auto">
-        <span>Editar</span>
-        <template #dropdown>
-          <el-dropdown-menu>
-            <el-dropdown-item @click="copyToClipboard">Copiar link</el-dropdown-item>
-          </el-dropdown-menu>
-          <el-dropdown-menu v-if="toBool(authUserPermissions[3])">
-            <el-dropdown-item @click="showConfirmModal = true">Eliminar tarea</el-dropdown-item>
-          </el-dropdown-menu>
-        </template>
-      </el-dropdown>
-      <el-dropdown v-if="toBool(authUserPermissions[2]) && canEdit" split-button type="primary" @click="updateTask"
-        class="custom-dropdown mt-5 ml-auto">
-        <span>Guardar cambios</span>
-        <template #dropdown>
-          <el-dropdown-menu>
-            <el-dropdown-item @click="canEdit = false">Cancelar edición</el-dropdown-item>
-          </el-dropdown-menu>
-          <el-dropdown-menu>
-            <el-dropdown-item @click="copyToClipboard">Copiar link</el-dropdown-item>
-          </el-dropdown-menu>
-          <el-dropdown-menu v-if="toBool(authUserPermissions[3])">
-            <el-dropdown-item @click="showConfirmModal = true">Eliminar tarea</el-dropdown-item>
-          </el-dropdown-menu>
-        </template>
-      </el-dropdown>
+      <div class="mt-2 md:mt-5 ml-auto col-span-full lg:col-span-1">
+        <el-dropdown v-if="toBool(authUserPermissions[2]) && !canEdit" split-button type="primary" @click="canEdit = true"
+          class="custom-dropdown">
+          <span>Editar</span>
+          <template #dropdown>
+            <el-dropdown-menu>
+              <el-dropdown-item @click="copyToClipboard">Copiar link</el-dropdown-item>
+            </el-dropdown-menu>
+            <el-dropdown-menu v-if="toBool(authUserPermissions[3])">
+              <el-dropdown-item @click="showConfirmModal = true">Eliminar tarea</el-dropdown-item>
+            </el-dropdown-menu>
+          </template>
+        </el-dropdown>
+        <el-dropdown v-if="toBool(authUserPermissions[2]) && canEdit" split-button type="primary" @click="updateTask"
+          class="custom-dropdown">
+          <span>Guardar cambios</span>
+          <template #dropdown>
+            <el-dropdown-menu>
+              <el-dropdown-item @click="canEdit = false">Cancelar edición</el-dropdown-item>
+            </el-dropdown-menu>
+            <el-dropdown-menu>
+              <el-dropdown-item @click="copyToClipboard">Copiar link</el-dropdown-item>
+            </el-dropdown-menu>
+            <el-dropdown-menu v-if="toBool(authUserPermissions[3])">
+              <el-dropdown-item @click="showConfirmModal = true">Eliminar tarea</el-dropdown-item>
+            </el-dropdown-menu>
+          </template>
+        </el-dropdown>
+      </div>
     </div>
     <!-- Form -->
     <div class="mx-8 mt-3 grid grid-cols-2 gap-x-4 gap-y-2">
@@ -84,7 +86,7 @@
       </div>
       <div>
         <InputLabel value="Departamento" class="ml-2" />
-        <el-select class="w-full" v-model="form.department" clearable filterable :disabled="!canEdit"
+        <el-select class="w-full" v-model="form.department" filterable :disabled="!canEdit"
           placeholder="Seleccionar departamento" no-data-text="No hay departamentos registrados"
           no-match-text="No se encontraron coincidencias">
           <el-option v-for="item in departments" :key="item" :label="item" :value="item" />
@@ -93,10 +95,16 @@
       </div>
       <div>
         <InputLabel value="Participantes" class="ml-2" />
-        <el-select class="w-full" v-model="form.participants" clearable filterable multiple :disabled="!canEdit"
+        <el-select class="w-full" v-model="form.participants" filterable multiple :disabled="!canEdit"
           placeholder="Seleccionar participantes" no-data-text="No hay usuarios registrados"
           no-match-text="No se encontraron coincidencias">
-          <el-option v-for="user in task.data.project.users" :key="user?.id" :label="user.name" :value="user?.id" />
+          <el-option v-for="user in task.data.project.users" :key="user?.id" :label="user.name" :value="user?.id">
+            <div v-if="$page.props.jetstream.managesProfilePhotos"
+              class="flex text-sm rounded-full items-center mt-[3px]">
+              <img class="h-7 w-7 rounded-full object-cover mr-4" :src="user.profile_photo_url" :alt="user.name" />
+              <p>{{ user.name }}</p>
+            </div>
+          </el-option>
         </el-select>
         <InputError :message="form.errors.participants" />
       </div>
@@ -111,9 +119,8 @@
           Prioridad
           <i :class="getColorPriority(form.priority)" class="fa-solid fa-circle text-xs ml-1"></i>
         </InputLabel>
-        <el-select class="w-[calc(50%-8px)]" v-model="form.priority" clearable filterable
-          placeholder="Seleccionar prioridad" :disabled="!canEdit" no-data-text="No hay registros"
-          no-match-text="No se encontraron coincidencias">
+        <el-select class="w-[calc(50%-8px)]" v-model="form.priority" filterable placeholder="Seleccionar prioridad"
+          :disabled="!canEdit" no-data-text="No hay registros" no-match-text="No se encontraron coincidencias">
           <el-option v-for="item in priorities" :key="item" :label="item.label" :value="item.label">
             <span style="float: left"><i :class="item.color" class="fa-solid fa-circle"></i></span>
             <span style="float: center; margin-left: 5px; font-size: 13px">{{
@@ -127,7 +134,7 @@
         <InputLabel value="Duración *" class="ml-2" />
         <el-date-picker @change="handleDateRange" v-model="range" type="daterange" range-separator="A"
           start-placeholder="Fecha de inicio" end-placeholder="Fecha límite" value-format="YYYY-MM-DD"
-          :disabled-date="disabledStartOrLimitDate" />
+          :disabled-date="disabledStartOrLimitDate" :disabled="!canEdit" />
         <InputError :message="form.errors.start_date" />
         <InputError :message="form.errors.limit_date" />
       </div>
@@ -196,7 +203,8 @@
       <template #content>
         <div>
           <InputLabel value="Motivo de pausa" class="ml-2" />
-          <RichText @content="updateReazon($event)" />
+          <textarea v-model="pausaReazon" rows="3" class="textarea"></textarea>
+          <!-- <RichText @content="updateReazon($event)" /> -->
         </div>
       </template>
       <template #footer>

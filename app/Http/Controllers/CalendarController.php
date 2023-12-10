@@ -19,8 +19,6 @@ class CalendarController extends Controller
         $pendent_invitations = Calendar::with(['user'])->where('participants', 'like', '%"user_id":' . auth()->id() . ',"status":"Pendiente"%')
             ->get();
 
-        // return $pendent_invitations;
-
         return inertia('Calendar/Index', compact('tasks', 'pendent_invitations'));
     }
 
@@ -38,9 +36,7 @@ class CalendarController extends Controller
         $request->validate([
             'type' => 'required|string',
             'title' => 'required|string',
-            'participants' => [Rule::requiredIf(function () use ($request) {
-                return $request->type == 'Evento';
-            })],
+            'participants' => 'nullable',
             'repeater' => 'nullable|string',
             'location' => 'nullable|string',
             'description' => 'nullable|string',

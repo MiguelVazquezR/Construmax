@@ -42,9 +42,9 @@ class EmailMonitor extends Model implements HasMedia
         return $this->belongsTo(User::class);
     }
 
-    public function contact() :MorphOne
+    public function contact() :BelongsTo
     {
-        return $this->morphOne(Contact::class, 'contactable');
+        return $this->belongsTo(Contact::class);
     }
 
     public function clientMonitor() :BelongsTo

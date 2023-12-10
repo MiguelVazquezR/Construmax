@@ -183,7 +183,6 @@ class UserController extends Controller
     public function getMeetings()
     {
         $meetings = MeetingMonitor::with('contact')
-            ->select('id', 'meeting_date', 'time', 'meeting_via', 'contact_name', 'description')
             ->where('seller_id', auth()->id())
             ->whereDate('meeting_date', '>=', today())
             ->get();

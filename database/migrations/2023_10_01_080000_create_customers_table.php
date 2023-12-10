@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('currency');
-            $table->string('rfc');
+            $table->string('rfc')->unique();
             $table->string('invoicing_method');
             $table->string('payment_method');
             $table->string('invoice_use');

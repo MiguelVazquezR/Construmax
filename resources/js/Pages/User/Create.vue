@@ -52,17 +52,17 @@
         </div>
         <div>
           <InputLabel value="Departamento *" class="ml-2" />
-          <el-select v-model="form.employee_properties.department" clearable placeholder="Seleccione" class="w-full mt-1"
+          <el-select v-model="form.employee_properties.department"  placeholder="Seleccione" class="w-full mt-1"
             no-data-text="No hay opciones para mostrar" no-match-text="No se encontraron coincidencias">
             <el-option v-for="(item, index) in departments" :key="index" :label="item" :value="item" />
           </el-select>
-          <InputError :message="form.errors.employee_properties?.department" />
+          <InputError :message="form.errors['employee_properties.department']" />
         </div>
         <div>
           <InputLabel value="Puesto *" class="ml-2" />
           <input v-model="form.employee_properties.position" type="text" class="input mt-1"
             placeholder="Escriba el puesto" required />
-          <InputError :message="form.errors.employee_properties?.position" />
+          <InputError :message="form.errors['employee_properties.position']" />
         </div>
         <div>
           <InputLabel value="Correo electrónico *" class="ml-2" />
@@ -73,7 +73,7 @@
           <InputLabel value="Teléfono *" class="ml-2" />
           <input v-model="form.employee_properties.phone" type="text" class="input mt-1" placeholder="Escriba el teléfono"
             required />
-          <InputError :message="form.errors.employee_properties?.phone" />
+          <InputError :message="form.errors['employee_properties.phone']" />
         </div>
       </div>
 

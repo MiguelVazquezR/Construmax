@@ -14,6 +14,10 @@ body {
     .input {
         @apply bg-transparent h-8 text-xs border placeholder:text-gray2 border-gray3 rounded-[3px] focus:ring-0 focus:border-primary block w-full disabled:cursor-not-allowed;
     }
+
+    .textarea {
+        @apply bg-transparent text-xs border placeholder:text-gray2 border-gray3 rounded-[3px] focus:ring-0 focus:border-primary block w-full disabled:cursor-not-allowed;
+    }
 }
 
 *::-webkit-scrollbar {

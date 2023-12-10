@@ -14,9 +14,8 @@
         </div>
         <div class="lg:flex items-center justify-between mt-5 mx-2 lg:mx-8">
           <!-- <div class="w-2/3 mr-2 flex items-center"> -->
-          <el-select v-model="selectedOpportunity" clearable filterable placeholder="Buscar proyecto"
-            class="w-full lg:w-1/2" no-data-text="No hay clientes registrados"
-            no-match-text="No se encontraron coincidencias">
+          <el-select v-model="selectedOpportunity" filterable placeholder="Buscar proyecto" class="w-full lg:w-1/2"
+            no-data-text="No hay clientes registrados" no-match-text="No se encontraron coincidencias">
             <el-option v-for="item in opportunities" :key="item.id" :label="item.name" :value="item.id" />
           </el-select>
           <!-- </div> -->
@@ -41,7 +40,7 @@
             </el-tooltip>
             <el-tooltip v-if="currentTab == 5 && (opportunity.data.finished_at || opportunity.data.paid_at)"
               content="Genera la url para la encuesta de satisfacción" placement="top">
-              <PrimaryButton @click="generateSurveyUrl" class="rounded-md w-[120px]">Generar url</PrimaryButton>
+              <PrimaryButton @click="copyToClipboard" class="rounded-md w-[120px]">Generar url</PrimaryButton>
             </el-tooltip>
             <el-dropdown v-if="currentTab == 3 && $page.props.auth.user.permissions?.includes('Registrar pagos en seguimiento integral')
               && $page.props.auth.user.permissions?.includes('Agendar citas en seguimiento integral')
@@ -112,7 +111,7 @@
                 : status == 'Cerrada' ? showCreateProjectModal = true
                   : status == 'Pagado' ? showCreateProjectModal = true
                     : updateStatus()
-              " class="lg:w-1/2 mt-2" v-model="status" clearable filterable placeholder="Seleccionar estatus"
+              " class="lg:w-1/2 mt-2" v-model="status" filterable placeholder="Seleccionar estatus"
               no-data-text="No hay estatus registrados" no-match-text="No se encontraron coincidencias">
               <el-option v-for="item in statuses" :key="item" :label="item.label" :value="item.label">
                 <span style="float: left"><i :class="item.color" class="fa-solid fa-circle"></i></span>
@@ -210,7 +209,7 @@
           </h2>
           <OpportunityTaskCard @updated-opportunityTask="updateOpportunityTask" @delete-task="deleteTask"
             @task-done="markAsDone" class="mb-3" v-for="todayTask in todayTasksList" :key="todayTask"
-            :opportunityTask="todayTask" :users="opportunity.data.users" />
+            :opportunityTask="todayTask" />
           <div class="text-center" v-if="!todayTasksList.length">
             <p class="text-xs text-gray-500">No hay tareas para mostrar</p>
             <i class="fa-regular fa-folder-open text-9xl text-gray-300/50 mt-16"></i>
@@ -225,7 +224,7 @@
           </h2>
           <OpportunityTaskCard @updated-opportunityTask="updateOpportunityTask" @delete-task="deleteTask"
             @task-done="markAsDone" class="mb-3" v-for="thisWeekTask in thisWeekTasksList" :key="thisWeekTask"
-            :opportunityTask="thisWeekTask" :users="opportunity.data.users" />
+            :opportunityTask="thisWeekTask" />
           <div class="text-center" v-if="!thisWeekTasksList.length">
             <p class="text-xs text-gray-500">No hay tareas para mostrar</p>
             <i class="fa-regular fa-folder-open text-9xl text-gray-300/50 mt-16"></i>
@@ -240,7 +239,7 @@
           </h2>
           <OpportunityTaskCard @updated-opportunityTask="updateOpportunityTask" @delete-task="deleteTask"
             @task-done="markAsDone" class="mb-3" v-for="nextTask in nextTasksList" :key="nextTask"
-            :opportunityTask="nextTask" :users="opportunity.data.users" />
+            :opportunityTask="nextTask" />
           <div class="text-center" v-if="!nextTasksList?.length">
             <p class="text-xs text-gray-500">No hay tareas para mostrar</p>
             <i class="fa-regular fa-folder-open text-9xl text-gray-300/50 mt-16"></i>
@@ -254,7 +253,7 @@
           </h2>
           <OpportunityTaskCard @updated-opportunityTask="updateOpportunityTask" @delete-task="deleteTask"
             @task-done="markAsDone" class="mb-3" v-for="lateTask in lateTasksList" :key="lateTask"
-            :opportunityTask="lateTask" :users="opportunity.data.users" />
+            :opportunityTask="lateTask" />
           <div class="text-center" v-if="!lateTasksList.length">
             <p class="text-xs text-gray-500">No hay tareas para mostrar</p>
             <i class="fa-regular fa-folder-open text-9xl text-gray-300/50 mt-16"></i>
@@ -268,7 +267,7 @@
           </h2>
           <OpportunityTaskCard @updated-opportunityTask="updateOpportunityTask" @delete-task="deleteTask"
             @task-done="markAsDone" class="mb-3" v-for="finishedTask in finishedTasksList" :key="finishedTask"
-            :opportunityTask="finishedTask" :users="opportunity.data.users" />
+            :opportunityTask="finishedTask" />
           <div class="text-center" v-if="!finishedTasksList.length">
             <p class="text-xs text-gray-500">No hay tareas para mostrar</p>
             <i class="fa-regular fa-folder-open text-9xl text-gray-300/50 mt-16"></i>
@@ -611,9 +610,28 @@ export default {
       if (value == 1 || value == true) return true;
       return false;
     },
-    generateSurveyUrl() {
-      alert('http://127.0.0.1:8000/surveys/create/' + this.opportunity.data.id);
+    copyToClipboard() {
+      const textToCopy = window.location.origin + '/surveys/create/' + this.opportunity.data.id;
 
+      // Create a temporary input element
+      const input = document.createElement("input");
+      input.value = textToCopy;
+      document.body.appendChild(input);
+
+      // Select the content of the input element
+      input.select();
+
+      // Try to copy the text to the clipboard
+      document.execCommand("copy");
+
+      // Remove the temporary input element
+      document.body.removeChild(input);
+
+      this.$notify({
+        title: "Éxito",
+        message: "Se ha copiado el link en el portapapeles",
+        type: "success",
+      });
     },
     deleteItem() {
       this.$inertia.delete(route("crm.opportunities.destroy", this.selectedOpportunity));
@@ -847,4 +865,5 @@ export default {
   /* Color de la barra de desplazamiento */
   border-radius: 5px;
   /* Radio de los bordes de la barra de desplazamiento */
-}</style>
+}
+</style>

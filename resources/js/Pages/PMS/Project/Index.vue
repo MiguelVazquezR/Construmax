@@ -173,14 +173,14 @@ export default {
       const limitDate = moment(project.raw_limit_date);
 
       if (project.finished_at === null) {
-        if (createdDate.isSame(today, 'day')) {
-          return 'text-green-600';
+        if (limitDate.isSame(today, 'day') || limitDate.isBefore(today, 'day')) {
+          return 'text-red-600';
         } else if (createdDate.isBefore(today, 'day') && limitDate.isAfter(today, 'day')) {
           return 'text-amber-600';
-        } else if (limitDate.isSame(today, 'day') || limitDate.isBefore(today, 'day')) {
-          return 'text-red-600';
+        } else if (createdDate.isSame(today, 'day')) {
+          return 'text-green-600';
         } else {
-          return 'text-purple-500'; // Clase vacía si no se cumple ninguna condición
+          return 'text-black'; // Clase vacía si no se cumple ninguna condición
         }
       }
     },

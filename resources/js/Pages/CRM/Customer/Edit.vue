@@ -28,7 +28,7 @@
             <i class="fa-solid fa-plus text-primary text-[9px]"></i>
           </button>
         </div>
-        <el-select v-model="form.tags" clearable placeholder="Seleccione" multiple class="w-full mt-1"
+        <el-select v-model="form.tags"  placeholder="Seleccione" multiple class="w-full mt-1"
           no-data-text="No hay opciones para mostrar" no-match-text="No se encontraron coincidencias">
           <el-option v-for="(item, index) in tags.data" :key="item.id" :label="item.name" :value="item.id">
             <Tag :name="item.name" :color="item.color" />
@@ -54,6 +54,7 @@
         <div>
           <InputLabel value="Puesto *" class="ml-2" />
           <input v-model="contact.position" type="text" class="input mt-1" placeholder="Escriba un puesto">
+          <InputError :message="phoneErrorMessage" />
         </div>
         <div>
           <InputLabel value="Sucursal *" class="ml-2" />
@@ -91,7 +92,8 @@
       </div>
 
       <!-- lista de contactos -->
-      <div v-for="(item, index) in form.contacts" :key="index" class="bg-[#f2f2f2] p-5 mt-2 rounded-[3px] col-span-full lg:col-span-1">
+      <div v-for="(item, index) in form.contacts" :key="index"
+        class="bg-[#f2f2f2] p-5 mt-2 rounded-[3px] col-span-full lg:col-span-1">
         <header class="flex justify-between items-center">
           <h2 class="font-bold text-sm mb-2">Contacto {{ (index + 1) }}</h2>
           <div class="flex space-x-1 items-center">
@@ -130,7 +132,7 @@
       <h2 class="font-bold mt-7 col-span-2">Datos adicionales</h2>
       <div>
         <InputLabel value="Condiciones de pago *" class="ml-2" />
-        <el-select v-model="form.invoicing_method" clearable placeholder="Seleccione" class="w-full mt-1"
+        <el-select v-model="form.invoicing_method"  placeholder="Seleccione" class="w-full mt-1"
           no-data-text="No hay opciones para mostrar" no-match-text="No se encontraron coincidencias">
           <el-option v-for="item in invoicingMetods" :key="item.id" :label="item" :value="item" />
         </el-select>
@@ -138,7 +140,7 @@
       </div>
       <div>
         <InputLabel value="Método de pago *" class="ml-2" />
-        <el-select v-model="form.payment_method" clearable placeholder="Seleccione" class="w-full mt-1"
+        <el-select v-model="form.payment_method"  placeholder="Seleccione" class="w-full mt-1"
           no-data-text="No hay opciones para mostrar" no-match-text="No se encontraron coincidencias">
           <el-option v-for="item in paymentMethods" :key="item.id" :label="item" :value="item" />
         </el-select>
@@ -146,7 +148,7 @@
       </div>
       <div>
         <InputLabel value="Uso de factura *" class="ml-2" />
-        <el-select v-model="form.invoice_use" clearable placeholder="Seleccione" class="w-full mt-1"
+        <el-select v-model="form.invoice_use"  placeholder="Seleccione" class="w-full mt-1"
           no-data-text="No hay opciones para mostrar" no-match-text="No se encontraron coincidencias">
           <el-option v-for="item in invoiceUses" :key="item.id" :label="item" :value="item" />
         </el-select>
@@ -155,7 +157,7 @@
 
       <div>
         <InputLabel value="Moneda *" class="ml-2" />
-        <el-select v-model="form.currency" clearable placeholder="Seleccione" class="w-full mt-1"
+        <el-select v-model="form.currency"  placeholder="Seleccione" class="w-full mt-1"
           no-data-text="No hay opciones para mostrar" no-match-text="No se encontraron coincidencias">
           <el-option v-for="item in currencies" :key="item.id" :label="item" :value="item" />
         </el-select>
@@ -258,6 +260,8 @@ export default {
         position: null,
         branches: [],
       },
+      // error messages
+      phoneErrorMessage: null,
     }
   },
   components: {
@@ -337,9 +341,13 @@ export default {
       this.contact.branches = [];
     },
     addContact() {
-      this.form.contacts.push({ ...this.contact });
-
-      this.resetContact();
+      if (this.contact.phone.length > 14) {
+        this.phoneErrorMessage = "No debe exceder 14 caracteres";
+      } else {
+        this.phoneErrorMessage = null;
+        this.form.contacts.push({ ...this.contact });
+        this.resetContact();
+      }
     },
     addBranch() {
       if (this.branch == null) {

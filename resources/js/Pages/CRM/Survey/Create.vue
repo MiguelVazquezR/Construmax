@@ -9,9 +9,9 @@
     <form v-if="!is_sent" @submit.prevent="store">
       <div class="md:w-1/2 md:mx-auto mt-20 bg-transparent rounded-lg lg:p-9 p-4 space-y-4">
         <h1 class="text-2xl font-bold">Encuesta de satisfacción</h1>
-        <p class="mt-3">En Emblemas 3d USA valoramos mucho tu opinión y nos gustaría conocer tus comentario para seguir
+        <p class="mt-3">En Construmax de occidete valoramos mucho tu opinión y nos gustaría conocer tus comentario para seguir
           mejorando.</p>
-        <p class="mt-3">1. En una escala del 0 al 10, ¿qué tan satisfecho/a estás con la calidad de nuestros productos?
+        <p class="mt-3">1. En una escala del 0 al 10, ¿qué tan satisfecho/a estás con la calidad de nuestros servicios?
         </p>
         <div class="w-full">
           <div class="flex items-center">
@@ -21,7 +21,8 @@
             <div class="w-1/12 text-gray-500 text-xs text-right">10</div>
           </div>
           <el-tooltip :content="`${form.p1}`" placement="top">
-            <input type="range" min="0" max="10" v-model="form.p1" class="w-full" @input="updatePercentage" />
+            <!-- <input type="range" min="0" max="10" v-model="form.p1" class="w-full" @input="updatePercentage" /> -->
+            <el-slider @input="updatePercentage" v-model="form.p1" :step="1" :max="10" show-stops class="w-full" />
           </el-tooltip>
         </div>
         <InputError :message="form.errors.p1" />
@@ -73,7 +74,8 @@
           <InputError :message="form.errors.p4" />
         </div>
         <p class="mt-3">5. ¿Qué aspectos crees que podríamos perfeccionar que nos ayude a brindarte un mejor servicio?</p>
-        <RichText @content="updateDescription($event)" v-model="form.p5" />
+        <textarea v-model="form.p5" rows="3" class="textarea"></textarea>
+        <!-- <RichText @content="updateDescription($event)" v-model="form.p5" /> -->
         <InputError :message="form.errors.p5" />
         <PrimaryButton :disabled="form.processing">Enviar</PrimaryButton>
       </div>

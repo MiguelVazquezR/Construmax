@@ -17,7 +17,7 @@
       </div>
       <div>
         <InputLabel value="Tipo de servicio *" class="ml-2" />
-        <el-select v-model="form.service_type" clearable placeholder="Seleccione" class="w-full mt-1"
+        <el-select v-model="form.service_type"  placeholder="Seleccione" class="w-full mt-1"
           no-data-text="No hay opciones para mostrar" no-match-text="No se encontraron coincidencias">
           <el-option v-for="(item, index) in serviceTypes" :key="item.id" :label="item" :value="item" />
         </el-select>
@@ -33,7 +33,7 @@
       </div>
       <div class="col-span-full lg:col-span-1">
         <InputLabel value="Responsable *" class="ml-2" />
-        <el-select v-model="form.owner_id" clearable placeholder="Seleccione" class="w-full mt-1"
+        <el-select v-model="form.owner_id"  placeholder="Seleccione" class="w-full mt-1"
           no-data-text="No hay opciones para mostrar" no-match-text="No se encontraron coincidencias">
           <el-option v-for="(item, index) in users" :key="item.id" :label="item.name" :value="item.id">
             <div v-if="$page.props.jetstream.managesProfilePhotos"
@@ -60,7 +60,8 @@
       </div>
       <div class="mt-5 col-span-full">
         <InputLabel value="Descripción" class="ml-2" />
-        <RichText @content="updateDescription($event)" :defaultValue="form.description" />
+        <textarea v-model="form.description" rows="3" class="textarea"></textarea>
+        <!-- <RichText @content="updateDescription($event)" :defaultValue="form.description" /> -->
       </div>
       <div class="ml-2 mt-2 col-span-full flex">
         <FileUploader @files-selected="this.form.media = $event" />
@@ -81,7 +82,7 @@
             <i class="fa-solid fa-plus text-primary text-[9px]"></i>
           </button>
         </div>
-        <el-select v-model="form.tags" clearable placeholder="Seleccione" multiple class="w-full mt-1"
+        <el-select v-model="form.tags"  placeholder="Seleccione" multiple class="w-full mt-1"
           no-data-text="No hay opciones para mostrar" no-match-text="No se encontraron coincidencias">
           <el-option v-for="(item, index) in tags.data" :key="item.id" :label="item.name" :value="item.id">
             <Tag :name="item.name" :color="item.color" />
@@ -116,7 +117,7 @@
             Agregar grupo nuevo
           </button>
         </div>
-        <el-select v-model="form.project_group_id" clearable placeholder="Seleccione" class="w-full mt-1"
+        <el-select v-model="form.project_group_id"  placeholder="Seleccione" class="w-full mt-1"
           no-data-text="No hay opciones para mostrar" no-match-text="No se encontraron coincidencias">
           <el-option v-for="(item, index) in project_groups.data" :key="item.id" :label="item.name" :value="item.id" />
         </el-select>
@@ -125,7 +126,7 @@
       <h2 v-if="!form.is_internal" class="font-bold text-sm my-2 col-span-full">Campos adicionales</h2>
       <div v-if="!form.is_internal">
         <InputLabel value="Cliente *" class="ml-2" />
-        <el-select v-model="form.customer_id" @change="updateContacts()" clearable placeholder="Seleccione"
+        <el-select v-model="form.customer_id" @change="updateContacts()"  placeholder="Seleccione"
           class="w-full mt-1" no-data-text="No hay opciones para mostrar" no-match-text="No se encontraron coincidencias">
           <el-option v-for="(item, index) in customers" :key="item.id" :label="item.name" :value="item.id" />
         </el-select>
@@ -133,7 +134,7 @@
       </div>
       <div v-if="!form.is_internal">
         <InputLabel value="Contacto *" class="ml-2" />
-        <el-select v-model="form.contact_id" @change="updateBranches()" clearable placeholder="Seleccione"
+        <el-select v-model="form.contact_id" @change="updateBranches()"  placeholder="Seleccione"
           class="w-full mt-1" no-data-text="No hay opciones para mostrar" no-match-text="No se encontraron coincidencias">
           <el-option v-for="(item, index) in contacts" :key="item.id" :label="item.name" :value="item.id" />
         </el-select>
@@ -141,7 +142,7 @@
       </div>
       <div v-if="!form.is_internal">
         <InputLabel value="Sucursal *" class="ml-2" />
-        <el-select v-model="form.address" clearable placeholder="Seleccione" class="w-full mt-1"
+        <el-select v-model="form.address"  placeholder="Seleccione" class="w-full mt-1"
           no-data-text="No hay opciones para mostrar" no-match-text="No se encontraron coincidencias">
           <el-option v-for="(item, index) in branches" :key="index" :label="item" :value="item" />
         </el-select>
@@ -149,7 +150,7 @@
       </div>
       <div v-if="!form.is_internal">
         <InputLabel value="OP *" class="ml-2" />
-        <el-select v-model="form.opportunity_id" clearable placeholder="Seleccione" class="w-full mt-1"
+        <el-select v-model="form.opportunity_id"  placeholder="Seleccione" class="w-full mt-1"
           no-data-text="No hay opciones para mostrar" no-match-text="No se encontraron coincidencias">
           <el-option v-for="(item, index) in opportunities" :key="item.id" :label="item.name" :value="item.id" />
         </el-select>
@@ -158,7 +159,7 @@
       <h2 class="font-bold text-sm my-2 col-span-full">Presupuesto</h2>
       <div>
         <InputLabel value="Moneda" class="ml-2" />
-        <el-select v-model="form.currency" clearable placeholder="Seleccione" class="w-full mt-1"
+        <el-select v-model="form.currency"  placeholder="Seleccione" class="w-full mt-1"
           no-data-text="No hay opciones para mostrar" no-match-text="No se encontraron coincidencias">
           <el-option v-for="(item, index) in currencies" :key="index" :label="item.label" :value="item.value" />
         </el-select>
@@ -191,8 +192,9 @@
         <div class="flex px-5 lg:px-16 mb-8">
           <div v-if="typeAccessProject === 'Private'" class="w-full">
             <h2 class="font-bold text-sm my-2 ml-2 col-span-full">Asignar participantes </h2>
-            <el-select @change="addToSelectedUsers" filterable clearable placeholder="Seleccionar usuario" class="w-full lg:w-1/2"
-              no-data-text="No hay más usuarios para añadir" no-match-text="No se encontraron coincidencias">
+            <el-select @change="addToSelectedUsers" filterable  placeholder="Seleccionar usuario"
+              class="w-full lg:w-1/2" no-data-text="No hay más usuarios para añadir"
+              no-match-text="No se encontraron coincidencias">
               <el-option v-for="(item, index) in availableUsersToPermissions" :key="item.id" :label="item.name"
                 :value="item.id">
                 <div v-if="$page.props.jetstream.managesProfilePhotos"
@@ -218,7 +220,8 @@
               <div class="flex mt-2 border-b border-gray3" v-for="user in form.selectedUsersToPermissions" :key="user.id">
                 <div class="w-2/3 flex space-x-2">
                   <div v-if="$page.props.jetstream.managesProfilePhotos" class="flex text-sm rounded-full w-10 lg:w-12">
-                    <img class="h-8 lg:h-10 w-8 lg:w-10 rounded-full object-cover" :src="user.profile_photo_url" :alt="user.name" />
+                    <img class="h-8 lg:h-10 w-8 lg:w-10 rounded-full object-cover" :src="user.profile_photo_url"
+                      :alt="user.name" />
                   </div>
                   <div class="text-xs lg:text-sm w-full">
                     <p>{{ user.name }}</p>
@@ -239,8 +242,7 @@
                       </span>
                     </label>
                     <label class="flex items-center">
-                      <Checkbox :disabled="!editAccesFlag || user.employee_properties === null"
-                        v-model:checked="user.permissions[1]" :checked="user.permissions[1]" />
+                      <Checkbox disabled v-model:checked="user.permissions[1]" :checked="user.permissions[1]" />
                       <span
                         :class="!editAccesFlag || user.employee_properties === null ? 'text-gray-500/80 cursor-not-allowed' : ''"
                         class="ml-2 text-xs">Ver</span>
@@ -452,6 +454,11 @@ export default {
 
   },
   methods: {
+    handleChangeSeller() {
+      if (!this.form.selectedUsersToPermissions.some(item => item.id == this.form.owner_id)) {
+        this.addToSelectedUsers(this.form.owner_id, true);
+      }
+    },
     handleDateRange(range) {
       this.form.start_date = range[0];
       this.form.limit_date = range[1];
@@ -584,9 +591,12 @@ export default {
 
       this.form.selectedUsersToPermissions.splice(index, 1);
     },
-    addToSelectedUsers(userId) {
+    addToSelectedUsers(userId, allPermissions = false) {
       const user = this.users.find((item) => item.id === userId);
-      const defaultPermissions = [false, true, false, false, true];
+      let defaultPermissions = [false, true, false, false, true];
+      if (allPermissions) {
+        defaultPermissions = [true, true, true, true, true];
+      }
       let foundUser = {
         id: user.id,
         name: user.name,
@@ -696,6 +706,7 @@ export default {
       } else {
         this.selectAuthUser();
         this.editAccesFlag = true;
+        this.handleChangeSeller();
       }
     },
   },

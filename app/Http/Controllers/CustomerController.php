@@ -29,7 +29,7 @@ class CustomerController extends Controller
     {
         $request->validate([
             'name' => 'required|string',
-            'rfc' => 'required|string',
+            'rfc' => 'required|unique:customers|string',
             'contacts' => 'array|min:1',
             'invoicing_method' => 'required',
             'currency' => 'required',
@@ -83,7 +83,7 @@ class CustomerController extends Controller
     {
         $request->validate([
             'name' => 'required|string',
-            'rfc' => 'required|string',
+            'rfc' => 'required|string|unique:customers,rfc,'.$customer->id,
             'contacts' => 'required|array|min:1',
             'invoicing_method' => 'required',
             'payment_method' => 'required',

@@ -13,7 +13,7 @@
             </div>
             <div class="lg:flex justify-between mt-5 mx-2 lg:mx-14">
                 <div class="md:w-full mr-2 flex items-center">
-                    <el-select v-model="selectedProject" clearable filterable placeholder="Buscar proyecto"
+                    <el-select v-model="selectedProject"  filterable placeholder="Buscar proyecto"
                         class="w-2/3 lg:w-1/2 mr-2" no-data-text="No hay proyectos registrados"
                         no-match-text="No se encontraron coincidencias">
                         <el-option v-for="item in projects" :key="item.id" :label="item.name" :value="item.id" />
@@ -49,7 +49,8 @@
                                 class="fa-solid fa-pen"></i></SecondaryButton>
                     </div>
                     <div v-if="currentTab == 2 || currentTab == 3" class="flex space-x-2 w-full justify-end">
-                        <PrimaryButton @click="$inertia.get(route('pms.tasks.create', { projectId: project.data.id ?? 1 }))">
+                        <PrimaryButton
+                            @click="$inertia.get(route('pms.tasks.create', { projectId: project.data.id ?? 1 }))">
                             Nueva
                             tarea</PrimaryButton>
                     </div>
@@ -232,10 +233,8 @@
             <!-- ------------- Cronograma Starts 3 ------------- -->
             <div v-if="currentTab == 3" class="text-left text-sm items-center overflow-x-auto">
                 <GanttDiagramMonth v-if="period === 'Mes'" :currentProject="project.data" :currentDate="currentDate" />
-
                 <GanttDiagramBimester v-if="period === 'Bimestre'" :currentProject="project.data"
                     :currentDate="currentDate" />
-
                 <div class="text-right mr-9">
                     <div class="border border-[#9A9A9A] rounded-md inline-flex justify-end mt-4">
                         <p :class="period == 'Mes' ? 'bg-primary text-white rounded-sm' : 'border-[#9A9A9A]'
@@ -356,6 +355,8 @@ export default {
                 if (response.status === 200) {
                     const taskIndex = this.project.data.tasks.findIndex(item => item.id === this.draggingTaskId);
                     this.project.data.tasks[taskIndex].status = status;
+                    this.project.data.tasks[taskIndex].is_paused = 0;
+                    this.project.data.tasks[taskIndex].pausa_reazon = null;
                 }
             } catch (error) {
                 console.log(error);
@@ -390,7 +391,7 @@ export default {
             if (this.project.data && this.project.data.tasks.length > 0) {
                 const firstTask = this.project.data.tasks[0];
                 if (firstTask && firstTask.start_date) {
-                    this.currentDate = new Date(firstTask.start_date);
+                    this.currentDate = new Date(firstTask.start_date_raw);
                 }
             }
         },

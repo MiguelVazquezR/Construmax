@@ -55,6 +55,6 @@ class PaymentMonitor extends Model implements HasMedia
 
     public function contact()
     {
-        return $this->morphOne(Contact::class, 'contactable');
+        return $this->belongsTo(Contact::class);
     }
 }

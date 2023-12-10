@@ -14,7 +14,7 @@
 
             <div class="lg:flex justify-between mt-5 mx-2 lg:mx-14">
                 <div class="md:w-full mr-2 flex items-center">
-                    <el-select v-model="selectedCustomer" clearable filterable placeholder="Buscar proyecto"
+                    <el-select v-model="selectedCustomer"  filterable placeholder="Buscar proyecto"
                         class="w-full lg:w-1/2" no-data-text="No hay clientes registrados"
                         no-match-text="No se encontraron coincidencias">
                         <el-option v-for="item in customers" :key="item.id" :label="item.name" :value="item.id" />

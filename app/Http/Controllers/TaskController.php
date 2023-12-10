@@ -135,7 +135,7 @@ class TaskController extends Controller
             $user = User::find($mention['id']);
             $user->notify(new MentionInCommentNotification('Tarea', $task->name, 'projects', route('pms.tasks.show', $task), auth()->user()->name));
         }
-        
+
         return response()->json(['item' => $comment->fresh('user')]);
     }
 
@@ -159,7 +159,11 @@ class TaskController extends Controller
 
     public function updateStatus(Task $task, Request $request)
     {
-        $task->update(['status' => $request->status]);
+        $task->update([
+            'status' => $request->status,
+            'pausa_reazon' => null,
+            'is_paused' => 0,
+        ]);
         $this->handleUpdatedTaskStatus($task->project_id);
 
         return response()->json([]);

@@ -219,5 +219,6 @@ return [
         'meeting_date' => 'fecha de cita',
         'meeting_via' => 'vía de cita',
         'photo' => 'foto',
+        'employee_properties.phone' => 'teléfono',
     ],
 ]; 

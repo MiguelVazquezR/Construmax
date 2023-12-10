@@ -50,8 +50,8 @@
           <InputError :message="form.errors.title" />
         </div>
         <div>
-          <InputLabel value="Participante(s) *" class="ml-2" />
-          <el-select class="w-full" v-model="form.participants" clearable filterable multiple
+          <InputLabel value="Participante(s)" class="ml-2" />
+          <el-select class="w-full" v-model="form.participants"  filterable multiple
             placeholder="Seleccionar participantes" no-data-text="No hay usuarios registrados"
             no-match-text="No se encontraron coincidencias">
             <el-option v-for="user in users" :key="user.id" :label="user.name" :value="user.id">
@@ -103,12 +103,12 @@
             <InputError :message="form.errors.repeater" />
           </div> -->
         <div class="col-span-full lg:col-span-1">
-          <InputLabel value="Ubicación *" class="ml-2" />
+          <InputLabel value="Ubicación" class="ml-2" />
           <input v-model="form.location" class="input" type="text" placeholder="Agregar ubicación" />
           <InputError :message="form.errors.location" />
         </div>
         <div class="col-span-full">
-          <InputLabel value="Descripción *" class="ml-2" />
+          <InputLabel value="Descripción" class="ml-2" />
           <textarea v-model="form.description" class="input h-24"> </textarea>
           <InputError :message="form.errors.description" />
         </div>
@@ -141,11 +141,11 @@
       <!-- ------------- Tarea .............. -->
       <section class="grid grid-cols-2 gap-x-4 gap-y-2" v-else>
         <div>
-          <InputLabel value="Título del evento *" class="ml-2" />
+          <InputLabel value="Título de la tarea *" class="ml-2" />
           <input v-model="form.title" class="input" type="text" placeholder="Agregar título" />
           <InputError :message="form.errors.title" />
         </div>
-        <div class="flex items-center">
+        <div class="flex items-center col-span-full">
           <div class="lg:mt-0">
             <InputLabel value="Fecha *" class="ml-2" />
             <el-date-picker v-model="form.start_date" type="date" placeholder="Fecha *" :disabled-date="disabledDate" />
@@ -170,7 +170,7 @@
         </div>
         <!-- <div>
             <label class="block">Repetir</label>
-            <el-select class="w-full mt-2" v-model="form.repeater" clearable placeholder="Seleccionar"
+            <el-select class="w-full mt-2" v-model="form.repeater"  placeholder="Seleccionar"
               no-data-text="No hay opciones registradas" no-match-text="No se encontraron coincidencias">
               <el-option v-for="repeater in repeaters" :key="repeater" :label="repeater" :value="repeater" />
             </el-select>
@@ -184,7 +184,7 @@
         <!-- <div>
             <label class="block">Recordatorio</label>
             <div class="flex items-center">
-              <el-select class="w-1/2 mt-2" v-model="form.reminder" clearable placeholder="Seleccionar"
+              <el-select class="w-1/2 mt-2" v-model="form.reminder"  placeholder="Seleccionar"
                 no-data-text="No hay opciones registradas" no-match-text="No se encontraron coincidencias">
                 <el-option v-for="reminder in reminders" :key="reminder" :label="reminder" :value="reminder" />
               </el-select>

@@ -35,14 +35,14 @@ class PaymentMonitorController extends Controller
         $request->validate([
             'opportunity_id' => 'required',
             'customer_id' => 'required',
-            'branch' => 'required|string',
+            'branch' => 'required|string|max:255',
             'contact_id' => 'required',
-            'contact_name' => 'required|string',
-            'contact_phone' => 'required|string',
+            // 'contact_name' => 'required|string',
+            // 'contact_phone' => 'required|string',
             'paid_at' => 'required',
-            'amount' => 'required',
-            'payment_method' => 'required|string',
-            'concept' => 'required|string',
+            'amount' => 'required|numeric|min:0|max:999999.99',
+            'payment_method' => 'required|string|max:255',
+            'concept' => 'required|string|max:255',
             'notes' => 'nullable|string',
         ]);
 
@@ -72,8 +72,6 @@ class PaymentMonitorController extends Controller
     {
         $payment_monitor = PaymentMonitorResource::make(PaymentMonitor::with('seller', 'opportunity', 'customer', 'contact', 'media')->find($payment_monitor_id));
 
-        // return $payment_monitor;
-
         return inertia('CRM/PaymentMonitor/Show', compact('payment_monitor'));
     }
 
@@ -84,8 +82,6 @@ class PaymentMonitorController extends Controller
         $opportunities = OpportunityResource::collection(Opportunity::with('customer')->latest()->get());
         $customers = CustomerResource::collection(Customer::with('contacts')->latest()->get());
 
-        // return $payment_monitor;
-
         return inertia('CRM/PaymentMonitor/Edit', compact('payment_monitor', 'opportunities', 'customers'));
     }
 
@@ -95,14 +91,14 @@ class PaymentMonitorController extends Controller
         $request->validate([
             'opportunity_id' => 'required',
             'customer_id' => 'required',
-            'branch' => 'required|string',
+            'branch' => 'required|string|max:255',
             'contact_id' => 'required',
-            'contact_name' => 'required|string',
-            'contact_phone' => 'required|string',
+            // 'contact_name' => 'required|string',
+            // 'contact_phone' => 'required|string',
             'paid_at' => 'required',
-            'amount' => 'required',
-            'payment_method' => 'required|string',
-            'concept' => 'required|string',
+            'amount' => 'required|numeric|min:0|max:999999.99',
+            'payment_method' => 'required|string|max:255',
+            'concept' => 'required|string|max:255',
             'notes' => 'nullable|string',
         ]);
 
@@ -126,14 +122,14 @@ class PaymentMonitorController extends Controller
         $request->validate([
             'opportunity_id' => 'required',
             'customer_id' => 'required',
-            'branch' => 'required|string',
+            'branch' => 'required|string|max:255',
             'contact_id' => 'required',
-            'contact_name' => 'required|string',
-            'contact_phone' => 'required|string',
+            // 'contact_name' => 'required|string',
+            // 'contact_phone' => 'required|string',
             'paid_at' => 'required',
-            'amount' => 'required',
-            'payment_method' => 'required|string',
-            'concept' => 'required|string',
+            'amount' => 'required|numeric|min:0|max:999999.99',
+            'payment_method' => 'required|string|max:255',
+            'concept' => 'required|string|max:255',
             'notes' => 'nullable|string',
         ]);
 

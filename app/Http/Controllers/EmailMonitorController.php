@@ -41,10 +41,10 @@ class EmailMonitorController extends Controller
             'customer_id' => 'required',
             'branch' => 'required',
             'contact_id' => 'required',
-            'contact_name' => 'required',
+            // 'contact_name' => 'required',
             'contact_email' => 'required',
-            'subject' => 'required',
-            'content' => 'required',
+            'subject' => 'required|string|max:255',
+            'content' => 'required|string',
         ]);
 
         $email_monitor = EmailMonitor::create($request->all() + ['seller_id' => auth()->id()]);
@@ -63,7 +63,7 @@ class EmailMonitorController extends Controller
         $email_monitor->save();
 
         // enviar correo a contacto
-        if (app()->environment() == 'production' && $request->send_mail) {
+        if (app()->environment() == 'local' && $request->send_mail) {
             Mail::to($request->contact_email)->send(new EmailMonitorTemplateMail($request->subject, $request->content));
         }
 
@@ -73,7 +73,7 @@ class EmailMonitorController extends Controller
     
     public function show($email_monitor_id)
     {
-        $email_monitor = EmailMonitorResource::make(EmailMonitor::with('seller', 'opportunity', 'customer')->find($email_monitor_id));
+        $email_monitor = EmailMonitorResource::make(EmailMonitor::with('seller', 'opportunity', 'customer', 'contact')->find($email_monitor_id));
 
         return inertia('CRM/EmailMonitor/Show', compact('email_monitor'));
     }

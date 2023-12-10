@@ -50,12 +50,12 @@ class ProjectController extends Controller
             'service_type' => 'required|string',
             'is_strict' => 'boolean',
             'is_internal' => 'boolean',
-            'budget' => 'required|numeric|min:0',
+            'budget' => 'required|numeric|min:0|max:999999.99',
             'start_date' => 'required|date',
             'limit_date' => 'required|date',
             'project_group_id' => 'required|numeric|min:1',
             'user_id' => 'required|numeric|min:1',
-            'contact_id' => 'required|numeric|min:1',
+            'contact_id' => $request->is_internal ? 'nullable' : 'required|numeric|min:1',
             'opportunity_id' => [Rule::requiredIf(function () use ($request) {
                 return !$request->input('is_internal');
             })],
@@ -96,7 +96,7 @@ class ProjectController extends Controller
 
     public function show(Project $project)
     {
-        $project = ProjectResource::make(Project::with(['tasks' => ['users', 'project', 'user'], 'projectGroup', 'opportunity.customer', 'tags', 'users', 'owner', 'contact', 'user'])->find($project->id));
+        $project = ProjectResource::make(Project::with(['tasks' => ['users', 'project', 'user', 'comments'], 'projectGroup', 'opportunity.customer', 'tags', 'users', 'owner', 'contact', 'user'])->find($project->id));
         $projects = Project::latest()->get(['id', 'name']);
         $users = User::all();
         $defaultTab = request('defaultTab');
@@ -128,12 +128,12 @@ class ProjectController extends Controller
             'service_type' => 'required|string',
             'is_strict' => 'boolean',
             'is_internal' => 'boolean',
-            'budget' => 'required|numeric|min:0',
+            'budget' => 'required|numeric|min:0|max:999999.99',
             'start_date' => 'required|date',
             'limit_date' => 'required|date',
             'project_group_id' => 'required|numeric|min:1',
             'user_id' => 'required|numeric|min:1',
-            'contact_id' => 'required|numeric|min:1',
+            'contact_id' => $request->is_internal ? 'nullable' : 'required|numeric|min:1',
             'opportunity_id' => [Rule::requiredIf(function () use ($request) {
                 return !$request->input('is_internal');
             })],
@@ -181,12 +181,12 @@ class ProjectController extends Controller
             'service_type' => 'required|string',
             'is_strict' => 'boolean',
             'is_internal' => 'boolean',
-            'budget' => 'required|numeric|min:0',
+            'budget' => 'required|numeric|min:0|max:999999.99',
             'start_date' => 'required|date',
             'limit_date' => 'required|date',
             'project_group_id' => 'required|numeric|min:1',
             'user_id' => 'required|numeric|min:1',
-            'contact_id' => 'required|numeric|min:1',
+            'contact_id' => $request->is_internal ? 'nullable' : 'required|numeric|min:1',
             'opportunity_id' => [Rule::requiredIf(function () use ($request) {
                 return !$request->input('is_internal');
             })],

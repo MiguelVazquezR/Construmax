@@ -125,10 +125,11 @@ export default {
       selectedImage: null,
       form,
       departments: [
+        "Administración y Ventas",
         "Construcción",
         "Costos y presupuestos",
         "Mantenimiento",
-        "Ventas",
+        "Obras",
       ],
     };
   },

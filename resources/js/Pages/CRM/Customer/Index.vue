@@ -25,7 +25,7 @@
             </el-dropdown-menu>
           </template>
         </el-dropdown>
-        <PrimaryButton v-else>Nuevo cliente</PrimaryButton>
+        <PrimaryButton @click="$inertia.get(route('crm.customers.create'))" v-else>Nuevo cliente</PrimaryButton>
       </div>
     </div>
 

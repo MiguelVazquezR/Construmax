@@ -138,7 +138,7 @@ export default {
         "Construcción",
         "Costos y presupuestos",
         "Mantenimiento",
-        "Ventas",
+        "Administración y Ventas",
       ],
     };
   },

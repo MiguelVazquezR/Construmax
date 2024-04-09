@@ -220,5 +220,6 @@ return [
         'meeting_via' => 'vía de cita',
         'photo' => 'foto',
         'employee_properties.phone' => 'teléfono',
+        'seller_id' => 'responsable',
     ],
 ]; 

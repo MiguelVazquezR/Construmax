@@ -47,7 +47,7 @@
           placeholder="Seleccione" no-data-text="No hay vendedores registrados"
           no-match-text="No se encontraron coincidencias">
           <el-option v-for="seller in users.filter(
-            (user) => user.employee_properties?.department == 'Ventas'
+            (user) => user.employee_properties?.department == 'Administración y Ventas'
           )" :key="seller" :label="seller.name" :value="seller.id">
             <div v-if="$page.props.jetstream.managesProfilePhotos"
               class="flex text-sm rounded-full items-center mt-[3px]">

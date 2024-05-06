@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Resources\TaskResource;
 use App\Models\Comment;
+use App\Models\Opportunity;
 use App\Models\Project;
 use App\Models\Task;
 use App\Models\User;
@@ -200,6 +201,28 @@ class TaskController extends Controller
         if ($project->tasks->where('status', 'Terminada')->count() === $project->tasks->count()) {
             $project->finished_at = now();
             $project->save();
+
+            if ( $project->opportunity_id == null ) {
+
+                // Se crea una opportunidad o presupuesto si el proyecto aun no tiene ------------------------------
+                // -------------------------------------------------------------------------------------------------
+                $opportunity = Opportunity::create([
+                    'name' => $project->name,
+                    'status' => 'Nueva', //se cambió el nombre a trabajo terminado pero en base de datos se guarda como nueva
+                    'seller_id' => $project->owner_id,
+                    'amount' => $project->budget,
+                    'priority' => 'Baja',
+                    'start_date' => $project->start_date,
+                    'close_date' => $project->limit_date,
+                    'service_type' => $project->service_type,
+                    'user_id' => auth()->id(),
+                ]);
+                
+                // guarda el id de la oportunidad recien creada en el proyecto
+                $project->opportunity_id = $opportunity->id;
+                $project->save();
+            }
+
         } else if ($project->finished_at !== null) {
             $project->finished_at = null;
             $project->save();

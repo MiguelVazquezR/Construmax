@@ -149,7 +149,7 @@
         <InputError :message="form.errors.address" />
       </div>
       <div v-if="!form.is_internal">
-        <InputLabel value="OP *" class="ml-2" />
+        <InputLabel value="OP" class="ml-2" />
         <el-select v-model="form.opportunity_id"  placeholder="Seleccione" class="w-full mt-1"
           no-data-text="No hay opciones para mostrar" no-match-text="No se encontraron coincidencias">
           <el-option v-for="(item, index) in opportunities" :key="item.id" :label="item.name" :value="item.id" />

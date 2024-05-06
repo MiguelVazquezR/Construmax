@@ -56,9 +56,10 @@ class ProjectController extends Controller
             'project_group_id' => 'required|numeric|min:1',
             'user_id' => 'required|numeric|min:1',
             'contact_id' => $request->is_internal ? 'nullable' : 'required|numeric|min:1',
-            'opportunity_id' => [Rule::requiredIf(function () use ($request) {
-                return !$request->input('is_internal');
-            })],
+            // 'opportunity_id' => [Rule::requiredIf(function () use ($request) {
+            //     return !$request->input('is_internal');
+            // })],
+            'opportunity_id' => 'nullable',
             'owner_id' => 'required|numeric|min:1',
         ]);
 
@@ -134,9 +135,10 @@ class ProjectController extends Controller
             'project_group_id' => 'required|numeric|min:1',
             'user_id' => 'required|numeric|min:1',
             'contact_id' => $request->is_internal ? 'nullable' : 'required|numeric|min:1',
-            'opportunity_id' => [Rule::requiredIf(function () use ($request) {
-                return !$request->input('is_internal');
-            })],
+            // 'opportunity_id' => [Rule::requiredIf(function () use ($request) {
+            //     return !$request->input('is_internal');
+            // })],
+            'opportunity_id' => 'nullable',
             'owner_id' => 'required|numeric|min:1',
         ]);
 
@@ -187,9 +189,10 @@ class ProjectController extends Controller
             'project_group_id' => 'required|numeric|min:1',
             'user_id' => 'required|numeric|min:1',
             'contact_id' => $request->is_internal ? 'nullable' : 'required|numeric|min:1',
-            'opportunity_id' => [Rule::requiredIf(function () use ($request) {
-                return !$request->input('is_internal');
-            })],
+            // 'opportunity_id' => [Rule::requiredIf(function () use ($request) {
+            //     return !$request->input('is_internal');
+            // })],
+            'opportunity_id' => 'nullable',
             'owner_id' => 'required|numeric|min:1',
         ]);
 

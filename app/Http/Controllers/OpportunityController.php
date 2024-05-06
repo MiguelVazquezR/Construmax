@@ -18,8 +18,9 @@ class OpportunityController extends Controller
 {
     public function index()
     {
-        $opportunities = OpportunityResource::collection(Opportunity::with('contact', 'opportunityTasks')->latest()->get());
+        $opportunities = OpportunityResource::collection(Opportunity::with('customer:id,name')->latest()->get());
 
+        // return $opportunities;
         return inertia('CRM/Opportunity/Index', compact('opportunities'));
     }
 

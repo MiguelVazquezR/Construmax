@@ -144,7 +144,7 @@
         <InputError :message="form.errors.address" />
       </div>
       <div v-if="!form.is_internal">
-        <InputLabel value="OP *" class="ml-2" />
+        <InputLabel value="OP" class="ml-2" />
         <el-select v-model="form.opportunity_id"  placeholder="Seleccione" class="w-full mt-1"
           no-data-text="El cliente no tiene oportunidades disponibles o las que existen ya han sido asignadas a un proyecto"
           no-match-text="No se encontraron coincidencias">

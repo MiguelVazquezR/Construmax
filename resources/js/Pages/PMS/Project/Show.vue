@@ -126,10 +126,11 @@
                         project.data.address
                     }}</span>
                     <span v-if="!project.data.is_internal" class="text-gray-500 my-2">OP</span>
-                    <Link :href="route('crm.opportunities.show', project.data.opportunity.id ?? 1)"
-                        v-if="!project.data.is_internal" class="text-primary underline">
-                    <span>{{ 'OP-' + project.data.opportunity.id }}</span>
+                    <Link :href="route('crm.opportunities.show', project.data.opportunity?.id ?? 1)"
+                        v-if="!project.data.is_internal && project.data.opportunity" class="text-primary underline">
+                    <span>{{ 'OP-' + project.data.opportunity?.id }}</span>
                     </Link>
+                    <span v-else>Sin oportunidad</span>
                 </div>
 
                 <div
@@ -232,9 +233,10 @@
             <!-- ------------- Tasks ends 2 ------------- -->
             <!-- ------------- Cronograma Starts 3 ------------- -->
             <div v-if="currentTab == 3" class="text-left text-sm items-center overflow-x-auto">
-                <GanttDiagramMonth v-if="period === 'Mes'" :currentProject="project.data" :currentDate="currentDate" />
-                <GanttDiagramBimester v-if="period === 'Bimestre'" :currentProject="project.data"
+                <GanttDiagramMonth v-if="period === 'Mes' && project.data.tasks?.length" :currentProject="project.data" :currentDate="currentDate" />
+                <GanttDiagramBimester v-if="period === 'Bimestre' && project.data.tasks?.length" :currentProject="project.data"
                     :currentDate="currentDate" />
+                
                 <div class="text-right mr-9">
                     <div class="border border-[#9A9A9A] rounded-md inline-flex justify-end mt-4">
                         <p :class="period == 'Mes' ? 'bg-primary text-white rounded-sm' : 'border-[#9A9A9A]'
@@ -357,6 +359,14 @@ export default {
                     this.project.data.tasks[taskIndex].status = status;
                     this.project.data.tasks[taskIndex].is_paused = 0;
                     this.project.data.tasks[taskIndex].pausa_reazon = null;
+
+                    if ( this.project.data.tasks.filter(task => task.status === 'Terminada').length == this.project.data.tasks.length ) {
+                        this.$notify({
+                            title: "Correcto",
+                            message: "Se han terminado todas las tareas del ticket y se ha creado un presupuesto! Ve a editarlo si no lo has hecho",
+                            type: "success",
+                        });
+                    }
                 }
             } catch (error) {
                 console.log(error);

@@ -1,5 +1,6 @@
 <template>
-  <table class="border border-[#9A9A9A] default w-full">
+<div class="overflow-auto">
+  <table class="border border-[#9A9A9A] default w-[1700px]">
     <tr>
       <th
         class="border-y border-[#9A9A9A] text-left pl-7 py-3 font-thin relative w-1/4"
@@ -61,7 +62,7 @@
         </div>
       </th>
       <td class="border-x border-[#CCCCCC]">
-        <div class="w-[93%] mx-auto">
+        <div class="w-[100%] mx-auto">
           <el-tooltip
             placement="top"
           >
@@ -83,6 +84,8 @@
       </td>
     </tr>
   </table>
+  </div>
+  <p v-if="this.currentDate == undefined">No hay tareas en este proyecto</p>
 </template>
 
 <script>

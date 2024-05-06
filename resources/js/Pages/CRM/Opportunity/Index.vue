@@ -37,9 +37,9 @@
 
     <!-- ------------ Kanban view starts ----------------- -->
     <div v-if="type_view === 'Kanban'" class="mx-4 contenedor text-center text-sm my-16 pb-9">
-      <!-- ---- Nueva --- -->
+      <!-- ---- Trabajo terminado --- -->
       <section class="seccion">
-        <h2 class="text-[#9A9A9A] bg-[#D9D9D9] border border-[#9A9A9A] py-1">Nueva</h2>
+        <h2 class="text-[#9A9A9A] bg-[#D9D9D9] border border-[#9A9A9A] py-1">Trabajo terminado</h2>
         <div class="border border-[#9A9A9A] p-2 min-h-full">
           <!-- <p class="text-[#9A9A9A] cursor-pointer mt-1">+ Agregar</p> -->
           <p class="text-primary text-xl my-2">
@@ -60,10 +60,10 @@
         </div>
       </section>
 
-      <!-- ---- Pendiente de aprobación --- -->
+      <!-- ---- Presupuesto --- -->
       <section class="seccion">
         <h2 class="text-[#C88C3C] bg-[#F3FD85] border border-[#9A9A9A] py-1">
-          Pendiente de aprobación
+          Presupuesto
         </h2>
         <div class="border border-[#9A9A9A] p-2 min-h-full">
           <!-- <p class="text-[#9A9A9A] cursor-pointer mt-1">+ Agregar</p> -->
@@ -87,10 +87,10 @@
         </div>
       </section>
 
-      <!-- ---- Cerrada --- -->
+      <!-- ---- Facturado --- -->
       <section class="seccion">
         <h2 class="text-[#FD8827] bg-[#FEDBBD] border border-[#9A9A9A] py-1">
-          Cerrada
+          Facturado
         </h2>
         <div class="border border-[#9A9A9A] p-2 min-h-full">
           <!-- <p class="text-[#9A9A9A] cursor-pointer mt-1">+ Agregar</p> -->

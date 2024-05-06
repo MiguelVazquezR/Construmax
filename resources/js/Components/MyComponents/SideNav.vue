@@ -55,7 +55,7 @@ export default {
                             active: route().current('crm.customers.*'),
                         },
                         {
-                            label: 'Oportunidades',
+                            label: 'Presupuestos',
                             route: route('crm.opportunities.index'),
                             show: this.$page.props.auth.user.permissions.includes('Ver oportunidades'),
                             active: route().current('crm.opportunities.*') || route().current('crm.opportunity-tasks.*'),
@@ -82,7 +82,7 @@ export default {
                             show: true,
                         },
                         {
-                            label: 'Proyectos',
+                            label: 'Tickets',
                             route: route('pms.projects.index'),
                             active: route().current('pms.projects.*') || route().current('pms.tasks.*'),
                             show: this.$page.props.auth.user.permissions.includes('Ver proyectos'),

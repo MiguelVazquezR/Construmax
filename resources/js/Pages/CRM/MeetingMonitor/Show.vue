@@ -40,9 +40,9 @@
     <div v-if="currentTab == 1" class="md:grid grid-cols-2 border-b-2 border-[#cccccc] text-sm">
       <div class="grid grid-cols-2 text-left p-4 md:ml-10 border-r-2 border-gray-[#cccccc] items-center">
 
-        <p class="font-bold col-span-2 mb-2">Información de la oportunidad</p>
+        <p class="font-bold col-span-2 mb-2">Información de el presupuesto</p>
 
-        <span class="text-gray-500 my-2">Folio de oportunidad</span>
+        <span class="text-gray-500 my-2">Folio de presupuesto</span>
         <a class="hover:underline text-primary"
           :href="route('crm.opportunities.show', meeting_monitor.data.opportunity?.id)">
           <span>{{ meeting_monitor.data.opportunity?.folio }} ({{ meeting_monitor.data.opportunity?.name }})</span></a>

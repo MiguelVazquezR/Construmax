@@ -78,7 +78,7 @@ class OpportunityController extends Controller
         // etiquetas
         // Obtiene los IDs de las etiquetas seleccionadas desde el formulario
         $tagIds = $request->input('tags', []);
-        // Adjunta las etiquetas al proyecto utilizando la relación polimórfica
+        // Adjunta las etiquetas al ticket utilizando la relación polimórfica
         $opportunity->tags()->attach($tagIds);
 
         // archivos adjuntos ----------
@@ -125,9 +125,9 @@ class OpportunityController extends Controller
             'asigned_id' => $request->seller_id,
         ]);
 
-        //Crea el registro de una actividad para el historial de esa oportunidad --------------------------
+        //Crea el registro de una actividad para el historial de ese presupuesto --------------------------
         Activity::create([
-            'description' => 'creó la oportunidad',
+            'description' => 'creó el presupuesto',
             'user_id' => auth()->id(),
             'opportunity_id' => $opportunity->id,
         ]);
@@ -184,7 +184,7 @@ class OpportunityController extends Controller
         }
 
         // permisos
-        // Eliminar todos los permisos actuales para la oportunidad
+        // Eliminar todos los permisos actuales para el presupuesto
         $opportunity->users()->detach();
         foreach ($request->selectedUsersToPermissions as $user) {
             $allowedUser = [
@@ -196,7 +196,7 @@ class OpportunityController extends Controller
         // etiquetas
         // Obtiene los IDs de las etiquetas seleccionadas desde el formulario
         $tagIds = $request->input('tags', []);
-        // Adjunta las etiquetas a la oportunidad utilizando la relación polimórfica
+        // Adjunta las etiquetas a el presupuesto utilizando la relación polimórfica
         $opportunity->tags()->sync($tagIds);
 
         return to_route('crm.opportunities.show', $opportunity->id);
@@ -232,7 +232,7 @@ class OpportunityController extends Controller
         }
 
         // permisos
-        // Eliminar todos los permisos actuales para la oportunidad
+        // Eliminar todos los permisos actuales para el presupuesto
         $opportunity->users()->detach();
         foreach ($request->selectedUsersToPermissions as $user) {
             $permissions_array = array_map(function ($item) {
@@ -248,7 +248,7 @@ class OpportunityController extends Controller
         // etiquetas
         // Obtiene los IDs de las etiquetas seleccionadas desde el formulario
         $tagIds = $request->input('tags', []);
-        // Adjunta las etiquetas a la oportunidad utilizando la relación polimórfica
+        // Adjunta las etiquetas a el presupuesto utilizando la relación polimórfica
         $opportunity->tags()->sync($tagIds);
 
         // archivos adjuntos
@@ -259,21 +259,21 @@ class OpportunityController extends Controller
 
     public function destroy(Opportunity $opportunity)
     {
-        // eliminar tareas y comentarios de proyectos
+        // eliminar tareas y comentarios de tickets
         $tasks = $opportunity->project?->tasks ?? [];
         foreach ($tasks as $task) {
             $task->comments()->delete();
             $task->delete();
         }
         
-        // eliminar actividades y comentarios de oportunidad
+        // eliminar actividades y comentarios de presupuesto
         $tasks = $opportunity->opportunityTasks;
         foreach ($tasks as $task) {
             $task->comments()->delete();
             $task->delete();
         }
 
-        // eliminar oportunidad
+        // eliminar presupuesto
         $opportunity->delete();
 
         return to_route('crm.opportunities.index');
@@ -312,9 +312,9 @@ class OpportunityController extends Controller
             ]);
         }
         
-        //Crea el registro de una actividad para el historial de esa oportunidad
+        //Crea el registro de una actividad para el historial de ese presupuesto
         Activity::create([
-            'description' => 'cambió el estatus de la oportunidad a "' . $request->status . '"',
+            'description' => 'cambió el estatus de el presupuesto a "' . $request->status . '"',
             'user_id' => auth()->id(),
             'opportunity_id' => $opportunity->id,
         ]);
@@ -324,15 +324,15 @@ class OpportunityController extends Controller
         return response()->json(['item' => OpportunityResource::make($opportunity)]);
     }
 
-    //-----------Revisa si la oportunidad ya tiene una orden de venta creada, si no la tiene, redirecciona al formulario para crearla
+    //-----------Revisa si el presupuesto ya tiene una orden de venta creada, si no la tiene, redirecciona al formulario para crearla
     public function createProject(Request $request, $opportunity_id)
     {
         $opportunity = Opportunity::find($opportunity_id);
 
-        $project = Project::where('opportunity_id', $opportunity_id)->first(); //Busca un proyecto de esta oportunidad
+        $project = Project::where('opportunity_id', $opportunity_id)->first(); //Busca un ticket de este presupuesto
 
         if ($project != null) {
-            return response()->json(['message' => 'Ya existe un proyecto de esta oportunidad']);
+            return response()->json(['message' => 'Ya existe un ticket de este presupuesto']);
         }
 
     }

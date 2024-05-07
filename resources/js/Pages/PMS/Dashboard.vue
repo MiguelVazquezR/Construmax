@@ -4,13 +4,13 @@
             <h1>Inicio</h1>
 
             <!-- Estadistics -->
-            <h2 class="text-primary lg:text-xl text-lg lg:mt-6 mt-6 font-bold">Proyectos en progreso</h2>
+            <h2 class="text-primary lg:text-xl text-lg lg:mt-6 mt-6 font-bold">Tickets en progreso</h2>
             <div class="lg:grid grid-cols-2 gap-5 mt-4 space-y-4 lg:space-y-0">
-                <StackedColumn100Chart :options="projecsProgressChartOptions" title="Progreso de proyectos"
+                <StackedColumn100Chart :options="projecsProgressChartOptions" title="Progreso de tickets"
                     icon="<i class='fa-regular fa-flag ml-2'></i>" />
                 <!-- <PieChart :options="taskStatusChartOptions" title="Estado de las Tareas"
                     icon='<i class="fa-solid fa-clipboard-list ml-2"></i>' /> -->
-                <DonutChart :options="projectGroupsChartOptions" title="Información de grupos de proyectos"
+                <DonutChart :options="projectGroupsChartOptions" title="Información de grupos de tickets"
                     icon='<i class="fa-solid fa-circle-nodes ml-2"></i>' />
                 <PolarAreaChart :options="tasksPrioritiesChartOptions" title="Estado de Prioridades"
                     icon='<i class="fa-solid fa-stopwatch ml-2"></i>' />
@@ -21,9 +21,9 @@
             <div class="lg:grid grid-cols-2 gap-5 mt-4 space-y-4 lg:space-y-0">
                 <!-- <PendentTasks
                     :tasks="[{ title: 'Alta IMSS de colaboradores nuevos', status: 'En curso', start_date: '12/09/2023', priority: 'Alta' }]" /> -->
-                <LateTasks v-if="this.$page.props.auth.user.permissions.includes('Crear proyectos')"
+                <LateTasks v-if="this.$page.props.auth.user.permissions.includes('Crear tickets')"
                     :tasks="[{ title: 'Alta IMSS de colaboradores nuevos', project: { project_name: 'Dalton Honda' }, late_days: 7, participants: [{ profile_photo_url: 'https://ui-avatars.com/api/?name=S+a&color=7F9CF5&background=EBF4FF', name: 'Miguel VR' }, { profile_photo_url: 'https://ui-avatars.com/api/?name=A+v&color=7F12F5&background=EB44FF', name: 'Angel VR' }] }]" />
-                <!-- <StackedBars100Chart :options="myProyectsProgressChartOptions" title="Mis proyectos"
+                <!-- <StackedBars100Chart :options="myProyectsProgressChartOptions" title="Mis tickets"
                     icon="<i class='fa-solid fa-chart-simple ml-2'></i>" /> -->
                 <StackedBars100Chart :options="myTasksProgressChartOptions" title="Progreso de mis tareas"
                     icon="<i class='fa-solid fa-bars-progress ml-2'></i>" />
@@ -142,7 +142,7 @@ export default {
     methods: {
         projectsWithAssignedTasks() {
             return this.projects_progress.filter(project => {
-                // Verifica si al menos una tarea en el proyecto tiene a tu usuario por su ID
+                // Verifica si al menos una tarea en el ticket tiene a tu usuario por su ID
                 return project.tasks.some(task => task.users.some(user => user.id === this.$page.props.auth.user.id));
             });
         },
@@ -154,7 +154,7 @@ export default {
                 counts[group.name] = 0;
             });
 
-            // Realiza el conteo de proyectos en cada grupo
+            // Realiza el conteo de tickets en cada grupo
             this.projects_progress.forEach(project => {
                 const groupName = project.project_group.name;
                 if (counts[groupName] !== undefined) {

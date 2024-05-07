@@ -18,7 +18,7 @@
                         <tr class="text-xs">
                             <th class="text-start">Usuario(s)</th>
                             <th class="text-start">Tarea</th>
-                            <th class="text-start">Proyecto</th>
+                            <th class="text-start">Ticket</th>
                             <th class="text-start">Atrasado por</th>
                         </tr>
                     </thead>

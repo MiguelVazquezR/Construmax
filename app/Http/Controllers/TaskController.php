@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Resources\TaskResource;
 use App\Models\Comment;
+use App\Models\Contact;
 use App\Models\Opportunity;
 use App\Models\Project;
 use App\Models\Task;
@@ -194,17 +195,17 @@ class TaskController extends Controller
 
     private function handleUpdatedTaskStatus($project_id)
     {
-        // Obtén el proyecto al que pertenece la tarea
+        // Obtén el ticket al que pertenece la tarea
         $project = Project::with('tasks')->find($project_id);
 
-        // Verifica si todas las tareas del proyecto están terminadas y actualiza propiedad finished_at
+        // Verifica si todas las tareas del ticket están terminadas y actualiza propiedad finished_at
         if ($project->tasks->where('status', 'Terminada')->count() === $project->tasks->count()) {
             $project->finished_at = now();
             $project->save();
 
-            if ( $project->opportunity_id == null ) {
-
-                // Se crea una opportunidad o presupuesto si el proyecto aun no tiene ------------------------------
+            if ($project->opportunity_id == null) {
+                $contact = Contact::find($project->contact_id);
+                // Se crea una opportunidad o presupuesto si el ticket aun no tiene ------------------------------
                 // -------------------------------------------------------------------------------------------------
                 $opportunity = Opportunity::create([
                     'name' => $project->name,
@@ -216,13 +217,18 @@ class TaskController extends Controller
                     'close_date' => $project->limit_date,
                     'service_type' => $project->service_type,
                     'user_id' => auth()->id(),
+                    'contact_id' => $project->contact_id,
+                    'customer_id' => $contact->contactable->id,
+                    'customer_name' => $contact->contactable->name,
+                    'contact_name' => $contact->name,
+                    'contact_phone' => $contact->phone,
+                    'branch' => $project->address,
                 ]);
-                
-                // guarda el id de la oportunidad recien creada en el proyecto
+
+                // guarda el id de el presupuesto recien creada en el ticket
                 $project->opportunity_id = $opportunity->id;
                 $project->save();
             }
-
         } else if ($project->finished_at !== null) {
             $project->finished_at = null;
             $project->save();

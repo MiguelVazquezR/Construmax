@@ -1,17 +1,17 @@
 <template>
-  <AppLayout title="Proyectos">
+  <AppLayout title="Tickets">
     <div class="flex justify-between text-lg mx-16 mt-11">
-      <span>Proyectos</span>
+      <span>Tickets</span>
     </div>
 
     <div class="flex justify-between mt-5 mx-1 lg:mx-16">
       <div class="w-1/3 relative">
-        <input @keyup.enter="handleSearch" v-model="inputSearch" class="input pr-8" placeholder="Buscar proyecto" />
+        <input @keyup.enter="handleSearch" v-model="inputSearch" class="input pr-8" placeholder="Buscar ticket" />
         <i class="fa-solid fa-magnifying-glass absolute top-2 right-4 text-xs text-gray2"></i>
       </div>
       <div>
-        <PrimaryButton v-if="this.$page.props.auth.user.permissions.includes('Crear proyectos')"
-          @click="$inertia.get(route('pms.projects.create'))" class="rounded-full">Nuevo proyecto
+        <PrimaryButton v-if="this.$page.props.auth.user.permissions.includes('Crear tickets')"
+          @click="$inertia.get(route('pms.projects.create'))" class="rounded-full">Nuevo ticket
         </PrimaryButton>
       </div>
     </div>
@@ -83,14 +83,14 @@
             <td class="text-left py-2">
               {{ project.finished_at ?? '--' }}
             </td>
-            <td v-if="$page.props.auth.user.permissions?.includes('Eliminar proyectos')"
+            <td v-if="$page.props.auth.user.permissions?.includes('Eliminar tickets')"
               class="text-left py-2 px-2 rounded-r-full">
               <i @click.stop="prepareToDelete(project)" class="fa-regular fa-trash-can text-primary cursor-pointer p-2"></i>
             </td>
           </tr>
         </tbody>
       </table>
-      <p v-else class="text-center text-gray2 mt-12">No hay proyectos registrados</p>
+      <p v-else class="text-center text-gray2 mt-12">No hay tickets registrados</p>
       <!-- --- pagination --- -->
       <div class="mt-4">
         <!-- <Pagination :pagination="projects" /> -->
@@ -98,10 +98,10 @@
     </div>
     <ConfirmationModal :show="showConfirmModal" @close="showConfirmModal = false">
       <template #title>
-        Eliminar proyecto
+        Eliminar ticket
       </template>
       <template #content>
-        Al eliminar el proyecto se perderán permanentemente las tareas y los archivos relacionados. ¿Deseas continuar?
+        Al eliminar el ticket se perderán permanentemente las tareas y los archivos relacionados. ¿Deseas continuar?
       </template>
       <template #footer>
         <div class="flex space-x-1">
@@ -161,7 +161,7 @@ export default {
       this.$inertia.delete(route('pms.projects.destroy', this.projectToDelete));
       this.$notify({
         title: "Éxito",
-        message: "Proyecto eliminado",
+        message: "Ticket eliminado",
         type: "success",
       });
       this.projectToDelete = null;

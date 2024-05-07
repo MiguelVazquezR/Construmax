@@ -96,7 +96,7 @@
         <h2 class="font-bold">Información de la tarea</h2>
         <div>
           <div class="flex space-x-2 justify-end items-center">
-            <label>Proyecto</label>
+            <label>Ticket</label>
             <input v-model="form.project_name" disabled class="input w-[80%]" type="text" />
             <InputError :message="form.errors.project_name" />
           </div>

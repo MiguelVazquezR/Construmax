@@ -26,7 +26,7 @@
 
       <div class="grid grid-cols-2 gap-x-4 gap-y-2">
         <div>
-          <InputLabel value="Oportunidad" class="ml-2" />
+          <InputLabel value="Presupuesto" class="ml-2" />
           <input :value="opportunityTask.opportunity.name" disabled class="input mt-1 cursor-not-allowed" type="text">
         </div>
         <div>

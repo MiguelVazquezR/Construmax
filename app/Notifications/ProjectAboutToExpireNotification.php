@@ -31,10 +31,10 @@ class ProjectAboutToExpireNotification extends Notification
     public function toMail(object $notifiable): MailMessage
     {
         return (new MailMessage)
-            ->subject('Proyecto por expirar')
+            ->subject('Ticket por expirar')
             ->markdown('emails.default-template', [
                 'greeting' => '¡Hola!',
-                'intro' => "Hoy es el día límite para terminar el proyecto {$this->project->name}",
+                'intro' => "Hoy es el día límite para terminar el ticket {$this->project->name}",
                 'url' => route('pms.projects.show', $this->project->id),
                 'salutation' => 'Saludos,',
             ]);
@@ -43,7 +43,7 @@ class ProjectAboutToExpireNotification extends Notification
     public function toArray(object $notifiable): array
     {
         return [
-            'description' => "Hoy es el día límite para terminar el proyecto <span class='text-primary'>{$this->project->name}</span>",
+            'description' => "Hoy es el día límite para terminar el ticket <span class='text-primary'>{$this->project->name}</span>",
             'module' => "projects",
             'url' => route('pms.projects.show', $this->project->id),
         ];

@@ -1,7 +1,7 @@
 <template>
-  <AppLayout title="Crear Oportunidad">
+  <AppLayout title="Crear Presupuesto">
     <div class="flex justify-between items-center text-lg mx-8 mt-8">
-      <b>Nueva oportunidad</b>
+      <b>Nuevo presupuesto</b>
       <Link :href="route('crm.opportunities.index')">
       <p class="flex items-center text-sm text-primary">
         <i class="fa-solid fa-arrow-left-long mr-2"></i>
@@ -12,8 +12,8 @@
 
     <form @submit.prevent="store" class="mx-8 mt-3 grid grid-cols-2 gap-x-4 gap-y-2">
       <div class="col-span-full lg:col-span-1">
-        <InputLabel value="Nombre de la oportunidad *" class="ml-2" />
-        <input v-model="form.name" type="text" class="input mt-1" placeholder="Asignar un nombre a la oportunidad"
+        <InputLabel value="Nombre del presupuesto *" class="ml-2" />
+        <input v-model="form.name" type="text" class="input mt-1" placeholder="Asignar un nombre a el presupuesto"
           required />
         <InputError :message="form.errors.name" />
       </div>
@@ -125,7 +125,7 @@
       <div class="mt-5 w-full">
         <div class="flex justify-between items-center mx-2">
           <InputLabel value="Etiquetas" />
-          <button v-if="$page.props.auth.user.permissions?.includes('Crear etiquetas de oportunidades')"
+          <button v-if="$page.props.auth.user.permissions?.includes('Crear etiquetas de presupuestos')"
             @click="showTagFormModal = true" type="button"
             class="rounded-full border border-primary w-4 h-4 flex items-center justify-center">
             <i class="fa-solid fa-plus text-primary text-[9px]"></i>
@@ -184,8 +184,8 @@
         </div>
       </div>
       <div v-if="form.status == 'Perdida'" class="w-full">
-        <label class="text-sm">Causa oportunidad perdida *
-          <el-tooltip content="Escribe la causa por la cual se PERDIÓ esta oportunidad" placement="right">
+        <label class="text-sm">Causa presupuesto perdido *
+          <el-tooltip content="Escribe la causa por la cual se PERDIÓ este presupuesto" placement="right">
             <i class="fa-regular fa-circle-question ml-2 text-primary text-xs"></i>
           </el-tooltip>
         </label>
@@ -193,7 +193,7 @@
         <InputError :message="form.errors.lost_oportunity_razon" />
       </div>
       <div class="w-full col-span-full md:col-span-1">
-        <label class="text-sm">Valor de oportunidad *
+        <label class="text-sm">Valor de presupuesto *
           <el-tooltip content="Monto esperado si se cierra la venta" placement="right">
             <i class="fa-regular fa-circle-question ml-2 text-primary text-xs"></i>
           </el-tooltip>
@@ -201,7 +201,7 @@
         <input v-model="form.amount" class="input" type="number" min="0" step="0.01" placeholder="Ingresa el monto" />
         <InputError :message="form.errors.amount" />
       </div>
-      <h2 class="font-bold text-sm my-2 col-span-full">Acceso a la oportunidad</h2>
+      <h2 class="font-bold text-sm my-2 col-span-full">Acceso a el presupuesto</h2>
       <div class="col-span-full text-sm">
         <div class="my-1">
           <input v-model="typeAccessProject" value="Public"
@@ -209,14 +209,14 @@
             name="typeAccessProject">
           <b>Público</b>
           <p class="text-[#9A9A9A] ml-7 text-xs">Los usuarios del portal solo pueden ver, seguir y comentar, mientras
-            que los usuarios del proyecto tendrán acceso directo.</p>
+            que los usuarios del ticket tendrán acceso directo.</p>
         </div>
         <div class="my-1">
           <input v-model="typeAccessProject" value="Private"
             class="checked:bg-primary focus:text-primary focus:ring-primary border-black mr-3" type="radio"
             name="typeAccessProject">
           <b>Privado</b>
-          <p class="text-[#9A9A9A] ml-7 text-xs">Solo los usuarios de proyecto pueden ver y acceder a este proyecto
+          <p class="text-[#9A9A9A] ml-7 text-xs">Solo los usuarios de ticket pueden ver y acceder a este ticket
           </p>
         </div>
       </div>
@@ -330,7 +330,7 @@
         <Link :href="route('crm.opportunities.index')">
         <CancelButton type="button">Cancelar</CancelButton>
         </Link>
-        <PrimaryButton :disabled="form.processing || (editAccesFlag && typeAccessProject == 'Public')">Crear oportunidad
+        <PrimaryButton :disabled="form.processing || (editAccesFlag && typeAccessProject == 'Public')">Crear presupuesto
         </PrimaryButton>
       </div>
     </form>
@@ -509,7 +509,7 @@ export default {
         onSuccess: () => {
           this.$notify({
             title: "Correcto",
-            message: "Se ha creado una nueva oportunidad",
+            message: "Se ha creado una nuevo presupuesto",
             type: "success",
           });
         },
@@ -588,7 +588,7 @@ export default {
       this.form.contact_id = null;
     },
     selectAdmins() {
-      // obtener los usuarios admin para que siempre aparezcan en los proyectos y dar todos los permisos
+      // obtener los usuarios admin para que siempre aparezcan en los tickets y dar todos los permisos
       let admins = this.users.filter((item) => item.employee_properties == null);
       admins.forEach((admin) => {
         const defaultPermissions = [true, true, true, true, true];
@@ -598,7 +598,7 @@ export default {
     },
     selectAuthUser() {
       if (this.$page.props.auth.user.employee_properties !== null) {
-        // obtener usuario que esta creando el proyecto para dar todos los permisos
+        // obtener usuario que esta creando el ticket para dar todos los permisos
         const user = this.users.find((item) => item.id === this.$page.props.auth.user.id);
         const defaultPermissions = [true, true, true, true, true];
         let authUser = {

@@ -76,7 +76,7 @@ class ProjectController extends Controller
             ];
             $project->users()->attach($user['id'], $allowedUser);
 
-            // notificar a usuarios que no sean el que crea el proyecto
+            // notificar a usuarios que no sean el que crea el ticket
             $_user = User::find($user['id']);
             if ($_user->id !== auth()->id()) {
                 $_user->notify(new NewProjectNotification($project, auth()->user()->name));
@@ -86,7 +86,7 @@ class ProjectController extends Controller
         // etiquetas
         // Obtiene los IDs de las etiquetas seleccionadas desde el formulario
         $tagIds = $request->input('tags', []);
-        // Adjunta las etiquetas al proyecto utilizando la relación polimórfica
+        // Adjunta las etiquetas al ticket utilizando la relación polimórfica
         $project->tags()->attach($tagIds);
 
         // archivos adjuntos
@@ -146,7 +146,7 @@ class ProjectController extends Controller
         $project->update($validated);
 
         // permisos
-        // Eliminar todos los permisos actuales para el proyecto
+        // Eliminar todos los permisos actuales para el ticket
         $project->users()->detach();
         foreach ($request->selectedUsersToPermissions as $user) {
             $allowedUser = [
@@ -154,7 +154,7 @@ class ProjectController extends Controller
             ];
             $project->users()->attach($user['id'], $allowedUser);
 
-            // notificar a usuarios que no sean el que edita el proyecto
+            // notificar a usuarios que no sean el que edita el ticket
             $_user = User::find($user['id']);
             if ($_user->id !== auth()->id()) {
                 $_user->notify(new UpdatedProjectNotification($project, auth()->user()->name));
@@ -164,7 +164,7 @@ class ProjectController extends Controller
         // etiquetas
         // Obtiene los IDs de las etiquetas seleccionadas desde el formulario
         $tagIds = $request->input('tags', []);
-        // Adjunta las etiquetas al proyecto utilizando la relación polimórfica
+        // Adjunta las etiquetas al ticket utilizando la relación polimórfica
         $project->tags()->sync($tagIds);
 
         return to_route('pms.projects.show', $project);
@@ -200,7 +200,7 @@ class ProjectController extends Controller
         $project->update($validated);
 
         // permisos
-        // Eliminar todos los permisos actuales para el proyecto
+        // Eliminar todos los permisos actuales para el ticket
         $project->users()->detach();
         foreach ($request->selectedUsersToPermissions as $user) {
             $permissions_array = array_map(function ($item) {
@@ -212,7 +212,7 @@ class ProjectController extends Controller
             ];
             $project->users()->attach($user['id'], $allowedUser);
 
-            // notificar a usuarios que no sean el que edita el proyecto
+            // notificar a usuarios que no sean el que edita el ticket
             $_user = User::find($user['id']);
             if ($_user->id !== auth()->id()) {
                 $_user->notify(new UpdatedProjectNotification($project, auth()->user()->name));
@@ -222,7 +222,7 @@ class ProjectController extends Controller
         // etiquetas
         // Obtiene los IDs de las etiquetas seleccionadas desde el formulario
         $tagIds = $request->input('tags', []);
-        // Adjunta las etiquetas al proyecto utilizando la relación polimórfica
+        // Adjunta las etiquetas al ticket utilizando la relación polimórfica
         $project->tags()->sync($tagIds);
 
         // archivos adjuntos
@@ -241,7 +241,7 @@ class ProjectController extends Controller
             $task->delete();
         }
 
-        // eliminar proyecto
+        // eliminar ticket
         $project->delete();
 
         return to_route('pms.projects.index');

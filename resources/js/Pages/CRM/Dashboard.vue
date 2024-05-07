@@ -105,7 +105,7 @@ export default {
             // Utiliza un objeto para almacenar la información de cada tipo de servicio
             const serviceTypeMap = {};
 
-            // Itera sobre las oportunidades y agrega cada service_type y amount al objeto
+            // Itera sobre las presupuestos y agrega cada service_type y amount al objeto
             this.month_opportunities.forEach(opportunity => {
                 const { service_type, amount } = opportunity;
 
@@ -133,7 +133,7 @@ export default {
                 monthlySumMap[month] = { month, amount: 0 };
             });
 
-            // Itera sobre las oportunidades y agrega el monto al mes correspondiente
+            // Itera sobre las presupuestos y agrega el monto al mes correspondiente
             opportunities.forEach(opportunity => {
                 const created_at = new Date(opportunity.created_at);
                 const month = created_at.toLocaleString('default', { month: 'short' }).replace(/\b\w/g, match => match.toUpperCase());

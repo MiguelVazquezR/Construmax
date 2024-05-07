@@ -199,7 +199,7 @@ return [
         'start_date' => 'fecha de inicio',
         'address' => 'dirección',
         'project_group' => 'grupo',
-        'opportunity_id' => 'oportunidad',
+        'opportunity_id' => 'presupuesto',
         'invoice_type' => 'condiciones de pago',
         'budget' => 'monto',
         'close_date' => 'fecha de cierre',

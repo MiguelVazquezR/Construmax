@@ -31,10 +31,10 @@ class NewProjectNotification extends Notification
     public function toMail(object $notifiable): MailMessage
     {
         return (new MailMessage)
-            ->subject('Nuevo proyecto')
+            ->subject('Nuevo ticket')
             ->markdown('emails.default-template', [
                 'greeting' => '¡Hola!',
-                'intro' => "Eres participante en un nuevo proyecto llamado '{$this->project->name}', creado por <span class='text-primary'>$this->user_name</span>",
+                'intro' => "Eres participante en un nuevo ticket llamado '{$this->project->name}', creado por <span class='text-primary'>$this->user_name</span>",
                 'url' => route('pms.projects.show', $this->project->id),
                 'salutation' => 'Saludos,',
             ]);
@@ -43,7 +43,7 @@ class NewProjectNotification extends Notification
     public function toArray(object $notifiable): array
     {
         return [
-            'description' => "Eres participante en un nuevo proyecto llamado <span class='text-primary'>{$this->project->name}</span> creado por <span class='text-primary'>$this->user_name</span>",
+            'description' => "Eres participante en un nuevo ticket llamado <span class='text-primary'>{$this->project->name}</span> creado por <span class='text-primary'>$this->user_name</span>",
             'module' => "projects",
             'url' => route('pms.projects.show', $this->project->id),
         ];

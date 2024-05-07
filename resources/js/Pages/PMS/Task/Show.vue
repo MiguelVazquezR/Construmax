@@ -75,7 +75,7 @@
     <div class="mx-8 mt-3 grid grid-cols-2 gap-x-4 gap-y-2">
       <h2 class="font-bold col-span-full mt-10">Información de la tarea</h2>
       <div>
-        <InputLabel value="Proyecto" class="ml-2" />
+        <InputLabel value="Ticket" class="ml-2" />
         <input v-model="form.project_name" disabled class="input" type="text" />
         <InputError :message="form.errors.project_name" />
       </div>

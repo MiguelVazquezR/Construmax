@@ -24,7 +24,7 @@
         <p class="w-2/3">{{ task.data.user?.name }}</p>
         <p class="w-1/3">Estado actual</p>
         <p class="w-2/3">{{ task.data.status }}</p>
-        <p class="w-1/3">Proyecto</p>
+        <p class="w-1/3">Ticket</p>
         <p class="w-2/3">{{ task.data.project?.name }}</p>
         <p class="w-1/3">Departamento</p>
         <p class="w-2/3">{{ task.data.department }}</p>

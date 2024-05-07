@@ -1,5 +1,5 @@
 <template>
-    <AppLayout title="Detalles de proyecto">
+    <AppLayout title="Detalles de ticket">
         <SkeletonLoading v-if="loading" />
         <div v-else>
             <div class="flex justify-between text-lg mx-2 lg:mx-14 mt-11">
@@ -14,7 +14,7 @@
 
             <div class="lg:flex justify-between mt-5 mx-2 lg:mx-14">
                 <div class="md:w-full mr-2 flex items-center">
-                    <el-select v-model="selectedCustomer"  filterable placeholder="Buscar proyecto"
+                    <el-select v-model="selectedCustomer"  filterable placeholder="Buscar ticket"
                         class="w-full lg:w-1/2" no-data-text="No hay clientes registrados"
                         no-match-text="No se encontraron coincidencias">
                         <el-option v-for="item in customers" :key="item.id" :label="item.name" :value="item.id" />
@@ -127,17 +127,17 @@
             </div>
             <!-- ------------- info project ends 1 ------------- -->
 
-            <!-- -------------Oportunidades starts 2 ------------- -->
+            <!-- -------------Presupuestos starts 2 ------------- -->
             <div v-if="currentTab == 2" class="p-7 w-full mx-auto my-4">
                 <div v-if="customer.data.opportunities.length">
                     <CustomerOpportunityTable :opportunities="customer.data.opportunities" />
                 </div>
                 <div class="flex flex-col text-center justify-center" v-else>
-                    <p class="text-sm text-center">No hay oportunidades para mostrar</p>
+                    <p class="text-sm text-center">No hay presupuestos para mostrar</p>
                     <i class="fa-regular fa-folder-open text-9xl mt-16 text-gray-400/30"></i>
                 </div>
             </div>
-            <!-- ------------- Oportunidades ends 2 ------------- -->
+            <!-- ------------- Presupuestos ends 2 ------------- -->
 
             <!-- -------------Seguimiento integral starts 3 ------------- -->
             <div v-if="currentTab == 3" class="p-7 w-full mx-auto my-4">
@@ -173,7 +173,7 @@ export default {
             loading: false,
             tabs: [
                 'Información general',
-                'Oportunidades',
+                'Presupuestos',
                 'Seguimiento integral',
                 // 'Historial',
             ],

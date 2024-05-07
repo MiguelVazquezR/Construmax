@@ -51,7 +51,7 @@ export default {
                         {
                             label: 'Presupuestos',
                             route: route('crm.opportunities.index'),
-                            show: this.$page.props.auth.user.permissions.includes('Ver oportunidades'),
+                            show: this.$page.props.auth.user.permissions.includes('Ver presupuestos'),
                             active: route().current('crm.opportunities.*') || route().current('crm.opportunity-tasks.*'),
                         },
                         {
@@ -61,10 +61,10 @@ export default {
                             active: route().current('crm.client-monitors.*') || route().current('crm.email-monitors.*') || route().current('crm.payment-monitors.*') || route().current('crm.meeting-monitors.*'),
                         },
                     ],
-                    show: ['Ver clientes', 'Ver oportunidades', 'Ver seguimiento integral'].some(permission => this.$page.props.auth.user.permissions.includes(permission)),
+                    show: ['Ver clientes', 'Ver presupuestos', 'Ver seguimiento integral'].some(permission => this.$page.props.auth.user.permissions.includes(permission)),
                 },
                 {
-                    label: 'Proyectos',
+                    label: 'Tickets',
                     icon: '<i class="fa-solid fa-check mr-1"></i>',
                     route: route('pms.projects.index'),
                     active: route().current('pms.*'),
@@ -79,10 +79,10 @@ export default {
                             label: 'Tickets',
                             route: route('pms.projects.index'),
                             active: route().current('pms.projects.*') || route().current('pms.tasks.*'),
-                            show: this.$page.props.auth.user.permissions.includes('Ver proyectos'),
+                            show: this.$page.props.auth.user.permissions.includes('Ver tickets'),
                         },
                     ],
-                    show: ['Ver proyectos'].some(permission => this.$page.props.auth.user.permissions.includes(permission)),
+                    show: ['Ver tickets'].some(permission => this.$page.props.auth.user.permissions.includes(permission)),
                 },
                 {
                     label: 'Usuarios',

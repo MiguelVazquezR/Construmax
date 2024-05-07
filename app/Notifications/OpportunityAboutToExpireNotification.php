@@ -31,10 +31,10 @@ class OpportunityAboutToExpireNotification extends Notification
     public function toMail(object $notifiable): MailMessage
     {
         return (new MailMessage)
-            ->subject('Oportunidad por expirar')
+            ->subject('Presupuesto por expirar')
             ->markdown('emails.default-template', [
                 'greeting' => '¡Hola!',
-                'intro' => "Hoy es el día límite para terminar la oportunidad {$this->opportunity->name}",
+                'intro' => "Hoy es el día límite para terminar el presupuesto {$this->opportunity->name}",
                 'url' => route('crm.opportunities.show', $this->opportunity->id),
                 'salutation' => 'Saludos,',
             ]);
@@ -43,7 +43,7 @@ class OpportunityAboutToExpireNotification extends Notification
     public function toArray(object $notifiable): array
     {
         return [
-            'description' => "Hoy es el día límite para terminar la oportunidad <span class='text-primary'>{$this->opportunity->name}</span>",
+            'description' => "Hoy es el día límite para terminar el presupuesto <span class='text-primary'>{$this->opportunity->name}</span>",
             'module' => "opportunitys",
             'url' => route('crm.opportunities.show', $this->opportunity->id),
         ];

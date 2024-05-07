@@ -1,9 +1,9 @@
 <template>
-    <AppLayout title="Detalles de proyecto">
+    <AppLayout title="Detalles de ticket">
         <SkeletonLoading v-if="loading" />
         <div v-else>
             <div class="flex justify-between text-lg mx-2 lg:mx-14 mt-11">
-                <span>Proyectos</span>
+                <span>Tickets</span>
                 <Link :href="route('pms.projects.index')">
                 <p class="flex items-center text-sm text-primary">
                     <i class="fa-solid fa-arrow-left-long mr-2"></i>
@@ -13,8 +13,8 @@
             </div>
             <div class="lg:flex justify-between mt-5 mx-2 lg:mx-14">
                 <div class="md:w-full mr-2 flex items-center">
-                    <el-select v-model="selectedProject"  filterable placeholder="Buscar proyecto"
-                        class="w-2/3 lg:w-1/2 mr-2" no-data-text="No hay proyectos registrados"
+                    <el-select v-model="selectedProject" filterable placeholder="Buscar ticket"
+                        class="w-2/3 lg:w-1/2 mr-2" no-data-text="No hay tickets registrados"
                         no-match-text="No se encontraron coincidencias">
                         <el-option v-for="item in projects" :key="item.id" :label="item.name" :value="item.id" />
                     </el-select>
@@ -42,11 +42,12 @@
                 </div>
                 <div class="flex items-center justify-end w-full lg:w-1/2 mt-3 lg:mt-0">
                     <div v-if="currentTab == 1" class="flex space-x-2 w-full justify-end">
-                        <PrimaryButton v-if="this.$page.props.auth.user.permissions.includes('Crear proyectos')"
-                            @click="$inertia.get(route('pms.projects.create'))">Nuevo proyecto</PrimaryButton>
-                        <SecondaryButton v-if="this.$page.props.auth.user.permissions.includes('Editar proyectos')"
+                        <PrimaryButton v-if="this.$page.props.auth.user.permissions.includes('Crear tickets')"
+                            @click="$inertia.get(route('pms.projects.create'))">Nuevo ticket</PrimaryButton>
+                        <SecondaryButton v-if="this.$page.props.auth.user.permissions.includes('Editar tickets')"
                             @click="$inertia.get(route('pms.projects.edit', project.data.id ?? 1))"><i
-                                class="fa-solid fa-pen"></i></SecondaryButton>
+                                class="fa-solid fa-pen"></i>
+                        </SecondaryButton>
                     </div>
                     <div v-if="currentTab == 2 || currentTab == 3" class="flex space-x-2 w-full justify-end">
                         <PrimaryButton
@@ -71,7 +72,7 @@
             <!-- ------------- info project Starts 1 ------------- -->
             <div v-if="currentTab == 1" class="md:grid grid-cols-2 border-b-2 border-[#cccccc] text-sm">
                 <div class="grid grid-cols-2 text-left p-4 md:ml-10 border-r-2 border-gray-[#cccccc] items-center">
-                    <p class="text-secondary col-span-2 mb-2 font-bold">Información del proyecto</p>
+                    <p class="text-secondary col-span-2 mb-2 font-bold">Información del ticket</p>
 
                     <span class="text-gray-500">Folio</span>
                     <span>{{ project.data.folio }}</span>
@@ -88,9 +89,9 @@
                     <span class="text-gray-500 my-2">Fecha final</span>
                     <span>{{ project.data.limit_date }}</span>
                     <div class="flex items-start my-2">
-                        <span class="text-gray-500">Proyecto estricto</span>
+                        <span class="text-gray-500">Ticket estricto</span>
                         <el-tooltip
-                            content="Las tareas no pueden comenzar ni finalizar fuera de las fechas programadas de un proyecto  "
+                            content="Las tareas no pueden comenzar ni finalizar fuera de las fechas programadas de un ticket  "
                             placement="top">
                             <i class="fa-regular fa-circle-question text-primary text-[10px] ml-1"></i>
                         </el-tooltip>
@@ -101,13 +102,23 @@
                     </span>
                     <span class="text-gray-500 my-2">Descripción</span>
                     <span v-html="project.data.description"></span>
-                    <span class="text-gray-500 my-2">Proyecto interno</span>
+                    <span class="text-gray-500 my-2">Ticket interno</span>
                     <span>
                         <i v-if="project.data.is_internal" class="fa-solid fa-check text-green-500"></i>
                         <i v-else class="fa-solid fa-minus"></i>
                     </span>
                     <span class="text-gray-500 my-2">Grupo</span>
                     <span>{{ project.data.group.name }}</span>
+                </div>
+
+                <div
+                    class="grid grid-cols-2 text-left p-4 md:ml-10 border-r-2 border-gray-[#cccccc] items-center self-start">
+                    <!-- <p class="text-secondary col-span-full mb-2 font-bold">Presupuestos</p>
+
+                    <span class="text-gray-500">Moneda</span>
+                    <span>{{ project.data.currency }}</span>
+                    <span class="text-gray-500">Monto</span>
+                    <span>${{ project.data.budget?.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",") }}</span> -->
 
                     <p v-if="!project.data.is_internal" class="text-secondary col-span-2 mb-2 mt-8 font-bold">
                         Campos adicionales
@@ -116,33 +127,22 @@
                     <span v-if="!project.data.is_internal" class="text-gray-500">Cliente</span>
                     <span v-if="!project.data.is_internal">{{
                         project.data.opportunity?.customer?.name
-                    }}</span>
+                        }}</span>
                     <span v-if="!project.data.is_internal" class="text-gray-500 my-2">Contacto</span>
                     <span v-if="!project.data.is_internal">{{
                         project.data.contact?.name
-                    }}</span>
+                        }}</span>
                     <span v-if="!project.data.is_internal" class="text-gray-500 my-2">Sucursal</span>
                     <span v-if="!project.data.is_internal">{{
                         project.data.address
-                    }}</span>
+                        }}</span>
                     <span v-if="!project.data.is_internal" class="text-gray-500 my-2">OP</span>
                     <Link :href="route('crm.opportunities.show', project.data.opportunity?.id ?? 1)"
                         v-if="!project.data.is_internal && project.data.opportunity" class="text-primary underline">
                     <span>{{ 'OP-' + project.data.opportunity?.id }}</span>
                     </Link>
-                    <span v-else>Sin oportunidad</span>
-                </div>
-
-                <div
-                    class="grid grid-cols-2 text-left p-4 md:ml-10 border-r-2 border-gray-[#cccccc] items-center self-start">
-                    <p class="text-secondary col-span-full mb-2 font-bold">Presupuestos</p>
-
-                    <span class="text-gray-500">Moneda</span>
-                    <span>{{ project.data.currency }}</span>
-                    <span class="text-gray-500">Monto</span>
-                    <span>${{ project.data.budget?.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",") }}</span>
-
-                    <p class="text-secondary col-span-full mt-7 font-bold">Etiquetas</p>
+                    <span v-else>Sin presupuesto</span>
+                    <p v-if="project.data.tags.length" class="text-secondary col-span-full mt-7 font-bold">Etiquetas</p>
                     <div class="col-span-full flex space-x-3">
                         <Tag v-for="(item, index) in project.data.tags" :key="index" :name="item.name"
                             :color="item.color" />
@@ -166,14 +166,14 @@
                     <h2 class="font-bold mb-10">
                         POR HACER <span class="font-normal ml-7">{{ pendingTasksList?.length }}</span>
                     </h2>
-                    <draggable @start="handleStartDrag" @add="handleAddDrag" @end="drag = false" v-model="pendingTasksList"
-                        :animation="300" item-key="id" tag="ul" group="tasks" id="pendent"
+                    <draggable @start="handleStartDrag" @add="handleAddDrag" @end="drag = false"
+                        v-model="pendingTasksList" :animation="300" item-key="id" tag="ul" group="tasks" id="pendent"
                         :class="(drag && !pendingTasksList?.length) ? 'h-40' : ''">
                         <template #item="{ element: task }">
                             <li>
                                 <Link :href="route('pms.tasks.show', task.id)">
-                                <ProjectTaskCard @updated-status="updateTask($event)" :taskComponent="task" :users="users"
-                                    :id="task.id" />
+                                <ProjectTaskCard @updated-status="updateTask($event)" :taskComponent="task"
+                                    :users="users" :id="task.id" />
                                 </Link>
                             </li>
                         </template>
@@ -212,8 +212,8 @@
                     <h2 class="font-bold mb-10">
                         TERMINADA <span class="font-normal ml-7">{{ finishedTasksList?.length }}</span>
                     </h2>
-                    <draggable @start="handleStartDrag" @add="handleAddDrag" @end="drag = false" v-model="finishedTasksList"
-                        :animation="300" item-key="id" tag="ul" group="tasks" id="finished"
+                    <draggable @start="handleStartDrag" @add="handleAddDrag" @end="drag = false"
+                        v-model="finishedTasksList" :animation="300" item-key="id" tag="ul" group="tasks" id="finished"
                         :class="(drag && !finishedTasksList?.length) ? 'h-40' : ''">
                         <template #item="{ element: task }">
                             <li>
@@ -233,10 +233,11 @@
             <!-- ------------- Tasks ends 2 ------------- -->
             <!-- ------------- Cronograma Starts 3 ------------- -->
             <div v-if="currentTab == 3" class="text-left text-sm items-center overflow-x-auto">
-                <GanttDiagramMonth v-if="period === 'Mes' && project.data.tasks?.length" :currentProject="project.data" :currentDate="currentDate" />
-                <GanttDiagramBimester v-if="period === 'Bimestre' && project.data.tasks?.length" :currentProject="project.data"
+                <GanttDiagramMonth v-if="period === 'Mes' && project.data.tasks?.length" :currentProject="project.data"
                     :currentDate="currentDate" />
-                
+                <GanttDiagramBimester v-if="period === 'Bimestre' && project.data.tasks?.length"
+                    :currentProject="project.data" :currentDate="currentDate" />
+
                 <div class="text-right mr-9">
                     <div class="border border-[#9A9A9A] rounded-md inline-flex justify-end mt-4">
                         <p :class="period == 'Mes' ? 'bg-primary text-white rounded-sm' : 'border-[#9A9A9A]'
@@ -257,7 +258,7 @@
         </div>
     </AppLayout>
 </template>
-  
+
 <script>
 import AppLayout from "@/Layouts/AppLayout.vue";
 import PrimaryButton from "@/Components/PrimaryButton.vue";
@@ -290,7 +291,7 @@ export default {
             loading: false,
             draggingTaskId: null,
             tabs: [
-                'Información del proyecto',
+                'Información del ticket',
                 'Tareas',
                 'Cronograma',
             ]
@@ -360,7 +361,7 @@ export default {
                     this.project.data.tasks[taskIndex].is_paused = 0;
                     this.project.data.tasks[taskIndex].pausa_reazon = null;
 
-                    if ( this.project.data.tasks.filter(task => task.status === 'Terminada').length == this.project.data.tasks.length ) {
+                    if (this.project.data.tasks.filter(task => task.status === 'Terminada').length == this.project.data.tasks.length) {
                         this.$notify({
                             title: "Correcto",
                             message: "Se han terminado todas las tareas del ticket y se ha creado un presupuesto! Ve a editarlo si no lo has hecho",
@@ -397,7 +398,7 @@ export default {
             this.inProgressTasks();
             this.finishedTasks();
 
-            // Verificar si hay tareas en el proyecto y si la primera tarea tiene una fecha de inicio
+            // Verificar si hay tareas en el ticket y si la primera tarea tiene una fecha de inicio
             if (this.project.data && this.project.data.tasks.length > 0) {
                 const firstTask = this.project.data.tasks[0];
                 if (firstTask && firstTask.start_date) {
@@ -425,4 +426,3 @@ export default {
     },
 };
 </script>
-  

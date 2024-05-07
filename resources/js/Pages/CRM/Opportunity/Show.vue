@@ -1,10 +1,10 @@
 <template>
-  <AppLayout title="Oportunidades">
+  <AppLayout title="Presupuestos">
     <SkeletonLoading v-if="loading" />
     <div v-else class="mb-5">
       <div class="flex flex-col md:mx-9 md:my-7 space-y-3 m-1">
         <div class="flex justify-between text-lg mx-2 lg:mx-14 mt-11">
-          <span>Oportunidades</span>
+          <span>Presupuestos</span>
           <Link :href="route('crm.opportunities.index')">
           <p class="flex items-center text-sm text-primary">
             <i class="fa-solid fa-arrow-left-long mr-2"></i>
@@ -14,26 +14,26 @@
         </div>
         <div class="lg:flex items-center justify-between mt-5 mx-2 lg:mx-8">
           <!-- <div class="w-2/3 mr-2 flex items-center"> -->
-          <el-select v-model="selectedOpportunity" filterable placeholder="Buscar proyecto" class="w-full lg:w-1/2"
+          <el-select v-model="selectedOpportunity" filterable placeholder="Buscar ticket" class="w-full lg:w-1/2"
             no-data-text="No hay clientes registrados" no-match-text="No se encontraron coincidencias">
             <el-option v-for="item in opportunities" :key="item.id" :label="item.name" :value="item.id" />
           </el-select>
           <!-- </div> -->
           <div class="flex items-center justify-end w-full lg:w-1/2 mt-3 lg:mt-0">
-            <el-tooltip v-if="$page.props.auth.user.permissions?.includes('Crear oportunidades') && currentTab == 1"
-              content="Crear oportunidad" placement="top">
+            <el-tooltip v-if="$page.props.auth.user.permissions?.includes('Crear presupuestos') && currentTab == 1"
+              content="Crear presupuesto" placement="top">
               <Link :href="route('crm.opportunities.create')">
-              <PrimaryButton class="rounded-md w-[166px]">Nueva oportunidad</PrimaryButton>
+              <PrimaryButton class="rounded-md w-[166px]">Nuevo presupuesto</PrimaryButton>
               </Link>
             </el-tooltip>
             <Link v-if="currentTab == 1" :href="route('crm.opportunities.edit', selectedOpportunity)">
             <i class="fa-solid fa-pencil ml-3 text-primary rounded-full p-2 bg-primarylight cursor-pointer"></i>
             </Link>
-            <i v-if="this.$page.props.auth.user.permissions.includes('Eliminar oportunidades') && currentTab == 1"
+            <i v-if="this.$page.props.auth.user.permissions.includes('Eliminar presupuestos') && currentTab == 1"
               @click="showConfirmModal = true"
               class="fa-regular fa-trash-can ml-3 text-primary rounded-full p-2 bg-primarylight cursor-pointer"></i>
             <el-tooltip v-if="currentTab == 2 && toBool(authUserPermissions[0])"
-              content="Crear actividad en la oportunidad" placement="top">
+              content="Crear actividad en el presupuesto" placement="top">
               <Link :href="route('crm.opportunity-tasks.create', selectedOpportunity)">
               <PrimaryButton class="rounded-full w-40">Agregar actividad</PrimaryButton>
               </Link>
@@ -89,11 +89,11 @@
       <!-- ------------- Informacion general Starts 1 ------------- -->
       <div v-if="currentTab == 1" class="md:grid grid-cols-2 border-b-2 border-[#cccccc] text-sm">
         <div class="grid grid-cols-2 text-left p-4 md:ml-10 border-r-2 border-gray-[#cccccc] items-center">
-          <p class="text-secondary col-span-2 mb-2">Información de la oportunidad</p>
+          <p class="text-secondary col-span-2 mb-2">Información de el presupuesto</p>
 
           <span class="text-gray-500">Folio</span>
           <span>{{ opportunity.data.folio }}</span>
-          <span class="text-gray-500 my-2">Nombre de la oportunidad</span>
+          <span class="text-gray-500 my-2">Nombre del presupuesto</span>
           <span>{{ opportunity.data.name }}</span>
           <span class="text-gray-500 my-2">Tipo de servicio</span>
           <span v-html="opportunity.data.service_type"></span>
@@ -170,7 +170,7 @@
           </div>
           <p class="text-sm text-gray-400" v-else>
             <i class="fa-regular fa-file-excel mr-3"></i>No hay archivos adjuntos en esta
-            oportunidad
+            presupuesto
           </p>
 
           <p class="text-secondary col-span-full mt-7 mb-2">Etiquetas</p>
@@ -335,7 +335,7 @@
           </table>
         </div>
         <div v-else>
-          <p class="text-sm text-center text-gray-400">No hay seguimiento en esta oportunidad</p>
+          <p class="text-sm text-center text-gray-400">No hay seguimiento en este presupuesto</p>
         </div>
       </div>
       <!-- ------------ tab 3 seguimiento integral ends ------------- -->
@@ -353,7 +353,7 @@
           </ul>
         </div>
         <div v-else>
-          <p class="text-sm text-center text-gray-400">No hay historial en esta oportunidad</p>
+          <p class="text-sm text-center text-gray-400">No hay historial en este presupuesto</p>
         </div>
       </div>
       <!-- ------------ tab 4 Historial ends ------------- -->
@@ -421,7 +421,7 @@
       <!-- ------------ tab 5 Ecuesta post venta ends ------------- -->
 
       <ConfirmationModal :show="showConfirmModal" @close="showConfirmModal = false">
-        <template #title> Eliminar oportunidad </template>
+        <template #title> Eliminar presupuesto </template>
         <template #content> ¿Continuar con la eliminación? </template>
         <template #footer>
           <div>
@@ -436,8 +436,8 @@
         @close="showLostOpportunityModal = false; showCreateProjectModal = false">
         <section v-if="showLostOpportunityModal" class="mx-7 my-4 space-y-4 relative">
           <div>
-            <label>Causa oportunidad perdida
-              <el-tooltip content="Escribe la causa por la cual se PERDIÓ esta oportunidad" placement="top">
+            <label>Causa presupuesto perdido
+              <el-tooltip content="Escribe la causa por la cual se PERDIÓ este presupuesto" placement="top">
                 <i class="fa-regular fa-circle-question ml-2 text-primary text-xs"></i>
               </el-tooltip>
             </label>
@@ -452,10 +452,10 @@
 
         <section v-if="showCreateProjectModal" class="mx-7 my-4 space-y-4 relative">
           <div>
-            <h2 class="font bold text-center font-bold mb-5">Paso clave - Crear proyecto</h2>
-            <p class="px-5">Es necesario crear un proyecto al haber marcado como <span
+            <h2 class="font bold text-center font-bold mb-5">Paso clave - Crear ticket</h2>
+            <p class="px-5">Es necesario crear un ticket al haber marcado como <span
                 class="text-[#FD8827]">”cerrada”</span>
-              o <span class="text-[#37951F]">”Pagada”</span> la oportunidad para llevar un correcto seguimiento y flujo de
+              o <span class="text-[#37951F]">”Pagada”</span> el presupuesto para llevar un correcto seguimiento y flujo de
               trabajo.
             </p>
           </div>
@@ -748,10 +748,10 @@ export default {
         if (response.status === 200) {
           this.$notify({
             title: "Correcto",
-            message: "Se ha actulizado el estatus de la oportunidad",
+            message: "Se ha actulizado el estatus de el presupuesto",
             type: "success",
           });
-          //Cambia dinamicamente las propiedades de la oportunidad al cmbair el estatus
+          //Cambia dinamicamente las propiedades de el presupuesto al cmbair el estatus
           this.showLostOpportunityModal = false;
           this.opportunity.data.status = this.status;
           this.opportunity.data.finished_at = response.data.item.finished_at;

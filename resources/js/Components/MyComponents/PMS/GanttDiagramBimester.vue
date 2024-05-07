@@ -6,7 +6,7 @@
         class="border-y border-[#9A9A9A] text-left pl-7 py-3 font-thin relative w-1/4"
         scope="row"
       >
-        Proyecto <br />
+        Ticket <br />
         <strong class="text-lg font-bold">{{ currentProject?.name }}</strong>
         <!-- <i @click="showDepartmentFilter = !showDepartmentFilter"
               class="fa-solid fa-ellipsis text-primary absolute bottom-4 right-4 cursor-pointer hover:bg-[#dfdede] rounded-full p-2"></i>
@@ -85,7 +85,7 @@
     </tr>
   </table>
   </div>
-  <p v-if="this.currentDate == undefined">No hay tareas en este proyecto</p>
+  <p v-if="this.currentDate == undefined">No hay tareas en este tickets</p>
 </template>
 
 <script>
@@ -251,7 +251,7 @@ export default {
     },
   },
   mounted() {
-    // Verificar si hay tareas en el proyecto y si la primera tarea tiene una fecha de inicio
+    // Verificar si hay tareas en el ticket y si la primera tarea tiene una fecha de inicio
     if (this.currentProject && this.currentProject.tasks.length > 0) {
       const firstTask = this.currentProject.tasks[0];
       if (firstTask && firstTask.start_date_raw) {

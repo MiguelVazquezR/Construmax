@@ -50,7 +50,7 @@ class OpportunityTaskController extends Controller
         // archivos adjuntos
         $opportunity_task->addAllMediaFromRequest()->each(fn ($file) => $file->toMediaCollection());
 
-        //Crea el registro de una actividad para el historial de esa oportunidad --------------------------
+        //Crea el registro de una actividad para el historial de ese presupuesto --------------------------
         $asigned = User::find($request->asigned_id); //recupero el objeto del asignado a la actividad para la descripción.
         Activity::create([
             'description' => 'creó la actividad "' . $request->name . '" y la asignó a ' . $asigned->name,
@@ -99,7 +99,7 @@ class OpportunityTaskController extends Controller
             $opportunity_task->comments()->save($comment);
         }
 
-        //Crea el registro de una actividad para el historial de esa oportunidad --------------------------
+        //Crea el registro de una actividad para el historial de ese presupuesto --------------------------
         $asigned = User::find($request->asigned_id); //recupero el objeto del asignado a la actividad para la descripción.
         Activity::create([
             'description' => 'editó la actividad "' . $opportunity_task->name . '" y la asignó a ' . $asigned->name,
@@ -130,7 +130,7 @@ class OpportunityTaskController extends Controller
             $opportunity_task->comments()->save($comment);
         }
 
-        //Crea el registro de una actividad para el historial de esa oportunidad --------------------------
+        //Crea el registro de una actividad para el historial de ese presupuesto --------------------------
         $asigned = User::find($request->asigned_id); //recupero el objeto del asignado a la actividad para la descripción.
         Activity::create([
             'description' => 'editó la actividad "' . $opportunity_task->name . '" y la asignó a ' . $asigned->name,
@@ -147,14 +147,14 @@ class OpportunityTaskController extends Controller
 
     public function destroy(OpportunityTask $opportunity_task)
     {
-        //Crea el registro de una actividad para el historial de esa oportunidad --------------------------
+        //Crea el registro de una actividad para el historial de ese presupuesto --------------------------
         Activity::create([
             'description' => 'eliminó la actividad "' . $opportunity_task->name . '"',
             'user_id' => auth()->id(),
             'opportunity_id' => $opportunity_task->opportunity_id,
         ]);
 
-        $opportunity_id = $opportunity_task->opportunity_id; // guarda el id de la oportunidad antes de eliminar la tarea.
+        $opportunity_id = $opportunity_task->opportunity_id; // guarda el id de el presupuesto antes de eliminar la tarea.
 
         $opportunity_task->delete();
 
@@ -169,7 +169,7 @@ class OpportunityTaskController extends Controller
             'finished_at' => now()
         ]);
 
-        //Crea el registro de una actividad para el historial de esa oportunidad --------------------------
+        //Crea el registro de una actividad para el historial de ese presupuesto --------------------------
         Activity::create([
             'description' => 'marcó como terminada la actividad "' . $opportunity_task->name . '"',
             'user_id' => auth()->id(),

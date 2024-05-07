@@ -17,7 +17,7 @@ class SurveyController extends Controller
     public function create($opportunity_id)
     {
         $survey = null;
-        $survey = Survey::where('opportunity_id', $opportunity_id)->first(); //busca en bbdd si existe alguna ecuesta con el id de oportunidad de la url
+        $survey = Survey::where('opportunity_id', $opportunity_id)->first(); //busca en bbdd si existe alguna ecuesta con el id de presupuesto de la url
         $is_sent = false;
 
         if ($survey === null) { //si no existe entonces la variable se pone en false (0) y se manda a la vista para evaluarse
@@ -42,7 +42,7 @@ class SurveyController extends Controller
             'p5' => 'required|string',
         ]);
 
-        Survey::create($request->all() + ['opportunity_id' => $opportunity_id]); //recibe el id de la oportunidad por medio de la url generada
+        Survey::create($request->all() + ['opportunity_id' => $opportunity_id]); //recibe el id de el presupuesto por medio de la url generada
     }
 
     

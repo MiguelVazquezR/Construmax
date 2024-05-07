@@ -1,13 +1,13 @@
 <template>
-  <AppLayout title="Oportunidades">
+  <AppLayout title="Presupuestos">
     <div @click="show_type_view = false" class="flex flex-col md:mx-9 md:my-7 space-y-3 m-1">
       <div class="flex justify-between">
-        <label class="text-lg">Oportunidades</label>
+        <label class="text-lg">Presupuestos</label>
       </div>
       <div class="flex justify-between">
         <div v-if="type_view == 'Lista'" class="w-1/3 relative">
           <input @keyup.enter="handleSearch" v-model="inputSearch" class="input outline-none pr-8"
-            placeholder="Buscar proyecto" />
+            placeholder="Buscar ticket" />
           <i class="fa-solid fa-magnifying-glass absolute top-2 right-4 text-xs text-[#9A9A9A]"></i>
         </div>
         <span v-if="type_view == 'Kanban'"></span>
@@ -27,9 +27,9 @@
               </p>
             </div>
           </div>
-          <Link v-if="$page.props.auth.user.permissions?.includes('Crear oportunidades')
+          <Link v-if="$page.props.auth.user.permissions?.includes('Crear presupuestos')
             " :href="route('crm.opportunities.create')">
-          <PrimaryButton class="rounded-lg">Nueva oportunidad</PrimaryButton>
+          <PrimaryButton class="rounded-lg">Nuevo presupuesto</PrimaryButton>
           </Link>
         </div>
       </div>
@@ -55,7 +55,7 @@
             </template>
           </draggable>
           <div class="text-center" v-if="!newOpportunitiesLocal?.length">
-            <p class="text-xs text-gray-500 mt-6">No hay oportunidades en este estatus</p>
+            <p class="text-xs text-gray-500 mt-6">No hay presupuestos en este estatus</p>
           </div>
         </div>
       </section>
@@ -82,7 +82,7 @@
             </template>
           </draggable>
           <div class="text-center" v-if="!pendingOpportunitiesLocal?.length">
-            <p class="text-xs text-gray-500 mt-6">No hay oportunidades en este estatus</p>
+            <p class="text-xs text-gray-500 mt-6">No hay presupuestos en este estatus</p>
           </div>
         </div>
       </section>
@@ -109,7 +109,7 @@
             </template>
           </draggable>
           <div class="text-center" v-if="!closedOpportunitiesLocal?.length">
-            <p class="text-xs text-gray-500 mt-6">No hay oportunidades en este estatus</p>
+            <p class="text-xs text-gray-500 mt-6">No hay presupuestos en este estatus</p>
           </div>
         </div>
       </section>
@@ -132,7 +132,7 @@
             </template>
           </draggable>
           <div class="text-center" v-if="!paidOpportunitiesLocal?.length">
-            <p class="text-xs text-gray-500 mt-6">No hay oportunidades en este estatus</p>
+            <p class="text-xs text-gray-500 mt-6">No hay presupuestos en este estatus</p>
           </div>
         </div>
       </section>
@@ -155,7 +155,7 @@
             </template>
           </draggable>
           <div class="text-center" v-if="!lostOpportunitiesLocal?.length">
-            <p class="text-xs text-gray-500 mt-6">No hay oportunidades en este estatus</p>
+            <p class="text-xs text-gray-500 mt-6">No hay presupuestos en este estatus</p>
           </div>
         </div>
       </section>
@@ -214,7 +214,7 @@
               <td class="text-left py-2">
                 {{ opportunity.paid_at ?? "--" }}
               </td>
-              <td v-if="$page.props.auth.user.permissions?.includes('Eliminar oportunidades')" @click.stop=""
+              <td v-if="$page.props.auth.user.permissions?.includes('Eliminar presupuestos')" @click.stop=""
                 class="text-left py-2 rounded-r-full">
                 <el-popconfirm confirm-button-text="Si" cancel-button-text="No" icon-color="#FD8827" title="¿Eliminar?"
                   @confirm="deleteOpportunity(opportunity)">
@@ -228,7 +228,7 @@
         </table>
       </div>
       <div v-else>
-        <p class="text-sm text-center">No hay oportunidades</p>
+        <p class="text-sm text-center">No hay presupuestos</p>
       </div>
     </div>
     <!-- ------------ Lista view ends ----------------- -->
@@ -237,8 +237,8 @@
     <Modal :show="showLostOpportunityModal" @close="showLostOpportunityModal = false">
       <div class="mx-7 my-4 space-y-4 relative">
         <div>
-          <label>Causa oportunidad perdida
-            <el-tooltip content="Escribe la causa por la cual se PERDIÓ esta oportunidad" placement="top">
+          <label>Causa presupuesto perdido
+            <el-tooltip content="Escribe la causa por la cual se PERDIÓ este presupuesto" placement="top">
               <i class="fa-regular fa-circle-question ml-2 text-primary text-xs"></i>
             </el-tooltip>
           </label>
@@ -252,11 +252,11 @@
 
     <ConfirmationModal :show="showConfirmModal" @close="showConfirmModal = false">
       <template #title>
-        Eliminar proyecto
+        Eliminar ticket
       </template>
       <template #content>
-        Al eliminar la oportunidad se perderán permanentemente las actividades y los archivos relacionados, así como el
-        proyecto relacionado si es que se creó uno. ¿Deseas continuar?
+        Al eliminar el presupuesto se perderán permanentemente las actividades y los archivos relacionados, así como el
+        ticket relacionado si es que se creó uno. ¿Deseas continuar?
       </template>
       <template #footer>
         <div class="flex space-x-1">
@@ -271,8 +271,8 @@
       @close="showLostOpportunityModal = false; showCreateProjectModal = false">
       <section v-if="showLostOpportunityModal" class="mx-7 my-4 space-y-4 relative">
         <div>
-          <label>Causa oportunidad perdida
-            <el-tooltip content="Escribe la causa por la cual se PERDIÓ esta oportunidad" placement="top">
+          <label>Causa presupuesto perdido
+            <el-tooltip content="Escribe la causa por la cual se PERDIÓ este presupuesto" placement="top">
               <i class="fa-regular fa-circle-question ml-2 text-primary text-xs"></i>
             </el-tooltip>
           </label>
@@ -287,10 +287,10 @@
 
       <section v-if="showCreateProjectModal" class="mx-7 my-4 space-y-4 relative">
         <div>
-          <h2 class="font bold text-center font-bold mb-5">Paso clave - Crear proyecto</h2>
-          <p class="px-5">Es necesario crear un proyecto al haber marcado como <span
+          <h2 class="font bold text-center font-bold mb-5">Paso clave - Crear ticket</h2>
+          <p class="px-5">Es necesario crear un ticket al haber marcado como <span
               class="text-[#FD8827]">”cerrada”</span>
-            o <span class="text-[#37951F]">”Pagada”</span> la oportunidad para llevar un correcto seguimiento y flujo de
+            o <span class="text-[#37951F]">”Pagada”</span> el presupuesto para llevar un correcto seguimiento y flujo de
             trabajo.
           </p>
         </div>
@@ -489,7 +489,7 @@ export default {
       this.$inertia.delete(route('crm.opportunities.destroy', opportunity));
       this.$notify({
         title: "Éxito",
-        message: "Oportunidad eliminada",
+        message: "Presupuesto eliminada",
         type: "success",
       });
       // window.location.reload();

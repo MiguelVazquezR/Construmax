@@ -12,7 +12,7 @@
         </div>
         <form @submit.prevent="store" class="mx-8 mt-3 grid grid-cols-2 gap-x-4 gap-y-2">
             <div>
-                <InputLabel value="Folio de oportunidad *" class="ml-2" />
+                <InputLabel value="Folio de presupuesto *" class="ml-2" />
                 <el-select @change="handleChangeOpportunity" class="w-full" v-model="form.opportunity_id"  filterable
                     placeholder="Seleccione" no-data-text="No hay registros"
                     no-match-text="No se encontraron coincidencias">

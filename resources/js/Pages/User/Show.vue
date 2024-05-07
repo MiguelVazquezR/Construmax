@@ -13,7 +13,7 @@
       </div>
       <div class="lg:flex justify-between items-center mx-8 mt-8">
         <el-select v-model="selectedUserId"  filterable placeholder="Buscar usuario" class="w-full lg:w-1/2"
-          no-data-text="No hay proyectos registrados" no-match-text="No se encontraron coincidencias">
+          no-data-text="No hay tickets registrados" no-match-text="No se encontraron coincidencias">
           <el-option v-for="item in users" :key="item.id" :label="item.name" :value="item.id" />
         </el-select>
         <div class="flex items-center justify-end mt-5 lg:mt-0 space-x-2">

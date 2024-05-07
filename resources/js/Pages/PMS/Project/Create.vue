@@ -1,7 +1,7 @@
 <template>
-  <AppLayout title="Crear proyecto">
+  <AppLayout title="Crear ticket">
     <div class="flex justify-between items-center text-lg mx-8 mt-8">
-      <b>Nuevo proyecto</b>
+      <b>Nuevo ticket</b>
       <Link :href="route('pms.projects.index')">
       <p class="flex items-center text-sm text-primary">
         <i class="fa-solid fa-arrow-left-long mr-2"></i>
@@ -11,8 +11,8 @@
     </div>
     <form @submit.prevent="store" class="mx-8 mt-3 grid grid-cols-2 gap-x-4 gap-y-2">
       <div>
-        <InputLabel value="Título del proyecto *" class="ml-2" />
-        <input v-model="form.name" type="text" class="input mt-1" placeholder="Asignar un nombre al proyecto" required />
+        <InputLabel value="Título del ticket *" class="ml-2" />
+        <input v-model="form.name" type="text" class="input mt-1" placeholder="Asignar un nombre al ticket" required />
         <InputError :message="form.errors.name" />
       </div>
       <div>
@@ -47,8 +47,8 @@
       <div class="col-span-full ml-2 text-sm mt-3 flex">
         <label class="flex items-center cursor-pointer flex-shrink-0 flex-grow-0">
           <Checkbox v-model:checked="form.is_strict" name="strict" class="bg-transparent" />
-          <span class="mx-2">Proyecto estricto</span>
-          <el-tooltip content="Las tareas no pueden comenzar ni finalizar fuera de las fechas programadas de un proyecto"
+          <span class="mx-2">Ticket estricto</span>
+          <el-tooltip content="Las tareas no pueden comenzar ni finalizar fuera de las fechas programadas de un ticket"
             placement="right">
             <div class="rounded-full border border-primary w-3 h-3 flex items-center justify-center">
               <i class="fa-solid fa-info text-primary text-[7px]"></i>
@@ -67,7 +67,7 @@
       <div class="col-span-full lg:col-span-1 mt-5">
         <div class="flex justify-between items-center mx-2">
           <InputLabel value="Etiquetas" />
-          <button v-if="$page.props.auth.user.permissions?.includes('Crear etiquetas de proyectos')"
+          <button v-if="$page.props.auth.user.permissions?.includes('Crear etiquetas de tickets')"
             @click="showTagFormModal = true" type="button"
             class="rounded-full border border-primary w-4 h-4 flex items-center justify-center">
             <i class="fa-solid fa-plus text-primary text-[9px]"></i>
@@ -83,9 +83,9 @@
       <div class="col-span-full ml-2 text-sm mt-3 flex">
         <label class="flex items-center cursor-pointer flex-shrink-0 flex-grow-0">
           <Checkbox v-model:checked="form.is_internal" name="strict" class="bg-transparent" />
-          <span class="mx-2">Proyecto interno</span>
+          <span class="mx-2">Ticket interno</span>
           <el-tooltip
-            content="Seleccione esta opción si el proyecto es una iniciativa de la empresa y no esta relacionado con un cliente en específico"
+            content="Seleccione esta opción si el ticket es una iniciativa de la empresa y no esta relacionado con un cliente en específico"
             placement="right">
             <!-- <i class="fa-solid fa-circle-info text-primary text-xs ml-2"></i> -->
             <div class="rounded-full border border-primary w-3 h-3 flex items-center justify-center">
@@ -98,7 +98,7 @@
         <div class="flex justify-between items-center mx-2">
           <div class="flex items-center space-x-2">
             <InputLabel value="Grupo" />
-            <el-tooltip content="Organice su proyecto en grupos. Seleccione o cree un grupo para asociar este proyecto"
+            <el-tooltip content="Organice su ticket en grupos. Seleccione o cree un grupo para asociar este ticket"
               placement="right">
               <!-- <i class="fa-solid fa-circle-info text-primary text-xs ml-2"></i> -->
               <div class="rounded-full border border-primary w-3 h-3 flex items-center justify-center">
@@ -146,13 +146,13 @@
       <div v-if="!form.is_internal">
         <InputLabel value="OP" class="ml-2" />
         <el-select v-model="form.opportunity_id"  placeholder="Seleccione" class="w-full mt-1"
-          no-data-text="El cliente no tiene oportunidades disponibles o las que existen ya han sido asignadas a un proyecto"
+          no-data-text="El cliente no tiene presupuestos disponibles o las que existen ya han sido asignadas a un ticket"
           no-match-text="No se encontraron coincidencias">
           <el-option v-for="(item, index) in opportunities" :key="item.id" :label="item.name" :value="item.id" />
         </el-select>
         <InputError :message="form.errors.opportunity_id" />
       </div>
-      <h2 class="font-bold text-sm my-2 col-span-full">Presupuesto</h2>
+      <!-- <h2 class="font-bold text-sm my-2 col-span-full">Presupuesto</h2>
       <div>
         <InputLabel value="Moneda" class="ml-2" />
         <el-select v-model="form.currency"  placeholder="Seleccione" class="w-full mt-1"
@@ -166,8 +166,8 @@
         <input v-model="form.budget" type="number" step="0.01" class="input mt-1" placeholder="Ingresa el monto"
           required />
         <InputError :message="form.errors.budget" />
-      </div>
-      <h2 class="font-bold text-sm my-2 col-span-full">Acceso al proyecto</h2>
+      </div> -->
+      <h2 class="font-bold text-sm my-2 col-span-full">Acceso al ticket</h2>
       <div class="col-span-full text-sm">
         <div class="my-1">
           <input v-model="typeAccessProject" value="Public"
@@ -176,7 +176,7 @@
           <b>Público</b>
           <p class="text-[#9A9A9A] ml-7 text-xs">
             Los usuarios del portal solo pueden ver, seguir y comentar, mientras que los
-            usuarios del proyecto tendrán acceso directo.
+            usuarios del ticket tendrán acceso directo.
           </p>
         </div>
         <div class="my-1">
@@ -185,7 +185,7 @@
             name="typeAccessProject" />
           <b>Privado</b>
           <p class="text-[#9A9A9A] ml-7 text-xs">
-            Solo los usuarios de proyecto pueden ver y acceder a este proyecto
+            Solo los usuarios de ticket pueden ver y acceder a este ticket
           </p>
         </div>
       </div>
@@ -298,7 +298,7 @@
         <Link :href="route('pms.projects.index')">
         <CancelButton type="button">Cancelar</CancelButton>
         </Link>
-        <PrimaryButton :disabled="form.processing">Crear proyecto</PrimaryButton>
+        <PrimaryButton :disabled="form.processing">Crear ticket</PrimaryButton>
       </div>
     </form>
 
@@ -380,7 +380,7 @@ export default {
       contact_id: null,
       opportunity_id: null,
       currency: "$MXN",
-      budget: null,
+      budget: 0.00,
       selectedUsersToPermissions: [],
       media: [],
       user_id: this.$page.props.auth.user.id,
@@ -489,7 +489,7 @@ export default {
         onSuccess: () => {
           this.$notify({
             title: "Correcto",
-            message: "Proyecto creado",
+            message: "Ticket creado",
             type: "success",
           });
         },
@@ -570,7 +570,7 @@ export default {
       }
     },
     selectAdmins() {
-      // obtener los usuarios admin para que siempre aparezcan en los proyectos y dar todos los permisos
+      // obtener los usuarios admin para que siempre aparezcan en los tickets y dar todos los permisos
       let admins = this.users.filter((item) => item.employee_properties == null);
       admins.forEach((admin) => {
         const defaultPermissions = [true, true, true, true, true];
@@ -580,7 +580,7 @@ export default {
     },
     selectAuthUser() {
       if (this.$page.props.auth.user.employee_properties !== null) {
-        // obtener usuario que esta creando el proyecto para dar todos los permisos
+        // obtener usuario que esta creando el ticket para dar todos los permisos
         const user = this.users.find((item) => item.id === this.$page.props.auth.user.id);
         const defaultPermissions = [true, true, true, true, true];
         let authUser = {

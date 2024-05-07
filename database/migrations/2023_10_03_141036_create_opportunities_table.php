@@ -27,8 +27,8 @@ return new class extends Migration
             $table->unsignedFloat('amount', 10, 2);
             $table->date('start_date');
             $table->date('close_date');
-            $table->timestamp('finished_at')->nullable(); //fecha en la cual se cerró la oportunidad
-            $table->timestamp('paid_at')->nullable(); //fecha en la cual se cerró la oportunidad
+            $table->timestamp('finished_at')->nullable(); //fecha en la cual se cerró el presupuesto
+            $table->timestamp('paid_at')->nullable(); //fecha en la cual se cerró el presupuesto
             $table->foreignId('contact_id')->nullable()->constrained();
             $table->foreignId('customer_id')->nullable()->constrained();
             $table->foreignId('user_id')->constrained();

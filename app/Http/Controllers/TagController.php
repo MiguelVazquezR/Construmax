@@ -26,7 +26,7 @@ class TagController extends Controller
 
         $tag = Tag::create($request->all());
 
-        return response()->json(['message' => 'Se ha creado una nueva etiqueta de proyecto', 'item' => $tag]);
+        return response()->json(['message' => 'Se ha creado una nueva etiqueta de ticket', 'item' => $tag]);
     }
 
     public function show(Tag $tag)

@@ -22,6 +22,7 @@ class Opportunity extends Model implements HasMedia
         'description',
         'lost_oportunity_razon',
         'amount',
+        'budgets',
         'start_date',
         'close_date',
         'finished_at',
@@ -41,6 +42,7 @@ class Opportunity extends Model implements HasMedia
         'close_date' => 'date',
         'finished_at' => 'datetime',
         'paid_at' => 'datetime',
+        'budgets' => 'array',
     ];
 
     // relationships

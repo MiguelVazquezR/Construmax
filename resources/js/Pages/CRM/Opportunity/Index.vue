@@ -252,11 +252,11 @@
 
     <ConfirmationModal :show="showConfirmModal" @close="showConfirmModal = false">
       <template #title>
-        Eliminar ticket
+        Eliminar presupuesto
       </template>
       <template #content>
         Al eliminar el presupuesto se perderán permanentemente las actividades y los archivos relacionados, así como el
-        ticket relacionado si es que se creó uno. ¿Deseas continuar?
+        ticket relacionado. ¿Deseas continuar?
       </template>
       <template #footer>
         <div class="flex space-x-1">
@@ -265,41 +265,6 @@
         </div>
       </template>
     </ConfirmationModal>
-
-    <!-- ----------------- status modal ----------- -->
-    <Modal :show="showLostOpportunityModal || showCreateProjectModal"
-      @close="showLostOpportunityModal = false; showCreateProjectModal = false">
-      <section v-if="showLostOpportunityModal" class="mx-7 my-4 space-y-4 relative">
-        <div>
-          <label>Causa presupuesto perdido
-            <el-tooltip content="Escribe la causa por la cual se PERDIÓ este presupuesto" placement="top">
-              <i class="fa-regular fa-circle-question ml-2 text-primary text-xs"></i>
-            </el-tooltip>
-          </label>
-          <textarea v-model="lost_oportunity_razon" class="input h-20 mt-3"></textarea>
-        </div>
-        <div class="flex justify-end space-x-3 pt-5 pb-1">
-          <CancelButton @click="cancelUpdating">Cancelar</CancelButton>
-          <PrimaryButton @click="updateOpportunityStatus('Perdida')" :disabled="lost_oportunity_razon == null">Actualizar
-            estatus</PrimaryButton>
-        </div>
-      </section>
-
-      <section v-if="showCreateProjectModal" class="mx-7 my-4 space-y-4 relative">
-        <div>
-          <h2 class="font bold text-center font-bold mb-5">Paso clave - Crear ticket</h2>
-          <p class="px-5">Es necesario crear un ticket al haber marcado como <span
-              class="text-[#FD8827]">”cerrada”</span>
-            o <span class="text-[#37951F]">”Pagada”</span> el presupuesto para llevar un correcto seguimiento y flujo de
-            trabajo.
-          </p>
-        </div>
-        <div class="flex justify-end space-x-3 pt-5 pb-1">
-          <CancelButton @click="cancelUpdating">Cancelar</CancelButton>
-          <PrimaryButton @click="CreateProject">Continuar</PrimaryButton>
-        </div>
-      </section>
-    </Modal>
   </AppLayout>
 </template>
 <script>
@@ -373,15 +338,15 @@ export default {
     handleAddDrag(evt) {
       let status = "Perdida";
       if (evt.to.id === "new") {
-        status = "Nueva";
+        status = "Trabajo terminado";
       } else if (evt.to.id === "pending") {
-        status = "Pendiente";
+        status = "Presupuesto";
       } else if (evt.to.id === "closed") {
-        status = "Cerrada";
+        status = "Facturado";
       } else if (evt.to.id === "paid") {
         status = "Pagado";
       } else if (evt.to.id === "lost") {
-        status = "Perdida";
+        status = "Perdido";
       }
 
       if (evt.to.id === "lost") {
@@ -436,33 +401,33 @@ export default {
       }
     },
     getStatusStyles(opportunity) {
-      if (opportunity.status === 'Nueva') {
+      if (opportunity.status === 'Trabajo terminado') {
         return 'text-[#9A9A9A] bg-[#CCCCCCCC]';
-      } else if (opportunity.status === 'Pendiente') {
+      } else if (opportunity.status === 'Presupuesto') {
         return 'text-[#C88C3C] bg-[#F3FD85]';
-      } else if (opportunity.status === 'Cerrada') {
+      } else if (opportunity.status === 'Facturado') {
         return 'text-[#FD8827] bg-[#FEDBBD]';
       } else if (opportunity.status === 'Pagado') {
         return 'text-[#37951F] bg-[#ADFEB5]';
-      } else if (opportunity.status === 'Perdida') {
+      } else if (opportunity.status === 'Perdido') {
         return 'text-[#9E0FA9] bg-[#F7B7FC]';
       }
     },
     updateLists() {
       this.newOpportunitiesLocal = this.opportunitiesLocal.filter(
-        (opportunity) => opportunity.status === "Nueva"
+        (opportunity) => opportunity.status === "Trabajo terminado"
       );
       this.pendingOpportunitiesLocal = this.opportunitiesLocal.filter(
-        (opportunity) => opportunity.status === "Pendiente"
+        (opportunity) => opportunity.status === "Presupuesto"
       );
       this.closedOpportunitiesLocal = this.opportunitiesLocal.filter(
-        (opportunity) => opportunity.status === "Cerrada"
+        (opportunity) => opportunity.status === "Facturado"
       );
       this.paidOpportunitiesLocal = this.opportunitiesLocal.filter(
         (opportunity) => opportunity.status === "Pagado"
       );
       this.lostOpportunitiesLocal = this.opportunitiesLocal.filter(
-        (opportunity) => opportunity.status === "Perdida"
+        (opportunity) => opportunity.status === "Perdido"
       );
     },
     calculateTotals() {

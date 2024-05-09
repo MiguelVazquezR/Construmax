@@ -33,12 +33,13 @@ class OpportunityResource extends JsonResource
 
         return [
             'id' => $this->id,
-            'folio' => 'OP-' . strtoupper(substr($this->name, 0, 3)) . '-' . str_pad($this->id, 3, '0', STR_PAD_LEFT),
+            'folio' => 'PS-' . strtoupper(substr($this->name, 0, 3)) . '-' . str_pad($this->id, 3, '0', STR_PAD_LEFT),
             'name' => $this->name,
             'contact' => $this->whenLoaded('contact'),
             'contact_id' => $this->contact_id,
             'lost_oportunity_razon' => $this->lost_oportunity_razon,
             'amount' => $this->amount,
+            'budgets' => $this->budgets,
             'status' => $this->status,
             'description' => $this->description,
             'tags' => TagResource::collection($this->whenLoaded('tags')),

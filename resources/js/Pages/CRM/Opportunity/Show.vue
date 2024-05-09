@@ -45,7 +45,7 @@
             <el-dropdown v-if="currentTab == 3 && $page.props.auth.user.permissions?.includes('Registrar pagos en seguimiento integral')
               && $page.props.auth.user.permissions?.includes('Agendar citas en seguimiento integral')
               && $page.props.auth.user.permissions?.includes('Enviar correos en seguimiento integral')
-              " split-button type="primary"
+            " split-button type="primary"
               @click="$inertia.get(route('crm.meeting-monitors.create', { opportunityId: selectedOpportunity }))">
               Agendar cita
               <template #dropdown>
@@ -80,8 +80,8 @@
       <!-- ------------- tabs section starts ------------- -->
       <div class="border-y-2 border-[#cccccc] flex justify-between items-center py-2 w-full overflow-x-auto">
         <div class="flex">
-          <Tab @click="currentTab = index + 1" :label="tab" :active="currentTab == index + 1" v-for="(tab, index) in tabs"
-            :key="index" />
+          <Tab @click="currentTab = index + 1" :label="tab" :active="currentTab == index + 1"
+            v-for="(tab, index) in tabs" :key="index" />
         </div>
       </div>
       <!-- ------------- tabs section ends ------------- -->
@@ -107,17 +107,12 @@
           <div class="flex items-center relative">
             <div :class="getColorStatus()" class="absolute -left-10 top-5 rounded-full w-3 h-3"></div>
             <el-select @change="
-              status == 'Perdida' ? (showLostOpportunityModal = true)
-                : status == 'Cerrada' ? showCreateProjectModal = true
-                  : status == 'Pagado' ? showCreateProjectModal = true
-                    : updateStatus()
+              status == 'Perdido' ? (showLostOpportunityModal = true) : updateStatus()
               " class="lg:w-1/2 mt-2" v-model="status" filterable placeholder="Seleccionar estatus"
               no-data-text="No hay estatus registrados" no-match-text="No se encontraron coincidencias">
               <el-option v-for="item in statuses" :key="item" :label="item.label" :value="item.label">
                 <span style="float: left"><i :class="item.color" class="fa-solid fa-circle"></i></span>
-                <span style="float: center; margin-left: 5px; font-size: 13px">{{
-                  item.label
-                }}</span>
+                <span style="float: center; margin-left: 5px; font-size: 13px">{{ item.label }}</span>
               </el-option>
             </el-select>
           </div>
@@ -127,17 +122,17 @@
           <span>{{ opportunity.data.start_date }}</span>
           <span class="text-gray-500 my-2">Fecha estimada de cierre</span>
           <span>{{ opportunity.data.close_date }}</span>
-          <span class="text-gray-500 my-2">Monto</span>
-          <span>${{ opportunity.data.amount?.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",") }}</span>
+          <!-- <span class="text-gray-500 my-2">Monto</span>
+          <span>${{ opportunity.data.amount?.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",") }}</span> -->
           <span class="text-gray-500 my-2">Prioridad</span>
           <div class="relative">
             <div :class="getColorPriority(opportunity.data.priority.label)"
               class="absolute -left-10 top-1 rounded-full w-3 h-3"></div>
             <span>{{ opportunity.data.priority.label }}</span>
           </div>
-          <span v-if="opportunity.data.finished_at" class="text-gray-500 my-2">Cerrada el</span>
+          <!-- <span v-if="opportunity.data.finished_at" class="text-gray-500 my-2">Cerrada el</span>
           <span v-if="opportunity.data.finished_at" class="bg-green-300 py-1 px-2 rounded-full">{{
-            opportunity.data.finished_at }}</span>
+            opportunity.data.finished_at }}</span> -->
           <span v-if="opportunity.data.paid_at" class="text-gray-500 my-2">Pagado el</span>
           <span v-if="opportunity.data.paid_at" class="bg-green-300 py-1 px-2 rounded-full">{{
             opportunity.data.paid_at }}</span>
@@ -147,11 +142,24 @@
         </div>
 
         <div class="grid grid-cols-2 text-left p-4 md:ml-10 items-center">
+          <p v-if="opportunity.data.budgets" class="text-secondary col-span-2">
+            Presupuesto
+          </p>
+          <ul>
+            <li v-for="(item, index) in opportunity.data.budgets" :key="index">
+              • {{ item.concept }}: ${{
+                parseFloat(item.amount).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",") }}
+            </li>
+            <p v-if="opportunity.data.budgets" class="mt-1 font-semibold">
+              Total: ${{ getTotalBudget().toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",") }}
+            </p>
+          </ul>
+
           <p class="text-secondary col-span-2 mb-2">Usuarios con actividades</p>
 
           <div v-if="uniqueAsignedNames">
             <span v-for="asignedName in uniqueAsignedNames" :key="asignedName" class="text-gray-500">{{ asignedName
-            }}</span>
+              }}</span>
             <span>{{ opportunity.data.company_branch }}</span>
           </div>
           <p class="text-sm text-gray-400" v-else>
@@ -322,8 +330,8 @@
                 </td>
                 <td v-if="$page.props.auth.user.permissions.includes('Eliminar seguimiento integral')"
                   class="text-left py-2 rounded-r-full">
-                  <el-popconfirm confirm-button-text="Si" cancel-button-text="No" icon-color="#D90537" title="¿Eliminar?"
-                    @confirm="deleteClientMonitor(monitor)">
+                  <el-popconfirm confirm-button-text="Si" cancel-button-text="No" icon-color="#D90537"
+                    title="¿Eliminar?" @confirm="deleteClientMonitor(monitor)">
                     <template #reference>
                       <i
                         class="fa-regular fa-trash-can text-primary hover:bg-[#FEDBBD] rounded-full cursor-pointer p-2"></i>
@@ -455,7 +463,8 @@
             <h2 class="font bold text-center font-bold mb-5">Paso clave - Crear ticket</h2>
             <p class="px-5">Es necesario crear un ticket al haber marcado como <span
                 class="text-[#FD8827]">”cerrada”</span>
-              o <span class="text-[#37951F]">”Pagada”</span> el presupuesto para llevar un correcto seguimiento y flujo de
+              o <span class="text-[#37951F]">”Pagada”</span> el presupuesto para llevar un correcto seguimiento y flujo
+              de
               trabajo.
             </p>
           </div>
@@ -510,15 +519,15 @@ export default {
       ],
       statuses: [
         {
-          label: "Nueva",
+          label: "Trabajo terminado",
           color: "text-[#f2f2f2]",
         },
         {
-          label: "Pendiente",
+          label: "Presupuesto",
           color: "text-[#F3FD85]",
         },
         {
-          label: "Cerrada",
+          label: "Facturado",
           color: "text-[#FEDBBD]",
         },
         {
@@ -526,7 +535,7 @@ export default {
           color: "text-[#AFFDB2]",
         },
         {
-          label: "Perdida",
+          label: "Perdido",
           color: "text-[#F7B7FC]",
         },
       ],
@@ -553,6 +562,17 @@ export default {
     defaultTab: Number,
   },
   methods: {
+    getTotalBudget() {
+      return this.opportunity.data.budgets.reduce((acc, item) => {
+        // Verificar si item.amount es un número antes de sumarlo
+        const amount = parseFloat(item.amount);
+        if (!isNaN(amount)) {
+          return acc + amount;
+        } else {
+          return acc; // Si item.amount no es un número, simplemente retornar el acumulador sin sumar nada
+        }
+      }, 0);
+    },
     cancelUpdating() {
       window.location.reload();
     },
@@ -695,15 +715,15 @@ export default {
       }
     },
     getColorStatus() {
-      if (this.opportunity.data.status == "Nueva") {
+      if (this.opportunity.data.status == "Trabajo terminado") {
         return "bg-[#F2F2F2] text-[#97989A]";
-      } else if (this.opportunity.data.status == "Pendiente") {
+      } else if (this.opportunity.data.status == "Presupuesto") {
         return "bg-[#F3FD85] text-[#C88C3C]";
-      } else if (this.opportunity.data.status == "Cerrada") {
+      } else if (this.opportunity.data.status == "Facturado") {
         return "bg-[#FEDBBD] text-[#FD8827]";
       } else if (this.opportunity.data.status == "Pagado") {
         return "bg-[#AFFDB2] text-[#37951F]";
-      } else if (this.opportunity.data.status == "Perdida") {
+      } else if (this.opportunity.data.status == "Perdido") {
         return "bg-[#F7B7FC] text-[#9E0FA9]";
       } else {
         return "bg-transparent";

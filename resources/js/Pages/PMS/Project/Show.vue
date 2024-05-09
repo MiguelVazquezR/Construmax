@@ -119,30 +119,28 @@
                     <span v-if="!project.data.is_internal" class="text-gray-500">Cliente</span>
                     <span v-if="!project.data.is_internal">{{
                         project.data.contact.contactable.name
-                        }}</span>
+                    }}</span>
                     <span v-if="!project.data.is_internal" class="text-gray-500 my-2">Contacto</span>
                     <span v-if="!project.data.is_internal">{{
                         project.data.contact?.name
-                        }}</span>
+                    }}</span>
                     <span v-if="!project.data.is_internal" class="text-gray-500 my-2">Sucursal</span>
                     <span v-if="!project.data.is_internal">{{
                         project.data.address
-                        }}</span>
+                    }}</span>
 
                     <p v-if="!project.data.is_internal" class="text-secondary col-span-2 mb-2 mt-8 font-bold">
                         Presupuesto de ticket
                     </p>
                     <ul>
                         <li v-for="(item, index) in project.data.budgets" :key="index">
-                            • {{ item.concept }}: ${{ parseFloat(item.amount).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",") }}
+                            • {{ item.concept }}: ${{
+                                parseFloat(item.amount).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",") }}
                         </li>
+                        <p v-if="project.data.budgets.length" class="mt-1 font-semibold">
+                            Total: ${{ getTotalBudget().toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",") }}
+                        </p>
                     </ul>
-                    <!-- <span v-if="!project.data.is_internal" class="text-gray-500 my-2">OP</span> -->
-                    <!-- <Link :href="route('crm.opportunities.show', project.data.opportunity?.id ?? 1)"
-                        v-if="!project.data.is_internal && project.data.opportunity" class="text-primary underline">
-                    <span>{{ 'OP-' + project.data.opportunity?.id }}</span>
-                    </Link>
-                    <span v-else>Sin presupuesto</span> -->
                     <p v-if="project.data.tags.length" class="text-secondary col-span-full mt-7 font-bold">Etiquetas</p>
                     <div class="col-span-full flex space-x-3">
                         <Tag v-for="(item, index) in project.data.tags" :key="index" :name="item.name"
@@ -322,6 +320,17 @@ export default {
         defaultTab: Number,
     },
     methods: {
+        getTotalBudget() {
+            return this.project.data.budgets.reduce((acc, item) => {
+                // Verificar si item.amount es un número antes de sumarlo
+                const amount = parseFloat(item.amount);
+                if (!isNaN(amount)) {
+                    return acc + amount;
+                } else {
+                    return acc; // Si item.amount no es un número, simplemente retornar el acumulador sin sumar nada
+                }
+            }, 0);
+        },
         getFileTypeIcon(fileName) {
             // Asocia extensiones de archivo a iconos
             const fileExtension = fileName.split('.').pop().toLowerCase();
@@ -365,7 +374,7 @@ export default {
                     if (this.project.data.tasks.filter(task => task.status === 'Terminada').length == this.project.data.tasks.length) {
                         this.$notify({
                             title: "Correcto",
-                            message: "Se han terminado todas las tareas del ticket y se ha creado un presupuesto! Ve a editarlo si no lo has hecho",
+                            message: "Se han terminado todas las tareas del ticket y se ha creado un presupuesto! Ve a revisarlo",
                             type: "success",
                         });
                     }

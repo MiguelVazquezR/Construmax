@@ -25,6 +25,7 @@ return new class extends Migration
             $table->string('status');
             $table->text('description')->nullable();
             $table->unsignedFloat('amount', 10, 2);
+            $table->json('budgets')->nullable();
             $table->date('start_date');
             $table->date('close_date');
             $table->timestamp('finished_at')->nullable(); //fecha en la cual se cerró el presupuesto

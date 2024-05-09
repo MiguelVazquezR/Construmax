@@ -82,7 +82,8 @@
         <InputLabel value="Cliente *" class="ml-2" />
         <el-select class="w-full" v-model="form.customer_id" filterable placeholder="Seleccione"
           no-data-text="No hay clientes registrados" no-match-text="No se encontraron coincidencias">
-          <el-option v-for="customer in customers.data" :key="customer.id" :label="customer.name" :value="customer.id" />
+          <el-option v-for="customer in customers.data" :key="customer.id" :label="customer.name"
+            :value="customer.id" />
         </el-select>
         <InputError :message="form.errors.customer_id" />
       </div>
@@ -145,7 +146,8 @@
       </div>
       <div class="w-full">
         <div class="relative">
-          <i :class="getColorPriority(form.priority)" class="fa-solid fa-circle text-xs top-1 left-20 absolute z-30"></i>
+          <i :class="getColorPriority(form.priority)"
+            class="fa-solid fa-circle text-xs top-1 left-20 absolute z-30"></i>
           <InputLabel value="Prioridad *" />
           <div class="flex items-center space-x-4">
             <el-select class="w-full" v-model="form.priority" filterable placeholder="Seleccione"
@@ -192,7 +194,7 @@
         <input v-model="form.lost_oportunity_razon" class="input" type="text" />
         <InputError :message="form.errors.lost_oportunity_razon" />
       </div>
-      <div class="w-full col-span-full md:col-span-1">
+      <!-- <div class="w-full col-span-full md:col-span-1">
         <label class="text-sm">Valor de presupuesto *
           <el-tooltip content="Monto esperado si se cierra la venta" placement="right">
             <i class="fa-regular fa-circle-question ml-2 text-primary text-xs"></i>
@@ -200,7 +202,41 @@
         </label>
         <input v-model="form.amount" class="input" type="number" min="0" step="0.01" placeholder="Ingresa el monto" />
         <InputError :message="form.errors.amount" />
-      </div>
+      </div> -->
+      <h2 class="font-bold text-sm mt-3 col-span-full">Presupuesto</h2>
+      <section class="col-span-full">
+        <InputError :message="budgetMessage" id="budgetMessage" />
+        <div v-for="(item, index) in form.budgets" :key="index" class="col-span-full flex items-center space-x-2 mt-2">
+          <div class="w-[75%]">
+            <InputLabel value="Concepto" class="ml-2" />
+            <el-input v-model="form.budgets[index].concept" class="mt-1" placeholder="Ej. Costo de materiales"
+              required />
+          </div>
+          <div class="w-[20%]">
+            <InputLabel value="Monto" class="ml-2" />
+            <el-input v-model="form.budgets[index].amount" placeholder="Ej. 2,800" class="mt-1"
+              :formatter="(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')"
+              :parser="(value) => value.replace(/[^\d.]/g, '')" required>
+              <template #prefix>
+                <i class="fa-solid fa-dollar-sign"></i>
+              </template>
+            </el-input>
+          </div>
+          <el-popconfirm v-if="form.budgets.length > 1" confirm-button-text="Si" cancel-button-text="No"
+            icon-color="#FD8827" title="¿Remover?" @confirm="deleteBudget(index)" class="w-[5%]">
+            <template #reference>
+              <button type="button" class="text-primary text-sm w-6 h-6 self-end mb-1 hover:bg-gray-100 rounded-full">
+                <i class="fa-regular fa-trash-can"></i>
+              </button>
+            </template>
+          </el-popconfirm>
+        </div>
+        <div class="flex justify-center mt-4">
+          <button @click="addBudget()" type="button" class="text-xs text-primary underline">
+            + Agregar otro concepto
+          </button>
+        </div>
+      </section>
       <h2 class="font-bold text-sm my-2 col-span-full">Acceso a el presupuesto</h2>
       <div class="col-span-full text-sm">
         <div class="my-1">
@@ -251,7 +287,8 @@
               <h2 class="font-bold border-b border-gray3 w-1/3">Permisos</h2>
             </div>
             <div class="pl-3 overflow-y-auto min-h-[100px] max-h-[380px]">
-              <div class="flex mt-2 border-b border-gray3" v-for="user in form.selectedUsersToPermissions" :key="user.id">
+              <div class="flex mt-2 border-b border-gray3" v-for="user in form.selectedUsersToPermissions"
+                :key="user.id">
                 <div class="w-2/3 flex space-x-2">
                   <div v-if="$page.props.jetstream.managesProfilePhotos" class="flex text-sm rounded-full w-10 lg:w-12">
                     <img class="h-8 lg:h-10 w-8 lg:w-10 rounded-full object-cover" :src="user.profile_photo_url"
@@ -389,7 +426,8 @@ export default {
       probability: null,
       lost_oportunity_razon: null,
       priority: null,
-      amount: null,
+      // amount: null,
+      budgets: [{ concept: null, amount: null }],
       selectedUsersToPermissions: [],
       media: [],
       is_new_company: false,
@@ -399,7 +437,6 @@ export default {
       branch: null,
       contact_name: null,
       contact_phone: null,
-
     });
 
     const tagForm = useForm({
@@ -412,6 +449,7 @@ export default {
       showTagFormModal: false,
       company_branch: null,
       range: null,
+      budgetMessage: null,
       showTagFormModal: false,
       company_branch_obj: null,
       typeAccessProject: 'Private',
@@ -420,15 +458,15 @@ export default {
       editAccesFlag: true,
       statuses: [
         {
-          label: "Nueva",
+          label: "Trabajo terminado",
           color: "text-[#f2f2f2]",
         },
         {
-          label: "Pendiente",
+          label: "Presupuesto",
           color: "text-[#F3FD85]",
         },
         {
-          label: "Cerrada",
+          label: "Facturado",
           color: "text-[#FEDBBD]",
         },
         {
@@ -436,7 +474,7 @@ export default {
           color: "text-[#AFFDB2]",
         },
         {
-          label: "Perdida",
+          label: "Perdido",
           color: "text-[#F7B7FC]",
         },
       ],
@@ -495,6 +533,17 @@ export default {
     customers: Object,
   },
   methods: {
+    scrollToElement(elementId) {
+      const el = document.getElementById(elementId);
+      el.scrollIntoView({ behavior: 'smooth' });
+    },
+    deleteBudget(index) {
+      this.form.budgets.splice(index, 1);
+    },
+    addBudget() {
+      const newBudget = { concept: null, amount: null };
+      this.form.budgets.push(newBudget);
+    },
     handleChangeSeller() {
       if (!this.form.selectedUsersToPermissions.some(item => item.id == this.form.seller_id)) {
         this.addToSelectedUsers(this.form.seller_id, true);
@@ -519,15 +568,15 @@ export default {
       this.form.description = content;
     },
     getColorStatus(oportunityStatus) {
-      if (oportunityStatus === "Nueva") {
+      if (oportunityStatus === "Trabajo terminado") {
         return "text-[#f2f2f2]";
-      } else if (oportunityStatus === "Pendiente") {
+      } else if (oportunityStatus === "Presupuesto") {
         return "text-[#F3FD85]";
-      } else if (oportunityStatus === "Cerrada") {
+      } else if (oportunityStatus === "Facturado") {
         return "text-[#FEDBBD]";
       } else if (oportunityStatus === "Pagado") {
         return "text-[#AFFDB2]";
-      } else if (oportunityStatus === "Perdida") {
+      } else if (oportunityStatus === "Perdido") {
         return "text-[#F7B7FC]";
       } else {
         return "text-transparent";

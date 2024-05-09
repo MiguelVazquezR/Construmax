@@ -209,9 +209,10 @@ class TaskController extends Controller
                 // -------------------------------------------------------------------------------------------------
                 $opportunity = Opportunity::create([
                     'name' => $project->name,
-                    'status' => 'Nueva', //se cambió el nombre a trabajo terminado pero en base de datos se guarda como nueva
+                    'status' => 'Trabajo terminado',
                     'seller_id' => $project->owner_id,
                     'amount' => collect($project->budgets)->sum('amount'),
+                    'budgets' => $project->budgets,
                     'priority' => 'Baja',
                     'start_date' => $project->start_date,
                     'close_date' => $project->limit_date,

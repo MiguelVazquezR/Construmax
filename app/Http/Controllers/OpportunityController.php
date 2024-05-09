@@ -20,7 +20,6 @@ class OpportunityController extends Controller
     {
         $opportunities = OpportunityResource::collection(Opportunity::with('customer:id,name')->latest()->get());
 
-        // return $opportunities;
         return inertia('CRM/Opportunity/Index', compact('opportunities'));
     }
 
@@ -42,7 +41,8 @@ class OpportunityController extends Controller
             'seller_id' => 'required',
             'tags' => 'nullable|array',
             'probability' => 'nullable|numeric|min:0|max:100',
-            'amount' => 'required|numeric|min:0|max:99999999.99',
+            // 'amount' => 'required|numeric|min:0|max:99999999.99',
+            'budgets' => 'nullable|array|min:1',
             'priority' => 'required|string',
             'start_date' => 'required|date',
             'close_date' => 'required|date|after:start_date',
@@ -56,12 +56,12 @@ class OpportunityController extends Controller
             'contact_phone' => $request->is_new_company ? 'required' : 'nullable',
         ]);
 
-        if ($request->status == 'Cerrada') {
-            $opportunity = Opportunity::create($validated + ['user_id' => auth()->id(), 'finished_at' => now()]);
-        } else {
-
-            $opportunity = Opportunity::create($validated + ['user_id' => auth()->id()]);
-        }
+        // if ($request->status == 'Cerrada') {
+        //     $opportunity = Opportunity::create($validated + ['user_id' => auth()->id(), 'finished_at' => now()]);
+        // } else {
+        $validated['amount'] = collect($validated['budgets'])->sum('amount');
+        $opportunity = Opportunity::create($validated + ['user_id' => auth()->id()]);
+        // }
 
         // permisos
         foreach ($request->selectedUsersToPermissions as $user) {
@@ -163,7 +163,8 @@ class OpportunityController extends Controller
             'seller_id' => 'required',
             'tags' => 'nullable|array',
             'probability' => 'nullable|numeric|min:0|max:100',
-            'amount' => 'required|numeric|min:0|max:99999999.99',
+            // 'amount' => 'required|numeric|min:0|max:99999999.99',
+            'budgets' => 'nullable|array|min:1',
             'priority' => 'required|string',
             'start_date' => 'required|date',
             'close_date' => 'required|date|after:start_date',
@@ -177,11 +178,12 @@ class OpportunityController extends Controller
             'contact_phone' => $request->is_new_company ? 'required' : 'nullable',
         ]);
 
-        if ($request->status == 'Cerrada' || $request->status == 'Pagado') {
-            $opportunity->update($validated + ['finished_at' => now()]);
-        } else {
-            $opportunity->update($validated + ['finished_at' => null]);
-        }
+        // if ($request->status == 'Cerrada' || $request->status == 'Pagado') {
+        //     $opportunity->update($validated + ['finished_at' => now()]);
+        // } else {
+        $validated['amount'] = collect($validated['budgets'])->sum('amount');
+        $opportunity->update($validated);
+        // }
 
         // permisos
         // Eliminar todos los permisos actuales para el presupuesto
@@ -211,7 +213,8 @@ class OpportunityController extends Controller
             'seller_id' => 'required',
             'tags' => 'nullable|array',
             'probability' => 'nullable|numeric|min:0|max:100',
-            'amount' => 'required|numeric|min:0|max:99999999.99',
+            // 'amount' => 'required|numeric|min:0|max:99999999.99',
+            'budgets' => 'nullable|array|min:1',
             'priority' => 'required|string',
             'start_date' => 'required|date',
             'close_date' => 'required|date|after:start_date',
@@ -225,11 +228,12 @@ class OpportunityController extends Controller
             'contact_phone' => $request->is_new_company ? 'required' : 'nullable',
         ]);
 
-        if ($request->status == 'Cerrada' || $request->status == 'Pagado') {
-            $opportunity->update($validated + ['finished_at' => now()]);
-        } else {
-            $opportunity->update($validated + ['finished_at' => null]);
-        }
+        // if ($request->status == 'Cerrada' || $request->status == 'Pagado') {
+        //     $opportunity->update($validated + ['finished_at' => now()]);
+        // } else {
+        $validated['amount'] = collect($validated['budgets'])->sum('amount');
+        $opportunity->update($validated);
+        // }
 
         // permisos
         // Eliminar todos los permisos actuales para el presupuesto
@@ -265,7 +269,7 @@ class OpportunityController extends Controller
             $task->comments()->delete();
             $task->delete();
         }
-        
+
         // eliminar actividades y comentarios de presupuesto
         $tasks = $opportunity->opportunityTasks;
         foreach ($tasks as $task) {
@@ -283,7 +287,7 @@ class OpportunityController extends Controller
     {
         $opportunity = Opportunity::find($opportunity_id);
 
-        if ($request->status == 'Cerrada') {
+        if ($request->status == 'Facturado') {
             $opportunity->update([
                 'status' => $request->status,
                 'finished_at' => now(),
@@ -296,7 +300,7 @@ class OpportunityController extends Controller
                 'paid_at' => now(),
                 'lost_oportunity_razon' => null,
             ]);
-        } elseif ($request->status == "Perdida") {
+        } elseif ($request->status == "Perdido") {
             $opportunity->update([
                 'status' => $request->status,
                 'finished_at' => null,
@@ -311,7 +315,7 @@ class OpportunityController extends Controller
                 'lost_oportunity_razon' => null,
             ]);
         }
-        
+
         //Crea el registro de una actividad para el historial de ese presupuesto
         Activity::create([
             'description' => 'cambió el estatus de el presupuesto a "' . $request->status . '"',
@@ -334,6 +338,5 @@ class OpportunityController extends Controller
         if ($project != null) {
             return response()->json(['message' => 'Ya existe un ticket de este presupuesto']);
         }
-
     }
 }

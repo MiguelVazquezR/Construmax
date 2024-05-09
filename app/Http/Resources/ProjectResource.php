@@ -15,7 +15,7 @@ class ProjectResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-            'folio' => 'PR-' . str_pad($this->id, 4, "0", STR_PAD_LEFT),
+            'folio' => 'TK-' . str_pad($this->id, 4, "0", STR_PAD_LEFT),
             'id' => $this->id,
             'name' => $this->name,
             'service_type' => $this->service_type,
@@ -25,7 +25,7 @@ class ProjectResource extends JsonResource
             'is_internal' => $this->is_internal,
             'currency' => $this->currency,
             'invoice_type' => $this->invoice_type,
-            'budget' => $this->budget,
+            'budgets' => $this->budgets,
             'address' => $this->address,
             'contact' => $this->whenLoaded('contact'),
             'company' => $this->whenLoaded('company'),

@@ -43,7 +43,7 @@ export default {
                     active: route().current('crm.*'),
                     options: [
                         {
-                            label: 'Inicio',
+                            label: 'Analíticas',
                             route: route('crm.dashboard'),
                             show: true,
                             active: route().current('crm.dashboard'),
@@ -76,7 +76,7 @@ export default {
                     active: route().current('pms.*'),
                     options: [
                         {
-                            label: 'Inicio',
+                            label: 'Analíticas',
                             route: route('pms.dashboard'),
                             active: route().current('pms.dashboard'),
                             show: true,

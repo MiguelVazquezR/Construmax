@@ -17,7 +17,7 @@
       </div>
       <div>
         <InputLabel value="Tipo de servicio *" class="ml-2" />
-        <el-select v-model="form.service_type"  placeholder="Seleccione" class="w-full mt-1"
+        <el-select v-model="form.service_type" placeholder="Seleccione" class="w-full mt-1"
           no-data-text="No hay opciones para mostrar" no-match-text="No se encontraron coincidencias">
           <el-option v-for="(item, index) in serviceTypes" :key="item.id" :label="item" :value="item" />
         </el-select>
@@ -32,8 +32,8 @@
       </div>
       <div class="col-span-full lg:col-span-1">
         <InputLabel value="Responsable *" class="ml-2" />
-        <el-select @change="handleChangeSeller" v-model="form.owner_id"  placeholder="Seleccione"
-          class="w-full mt-1" no-data-text="No hay opciones para mostrar" no-match-text="No se encontraron coincidencias">
+        <el-select @change="handleChangeSeller" v-model="form.owner_id" placeholder="Seleccione" class="w-full mt-1"
+          no-data-text="No hay opciones para mostrar" no-match-text="No se encontraron coincidencias">
           <el-option v-for="(item, index) in users" :key="item.id" :label="item.name" :value="item.id">
             <div v-if="$page.props.jetstream.managesProfilePhotos"
               class="flex text-sm rounded-full items-center mt-[3px]">
@@ -73,7 +73,7 @@
             <i class="fa-solid fa-plus text-primary text-[9px]"></i>
           </button>
         </div>
-        <el-select v-model="form.tags"  placeholder="Seleccione" multiple class="w-full mt-1"
+        <el-select v-model="form.tags" placeholder="Seleccione" multiple class="w-full mt-1"
           no-data-text="No hay opciones para mostrar" no-match-text="No se encontraron coincidencias">
           <el-option v-for="(item, index) in tags.data" :key="item.id" :label="item.name" :value="item.id">
             <Tag :name="item.name" :color="item.color" />
@@ -110,7 +110,7 @@
             Agregar grupo nuevo
           </button>
         </div>
-        <el-select v-model="form.project_group_id"  placeholder="Seleccione" class="w-full mt-1"
+        <el-select v-model="form.project_group_id" placeholder="Seleccione" class="w-full mt-1"
           no-data-text="No hay opciones para mostrar" no-match-text="No se encontraron coincidencias">
           <el-option v-for="(item, index) in project_groups.data" :key="item.id" :label="item.name" :value="item.id" />
         </el-select>
@@ -121,29 +121,29 @@
       </h2>
       <div v-if="!form.is_internal">
         <InputLabel value="Cliente *" class="ml-2" />
-        <el-select v-model="form.customer_id" @change="updateContacts()"  placeholder="Seleccione"
-          class="w-full mt-1" no-data-text="No hay opciones para mostrar" no-match-text="No se encontraron coincidencias">
+        <el-select v-model="form.customer_id" @change="updateContacts()" placeholder="Seleccione" class="w-full mt-1"
+          no-data-text="No hay opciones para mostrar" no-match-text="No se encontraron coincidencias">
           <el-option v-for="(item, index) in customers" :key="item.id" :label="item.name" :value="item.id" />
         </el-select>
         <InputError :message="form.errors.customer_id" />
       </div>
       <div v-if="!form.is_internal">
         <InputLabel value="Contacto *" class="ml-2" />
-        <el-select v-model="form.contact_id" @change="updateBranches()"  placeholder="Seleccione"
-          class="w-full mt-1" no-data-text="No hay opciones para mostrar" no-match-text="No se encontraron coincidencias">
+        <el-select v-model="form.contact_id" @change="updateBranches()" placeholder="Seleccione" class="w-full mt-1"
+          no-data-text="No hay opciones para mostrar" no-match-text="No se encontraron coincidencias">
           <el-option v-for="(item, index) in contacts" :key="item.id" :label="item.name" :value="item.id" />
         </el-select>
         <InputError :message="form.errors.contact_id" />
       </div>
       <div v-if="!form.is_internal">
         <InputLabel value="Sucursal *" class="ml-2" />
-        <el-select v-model="form.address"  placeholder="Seleccione" class="w-full mt-1"
+        <el-select v-model="form.address" placeholder="Seleccione" class="w-full mt-1"
           no-data-text="No hay opciones para mostrar" no-match-text="No se encontraron coincidencias">
           <el-option v-for="(item, index) in branches" :key="index" :label="item" :value="item" />
         </el-select>
         <InputError :message="form.errors.address" />
       </div>
-      <div v-if="!form.is_internal">
+      <!-- <div v-if="!form.is_internal">
         <InputLabel value="OP" class="ml-2" />
         <el-select v-model="form.opportunity_id"  placeholder="Seleccione" class="w-full mt-1"
           no-data-text="El cliente no tiene presupuestos disponibles o las que existen ya han sido asignadas a un ticket"
@@ -151,22 +151,48 @@
           <el-option v-for="(item, index) in opportunities" :key="item.id" :label="item.name" :value="item.id" />
         </el-select>
         <InputError :message="form.errors.opportunity_id" />
-      </div>
-      <!-- <h2 class="font-bold text-sm my-2 col-span-full">Presupuesto</h2>
+      </div> -->
+      <h2 class="font-bold text-sm my-2 col-span-full">Presupuesto</h2>
       <div>
         <InputLabel value="Moneda" class="ml-2" />
-        <el-select v-model="form.currency"  placeholder="Seleccione" class="w-full mt-1"
+        <el-select v-model="form.currency" placeholder="Seleccione" class="w-full mt-1"
           no-data-text="No hay opciones para mostrar" no-match-text="No se encontraron coincidencias">
           <el-option v-for="(item, index) in currencies" :key="index" :label="item.label" :value="item.value" />
         </el-select>
         <InputError :message="form.errors.currency" />
       </div>
-      <div>
-        <InputLabel value="Monto" class="ml-2" />
-        <input v-model="form.budget" type="number" step="0.01" class="input mt-1" placeholder="Ingresa el monto"
-          required />
-        <InputError :message="form.errors.budget" />
-      </div> -->
+      <section class="col-span-full">
+        <InputError :message="budgetMessage" id="budgetMessage" />
+        <div v-for="(item, index) in form.budgets" :key="index" class="col-span-full flex items-center space-x-2 mt-2">
+          <div class="w-[75%]">
+            <InputLabel value="Concepto" class="ml-2" />
+            <el-input v-model="form.budgets[index].concept" class="mt-1" placeholder="Ej. Costo de materiales"
+              required />
+          </div>
+          <div class="w-[20%]">
+            <InputLabel value="Monto" class="ml-2" />
+            <el-input v-model="form.budgets[index].amount" placeholder="Ej. 2,800" class="mt-1"
+              :formatter="(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')"
+              :parser="(value) => value.replace(/[^\d.]/g, '')" required>
+              <template #prefix>
+                <i class="fa-solid fa-dollar-sign"></i>
+              </template>
+            </el-input>
+          </div>
+          <el-popconfirm v-if="form.budgets.length > 1" confirm-button-text="Si" cancel-button-text="No"
+            icon-color="#FD8827" title="¿Remover?" @confirm="deleteBudget(index)" class="w-[5%]">
+            <template #reference>
+              <button type="button" class="text-primary text-sm w-6 h-6 self-end mb-1 hover:bg-gray-100 rounded-full">
+                <i class="fa-regular fa-trash-can"></i>
+              </button>
+            </template>
+          </el-popconfirm>
+        </div>
+        <div class="flex justify-center mt-4">
+          <button @click="addBudget()" type="button" class="text-xs text-primary underline">+ Agregar otro
+            concepto</button>
+        </div>
+      </section>
       <h2 class="font-bold text-sm my-2 col-span-full">Acceso al ticket</h2>
       <div class="col-span-full text-sm">
         <div class="my-1">
@@ -195,9 +221,8 @@
             <h2 class="font-bold text-sm my-2 ml-2 col-span-full">
               Asignar participantes
             </h2>
-            <el-select @change="addToSelectedUsers" filterable  placeholder="Seleccionar usuario"
-              class="w-full lg:w-1/2" no-data-text="No hay más usuarios para añadir"
-              no-match-text="No se encontraron coincidencias">
+            <el-select @change="addToSelectedUsers" filterable placeholder="Seleccionar usuario" class="w-full lg:w-1/2"
+              no-data-text="No hay más usuarios para añadir" no-match-text="No se encontraron coincidencias">
               <el-option v-for="(item, index) in availableUsersToPermissions" :key="item.id" :label="item.name"
                 :value="item.id">
                 <div v-if="$page.props.jetstream.managesProfilePhotos"
@@ -220,7 +245,8 @@
               <h2 class="font-bold border-b border-gray3 w-1/3">Permisos</h2>
             </div>
             <div class="pl-3 overflow-y-auto min-h-[100px] max-h-[380px]">
-              <div class="flex mt-2 border-b border-gray3" v-for="user in form.selectedUsersToPermissions" :key="user.id">
+              <div class="flex mt-2 border-b border-gray3" v-for="user in form.selectedUsersToPermissions"
+                :key="user.id">
                 <div class="w-2/3 flex space-x-2">
                   <div v-if="$page.props.jetstream.managesProfilePhotos" class="flex text-sm rounded-full w-10 lg:w-12">
                     <img class="h-8 lg:h-10 w-8 lg:w-10 rounded-full object-cover" :src="user.profile_photo_url"
@@ -380,7 +406,7 @@ export default {
       contact_id: null,
       opportunity_id: null,
       currency: "$MXN",
-      budget: 0.00,
+      budgets: [{ concept: null, amount: null }],
       selectedUsersToPermissions: [],
       media: [],
       user_id: this.$page.props.auth.user.id,
@@ -406,6 +432,7 @@ export default {
       typeAccessProject: "Private",
       search: "",
       inputSearch: "",
+      budgetMessage: null,
       serviceTypes: [
         "Iluminación",
         "Herrería",
@@ -457,6 +484,17 @@ export default {
   },
   computed: {},
   methods: {
+    scrollToElement(elementId) {
+      const el = document.getElementById(elementId);
+      el.scrollIntoView({ behavior: 'smooth' });
+    },
+    deleteBudget(index) {
+      this.form.budgets.splice(index, 1);
+    },
+    addBudget() {
+      const newBudget = { concept: null, amount: null };
+      this.form.budgets.push(newBudget);
+    },
     handleChangeSeller() {
       if (!this.form.selectedUsersToPermissions.some(item => item.id == this.form.owner_id)) {
         this.addToSelectedUsers(this.form.owner_id, true);
@@ -485,15 +523,21 @@ export default {
       this.branches = selectedContact ? selectedContact?.additional.branches : [];
     },
     store() {
-      this.form.post(route("pms.projects.store"), {
-        onSuccess: () => {
-          this.$notify({
-            title: "Correcto",
-            message: "Ticket creado",
-            type: "success",
-          });
-        },
-      });
+      if (this.form.budgets.some(item => item.concept === null || item.amount === null)) {
+        this.budgetMessage = "No dejar ningún campo vacío en la lista de presupuesto...";
+        this.scrollToElement('budgetMessage');
+      } else {
+        this.budgetMessage = null;
+        this.form.post(route("pms.projects.store"), {
+          onSuccess: () => {
+            this.$notify({
+              title: "Correcto",
+              message: "Ticket creado",
+              type: "success",
+            });
+          },
+        });
+      }
     },
     submitGroupForm() {
       this.$refs.groupForm.dispatchEvent(new Event("submit", { cancelable: true }));

@@ -211,7 +211,7 @@ class TaskController extends Controller
                     'name' => $project->name,
                     'status' => 'Nueva', //se cambió el nombre a trabajo terminado pero en base de datos se guarda como nueva
                     'seller_id' => $project->owner_id,
-                    'amount' => $project->budget,
+                    'amount' => collect($project->budgets)->sum('amount'),
                     'priority' => 'Baja',
                     'start_date' => $project->start_date,
                     'close_date' => $project->limit_date,

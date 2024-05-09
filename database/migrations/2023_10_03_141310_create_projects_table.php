@@ -20,7 +20,7 @@ return new class extends Migration
             $table->text('address')->nullable();
             $table->boolean('is_strict')->default(0);
             $table->boolean('is_internal')->default(0);
-            $table->unsignedFloat('budget');
+            $table->json('budgets')->nullable();
             $table->date('start_date');
             $table->date('limit_date');
             $table->timestamp('finished_at')->nullable();

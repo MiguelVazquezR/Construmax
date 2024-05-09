@@ -20,7 +20,12 @@ class ProjectController extends Controller
 {
     public function index()
     {
-        $projects = ProjectResource::collection(Project::with(['tasks', 'owner'])->latest()->paginate(30));
+        // Consulta para obtener los proyectos en los que el usuario está involucrado
+        $projects = Project::whereHas('users', function ($query) {
+            $query->where('users.id', auth()->id());
+        })->with(['tasks', 'owner'])->latest()->paginate(30);
+
+        $projects = ProjectResource::collection($projects);
 
         return inertia('PMS/Project/Index', compact('projects'));
     }
@@ -32,8 +37,6 @@ class ProjectController extends Controller
         $tags = TagResource::collection(Tag::where('type', 'projects')->get());
         $users = User::whereNotIn('id', [1])->where('is_active', true)->get();
         $opportunity = Opportunity::find(request('opportunityId'));
-
-        // return $opportunity;
 
         return inertia('PMS/Project/Create', compact('customers', 'project_groups', 'tags', 'users', 'opportunity'));
     }
@@ -50,7 +53,7 @@ class ProjectController extends Controller
             'service_type' => 'required|string',
             'is_strict' => 'boolean',
             'is_internal' => 'boolean',
-            'budget' => 'required|numeric|min:0|max:999999.99',
+            'budgets' => 'required|array|min:1',
             'start_date' => 'required|date',
             'limit_date' => 'required|date',
             'project_group_id' => 'required|numeric|min:1',
@@ -97,7 +100,7 @@ class ProjectController extends Controller
 
     public function show(Project $project)
     {
-        $project = ProjectResource::make(Project::with(['tasks' => ['users', 'project', 'user', 'comments'], 'projectGroup', 'opportunity.customer', 'tags', 'users', 'owner', 'contact', 'user'])->find($project->id));
+        $project = ProjectResource::make(Project::with(['tasks' => ['users', 'project', 'user', 'comments'], 'projectGroup', 'opportunity.customer', 'tags', 'users', 'owner', 'contact.contactable', 'user'])->find($project->id));
         $projects = Project::latest()->get(['id', 'name']);
         $users = User::all();
         $defaultTab = request('defaultTab');
@@ -129,7 +132,7 @@ class ProjectController extends Controller
             'service_type' => 'required|string',
             'is_strict' => 'boolean',
             'is_internal' => 'boolean',
-            'budget' => 'required|numeric|min:0|max:999999.99',
+            'budgets' => 'required|array|min:1',
             'start_date' => 'required|date',
             'limit_date' => 'required|date',
             'project_group_id' => 'required|numeric|min:1',
@@ -183,7 +186,7 @@ class ProjectController extends Controller
             'service_type' => 'required|string',
             'is_strict' => 'boolean',
             'is_internal' => 'boolean',
-            'budget' => 'required|numeric|min:0|max:999999.99',
+            'budgets' => 'required|array|min:1',
             'start_date' => 'required|date',
             'limit_date' => 'required|date',
             'project_group_id' => 'required|numeric|min:1',

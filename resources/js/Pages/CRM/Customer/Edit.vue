@@ -168,7 +168,7 @@
         <Link :href="route('crm.customers.index')">
         <CancelButton type="button">Cancelar</CancelButton>
         </Link>
-        <PrimaryButton>Agregar</PrimaryButton>
+        <PrimaryButton :disabled="form.processing">Guardar cambios</PrimaryButton>
       </div>
     </form>
 

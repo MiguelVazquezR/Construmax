@@ -17,7 +17,7 @@ return new class extends Migration
             $table->date('limit_date');
             $table->string('time', 10);
             $table->timestamp('finished_at')->nullable();
-            $table->text('description');
+            $table->text('description')->nullable();
             $table->string('priority');
             $table->string('reminder')->nullable();
             $table->foreignId('user_id')->constrained()->cascadeOnDelete();

@@ -113,20 +113,12 @@
 
                 <div
                     class="grid grid-cols-2 text-left p-4 md:ml-10 border-r-2 border-gray-[#cccccc] items-center self-start">
-                    <!-- <p class="text-secondary col-span-full mb-2 font-bold">Presupuestos</p>
-
-                    <span class="text-gray-500">Moneda</span>
-                    <span>{{ project.data.currency }}</span>
-                    <span class="text-gray-500">Monto</span>
-                    <span>${{ project.data.budget?.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",") }}</span> -->
-
                     <p v-if="!project.data.is_internal" class="text-secondary col-span-2 mb-2 mt-8 font-bold">
                         Campos adicionales
                     </p>
-
                     <span v-if="!project.data.is_internal" class="text-gray-500">Cliente</span>
                     <span v-if="!project.data.is_internal">{{
-                        project.data.opportunity?.customer?.name
+                        project.data.contact.contactable.name
                         }}</span>
                     <span v-if="!project.data.is_internal" class="text-gray-500 my-2">Contacto</span>
                     <span v-if="!project.data.is_internal">{{
@@ -136,12 +128,21 @@
                     <span v-if="!project.data.is_internal">{{
                         project.data.address
                         }}</span>
-                    <span v-if="!project.data.is_internal" class="text-gray-500 my-2">OP</span>
-                    <Link :href="route('crm.opportunities.show', project.data.opportunity?.id ?? 1)"
+
+                    <p v-if="!project.data.is_internal" class="text-secondary col-span-2 mb-2 mt-8 font-bold">
+                        Presupuesto de ticket
+                    </p>
+                    <ul>
+                        <li v-for="(item, index) in project.data.budgets" :key="index">
+                            • {{ item.concept }}: ${{ parseFloat(item.amount).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",") }}
+                        </li>
+                    </ul>
+                    <!-- <span v-if="!project.data.is_internal" class="text-gray-500 my-2">OP</span> -->
+                    <!-- <Link :href="route('crm.opportunities.show', project.data.opportunity?.id ?? 1)"
                         v-if="!project.data.is_internal && project.data.opportunity" class="text-primary underline">
                     <span>{{ 'OP-' + project.data.opportunity?.id }}</span>
                     </Link>
-                    <span v-else>Sin presupuesto</span>
+                    <span v-else>Sin presupuesto</span> -->
                     <p v-if="project.data.tags.length" class="text-secondary col-span-full mt-7 font-bold">Etiquetas</p>
                     <div class="col-span-full flex space-x-3">
                         <Tag v-for="(item, index) in project.data.tags" :key="index" :name="item.name"

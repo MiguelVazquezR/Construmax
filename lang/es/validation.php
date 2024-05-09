@@ -201,7 +201,7 @@ return [
         'project_group' => 'grupo',
         'opportunity_id' => 'presupuesto',
         'invoice_type' => 'condiciones de pago',
-        'budget' => 'monto',
+        'budgets' => 'montos',
         'close_date' => 'fecha de cierre',
         'service_type' => 'tipo de servicio',
         'status' => 'Estatus',

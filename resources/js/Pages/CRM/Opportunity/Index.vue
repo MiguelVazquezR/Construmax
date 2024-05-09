@@ -386,10 +386,12 @@ export default {
 
       if (evt.to.id === "lost") {
         this.showLostOpportunityModal = true;
-      } else if (evt.to.id === "closed" || evt.to.id === "paid") {
-        this.showCreateProjectModal = true;
-        this.localStatus = status;
-      } else {
+      } 
+      // else if (evt.to.id === "closed" || evt.to.id === "paid") {
+      //   this.showCreateProjectModal = true;
+      //   this.localStatus = status;
+      // } 
+      else {
         this.updateOpportunityStatus(status);
       }
 

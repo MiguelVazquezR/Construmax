@@ -19,7 +19,7 @@ class Project extends Model implements HasMedia
         'address',
         'is_strict',
         'is_internal',
-        'budget',
+        'budgets',
         'start_date',
         'limit_date',
         'finished_at',
@@ -34,6 +34,7 @@ class Project extends Model implements HasMedia
         'start_date' => 'date',
         'limit_date' => 'date',
         'finished_at' => 'datetime',
+        'budgets' => 'array',
     ];
 
     // relationships

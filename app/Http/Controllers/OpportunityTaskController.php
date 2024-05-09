@@ -39,7 +39,7 @@ class OpportunityTaskController extends Controller
             'limit_date' => 'required|date',
             'time' => 'required',
             'priority' => 'required|string',
-            'description' => 'required',
+            'description' => 'nullable',
         ]);
 
         $opportunity_task = OpportunityTask::create($request->except('media') + [
@@ -86,7 +86,7 @@ class OpportunityTaskController extends Controller
             'limit_date' => 'required|date',
             'time' => 'required',
             'priority' => 'required|string',
-            'description' => 'required',
+            'description' => 'nullable',
         ]);
 
         $opportunity_task->update($validated);

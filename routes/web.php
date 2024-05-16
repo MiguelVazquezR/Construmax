@@ -35,6 +35,7 @@ Route::resource('tasks', TaskController::class)->middleware('auth')->names('pms.
 Route::resource('project-groups', ProjectGroupController::class)->middleware('auth')->names('pms.project-groups');
 Route::post('projects/update-with-media/{project}', [ProjectController::class, 'updateWithMedia'])->name('pms.projects.update-with-media')->middleware('auth');
 Route::get('/projects-{project_id}-get', [ProjectController::class, 'getSelectedItem'])->middleware('auth')->name('pms.projects.get-item');
+Route::get('projects-get-by-page/{currentPage}', [ProjectController::class, 'getItemsByPage'])->name('pms.projects.get-by-page')->middleware('auth');
 Route::resource('tags', TagController::class)->middleware('auth')->names('pms.tags');
 Route::post('tasks-{task}-comment', [TaskController::class, 'comment'])->name('pms.tasks.comment')->middleware('auth');
 Route::put('tasks-{task}-pause-play', [TaskController::class, 'pausePlayTask'])->name('pms.tasks.pause-play')->middleware('auth');
@@ -42,15 +43,16 @@ Route::put('tasks-{task}-update-status', [TaskController::class, 'updateStatus']
 Route::get('tasks-late-tasks', [TaskController::class, 'getLateTasks'])->middleware('auth')->name('pms.tasks.get-late-tasks');
 Route::get('/tasks-format/{task_id}', [TaskController::class, 'taskFormat'])->middleware('auth')->name('pms.tasks-format');
 
-// crm routes
+// crm routes (Opportunities routes)
 Route::get('crm/dashboard', [CRMController::class, 'dashboard'])->middleware('auth')->name('crm.dashboard');
 Route::resource('customers', CustomerController::class)->middleware('auth')->names('crm.customers');
 Route::resource('opportunities', OpportunityController::class)->middleware('auth')->names('crm.opportunities');
 Route::put('/opportunities/create-project/{oportunity_id}', [OpportunityController::class, 'createProject'])->name('crm.opportunities.create-project')->middleware('auth');
 Route::put('/opportunities/update-status/{opportunity_id}', [OpportunityController::class, 'updateStatus'])->name('crm.opportunities.update-status')->middleware('auth');
 Route::post('opportunities/update-with-media/{opportunity}', [OpportunityController::class, 'updateWithMedia'])->name('crm.opportunities.update-with-media')->middleware('auth');
+Route::get('opportunities-get-by-page/{currentPage}', [OpportunityController::class, 'getItemsByPage'])->name('crm.opportunities.get-by-page')->middleware('auth');
 
-// ------- CRM (opportunities Routes)  ---------
+// ------- CRM (opportunity task Routes)  ---------
 Route::resource('opportunity-tasks', OpportunityTaskController::class)->except(['store', 'create'])->names('crm.opportunity-tasks')->middleware('auth');
 Route::get('opportunity-tasks/create/{opportunity_id}', [OpportunityTaskController::class, 'create'])->name('crm.opportunity-tasks.create')->middleware('auth');
 Route::post('opportunity-tasks/store/{opportunity_id}', [OpportunityTaskController::class, 'store'])->name('crm.opportunity-tasks.store')->middleware('auth');

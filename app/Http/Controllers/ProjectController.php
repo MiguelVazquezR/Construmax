@@ -21,13 +21,18 @@ class ProjectController extends Controller
     public function index()
     {
         // Consulta para obtener los proyectos en los que el usuario está involucrado
-        $projects = Project::whereHas('users', function ($query) {
+        $all_projects = Project::whereHas('users', function ($query) {
             $query->where('users.id', auth()->id());
-        })->with(['tasks', 'owner'])->latest()->get()->take(1);
+        })->with(['tasks', 'owner'])->latest()->get();
+
+        $projects = $all_projects->take(30);
 
         $projects = ProjectResource::collection($projects);
 
-        return inertia('PMS/Project/Index', compact('projects'));
+        return inertia('PMS/Project/Index', [
+            'projects' => $projects,
+            'total_projects' => $all_projects->count(),
+        ]);
     }
 
     public function create()
@@ -255,5 +260,19 @@ class ProjectController extends Controller
         $project = ProjectResource::make(Project::with(['tasks' => ['users', 'project', 'user'], 'projectGroup', 'opportunity.customer', 'tags', 'users', 'owner', 'contact'])->find($project_id));
 
         return response()->json(['item' => $project]);
+    }
+
+    public function getItemsByPage($currentPage)
+    {
+        $offset = $currentPage * 30;
+
+        // Consulta para obtener los proyectos en los que el usuario está involucrado
+        $projects = Project::whereHas('users', function ($query) {
+            $query->where('users.id', auth()->id());
+        })->with(['tasks', 'owner'])->latest()->get()->splice($offset)->take(30);
+
+        $projects = ProjectResource::collection($projects);
+
+        return response()->json(['items' => $projects]);
     }
 }

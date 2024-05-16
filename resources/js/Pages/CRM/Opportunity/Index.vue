@@ -28,7 +28,7 @@
             </div>
           </div>
           <Link v-if="$page.props.auth.user.permissions?.includes('Crear presupuestos')
-            " :href="route('crm.opportunities.create')">
+          " :href="route('crm.opportunities.create')">
           <PrimaryButton class="rounded-lg">Nuevo presupuesto</PrimaryButton>
           </Link>
         </div>
@@ -72,9 +72,9 @@
               pendingTotal?.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",") ?? "0.00"
             }}
           </p>
-          <draggable @start="handleStartDrag" @add="handleAddDrag" @end="drag = false" v-model="pendingOpportunitiesLocal"
-            :animation="300" item-key="id" tag="ul" group="oportunities" id="pending"
-            :class="drag && !pendingOpportunitiesLocal?.length ? 'h-40' : ''">
+          <draggable @start="handleStartDrag" @add="handleAddDrag" @end="drag = false"
+            v-model="pendingOpportunitiesLocal" :animation="300" item-key="id" tag="ul" group="oportunities"
+            id="pending" :class="drag && !pendingOpportunitiesLocal?.length ? 'h-40' : ''">
             <template #item="{ element: opportunity }">
               <li>
                 <OpportunityCard class="my-3" :opportunity="opportunity" />
@@ -99,8 +99,8 @@
               closedTotal?.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",") ?? "0.00"
             }}
           </p>
-          <draggable @start="handleStartDrag" @add="handleAddDrag" @end="drag = false" v-model="closedOpportunitiesLocal"
-            :animation="300" item-key="id" tag="ul" group="oportunities" id="closed"
+          <draggable @start="handleStartDrag" @add="handleAddDrag" @end="drag = false"
+            v-model="closedOpportunitiesLocal" :animation="300" item-key="id" tag="ul" group="oportunities" id="closed"
             :class="drag && !closedOpportunitiesLocal?.length ? 'h-40' : ''">
             <template #item="{ element: opportunity }">
               <li>
@@ -209,17 +209,17 @@
               <td class="text-left py-2">
                 <span class="py-1 rounded-full">{{
                   opportunity.customer.name
-                }}</span>
+                  }}</span>
               </td>
               <td class="text-left py-2">
                 <span class="py-1 rounded-full">{{
                   opportunity.branch
-                }}</span>
+                  }}</span>
               </td>
               <td class="text-left py-2">
                 <span class="py-1 rounded-full">{{
                   opportunity.created_at.isoFormat
-                }}</span>
+                  }}</span>
               </td>
               <td class="text-left py-2">
                 {{ opportunity.close_date }}
@@ -242,6 +242,17 @@
             </tr>
           </tbody>
         </table>
+        <p v-if="opportunities.data.length" class="text-gray-500 text-[11px] mt-3 mx-8">
+          Mostrando {{ opportunities.data.length }} de {{ total_opportunities }} elementos
+        </p>
+        <p v-if="loadingItems" class="text-xs my-4 text-center">
+          Cargando <i class="fa-sharp fa-solid fa-circle-notch fa-spin ml-2 text-primary"></i>
+        </p>
+        <button
+          v-else-if="total_opportunities > 30 && opportunities.data.length < total_opportunities && opportunities.data.length"
+          @click="fetchItemsByPage" class="w-full text-primary my-4 text-xs mx-auto underline ml-6">
+          Cargar más elementos
+        </button>
       </div>
       <div v-else>
         <p class="text-sm text-center">No hay presupuestos</p>
@@ -322,6 +333,9 @@ export default {
       opportunitiesLocal: null,
       showConfirmModal: false,
       projectToDelete: null,
+      // paginacion
+      loadingItems: false,
+      currentPage: 1,
     };
   },
   components: {
@@ -339,6 +353,7 @@ export default {
   },
   props: {
     opportunities: Object,
+    total_opportunities: Number,
   },
   methods: {
     cancelUpdating() {
@@ -367,7 +382,7 @@ export default {
 
       if (evt.to.id === "lost") {
         this.showLostOpportunityModal = true;
-      } 
+      }
       // else if (evt.to.id === "closed" || evt.to.id === "paid") {
       //   this.showCreateProjectModal = true;
       //   this.localStatus = status;
@@ -377,44 +392,6 @@ export default {
       }
 
       this.drag = false;
-    },
-    async updateOpportunityStatus(status) {
-      //cierra los modales antes de actualizar el estado
-      this.showLostOpportunityModal = false;
-      this.showCreateProjectModal = false;
-      try {
-        const response = await axios.put(route('crm.opportunities.update-status', this.draggingOpportunityId), { status: status, lost_oportunity_razon: this.lost_oportunity_razon });
-
-        if (response.status === 200) {
-          const OpportunityIndex = this.opportunitiesLocal.findIndex(item => item.id === this.draggingOpportunityId);
-          this.opportunitiesLocal[OpportunityIndex].status = status;
-          this.updateLists();
-          this.calculateTotals();
-        }
-      } catch (error) {
-        console.log(error);
-      }
-    },
-    async CreateProject() {
-      try {
-        const response = await axios.put(route('crm.opportunities.create-project', this.draggingOpportunityId));
-        if (response.status === 200) {
-          if (response.data.message) {
-            this.$notify({
-              title: "Correcto",
-              message: response.data.message,
-              type: "success",
-            });
-            this.showCreateProjectModal = false;
-            this.updateOpportunityStatus(this.localStatus);
-          } else {
-            this.updateOpportunityStatus(this.localStatus);
-            this.$inertia.get(route('pms.projects.create'), { opportunityId: this.draggingOpportunityId });
-          }
-        }
-      } catch (error) {
-        console.log(error);
-      }
     },
     getStatusStyles(opportunity) {
       if (opportunity.status === 'Trabajo terminado') {
@@ -476,6 +453,59 @@ export default {
         type: "success",
       });
       // window.location.reload();
+    },
+    async updateOpportunityStatus(status) {
+      //cierra los modales antes de actualizar el estado
+      this.showLostOpportunityModal = false;
+      this.showCreateProjectModal = false;
+      try {
+        const response = await axios.put(route('crm.opportunities.update-status', this.draggingOpportunityId), { status: status, lost_oportunity_razon: this.lost_oportunity_razon });
+
+        if (response.status === 200) {
+          const OpportunityIndex = this.opportunitiesLocal.findIndex(item => item.id === this.draggingOpportunityId);
+          this.opportunitiesLocal[OpportunityIndex].status = status;
+          this.updateLists();
+          this.calculateTotals();
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    },
+    async CreateProject() {
+      try {
+        const response = await axios.put(route('crm.opportunities.create-project', this.draggingOpportunityId));
+        if (response.status === 200) {
+          if (response.data.message) {
+            this.$notify({
+              title: "Correcto",
+              message: response.data.message,
+              type: "success",
+            });
+            this.showCreateProjectModal = false;
+            this.updateOpportunityStatus(this.localStatus);
+          } else {
+            this.updateOpportunityStatus(this.localStatus);
+            this.$inertia.get(route('pms.projects.create'), { opportunityId: this.draggingOpportunityId });
+          }
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    },
+    async fetchItemsByPage() {
+      try {
+        this.loadingItems = true;
+        const response = await axios.get(route('crm.opportunities.get-by-page', this.currentPage));
+
+        if (response.status === 200) {
+          this.opportunities.data = [...this.opportunities.data, ...response.data.items];
+          this.currentPage++;
+        }
+      } catch (error) {
+        console.log(error)
+      } finally {
+        this.loadingItems = false;
+      }
     },
   },
   computed: {

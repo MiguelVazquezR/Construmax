@@ -18,9 +18,13 @@ class OpportunityController extends Controller
 {
     public function index()
     {
-        $opportunities = OpportunityResource::collection(Opportunity::with('customer:id,name')->latest()->get());
+        $all_opportunities = Opportunity::with('customer:id,name')->latest()->get();
+        $opportunities = OpportunityResource::collection($all_opportunities->take(30));
 
-        return inertia('CRM/Opportunity/Index', compact('opportunities'));
+        return inertia('CRM/Opportunity/Index', [
+            'opportunities' => $opportunities,
+            'total_opportunities' => $all_opportunities->count(),
+        ]);
     }
 
     public function create()
@@ -338,5 +342,21 @@ class OpportunityController extends Controller
         if ($project != null) {
             return response()->json(['message' => 'Ya existe un ticket de este presupuesto']);
         }
+    }
+
+    public function getItemsByPage($currentPage)
+    {
+        $offset = $currentPage * 30;
+
+        // Consulta para obtener presupuestos en los que el usuario está involucrado
+        $opportunities = Opportunity::with('customer:id,name')
+            ->latest()
+            ->get()
+            ->splice($offset)
+            ->take(30);
+
+        $opportunities = OpportunityResource::collection($opportunities);
+
+        return response()->json(['items' => $opportunities]);
     }
 }

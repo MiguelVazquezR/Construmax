@@ -17,96 +17,102 @@
     </div>
 
     <div class="lg:px-16 px-4 py-7 text-xs overflow-x-auto">
-      <table v-if="filteredTableData.length" class="w-full mx-auto">
-        <thead>
-          <tr class="text-left">
-            <th class="font-bold pb-5 pl-4 min-w-[90px]">Folio <i
-                class="text-[9px] md:inline fa-solid fa-arrow-down-long md:ml-3"></i></th>
-            <th class="font-bold pb-5 min-w-[90px]">Nombre <i
-                class="text-[9px] md:inline fa-solid fa-arrow-down-long md:ml-3"></i>
-            </th>
-            <th class="font-bold pb-5 min-w-[120px]">Tipo de servicio <i
-                class="text-[9px] md:inline fa-solid fa-arrow-down-long md:ml-3"></i>
-            </th>
-            <th class="font-bold pb-5 min-w-[90px]">Estado <i
-                class="text-[9px] md:inline fa-solid fa-arrow-down-long md:ml-3"></i></th>
-            <th class="font-bold pb-5 text-center">Tareas <i
-                class="text-[9px] md:inline fa-solid fa-arrow-down-long md:ml-3"></i>
-            </th>
-            <th class="font-bold pb-5 min-w-[120px]">Responsable <i
-                class="text-[9px] md:inline fa-solid fa-arrow-down-long md:ml-3"></i></th>
-            <th class="font-bold pb-5 min-w-[120px]">Fecha de inicio <i
-                class="text-[9px] md:inline fa-solid fa-arrow-down-long md:ml-3"></i></th>
-            <th class="font-bold pb-5 min-w-[120px]">Fecha final <i
-                class="text-[9px] md:inline fa-solid fa-arrow-down-long md:ml-3"></i></th>
-            <th class="font-bold pb-5 min-w-[120px]">Completa <i
-                class="text-[9px] md:inline fa-solid fa-arrow-down-long md:ml-3"></i></th>
-            <th></th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="project in filteredTableData" :key="project.id" class="mb-4 cursor-pointer hover:bg-primarylight"
-            @click="$inertia.get(route('pms.projects.show', project.id))">
-            <td class="text-left py-2 pr-2 pl-4 rounded-l-full">
-              {{ project.folio }}
-            </td>
-            <td :title="project.name" class="text-left py-2 max-w-[220px] truncate pr-2">
-              {{ project.name }}
-            </td>
-            <td class="text-left py-2">
-              {{ project.service_type }}
-            </td>
-            <td class="text-left py-2">
-              <span
-                :class="calculateProjectStatus(project.tasks)?.text_color + ' ' + calculateProjectStatus(project.tasks)?.bg"
-                class="py-1 px-2 rounded-full border border-white">{{ calculateProjectStatus(project.tasks)?.label
-                }}</span>
-            </td>
-            <td class="text-left py-2 flex space-x-px items-center">
-              <p class="text-[10px] mt-1">{{ project.tasks.filter(task => task.status === 'Terminada').length }}</p>
-              <div class="relative bg-gray4 rounded-full h-5 w-24 mt-1 border border-white">
-                <div
-                  :class="(project.tasks.filter(task => task.status === 'Terminada').length / project.tasks.length) * 100 == 100 ? 'rounded-full' : 'rounded-l-full'"
-                  class="absolute top-0 left-0 bg-primary h-5"
-                  :style="{ width: (project.tasks.filter(task => task.status === 'Terminada').length / project.tasks.length) * 100 + '%' }">
+      <div v-if="filteredTableData.length">
+        <table class="w-full mx-auto">
+          <thead>
+            <tr class="text-left">
+              <th class="font-bold pb-5 pl-4 min-w-[90px]">Folio <i
+                  class="text-[9px] md:inline fa-solid fa-arrow-down-long md:ml-3"></i></th>
+              <th class="font-bold pb-5 min-w-[90px]">Nombre <i
+                  class="text-[9px] md:inline fa-solid fa-arrow-down-long md:ml-3"></i>
+              </th>
+              <th class="font-bold pb-5 min-w-[120px]">Tipo de servicio <i
+                  class="text-[9px] md:inline fa-solid fa-arrow-down-long md:ml-3"></i>
+              </th>
+              <th class="font-bold pb-5 min-w-[90px]">Estado <i
+                  class="text-[9px] md:inline fa-solid fa-arrow-down-long md:ml-3"></i></th>
+              <th class="font-bold pb-5 text-center">Tareas <i
+                  class="text-[9px] md:inline fa-solid fa-arrow-down-long md:ml-3"></i>
+              </th>
+              <th class="font-bold pb-5 min-w-[120px]">Responsable <i
+                  class="text-[9px] md:inline fa-solid fa-arrow-down-long md:ml-3"></i></th>
+              <th class="font-bold pb-5 min-w-[120px]">Fecha de inicio <i
+                  class="text-[9px] md:inline fa-solid fa-arrow-down-long md:ml-3"></i></th>
+              <th class="font-bold pb-5 min-w-[120px]">Fecha final <i
+                  class="text-[9px] md:inline fa-solid fa-arrow-down-long md:ml-3"></i></th>
+              <th class="font-bold pb-5 min-w-[120px]">Completa <i
+                  class="text-[9px] md:inline fa-solid fa-arrow-down-long md:ml-3"></i></th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="project in filteredTableData" :key="project.id" class="mb-4 cursor-pointer hover:bg-primarylight"
+              @click="$inertia.get(route('pms.projects.show', project.id))">
+              <td class="text-left py-2 pr-2 pl-4 rounded-l-full">
+                {{ project.folio }}
+              </td>
+              <td :title="project.name" class="text-left py-2 max-w-[220px] truncate pr-2">
+                {{ project.name }}
+              </td>
+              <td class="text-left py-2">
+                {{ project.service_type }}
+              </td>
+              <td class="text-left py-2">
+                <span
+                  :class="calculateProjectStatus(project.tasks)?.text_color + ' ' + calculateProjectStatus(project.tasks)?.bg"
+                  class="py-1 px-2 rounded-full border border-white">{{ calculateProjectStatus(project.tasks)?.label
+                  }}</span>
+              </td>
+              <td class="text-left py-2 flex space-x-px items-center">
+                <p class="text-[10px] mt-1">{{ project.tasks.filter(task => task.status === 'Terminada').length }}</p>
+                <div class="relative bg-gray4 rounded-full h-5 w-24 mt-1 border border-white">
+                  <div
+                    :class="(project.tasks.filter(task => task.status === 'Terminada').length / project.tasks.length) * 100 == 100 ? 'rounded-full' : 'rounded-l-full'"
+                    class="absolute top-0 left-0 bg-primary h-5"
+                    :style="{ width: (project.tasks.filter(task => task.status === 'Terminada').length / project.tasks.length) * 100 + '%' }">
+                  </div>
+                  <p class="text-xs mt-px absolute top-0 right-8 text-black">{{ project.tasks.length != 0 ?
+                    Math.round((project.tasks.filter(task => task.status === 'Terminada').length / project.tasks.length)
+                      *
+                      100) : '0' }}%</p>
                 </div>
-                <p class="text-xs mt-px absolute top-0 right-8 text-black">{{ project.tasks.length != 0 ?
-                  Math.round((project.tasks.filter(task => task.status === 'Terminada').length / project.tasks.length) *
-                    100) : '0' }}%</p>
-              </div>
-              <p class="text-[10px] mt-1">{{ project.tasks.length }}</p>
-            </td>
-            <td class="text-left py-2 px-2 max-w-[120px] truncate">
-              {{ project.owner.name }}
-            </td>
-            <td class="text-left py-2">
-              {{ project.start_date }}
-            </td>
-            <td class="text-left py-2" :class="getTextClass(project)">
-              {{ project.limit_date }}
-              <el-tooltip v-if="project.finished_at === null && limitDateHasPassed(project)"
-                content="La fecha limite ha pasado" placement="top">
-                <i class="fa-solid fa-triangle-exclamation"></i>
-              </el-tooltip>
-            </td>
-            <td class="text-left py-2">
-              {{ project.finished_at ?? '--' }}
-            </td>
-            <td v-if="$page.props.auth.user.permissions?.includes('Eliminar tickets')"
-              class="text-left py-2 px-2 rounded-e-full">
-              <i @click.stop="prepareToDelete(project)"
-                class="fa-regular fa-trash-can text-primary cursor-pointer p-2"></i>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+                <p class="text-[10px] mt-1">{{ project.tasks.length }}</p>
+              </td>
+              <td class="text-left py-2 px-2 max-w-[120px] truncate">
+                {{ project.owner.name }}
+              </td>
+              <td class="text-left py-2">
+                {{ project.start_date }}
+              </td>
+              <td class="text-left py-2" :class="getTextClass(project)">
+                {{ project.limit_date }}
+                <el-tooltip v-if="project.finished_at === null && limitDateHasPassed(project)"
+                  content="La fecha limite ha pasado" placement="top">
+                  <i class="fa-solid fa-triangle-exclamation"></i>
+                </el-tooltip>
+              </td>
+              <td class="text-left py-2">
+                {{ project.finished_at ?? '--' }}
+              </td>
+              <td v-if="$page.props.auth.user.permissions?.includes('Eliminar tickets')"
+                class="text-left py-2 px-2 rounded-e-full">
+                <i @click.stop="prepareToDelete(project)"
+                  class="fa-regular fa-trash-can text-primary cursor-pointer p-2"></i>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <p v-if="projects.data.length" class="text-gray-500 text-[11px] mt-3">Mostrando {{ projects.data.length }} de {{
+          total_projects }} elementos
+        </p>
+        <p v-if="loadingItems" class="text-xs my-4 text-center">
+          Cargando <i class="fa-sharp fa-solid fa-circle-notch fa-spin ml-2 text-primary"></i>
+        </p>
+        <button v-else-if="total_projects > 30 && projects.data.length < total_projects && projects.data.length"
+          @click="fetchItemsByPage" class="w-full text-primary my-4 text-xs mx-auto underline ml-6">Cargar más
+          elementos</button>
+      </div>
       <p v-else class="text-center text-gray2 mt-12">No hay tickets registrados</p>
-      <p v-if="loadingItems" class="text-xs my-4 text-center">
-        Cargando <i class="fa-sharp fa-solid fa-circle-notch fa-spin ml-2 text-primary"></i>
-      </p>
-      <button v-else-if="total_products > 30 && localProducts.length < total_products && localProducts.length"
-        @click="fetchItemsByPage" class="w-full text-primary my-4 text-xs mx-auto underline ml-6">Cargar más
-        elementos</button>
     </div>
     <ConfirmationModal :show="showConfirmModal" @close="showConfirmModal = false">
       <template #title>
@@ -154,7 +160,7 @@ export default {
   },
   props: {
     projects: Object,
-    total_products: Number,
+    total_projects: Number,
   },
   methods: {
     limitDateHasPassed(project) {
@@ -240,10 +246,10 @@ export default {
     async fetchItemsByPage() {
       try {
         this.loadingItems = true;
-        const response = await axios.get(route('projects.get-by-page', this.currentPage));
+        const response = await axios.get(route('pms.projects.get-by-page', this.currentPage));
 
         if (response.status === 200) {
-          this.products.data = [...this.products.data, ...response.data.items];
+          this.projects.data = [...this.projects.data, ...response.data.items];
           this.currentPage++;
         }
       } catch (error) {

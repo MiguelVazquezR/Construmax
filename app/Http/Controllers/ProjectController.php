@@ -23,7 +23,7 @@ class ProjectController extends Controller
         // Consulta para obtener los proyectos en los que el usuario está involucrado
         $projects = Project::whereHas('users', function ($query) {
             $query->where('users.id', auth()->id());
-        })->with(['tasks', 'owner'])->latest()->paginate(30);
+        })->with(['tasks', 'owner'])->latest()->get()->take(1);
 
         $projects = ProjectResource::collection($projects);
 

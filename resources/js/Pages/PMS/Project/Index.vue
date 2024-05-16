@@ -20,18 +20,27 @@
       <table v-if="filteredTableData.length" class="w-full mx-auto">
         <thead>
           <tr class="text-left">
-            <th class="font-bold pb-5 pl-4 min-w-[90px]">Folio <i class="text-[9px] md:inline fa-solid fa-arrow-down-long md:ml-3"></i></th>
-            <th class="font-bold pb-5 min-w-[90px]">Nombre <i class="text-[9px] md:inline fa-solid fa-arrow-down-long md:ml-3"></i>
+            <th class="font-bold pb-5 pl-4 min-w-[90px]">Folio <i
+                class="text-[9px] md:inline fa-solid fa-arrow-down-long md:ml-3"></i></th>
+            <th class="font-bold pb-5 min-w-[90px]">Nombre <i
+                class="text-[9px] md:inline fa-solid fa-arrow-down-long md:ml-3"></i>
             </th>
-            <th class="font-bold pb-5 min-w-[120px]">Tipo de servicio <i class="text-[9px] md:inline fa-solid fa-arrow-down-long md:ml-3"></i>
+            <th class="font-bold pb-5 min-w-[120px]">Tipo de servicio <i
+                class="text-[9px] md:inline fa-solid fa-arrow-down-long md:ml-3"></i>
             </th>
-            <th class="font-bold pb-5 min-w-[90px]">Estado <i class="text-[9px] md:inline fa-solid fa-arrow-down-long md:ml-3"></i></th>
-            <th class="font-bold pb-5 text-center">Tareas <i class="text-[9px] md:inline fa-solid fa-arrow-down-long md:ml-3"></i>
+            <th class="font-bold pb-5 min-w-[90px]">Estado <i
+                class="text-[9px] md:inline fa-solid fa-arrow-down-long md:ml-3"></i></th>
+            <th class="font-bold pb-5 text-center">Tareas <i
+                class="text-[9px] md:inline fa-solid fa-arrow-down-long md:ml-3"></i>
             </th>
-            <th class="font-bold pb-5 min-w-[120px]">Responsable <i class="text-[9px] md:inline fa-solid fa-arrow-down-long md:ml-3"></i></th>
-            <th class="font-bold pb-5 min-w-[120px]">Fecha de inicio <i class="text-[9px] md:inline fa-solid fa-arrow-down-long md:ml-3"></i></th>
-            <th class="font-bold pb-5 min-w-[120px]">Fecha final <i class="text-[9px] md:inline fa-solid fa-arrow-down-long md:ml-3"></i></th>
-            <th class="font-bold pb-5 min-w-[120px]">Completa <i class="text-[9px] md:inline fa-solid fa-arrow-down-long md:ml-3"></i></th>
+            <th class="font-bold pb-5 min-w-[120px]">Responsable <i
+                class="text-[9px] md:inline fa-solid fa-arrow-down-long md:ml-3"></i></th>
+            <th class="font-bold pb-5 min-w-[120px]">Fecha de inicio <i
+                class="text-[9px] md:inline fa-solid fa-arrow-down-long md:ml-3"></i></th>
+            <th class="font-bold pb-5 min-w-[120px]">Fecha final <i
+                class="text-[9px] md:inline fa-solid fa-arrow-down-long md:ml-3"></i></th>
+            <th class="font-bold pb-5 min-w-[120px]">Completa <i
+                class="text-[9px] md:inline fa-solid fa-arrow-down-long md:ml-3"></i></th>
             <th></th>
           </tr>
         </thead>
@@ -84,17 +93,20 @@
               {{ project.finished_at ?? '--' }}
             </td>
             <td v-if="$page.props.auth.user.permissions?.includes('Eliminar tickets')"
-              class="text-left py-2 px-2 rounded-r-full">
-              <i @click.stop="prepareToDelete(project)" class="fa-regular fa-trash-can text-primary cursor-pointer p-2"></i>
+              class="text-left py-2 px-2 rounded-e-full">
+              <i @click.stop="prepareToDelete(project)"
+                class="fa-regular fa-trash-can text-primary cursor-pointer p-2"></i>
             </td>
           </tr>
         </tbody>
       </table>
       <p v-else class="text-center text-gray2 mt-12">No hay tickets registrados</p>
-      <!-- --- pagination --- -->
-      <div class="mt-4">
-        <!-- <Pagination :pagination="projects" /> -->
-      </div>
+      <p v-if="loadingItems" class="text-xs my-4 text-center">
+        Cargando <i class="fa-sharp fa-solid fa-circle-notch fa-spin ml-2 text-primary"></i>
+      </p>
+      <button v-else-if="total_products > 30 && localProducts.length < total_products && localProducts.length"
+        @click="fetchItemsByPage" class="w-full text-primary my-4 text-xs mx-auto underline ml-6">Cargar más
+        elementos</button>
     </div>
     <ConfirmationModal :show="showConfirmModal" @close="showConfirmModal = false">
       <template #title>
@@ -112,7 +124,7 @@
     </ConfirmationModal>
   </AppLayout>
 </template>
-  
+
 <script>
 import AppLayout from "@/Layouts/AppLayout.vue";
 import PrimaryButton from "@/Components/PrimaryButton.vue";
@@ -120,7 +132,6 @@ import CancelButton from "@/Components/CancelButton.vue";
 import SecondaryButton from "@/Components/SecondaryButton.vue";
 import ConfirmationModal from "@/Components/ConfirmationModal.vue";
 import moment from 'moment';
-//   import Pagination from "@/Components/MyComponents/Pagination.vue";
 
 export default {
   data() {
@@ -129,6 +140,9 @@ export default {
       inputSearch: '',
       showConfirmModal: false,
       projectToDelete: null,
+      // paginacion
+      loadingItems: false,
+      currentPage: 1,
     }
   },
   components: {
@@ -137,10 +151,10 @@ export default {
     CancelButton,
     SecondaryButton,
     ConfirmationModal,
-    //   Pagination
   },
   props: {
-    projects: Object
+    projects: Object,
+    total_products: Number,
   },
   methods: {
     limitDateHasPassed(project) {
@@ -223,6 +237,21 @@ export default {
         };
       }
     },
+    async fetchItemsByPage() {
+      try {
+        this.loadingItems = true;
+        const response = await axios.get(route('projects.get-by-page', this.currentPage));
+
+        if (response.status === 200) {
+          this.products.data = [...this.products.data, ...response.data.items];
+          this.currentPage++;
+        }
+      } catch (error) {
+        console.log(error)
+      } finally {
+        this.loadingItems = false;
+      }
+    },
   },
   computed: {
     filteredTableData() {
@@ -243,4 +272,3 @@ export default {
   },
 }
 </script>
-  

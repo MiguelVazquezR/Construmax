@@ -174,6 +174,12 @@
               <th class="font-bold pb-5 min-w-[90px]">Estatus <i
                   class="text-[9px] md:inline fa-solid fa-arrow-down-long md:ml-3"></i>
               </th>
+              <th class="font-bold pb-5 min-w-[90px]">Cliente <i
+                  class="text-[9px] md:inline fa-solid fa-arrow-down-long md:ml-3"></i>
+              </th>
+              <th class="font-bold pb-5 min-w-[90px]">Sucursal <i
+                  class="text-[9px] md:inline fa-solid fa-arrow-down-long md:ml-3"></i>
+              </th>
               <th class="font-bold pb-5 min-w-[130px]">Fecha inicio <i
                   class="text-[9px] md:inline fa-solid fa-arrow-down-long md:ml-3"></i>
               </th>
@@ -199,6 +205,16 @@
               <td class="text-left py-2">
                 <span class="py-1 px-4 rounded-full border border-white" :class="getStatusStyles(opportunity)">{{
                   opportunity.status }}</span>
+              </td>
+              <td class="text-left py-2">
+                <span class="py-1 rounded-full">{{
+                  opportunity.customer.name
+                }}</span>
+              </td>
+              <td class="text-left py-2">
+                <span class="py-1 rounded-full">{{
+                  opportunity.branch
+                }}</span>
               </td>
               <td class="text-left py-2">
                 <span class="py-1 rounded-full">{{

@@ -36,129 +36,140 @@
     </div>
 
     <!-- ------------ Kanban view starts ----------------- -->
-    <div v-if="type_view === 'Kanban'" class="mx-4 contenedor text-center text-sm my-16 pb-9">
-      <!-- ---- Trabajo terminado --- -->
-      <section class="seccion">
-        <h2 class="text-[#9A9A9A] bg-[#D9D9D9] border border-[#9A9A9A] py-1">Trabajo terminado</h2>
-        <div class="border border-[#9A9A9A] p-2 min-h-full">
-          <!-- <p class="text-[#9A9A9A] cursor-pointer mt-1">+ Agregar</p> -->
-          <p class="text-primary text-xl my-2">
-            ${{ newTotal?.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",") ?? "0.00" }}
-          </p>
-          <draggable @start="handleStartDrag" @add="handleAddDrag" @end="drag = false" v-model="newOpportunitiesLocal"
-            :animation="300" item-key="id" tag="ul" group="oportunities" id="new"
-            :class="drag && !newOpportunitiesLocal?.length ? 'h-40' : ''">
-            <template #item="{ element: opportunity }">
-              <li>
-                <OpportunityCard class="my-3" :opportunity="opportunity" />
-              </li>
-            </template>
-          </draggable>
-          <div class="text-center" v-if="!newOpportunitiesLocal?.length">
-            <p class="text-xs text-gray-500 mt-6">No hay presupuestos en este estatus</p>
+    <div v-if="type_view === 'Kanban'" class="mt-16">
+      <div>
+        <p v-if="opportunities.data.length" class="text-gray-500 text-[11px] mx-8">
+          Mostrando {{ opportunities.data.length }} de {{ total_opportunities }} elementos
+        </p>
+        <p v-if="loadingItems" class="text-xs text-center">
+          Cargando <i class="fa-sharp fa-solid fa-circle-notch fa-spin ml-2 text-primary"></i>
+        </p>
+        <button
+          v-else-if="total_opportunities > 30 && opportunities.data.length < total_opportunities && opportunities.data.length"
+          @click="fetchItemsByPage" class="w-full text-primary text-xs mx-auto underline">
+          Cargar más elementos
+        </button>
+      </div>
+      <div class="mx-4 contenedor text-center text-sm mb-16 mt-4 pb-9">
+        <!-- ---- Trabajo terminado --- -->
+        <section class="seccion">
+          <h2 class="text-[#9A9A9A] bg-[#D9D9D9] border border-[#9A9A9A] py-1">Trabajo terminado</h2>
+          <div class="border border-[#9A9A9A] p-2 min-h-full">
+            <!-- <p class="text-[#9A9A9A] cursor-pointer mt-1">+ Agregar</p> -->
+            <p class="text-primary text-xl my-2">
+              ${{ newTotal?.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",") ?? "0.00" }}
+            </p>
+            <draggable @start="handleStartDrag" @add="handleAddDrag" @end="drag = false" v-model="newOpportunitiesLocal"
+              :animation="300" item-key="id" tag="ul" group="oportunities" id="new"
+              :class="drag && !newOpportunitiesLocal?.length ? 'h-40' : ''">
+              <template #item="{ element: opportunity }">
+                <li>
+                  <OpportunityCard class="my-3" :opportunity="opportunity" />
+                </li>
+              </template>
+            </draggable>
+            <div class="text-center" v-if="!newOpportunitiesLocal?.length">
+              <p class="text-xs text-gray-500 mt-6">No hay presupuestos en este estatus</p>
+            </div>
           </div>
-        </div>
-      </section>
-
-      <!-- ---- Presupuesto --- -->
-      <section class="seccion">
-        <h2 class="text-[#C88C3C] bg-[#F3FD85] border border-[#9A9A9A] py-1">
-          Presupuesto
-        </h2>
-        <div class="border border-[#9A9A9A] p-2 min-h-full">
-          <!-- <p class="text-[#9A9A9A] cursor-pointer mt-1">+ Agregar</p> -->
-          <p class="text-primary text-xl my-2">
-            ${{
-              pendingTotal?.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",") ?? "0.00"
-            }}
-          </p>
-          <draggable @start="handleStartDrag" @add="handleAddDrag" @end="drag = false"
-            v-model="pendingOpportunitiesLocal" :animation="300" item-key="id" tag="ul" group="oportunities"
-            id="pending" :class="drag && !pendingOpportunitiesLocal?.length ? 'h-40' : ''">
-            <template #item="{ element: opportunity }">
-              <li>
-                <OpportunityCard class="my-3" :opportunity="opportunity" />
-              </li>
-            </template>
-          </draggable>
-          <div class="text-center" v-if="!pendingOpportunitiesLocal?.length">
-            <p class="text-xs text-gray-500 mt-6">No hay presupuestos en este estatus</p>
+        </section>
+        <!-- ---- Presupuesto --- -->
+        <section class="seccion">
+          <h2 class="text-[#C88C3C] bg-[#F3FD85] border border-[#9A9A9A] py-1">
+            Presupuesto
+          </h2>
+          <div class="border border-[#9A9A9A] p-2 min-h-full">
+            <!-- <p class="text-[#9A9A9A] cursor-pointer mt-1">+ Agregar</p> -->
+            <p class="text-primary text-xl my-2">
+              ${{
+                pendingTotal?.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",") ?? "0.00"
+              }}
+            </p>
+            <draggable @start="handleStartDrag" @add="handleAddDrag" @end="drag = false"
+              v-model="pendingOpportunitiesLocal" :animation="300" item-key="id" tag="ul" group="oportunities"
+              id="pending" :class="drag && !pendingOpportunitiesLocal?.length ? 'h-40' : ''">
+              <template #item="{ element: opportunity }">
+                <li>
+                  <OpportunityCard class="my-3" :opportunity="opportunity" />
+                </li>
+              </template>
+            </draggable>
+            <div class="text-center" v-if="!pendingOpportunitiesLocal?.length">
+              <p class="text-xs text-gray-500 mt-6">No hay presupuestos en este estatus</p>
+            </div>
           </div>
-        </div>
-      </section>
-
-      <!-- ---- Facturado --- -->
-      <section class="seccion">
-        <h2 class="text-[#FD8827] bg-[#FEDBBD] border border-[#9A9A9A] py-1">
-          Facturado
-        </h2>
-        <div class="border border-[#9A9A9A] p-2 min-h-full">
-          <!-- <p class="text-[#9A9A9A] cursor-pointer mt-1">+ Agregar</p> -->
-          <p class="text-primary text-xl my-2">
-            ${{
-              closedTotal?.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",") ?? "0.00"
-            }}
-          </p>
-          <draggable @start="handleStartDrag" @add="handleAddDrag" @end="drag = false"
-            v-model="closedOpportunitiesLocal" :animation="300" item-key="id" tag="ul" group="oportunities" id="closed"
-            :class="drag && !closedOpportunitiesLocal?.length ? 'h-40' : ''">
-            <template #item="{ element: opportunity }">
-              <li>
-                <OpportunityCard class="my-3" :opportunity="opportunity" />
-              </li>
-            </template>
-          </draggable>
-          <div class="text-center" v-if="!closedOpportunitiesLocal?.length">
-            <p class="text-xs text-gray-500 mt-6">No hay presupuestos en este estatus</p>
+        </section>
+        <!-- ---- Facturado --- -->
+        <section class="seccion">
+          <h2 class="text-[#FD8827] bg-[#FEDBBD] border border-[#9A9A9A] py-1">
+            Facturado
+          </h2>
+          <div class="border border-[#9A9A9A] p-2 min-h-full">
+            <!-- <p class="text-[#9A9A9A] cursor-pointer mt-1">+ Agregar</p> -->
+            <p class="text-primary text-xl my-2">
+              ${{
+                closedTotal?.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",") ?? "0.00"
+              }}
+            </p>
+            <draggable @start="handleStartDrag" @add="handleAddDrag" @end="drag = false"
+              v-model="closedOpportunitiesLocal" :animation="300" item-key="id" tag="ul" group="oportunities"
+              id="closed" :class="drag && !closedOpportunitiesLocal?.length ? 'h-40' : ''">
+              <template #item="{ element: opportunity }">
+                <li>
+                  <OpportunityCard class="my-3" :opportunity="opportunity" />
+                </li>
+              </template>
+            </draggable>
+            <div class="text-center" v-if="!closedOpportunitiesLocal?.length">
+              <p class="text-xs text-gray-500 mt-6">No hay presupuestos en este estatus</p>
+            </div>
           </div>
-        </div>
-      </section>
-
-      <!-- ---- Pagado --- -->
-      <section class="seccion">
-        <h2 class="text-[#37951F] bg-[#AFFDB2] border border-[#9A9A9A] py-1">Pagado</h2>
-        <div class="border border-[#9A9A9A] p-2 min-h-full">
-          <!-- <p class="text-[#9A9A9A] cursor-pointer mt-1">+ Agregar</p> -->
-          <p class="text-primary text-xl my-2">
-            ${{ paidTotal?.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",") ?? "0.00" }}
-          </p>
-          <draggable @start="handleStartDrag" @add="handleAddDrag" @end="drag = false" v-model="paidOpportunitiesLocal"
-            :animation="300" item-key="id" tag="ul" group="oportunities" id="paid"
-            :class="drag && !paidOpportunitiesLocal?.length ? 'h-40' : ''">
-            <template #item="{ element: opportunity }">
-              <li>
-                <OpportunityCard class="my-3" :opportunity="opportunity" />
-              </li>
-            </template>
-          </draggable>
-          <div class="text-center" v-if="!paidOpportunitiesLocal?.length">
-            <p class="text-xs text-gray-500 mt-6">No hay presupuestos en este estatus</p>
+        </section>
+        <!-- ---- Pagado --- -->
+        <section class="seccion">
+          <h2 class="text-[#37951F] bg-[#AFFDB2] border border-[#9A9A9A] py-1">Pagado</h2>
+          <div class="border border-[#9A9A9A] p-2 min-h-full">
+            <!-- <p class="text-[#9A9A9A] cursor-pointer mt-1">+ Agregar</p> -->
+            <p class="text-primary text-xl my-2">
+              ${{ paidTotal?.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",") ?? "0.00" }}
+            </p>
+            <draggable @start="handleStartDrag" @add="handleAddDrag" @end="drag = false"
+              v-model="paidOpportunitiesLocal" :animation="300" item-key="id" tag="ul" group="oportunities" id="paid"
+              :class="drag && !paidOpportunitiesLocal?.length ? 'h-40' : ''">
+              <template #item="{ element: opportunity }">
+                <li>
+                  <OpportunityCard class="my-3" :opportunity="opportunity" />
+                </li>
+              </template>
+            </draggable>
+            <div class="text-center" v-if="!paidOpportunitiesLocal?.length">
+              <p class="text-xs text-gray-500 mt-6">No hay presupuestos en este estatus</p>
+            </div>
           </div>
-        </div>
-      </section>
-
-      <!-- ---- Perdidas --- -->
-      <section class="seccion">
-        <h2 class="text-[#9E0FA9] bg-[#F7B7FC] border border-[#9A9A9A] py-1">Perdidas</h2>
-        <div class="border border-[#9A9A9A] p-2 min-h-full">
-          <!-- <p class="text-[#9A9A9A] cursor-pointer mt-1">+ Agregar</p> -->
-          <p class="text-primary text-xl my-2">
-            ${{ lostTotal?.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",") ?? "0.00" }}
-          </p>
-          <draggable @start="handleStartDrag" @add="handleAddDrag" @end="drag = false" v-model="lostOpportunitiesLocal"
-            :animation="300" item-key="id" tag="ul" group="oportunities" id="lost"
-            :class="drag && !lostOpportunitiesLocal?.length ? 'h-40' : ''">
-            <template #item="{ element: opportunity }">
-              <li>
-                <OpportunityCard class="my-3" :opportunity="opportunity" />
-              </li>
-            </template>
-          </draggable>
-          <div class="text-center" v-if="!lostOpportunitiesLocal?.length">
-            <p class="text-xs text-gray-500 mt-6">No hay presupuestos en este estatus</p>
+        </section>
+        <!-- ---- Perdidas --- -->
+        <section class="seccion">
+          <h2 class="text-[#9E0FA9] bg-[#F7B7FC] border border-[#9A9A9A] py-1">Perdidas</h2>
+          <div class="border border-[#9A9A9A] p-2 min-h-full">
+            <!-- <p class="text-[#9A9A9A] cursor-pointer mt-1">+ Agregar</p> -->
+            <p class="text-primary text-xl my-2">
+              ${{ lostTotal?.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",") ?? "0.00" }}
+            </p>
+            <draggable @start="handleStartDrag" @add="handleAddDrag" @end="drag = false"
+              v-model="lostOpportunitiesLocal" :animation="300" item-key="id" tag="ul" group="oportunities" id="lost"
+              :class="drag && !lostOpportunitiesLocal?.length ? 'h-40' : ''">
+              <template #item="{ element: opportunity }">
+                <li>
+                  <OpportunityCard class="my-3" :opportunity="opportunity" />
+                </li>
+              </template>
+            </draggable>
+            <div class="text-center" v-if="!lostOpportunitiesLocal?.length">
+              <p class="text-xs text-gray-500 mt-6">No hay presupuestos en este estatus</p>
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+      </div>
     </div>
     <!-- ------------ Kanban view ends ----------------- -->
 
@@ -209,17 +220,17 @@
               <td class="text-left py-2">
                 <span class="py-1 rounded-full">{{
                   opportunity.customer.name
-                  }}</span>
+                }}</span>
               </td>
               <td class="text-left py-2">
                 <span class="py-1 rounded-full">{{
                   opportunity.branch
-                  }}</span>
+                }}</span>
               </td>
               <td class="text-left py-2">
                 <span class="py-1 rounded-full">{{
                   opportunity.created_at.isoFormat
-                  }}</span>
+                }}</span>
               </td>
               <td class="text-left py-2">
                 {{ opportunity.close_date }}
@@ -250,7 +261,7 @@
         </p>
         <button
           v-else-if="total_opportunities > 30 && opportunities.data.length < total_opportunities && opportunities.data.length"
-          @click="fetchItemsByPage" class="w-full text-primary my-4 text-xs mx-auto underline ml-6">
+          @click="fetchItemsByPage" class="w-full text-primary my-4 text-xs mx-auto underline">
           Cargar más elementos
         </button>
       </div>
@@ -499,7 +510,9 @@ export default {
 
         if (response.status === 200) {
           this.opportunities.data = [...this.opportunities.data, ...response.data.items];
+          this.opportunitiesLocal = [...this.opportunitiesLocal, ...response.data.items];
           this.currentPage++;
+          this.updateLists();
         }
       } catch (error) {
         console.log(error)
